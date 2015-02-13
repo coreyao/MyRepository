@@ -8,10 +8,30 @@
     <Filter Include="Extern">
       <UniqueIdentifier>{4664543f-f41c-47a8-acee-2a902d777cdb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\FrameWork">
+      <UniqueIdentifier>{bacaa242-feb1-4c69-8822-8976ee4daa94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FrameWork\OpenGL">
+      <UniqueIdentifier>{bb31b91f-a96d-48d6-8803-c4702e0302c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{d62a9f1f-e02e-4dad-8730-61abb774a84c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Source\main.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\Source\FrameWork\OpenGL\OpenGLFrameWork.cpp">
+      <Filter>Source Files\FrameWork\OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\Utility.cpp">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Source\FrameWork\OpenGL\OpenGLFrameWork.h">
+      <Filter>Source Files\FrameWork\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\Utility.h">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
