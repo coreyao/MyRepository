@@ -11,11 +11,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Source\FrameWork\Image\ImageReader.cpp" />
+    <ClCompile Include="..\Source\FrameWork\Image\PNGReader.cpp" />
     <ClCompile Include="..\Source\FrameWork\OpenGL\OpenGLFrameWork.cpp" />
     <ClCompile Include="..\Source\FrameWork\Utility.cpp" />
     <ClCompile Include="..\Source\MeshViewer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Source\FrameWork\Image\ImageReader.h" />
+    <ClInclude Include="..\Source\FrameWork\Image\PNGReader.h" />
     <ClInclude Include="..\Source\FrameWork\OpenGL\OpenGLFrameWork.h" />
     <ClInclude Include="..\Source\FrameWork\Utility.h" />
   </ItemGroup>
@@ -55,14 +59,14 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\Extern\freeglut-2.8.1\include;..\Extern\glew-1.12.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Extern\lpng1616;..\Extern\freeglut-2.8.1\include;..\Extern\glew-1.12.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>..\Extern\freeglut-2.8.1\lib\x86;..\Extern\glew-1.12.0\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freeglut.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\Extern\freeglut-2.8.1\lib\x86;..\Extern\lpng1616\projects\vstudio\Release Library;..\Extern\glew-1.12.0\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>freeglut.lib;glew32.lib;libpng16.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

@@ -1,11 +1,10 @@
 #include "OpenGLFrameWork.h"
+#include "../Utility.h"
 
 #include <fstream>
 #include <sstream>
 
 using namespace std;
-
-#define LOCAL_FILE_DIR "./Resource"
 
 namespace OpenGLFramework
 {

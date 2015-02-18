@@ -1,5 +1,6 @@
 #include "FrameWork/OpenGL/OpenGLFrameWork.h"
 #include "FrameWork/Utility.h"
+#include "FrameWork/Image/PNGReader.h"
 
 #include <algorithm>
 
@@ -57,6 +58,8 @@ void init()
 {
 	InitializeProgram();
 	InitializeVertexBuffer();
+
+	CPNGReader pngReader(LOCAL_FILE_DIR + "bang.png");
 
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
