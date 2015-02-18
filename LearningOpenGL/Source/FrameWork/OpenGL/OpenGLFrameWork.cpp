@@ -2,7 +2,6 @@
 
 #include <fstream>
 #include <sstream>
-#include "GL/freeglut.h"
 
 using namespace std;
 
@@ -44,7 +43,30 @@ namespace OpenGLFramework
 
 	GLuint CreateProgram(const std::vector<GLuint> &shaderList)
 	{
-		return 0;
+		GLuint program = glCreateProgram();
+
+		for(size_t iLoop = 0; iLoop < shaderList.size(); iLoop++)
+			glAttachShader(program, shaderList[iLoop]);
+
+		glLinkProgram(program);
+
+		GLint status;
+		glGetProgramiv (program, GL_LINK_STATUS, &status);
+		if (status == GL_FALSE)
+		{
+			GLint infoLogLength;
+			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLogLength);
+
+			GLchar *strInfoLog = new GLchar[infoLogLength + 1];
+			glGetProgramInfoLog(program, infoLogLength, NULL, strInfoLog);
+			fprintf(stderr, "Linker failure: %s\n", strInfoLog);
+			delete[] strInfoLog;
+		}
+
+		for(size_t iLoop = 0; iLoop < shaderList.size(); iLoop++)
+			glDetachShader(program, shaderList[iLoop]);
+
+		return program;
 	}
 
 	GLuint CreateShader(GLenum eShaderType, const std::string &strShaderFile)
@@ -85,7 +107,7 @@ int main(int argc, char* argv[])
 {
 	glutInit(&argc, argv);
 	glutInitWindowPosition(100, 100);
-	glutInitWindowSize(800, 480);
+	glutInitWindowSize(1024, 768);
 	glutInitDisplayMode(GLUT_RGBA);
 
 	glutCreateWindow("opengl");
@@ -95,6 +117,7 @@ int main(int argc, char* argv[])
 	init();
 
 	glutDisplayFunc(display);
+	glutReshapeFunc(reshape);
 
 	glutMainLoop();
 	return 0;

@@ -1,11 +1,14 @@
 #pragma once
 
 #include "GL/glew.h"
+#include "GL/freeglut.h"
+
 #include <vector>
 #include <string>
 
 void init();
 void display();
+void reshape(int w, int h);
 
 namespace OpenGLFramework
 {
