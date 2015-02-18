@@ -25,6 +25,9 @@
     <ClCompile Include="..\Source\FrameWork\Utility.cpp">
       <Filter>Source Files\FrameWork</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\MeshViewer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\FrameWork\OpenGL\OpenGLFrameWork.h">

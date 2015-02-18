@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClCompile Include="..\Source\FrameWork\OpenGL\OpenGLFrameWork.cpp" />
     <ClCompile Include="..\Source\FrameWork\Utility.cpp" />
+    <ClCompile Include="..\Source\MeshViewer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\FrameWork\OpenGL\OpenGLFrameWork.h" />
@@ -54,12 +55,14 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\Extern\freeglut-2.8.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Extern\freeglut-2.8.1\include;..\Extern\glew-1.12.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>..\Extern\freeglut-2.8.1\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\Extern\freeglut-2.8.1\lib\x86;..\Extern\glew-1.12.0\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>freeglut.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
