@@ -2,6 +2,8 @@
 
 CImageReader::CImageReader()
 	: m_pData(nullptr)
+	, m_fWidth(0)
+	, m_fHeight(0)
 {
 }
 
@@ -19,4 +21,14 @@ void CImageReader::ResetData()
 unsigned char* CImageReader::GetData()
 {
 	return m_pData;
+}
+
+float CImageReader::GetWidth()
+{
+	return m_fWidth;
+}
+
+float CImageReader::GetHeight()
+{
+	return m_fHeight;
 }

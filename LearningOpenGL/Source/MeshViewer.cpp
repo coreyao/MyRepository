@@ -4,45 +4,40 @@
 
 #include <algorithm>
 
-const std::string strVertexShader(
-	"#version 330\n"
-	"layout(location = 0) in vec4 position;\n"
-	"void main()\n"
-	"{\n"
-	"   gl_Position = position;\n"
-	"}\n"
-	);
-
-const std::string strFragmentShader(
-	"#version 330\n"
-	"out vec4 outputColor;\n"
-	"void main()\n"
-	"{\n"
-	"   outputColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);\n"
-	"}\n"
-	);
-
 GLuint theProgram;
 
 const float vertexPositions[] = {
 	0.75f, 0.75f, 1.0f, 1.0f,
 	0.75f, -0.75f, 1.0f, 1.0f,
 	-0.75f, -0.75f, 1.0f, 1.0f,
+
+	1.0f, 0.0f,
+	1.0f, 1.0f,
+	0.0f, 1.0f
 };
 
 GLuint positionBufferObject;
 GLuint vao;
 
+const int g_colorTexUnit = 0;
+GLuint g_checkerTexture = 0;
+GLuint g_sampler = 0;
+
 void InitializeProgram()
 {
 	std::vector<GLuint> shaderList;
 
-	shaderList.push_back(OpenGLFramework::CreateShader(GL_VERTEX_SHADER, strVertexShader));
-	shaderList.push_back(OpenGLFramework::CreateShader(GL_FRAGMENT_SHADER, strFragmentShader));
+	shaderList.push_back(OpenGLFramework::LoadShader(GL_VERTEX_SHADER, SHADER_FILE_DIR + "Mesh_Vertex_Shader.vert"));
+	shaderList.push_back(OpenGLFramework::LoadShader(GL_FRAGMENT_SHADER, SHADER_FILE_DIR + "Mesh_Fragment_Shader.frag"));
 
 	theProgram = OpenGLFramework::CreateProgram(shaderList);
 
 	std::for_each(shaderList.begin(), shaderList.end(), glDeleteShader);
+
+	GLuint colorTextureUnif = glGetUniformLocation(theProgram, "colorTexture");
+	glUseProgram(theProgram);
+	glUniform1i(colorTextureUnif, g_colorTexUnit);
+	glUseProgram(0);
 }
 
 void InitializeVertexBuffer()
@@ -54,12 +49,32 @@ void InitializeVertexBuffer()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
+void InitializeTexture()
+{
+	CPNGReader pngReader(IMAGE_FILE_DIR + "HelloWorld.png");
+	if ( pngReader.GetData() )
+	{
+		glGenTextures(1, &g_checkerTexture);
+		glBindTexture(GL_TEXTURE_2D, g_checkerTexture);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pngReader.GetWidth(), pngReader.GetHeight(), 0,
+			GL_RGBA, GL_UNSIGNED_BYTE, pngReader.GetData());
+
+		glGenSamplers(1, &g_sampler);
+		glSamplerParameteri(g_sampler, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glSamplerParameteri(g_sampler, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glSamplerParameteri(g_sampler, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glSamplerParameteri(g_sampler, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+}
+
 void init()
 {
 	InitializeProgram();
 	InitializeVertexBuffer();
-
-	CPNGReader pngReader(LOCAL_FILE_DIR + "bang.png");
+	InitializeTexture();
 
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
@@ -76,9 +91,19 @@ void display()
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(12 * sizeof(float)));
+
+	glActiveTexture(GL_TEXTURE0 + g_colorTexUnit);
+	glBindTexture(GL_TEXTURE_2D, g_checkerTexture);
+	glBindSampler(g_colorTexUnit, g_sampler);
+
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 
+	glBindSampler(g_colorTexUnit, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
 	glUseProgram(0);
 
 	glutSwapBuffers();

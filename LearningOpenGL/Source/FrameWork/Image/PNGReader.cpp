@@ -1,6 +1,7 @@
 #include "PNGReader.h"
-#include <cstdio>
 #include "png.h"
+#include "../Utility.h"
+#include <cstdio>
 
 CPNGReader::CPNGReader( const std::string& sFileName )
 	: CImageReader()
@@ -15,7 +16,7 @@ CPNGReader::~CPNGReader()
 
 void CPNGReader::ReadData(const std::string& sFileName)
 {
-	FILE* file = fopen(sFileName.c_str(), "rb");
+	FILE* file = fopen((LOCAL_FILE_DIR + sFileName).c_str(), "rb");
 	if ( !file )
 		return;
 
@@ -30,22 +31,30 @@ void CPNGReader::ReadData(const std::string& sFileName)
 
 	png_read_png(png_ptr, info_ptr, PNG_TRANSFORM_EXPAND, 0);
 
-	int m_width = png_get_image_width(png_ptr, info_ptr);
-	int m_height = png_get_image_height(png_ptr, info_ptr);
+	m_fWidth = png_get_image_width(png_ptr, info_ptr);
+	m_fHeight = png_get_image_height(png_ptr, info_ptr);
 	int color_type = png_get_color_type(png_ptr, info_ptr);
-	int size = m_height * m_width * 4;
+	int size = m_fHeight * m_fWidth * 4;
 	int pos = 0;
 	png_bytep* row_pointers = png_get_rows(png_ptr, info_ptr);
 
+	int block_size = color_type == 6 ? 4 : 3;
 	m_pData = new unsigned char[size];
-	for(int i = 0; i < m_height; i++)
+	for(int i = 0; i < m_fHeight; i++)
 	{
-		for(int j = 0; j < (4 * m_width); j += 4)
+		for(int j = 0; j < (block_size * m_fWidth); j += block_size)
 		{
 			m_pData[pos++] = row_pointers[i][j];   // red
 			m_pData[pos++] = row_pointers[i][j + 1]; // green
 			m_pData[pos++] = row_pointers[i][j + 2]; // blue
-			m_pData[pos++] = row_pointers[i][j + 3]; // alpha
+			if ( block_size == 3 )
+			{
+				m_pData[pos++] = 255; // alpha
+			}
+			else if ( block_size == 4 )
+			{
+				m_pData[pos++] = row_pointers[i][j + 3]; // alpha
+			}
 		}
 	}
 
