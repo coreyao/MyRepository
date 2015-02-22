@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Source\FrameWork\DataStructure.cpp" />
     <ClCompile Include="..\Source\FrameWork\Image\ImageReader.cpp" />
     <ClCompile Include="..\Source\FrameWork\Image\PNGReader.cpp" />
     <ClCompile Include="..\Source\FrameWork\OpenGL\OpenGLFrameWork.cpp" />
@@ -18,6 +19,7 @@
     <ClCompile Include="..\Source\MeshViewer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Source\FrameWork\DataStructure.h" />
     <ClInclude Include="..\Source\FrameWork\Image\ImageReader.h" />
     <ClInclude Include="..\Source\FrameWork\Image\PNGReader.h" />
     <ClInclude Include="..\Source\FrameWork\OpenGL\OpenGLFrameWork.h" />

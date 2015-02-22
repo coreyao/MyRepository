@@ -37,6 +37,9 @@
     <ClCompile Include="..\Source\FrameWork\Image\ImageReader.cpp">
       <Filter>Source Files\FrameWork\Image</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\DataStructure.cpp">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\FrameWork\OpenGL\OpenGLFrameWork.h">
@@ -50,6 +53,9 @@
     </ClInclude>
     <ClInclude Include="..\Source\FrameWork\Image\ImageReader.h">
       <Filter>Source Files\FrameWork\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\DataStructure.h">
+      <Filter>Source Files\FrameWork</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
