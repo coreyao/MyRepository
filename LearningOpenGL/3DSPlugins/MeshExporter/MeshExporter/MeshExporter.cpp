@@ -13,6 +13,7 @@
 //***************************************************************************/
 
 #include "MeshExporter.h"
+#include "DataStructure.h"
 #include <string>
 #include <vector>
 #include <sstream>
@@ -33,104 +34,6 @@ void AddStrToOutPutListBox(const char* szText)
 	}  
 }
 
-struct Vec2
-{
-	Vec2() : x(0.0f), y(0.0f)
-	{
-	}
-
-	float x;
-	float y;
-};
-
-struct Vec3
-{
-	Vec3() : x(0.0f), y(0.0f), z(0.0f)
-	{
-	}
-
-	float x;
-	float y;
-	float z;
-};
-
-struct Color4F
-{
-	Color4F() : r(0.0f), g(0.0f), b(0.0f), a(1.0f)
-	{
-	}
-
-	float r;
-	float g;
-	float b;
-	float a;
-};
-
-struct SFace
-{
-	SFace()
-		: m_VertexIndex1(0)
-		, m_VertexIndex2(0)
-		, m_VertexIndex3(0)
-	{
-	}
-
-	int m_VertexIndex1;
-	int m_VertexIndex2;
-	int m_VertexIndex3;
-};
-
-struct STexture
-{
-	STexture()
-		: m_Index(0)
-	{
-	}
-
-	int m_Index;
-	string m_sFileName;
-};
-
-struct SMaterial 
-{
-	SMaterial()
-		: m_MaterialID(0)
-	{
-	}
-
-	int m_MaterialID;
-	std::string m_MaterialName;
-	vector<STexture> m_SubTextureVec;
-};
-
-struct SSubMesh
-{
-	SSubMesh()
-		: m_MaterialID(-1)
-	{
-		memset(m_SubMeshMatrix, 0, sizeof(m_SubMeshMatrix));
-	}
-
-	int m_MaterialID;
-	string m_SubMeshName;
-	float  m_SubMeshMatrix[16];
-	vector<SFace> m_FaceVec;
-};
-
-struct SMesh
-{
-	string m_MeshName;
-	vector<SSubMesh> m_SubMeshVec;
-};
-
-struct SVertex
-{
-	Vec3 m_position;
-	Vec3 m_normal;
-	Vec2 m_texCoord;
-	Color4F m_color;
-};
-
 class MeshExporter : public SceneExport 
 {
 	public:
@@ -150,10 +53,10 @@ class MeshExporter : public SceneExport
 		BOOL			SupportsOptions(int ext, DWORD options);
 		int				DoExport(const TCHAR *name,ExpInterface *ei,Interface *i, BOOL suppressPrompts=FALSE, DWORD options=0);
 		int             ExportMesh(const char* szMeshName);
-		BOOL			SubTextureEnum(MtlBase* vMtl, vector<STexture>& vTextureVec, int& vMaterialSize);
-		BOOL			NodeEnum(INode* node, SMesh* pMeshNode);
-		BOOL			NodeEnum_Child(INode* node, SMesh*  pMeshNode);
-		void			ParseGeomObject(INode* node, SMesh* pMeshNode);
+		BOOL			SubTextureEnum(MtlBase* vMtl, vector<CTexture>& vTextureVec, int& vMaterialSize);
+		BOOL			NodeEnum(INode* node, CMesh* pMeshNode);
+		BOOL			NodeEnum_Child(INode* node, CMesh*  pMeshNode);
+		void			ParseGeomObject(INode* node, CMesh* pMeshNode);
 
 		//Constructor/Destructor
 		MeshExporter();
@@ -164,10 +67,10 @@ class MeshExporter : public SceneExport
 		BOOL				m_exportSelected;
 		char				m_szExportPath[_MAX_PATH];
 
-		vector<SMaterial*> m_AllMaterialVec;
+		vector<CMaterial>	m_AllMaterialVec;
 		int					m_AllMaterialSize;
 
-		vector<SMesh>  m_MeshNodeVec;
+		vector<CMesh>  m_MeshNodeVec;
 };
 
 class MeshExporterClassDesc : public ClassDesc2 
@@ -271,31 +174,31 @@ int MeshExporter::ExtCount()
 const TCHAR *MeshExporter::Ext(int n)
 {		
 	#pragma message(TODO("Return the 'i-th' file name extension (i.e. \"3DS\")."))
-	return _T("");
+	return _T("CSTM");
 }
 
 const TCHAR *MeshExporter::LongDesc()
 {
 	#pragma message(TODO("Return long ASCII description (i.e. \"Targa 2.0 Image File\")"))
-	return _T("");
+	return _T("Mesh Exporter Author : Yao Jinhua");
 }
 	
 const TCHAR *MeshExporter::ShortDesc() 
 {			
 	#pragma message(TODO("Return short ASCII description (i.e. \"Targa\")"))
-	return _T("");
+	return _T("Mesh Exporter");
 }
 
 const TCHAR *MeshExporter::AuthorName()
 {			
 	#pragma message(TODO("Return ASCII Author name"))
-	return _T("");
+	return _T("Yao Jinhua");
 }
 
 const TCHAR *MeshExporter::CopyrightMessage() 
 {	
 	#pragma message(TODO("Return ASCII Copyright message"))
-	return _T("");
+	return _T("Mesh Exporter Author : Yao Jinhua");
 }
 
 const TCHAR *MeshExporter::OtherMessage1() 
@@ -331,7 +234,7 @@ int	MeshExporter::DoExport(const TCHAR *name,ExpInterface *ei,Interface *i, BOOL
 {
 	#pragma message(TODO("Implement the actual file Export here and"))
 
-	strcpy(m_szExportPath,name);  
+	strcpy(m_szExportPath, name);
 	m_pExpInterface = ei;  
 	m_pInterface = i;  
 	m_exportSelected = (options & SCENE_EXPORT_SELECTED);
@@ -349,7 +252,6 @@ int	MeshExporter::DoExport(const TCHAR *name,ExpInterface *ei,Interface *i, BOOL
 int MeshExporter::ExportMesh(const char* szMeshName)  
 {  
 	MtlBaseLib* scenemats = m_pInterface->GetSceneMtls(); 
-
 	if (scenemats)  
 	{     
 		char tText[200] = {0};  
@@ -367,10 +269,10 @@ int MeshExporter::ExportMesh(const char* szMeshName)
 				MtlBase * vMtl = (*scenemats)[i];  
 				if (IsMtl(vMtl))  
 				{         
-					SMaterial* pParseMaterial = new SMaterial;  
-					pParseMaterial->m_MaterialID = m_AllMaterialSize++;  
-					pParseMaterial->m_MaterialName = vMtl->GetName();  
-					SubTextureEnum(vMtl, pParseMaterial->m_SubTextureVec, m_AllMaterialSize);
+					CMaterial pParseMaterial;  
+					pParseMaterial.m_MaterialID = m_AllMaterialSize++;  
+					pParseMaterial.m_MaterialName = vMtl->GetName();
+					SubTextureEnum(vMtl, pParseMaterial.m_SubTextureVec, m_AllMaterialSize);
 					m_AllMaterialVec.push_back(pParseMaterial);
 				}
 			}  
@@ -389,95 +291,55 @@ int MeshExporter::ExportMesh(const char* szMeshName)
 	int nMeshCount = m_MeshNodeVec.size();  
 	for(int m = 0; m < nMeshCount; ++m)  
 	{  
-		char szExportFileName[_MAX_PATH] = {0};  
+		CMesh* pMesh = &m_MeshNodeVec[m];
+		char szExportFileName[_MAX_PATH] = {0};
 		if( 1 == nMeshCount )
 		{  
-			m_MeshNodeVec[m].m_MeshName = szMeshName;  
+			pMesh->m_MeshName = szMeshName;  
 			strcpy(szExportFileName, m_szExportPath);
 		}  
 		else  
 		{  
-			ostringstream oss;
-			oss << szMeshName << "_" << m;
-			
-			m_MeshNodeVec[m].m_MeshName = oss.str();  
-			std::string strExportPath = m_szExportPath;  
-
-			// 得到扩展名  
-			std::string strEx   = "";  
+			_snprintf(szExportFileName, _MAX_PATH, "%s_%d", szMeshName, m);  
+			pMesh->m_MeshName = szExportFileName;
+			std::string strExportPath = m_szExportPath;
+			std::string strEx;  
 			std::string strName = strExportPath;  
 			std::string::size_type pos = strExportPath.find_last_of(".");  
 			if (pos != std::string::npos)  
 			{  
 				strEx = strExportPath.substr(pos+1);  
-				strName = strExportPath.substr(0, pos);  
-				_snprintf(  szExportFileName, _MAX_PATH, "%s_%d.%s", strName.c_str(),m,strEx);  
+				strName = strExportPath.substr(0, pos);
+				_snprintf( szExportFileName, _MAX_PATH, "%s_%d.%s", strName.c_str(), m, strEx);  
 			}  
 			else  
 			{  
-				_snprintf(  szExportFileName, _MAX_PATH, "%s_%d", strName.c_str(),m);  
+				_snprintf( szExportFileName, _MAX_PATH, "%s_%d", strName.c_str(), m);  
 			}  
-
 		}  
-		//进行二进制文件的写入。  
-		FILE*   hFile = fopen(m_szExportPath,"wb");  
-		fwrite(m_MeshNodeVec[m].m_MeshName,sizeof(m_MeshNodeVec[m].m_MeshName),1,hFile);  
-		int nSubNum = m_MeshNodeVec[m].m_SubMeshVec.size();  
-		fwrite(&nSubNum,sizeof(int),1,hFile);  
 
-		for( int s = 0 ; s < nSubNum ; s++)  
-		{  
-			SSubMeshHeader  tSubMeshHeader;  
-			strcpy(tSubMeshHeader.m_SubMeshName,m_MeshNodeVec[m].m_SubMeshVec[s].m_SubMeshName);  
-			int nMaterialID = m_MeshNodeVec[m].m_SubMeshVec[s].m_MaterialID ;  
-			SParseMaterial* tpParseMaterial = GetMaterial(nMaterialID);  
-			if(tpParseMaterial && false == tpParseMaterial->m_SubTextureVec.empty())  
-			{  
-				strcpy(tSubMeshHeader.m_Texture,tpParseMaterial->m_SubTextureVec[0].m_FileName);  
-			}  
-			else  
-			{  
-				tSubMeshHeader.m_Texture[0]='\0';  
-			}  
-			tSubMeshHeader.m_VertexCount = m_MeshNodeVec[m].m_SubMeshVec[s].m_VertexVec.size();  
-			tSubMeshHeader.m_IndexCount = m_MeshNodeVec[m].m_SubMeshVec[s].m_FaceVec.size() * 3;      
-			tSubMeshHeader.m_PrimitiveType = PT_TRIANGLES ;  
-			tSubMeshHeader.m_IndexFormat = INDEX16 ;  
-			fwrite(&tSubMeshHeader,sizeof(SSubMeshHeader),1,hFile);  
-			if(tSubMeshHeader.m_VertexCount > 0 )  
-			{  
-				fwrite(&m_MeshNodeVec[m].m_SubMeshVec[s].m_VertexVec.front(),sizeof(SVertex),tSubMeshHeader.m_VertexCount,hFile);  
-			}  
-			if(tSubMeshHeader.m_IndexCount > 0 )  
-			{  
-				fwrite(&m_MeshNodeVec[m].m_SubMeshVec[s].m_FaceVec.front(),sizeof(SFace),m_MeshNodeVec[m].m_SubMeshVec[s].m_FaceVec.size(),hFile);  
-			}  
-			fwrite(&m_MeshNodeVec[m].m_SubMeshVec[s].m_SubMeshMatrix,sizeof(SSubMeshMatrix),1,hFile);  
-		}  
-		fclose(hFile);  
-	}  
+		FILE* hFile = fopen(szExportFileName, "wb");
+		if ( hFile )
+		{
+			pMesh->WriteToFile(hFile);
+			fclose(hFile);  
+		}
+	}
 
-
-	//释放材质  
-	vector<SParseMaterial*>::iterator Iter;  
-	for(Iter = m_AllMaterialVec.begin(); Iter != m_AllMaterialVec.end(); Iter++)  
-	{  
-		delete (*Iter);  
-	}  
-	m_AllMaterialVec.clear();  
-	//释放模型  
+	m_AllMaterialVec.clear();
 	m_MeshNodeVec.clear();  
-	AddStrToOutPutListBox("导出完毕!");
+
+	AddStrToOutPutListBox("Export Finished!");
 
 	return 0;  
 }  
 
-BOOL MeshExporter::NodeEnum(INode* node,SMesh* pMeshNode)   
+BOOL MeshExporter::NodeEnum(INode* node,CMesh* pMeshNode)   
 {  
 	if (!node)  
 		return FALSE;  
 
-	SMesh       tMeshNode;    
+	CMesh       tMeshNode;    
 	TimeValue       tTime = 0;  
 	ObjectState os = node->EvalWorldState(tTime);   
 
@@ -510,7 +372,7 @@ BOOL MeshExporter::NodeEnum(INode* node,SMesh* pMeshNode)
 	return TRUE;  
 }  
 
-BOOL MeshExporter::NodeEnum_Child(INode* node, SMesh* pMeshNode)   
+BOOL MeshExporter::NodeEnum_Child(INode* node, CMesh* pMeshNode)   
 {  
 	if (!node)  
 		return FALSE;  
@@ -527,7 +389,7 @@ BOOL MeshExporter::NodeEnum_Child(INode* node, SMesh* pMeshNode)
 		DWORD   SuperclassID = os.obj->SuperClassID();  
 		switch(SuperclassID)  
 		{  
-		case SHAPE_CLASS_ID:  
+		case SHAPE_CLASS_ID:
 		case GEOMOBJECT_CLASS_ID:   
 			ParseGeomObject(node, pMeshNode);
 			break;  
@@ -547,7 +409,7 @@ BOOL MeshExporter::NodeEnum_Child(INode* node, SMesh* pMeshNode)
 	return TRUE;  
 }  
 
-BOOL MeshExporter::SubTextureEnum( MtlBase* vMtl, vector<STexture>& vTextureVec, int& vMaterialSize )
+BOOL MeshExporter::SubTextureEnum( MtlBase* vMtl, vector<CTexture>& vTextureVec, int& vMaterialSize )
 {
 	int tTextureNum = vMtl->NumSubTexmaps();  
 	for (int j = 0; j < tTextureNum ; j++)  
@@ -559,7 +421,7 @@ BOOL MeshExporter::SubTextureEnum( MtlBase* vMtl, vector<STexture>& vTextureVec,
 			{  
 				BitmapTex* bmt = (BitmapTex*)tmap;
 
-				STexture tParseTexture;
+				CTexture tParseTexture;
 				tParseTexture.m_Index = j;  
 				std::string strMapName = bmt->GetMapName();  
 				if (!strMapName.empty())
@@ -595,7 +457,7 @@ public:
 	}
 };
 
-void MeshExporter::ParseGeomObject(INode* node, SMesh* pMeshNode)
+void MeshExporter::ParseGeomObject(INode* node, CMesh* pMeshNode)
 {  
 	char            tText[200] = {0};
 	TimeValue       tTime = 0;  
@@ -609,7 +471,7 @@ void MeshExporter::ParseGeomObject(INode* node, SMesh* pMeshNode)
 	sprintf(tText,"Export Object:<%s>.............", node->GetName());  
 	AddStrToOutPutListBox(tText);  
 
-	SSubMesh tSubMesh;
+	CSubMesh tSubMesh;
 	tSubMesh.m_SubMeshName = node->GetName();  
 
 	Mtl* nodemtl = node->GetMtl();
@@ -622,7 +484,7 @@ void MeshExporter::ParseGeomObject(INode* node, SMesh* pMeshNode)
 			MtlBase* mtl = (*scenemats)[i];  
 			if(strcmp(mtl->GetName(),nodemtl->GetName()) == 0)  
 			{  
-				tSubMesh.m_MaterialID = i;  
+				tSubMesh.m_cMaterial = m_AllMaterialVec[i];  
 				break;  
 			}  
 		}  
@@ -640,11 +502,11 @@ void MeshExporter::ParseGeomObject(INode* node, SMesh* pMeshNode)
 			if (obj != tri)
 				delMesh = true;   
 
-			if (tri)  
+			if (tri)
 			{  
 				NullView maxView;
 				BOOL bDelete = TRUE;  
-				Mesh * mesh = tri->GetRenderMesh(tTime, node, maxView, bDelete);  
+				Mesh* mesh = tri->GetRenderMesh(tTime, node, maxView, bDelete);  
 				mesh->buildNormals();  
 				mesh->checkNormals(TRUE);  
 
@@ -674,7 +536,7 @@ void MeshExporter::ParseGeomObject(INode* node, SMesh* pMeshNode)
 					tFace.m_VertexIndex1 = tDestTexIndex1;
 					tFace.m_VertexIndex2 = tDestTexIndex2;  
 					tFace.m_VertexIndex3 = tDestTexIndex3;
-					tSubMesh.m_FaceVec.push_back(tFace); 
+					tSubMesh.m_vFace.push_back(tFace); 
 				}  
 
 				vector<SVertex> tVertexVec;  
@@ -758,9 +620,9 @@ void MeshExporter::ParseGeomObject(INode* node, SMesh* pMeshNode)
 				}  
   
 				if (delMesh)
-				{  
 					delete tri;  
-				}  
+
+				tSubMesh.m_vVectex = tVertexVec;
 			}  
 		}  
 	}  
