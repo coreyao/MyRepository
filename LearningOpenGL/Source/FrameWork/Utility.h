@@ -14,6 +14,10 @@
 #define IMAGE_FILE_DIR std::string("Images/")
 #endif
 
+#ifndef MESH_FILE_DIR
+#define MESH_FILE_DIR std::string("Mesh/")
+#endif
+
 namespace Utility
 {
 	float DegToRad(float fAngDeg);
