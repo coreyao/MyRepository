@@ -1,6 +1,6 @@
 #include "DataStructure.h"
 
-void CMesh::WriteToFile(FILE* hFile)
+void SMeshData::WriteToFile(FILE* hFile)
 {
 	int iMeshNameSize = m_MeshName.size();
 	fwrite(&iMeshNameSize, sizeof(int), 1, hFile);
@@ -11,7 +11,7 @@ void CMesh::WriteToFile(FILE* hFile)
 
 	for(int s = 0 ; s < nSubNum ; s++)
 	{  
-		CSubMesh* pSubMesh = &m_SubMeshVec[s];
+		SSubMeshData* pSubMesh = &m_SubMeshVec[s];
 
 		int iSubMeshNameSize = pSubMesh->m_SubMeshName.size();
 		fwrite(&iSubMeshNameSize, sizeof(int), 1, hFile);
@@ -46,7 +46,7 @@ void CMesh::WriteToFile(FILE* hFile)
 	}  
 }
 
-void CMesh::ReadFromFile( FILE* hFile )
+void SMeshData::ReadFromFile( FILE* hFile )
 {
 	int iMeshNameSize = 0;
 	fread(&iMeshNameSize, sizeof(int), 1, hFile);
@@ -62,7 +62,7 @@ void CMesh::ReadFromFile( FILE* hFile )
 		m_SubMeshVec.resize(nSubNum);
 		for(int s = 0 ; s < nSubNum ; s++)
 		{  
-			CSubMesh* pSubMesh = &m_SubMeshVec[s];
+			SSubMeshData* pSubMesh = &m_SubMeshVec[s];
 
 			int iSubMeshNameSize = 0;
 			fread(&iSubMeshNameSize, sizeof(int), 1, hFile);
@@ -108,3 +108,4 @@ void CMesh::ReadFromFile( FILE* hFile )
 		}  
 	}
 }
+

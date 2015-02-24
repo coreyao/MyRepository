@@ -59,35 +59,28 @@ struct SVertex
 	Color4F m_color;
 };
 
-class CTexture
+struct STextureData
 {
-public:
-	CTexture()
-		: m_Index(0)
+	STextureData()
 	{
 	}
 
-	int m_Index;
 	std::string m_sFileName;
 };
 
-class CMaterial 
+struct SMaterialData 
 {
-public:
-	CMaterial()
-		: m_MaterialID(0)
+	SMaterialData()
 	{
 	}
 
-	int m_MaterialID;
 	std::string m_MaterialName;
-	std::vector<CTexture> m_SubTextureVec;
+	std::vector<STextureData> m_SubTextureVec;
 };
 
-class CSubMesh
+struct SSubMeshData
 {
-public:
-	CSubMesh()
+	SSubMeshData()
 	{
 		memset(m_SubMeshMatrix, 0, sizeof(m_SubMeshMatrix));
 	}
@@ -96,15 +89,23 @@ public:
 	float  m_SubMeshMatrix[16];
 	std::vector<SFace>	m_vFace;
 	std::vector<SVertex> m_vVectex;
-	CMaterial m_cMaterial;
+	SMaterialData m_cMaterial;
+};
+
+struct SMeshData
+{
+	void WriteToFile(FILE* pFile);
+	void ReadFromFile(FILE* pFile);
+
+	std::string m_MeshName;
+	std::vector<SSubMeshData> m_SubMeshVec;
 };
 
 class CMesh
 {
 public:
-	void WriteToFile(FILE* pFile);
-	void ReadFromFile(FILE* pFile);
+	virtual void Render() = 0;
 
-	std::string m_MeshName;
-	std::vector<CSubMesh> m_SubMeshVec;
+private:
+	SMeshData m_data;
 };

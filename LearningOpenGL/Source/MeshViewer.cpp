@@ -8,16 +8,6 @@
 GLuint theProgram;
 GLuint perspectiveMatrixUnif;
 
-const float vertexPositions[] = {
-	0.75f, 0.75f, 1.0f, 1.0f,
-	0.75f, -0.75f, 1.0f, 1.0f,
-	-0.75f, -0.75f, 1.0f, 1.0f,
-
-	1.0f, 0.0f,
-	1.0f, 1.0f,
-	0.0f, 1.0f
-};
-
 GLuint positionBufferObject;
 GLuint indexBufferObject;
 GLuint vao;
@@ -57,15 +47,6 @@ void InitializeProgram()
 	glUseProgram(0);
 }
 
-void InitializeVertexBuffer()
-{
-	glGenBuffers(1, &positionBufferObject);
-
-	glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexPositions), vertexPositions, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
-
 void InitializeTexture()
 {
 	CPNGReader pngReader(IMAGE_FILE_DIR + "HelloWorld.png");
@@ -87,7 +68,7 @@ void InitializeTexture()
 	}
 }
 
-CMesh g_mesh;
+SMeshData g_mesh;
 
 void InitializeMesh()
 {
@@ -96,12 +77,6 @@ void InitializeMesh()
 		return;
 
 	g_mesh.ReadFromFile(pMeshFile);
-	for ( auto& rVertex : g_mesh.m_SubMeshVec[0].m_vVectex )
-	{
-		rVertex.m_position.x /= (rVertex.m_position.z + 100);
-		rVertex.m_position.y /= (rVertex.m_position.z + 100);
-		rVertex.m_position.z = 1.0f;
-	}
 
 	glGenBuffers(1, &positionBufferObject);
 	glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject);
@@ -117,12 +92,14 @@ void InitializeMesh()
 void init()
 {
 	InitializeProgram();
-	//InitializeVertexBuffer();
-	//InitializeTexture();
+	InitializeTexture();
 	InitializeMesh();
 
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
+
+	glEnable(GL_CULL_FACE);
+	glFrontFace(GL_CW);
 }
 
 void display()
@@ -135,24 +112,21 @@ void display()
 	glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(SVertex), 0);
-	//glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
-	//glEnableVertexAttribArray(1);
-	//glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(12 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), (void*)(6 * sizeof(float)));
 
-	//glActiveTexture(GL_TEXTURE0 + g_colorTexUnit);
-	//glBindTexture(GL_TEXTURE_2D, g_checkerTexture);
-	//glBindSampler(g_colorTexUnit, g_sampler);
-
-	//glDrawArrays(GL_TRIANGLES, 0, 3);
+	glActiveTexture(GL_TEXTURE0 + g_colorTexUnit);
+	glBindTexture(GL_TEXTURE_2D, g_checkerTexture);
+	glBindSampler(g_colorTexUnit, g_sampler);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject);
 	glDrawElements(GL_TRIANGLES, g_mesh.m_SubMeshVec[0].m_vFace.size() * 3, GL_UNSIGNED_INT, 0);
 
-	//glBindSampler(g_colorTexUnit, 0);
-	//glBindTexture(GL_TEXTURE_2D, 0);
+	glBindSampler(g_colorTexUnit, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisableVertexAttribArray(0);
-	//glDisableVertexAttribArray(1);
+	glDisableVertexAttribArray(1);
 	glUseProgram(0);
 
 	glutSwapBuffers();
