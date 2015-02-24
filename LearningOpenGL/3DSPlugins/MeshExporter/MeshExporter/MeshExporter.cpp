@@ -13,7 +13,7 @@
 //***************************************************************************/
 
 #include "MeshExporter.h"
-#include "DataStructure.h"
+#include "../../../Source/FrameWork/DataStructure.h"
 #include <string>
 #include <vector>
 #include <sstream>
@@ -53,10 +53,10 @@ class MeshExporter : public SceneExport
 		BOOL			SupportsOptions(int ext, DWORD options);
 		int				DoExport(const TCHAR *name,ExpInterface *ei,Interface *i, BOOL suppressPrompts=FALSE, DWORD options=0);
 		int             ExportMesh(const char* szMeshName);
-		BOOL			SubTextureEnum(MtlBase* vMtl, vector<CTexture>& vTextureVec, int& vMaterialSize);
-		BOOL			NodeEnum(INode* node, CMesh* pMeshNode);
-		BOOL			NodeEnum_Child(INode* node, CMesh*  pMeshNode);
-		void			ParseGeomObject(INode* node, CMesh* pMeshNode);
+		BOOL			SubTextureEnum(MtlBase* vMtl, vector<STextureData>& vTextureVec);
+		BOOL			NodeEnum(INode* node, SMeshData* pMeshNode);
+		BOOL			NodeEnum_Child(INode* node, SMeshData*  pMeshNode);
+		void			ParseGeomObject(INode* node, SMeshData* pMeshNode);
 
 		//Constructor/Destructor
 		MeshExporter();
@@ -67,10 +67,8 @@ class MeshExporter : public SceneExport
 		BOOL				m_exportSelected;
 		char				m_szExportPath[_MAX_PATH];
 
-		vector<CMaterial>	m_AllMaterialVec;
-		int					m_AllMaterialSize;
-
-		vector<CMesh>  m_MeshNodeVec;
+		vector<SMaterialData>	m_AllMaterialVec;
+		vector<SMeshData>		m_MeshNodeVec;
 };
 
 class MeshExporterClassDesc : public ClassDesc2 
@@ -263,16 +261,14 @@ int MeshExporter::ExportMesh(const char* szMeshName)
 		if(tCount > 0)  
 		{  
 			m_AllMaterialVec.clear();
-			m_AllMaterialSize = 0;  
 			for (int i = 0; i < tCount ; i++)  
 			{   
 				MtlBase * vMtl = (*scenemats)[i];  
 				if (IsMtl(vMtl))  
 				{         
-					CMaterial pParseMaterial;  
-					pParseMaterial.m_MaterialID = m_AllMaterialSize++;  
+					SMaterialData pParseMaterial;  
 					pParseMaterial.m_MaterialName = vMtl->GetName();
-					SubTextureEnum(vMtl, pParseMaterial.m_SubTextureVec, m_AllMaterialSize);
+					SubTextureEnum(vMtl, pParseMaterial.m_SubTextureVec);
 					m_AllMaterialVec.push_back(pParseMaterial);
 				}
 			}  
@@ -291,7 +287,7 @@ int MeshExporter::ExportMesh(const char* szMeshName)
 	int nMeshCount = m_MeshNodeVec.size();  
 	for(int m = 0; m < nMeshCount; ++m)  
 	{  
-		CMesh* pMesh = &m_MeshNodeVec[m];
+		SMeshData* pMesh = &m_MeshNodeVec[m];
 		char szExportFileName[_MAX_PATH] = {0};
 		if( 1 == nMeshCount )
 		{  
@@ -334,12 +330,12 @@ int MeshExporter::ExportMesh(const char* szMeshName)
 	return 0;  
 }  
 
-BOOL MeshExporter::NodeEnum(INode* node,CMesh* pMeshNode)   
+BOOL MeshExporter::NodeEnum(INode* node,SMeshData* pMeshNode)   
 {  
 	if (!node)  
 		return FALSE;  
 
-	CMesh       tMeshNode;    
+	SMeshData       tMeshNode;    
 	TimeValue       tTime = 0;  
 	ObjectState os = node->EvalWorldState(tTime);   
 
@@ -372,7 +368,7 @@ BOOL MeshExporter::NodeEnum(INode* node,CMesh* pMeshNode)
 	return TRUE;  
 }  
 
-BOOL MeshExporter::NodeEnum_Child(INode* node, CMesh* pMeshNode)   
+BOOL MeshExporter::NodeEnum_Child(INode* node, SMeshData* pMeshNode)   
 {  
 	if (!node)  
 		return FALSE;  
@@ -409,7 +405,7 @@ BOOL MeshExporter::NodeEnum_Child(INode* node, CMesh* pMeshNode)
 	return TRUE;  
 }  
 
-BOOL MeshExporter::SubTextureEnum( MtlBase* vMtl, vector<CTexture>& vTextureVec, int& vMaterialSize )
+BOOL MeshExporter::SubTextureEnum( MtlBase* vMtl, vector<STextureData>& vTextureVec )
 {
 	int tTextureNum = vMtl->NumSubTexmaps();  
 	for (int j = 0; j < tTextureNum ; j++)  
@@ -421,8 +417,7 @@ BOOL MeshExporter::SubTextureEnum( MtlBase* vMtl, vector<CTexture>& vTextureVec,
 			{  
 				BitmapTex* bmt = (BitmapTex*)tmap;
 
-				CTexture tParseTexture;
-				tParseTexture.m_Index = j;  
+				STextureData tParseTexture;
 				std::string strMapName = bmt->GetMapName();  
 				if (!strMapName.empty())
 				{  
@@ -457,7 +452,7 @@ public:
 	}
 };
 
-void MeshExporter::ParseGeomObject(INode* node, CMesh* pMeshNode)
+void MeshExporter::ParseGeomObject(INode* node, SMeshData* pMeshNode)
 {  
 	char            tText[200] = {0};
 	TimeValue       tTime = 0;  
@@ -471,7 +466,7 @@ void MeshExporter::ParseGeomObject(INode* node, CMesh* pMeshNode)
 	sprintf(tText,"Export Object:<%s>.............", node->GetName());  
 	AddStrToOutPutListBox(tText);  
 
-	CSubMesh tSubMesh;
+	SSubMeshData tSubMesh;
 	tSubMesh.m_SubMeshName = node->GetName();  
 
 	Mtl* nodemtl = node->GetMtl();

@@ -5,9 +5,6 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Extern">
-      <UniqueIdentifier>{4664543f-f41c-47a8-acee-2a902d777cdb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\FrameWork">
       <UniqueIdentifier>{bacaa242-feb1-4c69-8822-8976ee4daa94}</UniqueIdentifier>
     </Filter>
@@ -40,6 +37,9 @@
     <ClCompile Include="..\Source\FrameWork\DataStructure.cpp">
       <Filter>Source Files\FrameWork</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\OpenGL\RenderingDataStructure.cpp">
+      <Filter>Source Files\FrameWork\OpenGL</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\FrameWork\OpenGL\OpenGLFrameWork.h">
@@ -57,5 +57,16 @@
     <ClInclude Include="..\Source\FrameWork\DataStructure.h">
       <Filter>Source Files\FrameWork</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\OpenGL\RenderingDataStructure.h">
+      <Filter>Source Files\FrameWork\OpenGL</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Resource\Shaders\Mesh_Fragment_Shader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Resource\Shaders\Mesh_Vertex_Shader.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

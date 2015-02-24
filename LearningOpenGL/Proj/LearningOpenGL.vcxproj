@@ -15,6 +15,7 @@
     <ClCompile Include="..\Source\FrameWork\Image\ImageReader.cpp" />
     <ClCompile Include="..\Source\FrameWork\Image\PNGReader.cpp" />
     <ClCompile Include="..\Source\FrameWork\OpenGL\OpenGLFrameWork.cpp" />
+    <ClCompile Include="..\Source\FrameWork\OpenGL\RenderingDataStructure.cpp" />
     <ClCompile Include="..\Source\FrameWork\Utility.cpp" />
     <ClCompile Include="..\Source\MeshViewer.cpp" />
   </ItemGroup>
@@ -23,7 +24,12 @@
     <ClInclude Include="..\Source\FrameWork\Image\ImageReader.h" />
     <ClInclude Include="..\Source\FrameWork\Image\PNGReader.h" />
     <ClInclude Include="..\Source\FrameWork\OpenGL\OpenGLFrameWork.h" />
+    <ClInclude Include="..\Source\FrameWork\OpenGL\RenderingDataStructure.h" />
     <ClInclude Include="..\Source\FrameWork\Utility.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Resource\Shaders\Mesh_Fragment_Shader.frag" />
+    <None Include="..\Resource\Shaders\Mesh_Vertex_Shader.vert" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{5A2DB272-BBFB-456E-8F56-E0CE3791347B}</ProjectGuid>
