@@ -539,10 +539,10 @@ void MeshExporter::ParseGeomObject(INode* node, SMeshData* pMeshNode)
 				{  
 					SVertex tVertex;  
 					Point3 vert = mesh->verts[i];  
-					tVertex.m_position.set(vert.x, vert.y, vert.z);  
+					tVertex.m_position.set(vert.x, vert.z, vert.y);  
 
 					Point3 norm = mesh->getNormal(i);  
-					tVertex.m_normal.set(norm.x, norm.y, norm.z);
+					tVertex.m_normal.set(norm.x, norm.z, norm.y);
 
 					tVertex.m_color.r = 1.0f;  
 					tVertex.m_color.g = 1.0f;  

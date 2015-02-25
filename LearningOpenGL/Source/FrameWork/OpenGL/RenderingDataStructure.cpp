@@ -12,6 +12,7 @@ COGLMesh::COGLMesh()
 	, m_theProgram(0)
 	, m_colorTexUnit(0)
 {
+	m_scale.set(1.0f, 1.0f, 1.0f);
 }
 
 COGLMesh::~COGLMesh()
@@ -98,7 +99,7 @@ void COGLMesh::Render()
 {
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
-	glFrontFace(GL_CCW);
+	glFrontFace(GL_CW);
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
@@ -118,6 +119,9 @@ void COGLMesh::Render()
 	GLuint modelViewMatrixUnif = glGetUniformLocation(m_theProgram, "modelViewMatrix");
 	Mat4 viewMatrix;
 	cml::matrix_translation(viewMatrix, Vec3(0.0f, 0.0f, -100.0f));
+
+	Mat4 ScaleMatrix;
+	cml::matrix_scale(ScaleMatrix, m_scale);
 
 	Mat4 RotationMatrix;
 	cml::matrix_rotation_euler(RotationMatrix, m_rotation[0], m_rotation[1], m_rotation[2], cml::euler_order_xyz);
