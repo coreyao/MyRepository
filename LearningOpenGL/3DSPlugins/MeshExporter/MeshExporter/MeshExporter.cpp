@@ -506,7 +506,7 @@ void MeshExporter::ParseGeomObject(INode* node, SMeshData* pMeshNode)
 				mesh->checkNormals(TRUE);  
 
 				sprintf(tText,"Mesh:<%s> VertexCount:<%d>FaceCount<%d>",node->GetName(),mesh->getNumVerts(),mesh->getNumFaces());  
-				AddStrToOutPutListBox(tText);  
+				AddStrToOutPutListBox(tText);
 
 				int tVertexNum = mesh->getNumVerts();   
 				int tFaceNum   = mesh->getNumFaces();  

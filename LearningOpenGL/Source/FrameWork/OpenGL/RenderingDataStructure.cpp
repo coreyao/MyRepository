@@ -97,7 +97,13 @@ void COGLMesh::InitFromFile( const char* pMeshFileName )
 void COGLMesh::Render()
 {
 	glEnable(GL_CULL_FACE);
-	glFrontFace(GL_CW);
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CCW);
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	glDepthFunc(GL_LEQUAL);
+	glDepthRange(0.0f, 1.0f);
 
 	glUseProgram(m_theProgram);
 	glBindVertexArray(m_vertexAttributeObj);
@@ -113,9 +119,14 @@ void COGLMesh::Render()
 	Mat4 viewMatrix;
 	cml::matrix_translation(viewMatrix, Vec3(0.0f, 0.0f, -100.0f));
 
+	Mat4 RotationMatrix;
+	cml::matrix_rotation_euler(RotationMatrix, m_rotation[0], m_rotation[1], m_rotation[2], cml::euler_order_xyz);
+
+	Mat4 TranslationMatrix;
+	cml::matrix_translation(TranslationMatrix, m_worldPos);
+
 	Mat4 ModelViewMatrix;
-	cml::matrix_rotation_euler(ModelViewMatrix, m_rotation[0], m_rotation[1], m_rotation[2], cml::euler_order_xyz);
-	ModelViewMatrix = viewMatrix * ModelViewMatrix;
+	ModelViewMatrix = viewMatrix * TranslationMatrix * RotationMatrix;
 
 	glUniformMatrix4fv(modelViewMatrixUnif, 1, GL_FALSE, ModelViewMatrix.data());
 

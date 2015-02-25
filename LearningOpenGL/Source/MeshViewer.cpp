@@ -11,12 +11,14 @@ void init()
 {
 	g_mesh.InitFromFile("Cube.CSTM");
 	g_mesh.SetTexture("HelloWorld.png");
+	g_mesh.m_worldPos[1] = -30.0f;
 }
 
 void display()
 {
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClearDepth(1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	g_mesh.m_rotation[1] = cml::rad(g_YAngle);
 	g_mesh.Render();
