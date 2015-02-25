@@ -45,6 +45,8 @@ struct SVertex
 	Vec3 m_normal;
 	Vec2 m_texCoord;
 	Color4F m_color;
+	Vec4 m_blendIndex;
+	Vec4 m_blendWeight;
 };
 
 struct STextureData
@@ -100,4 +102,40 @@ public:
 
 protected:
 	SMeshData m_data;
+};
+
+struct SBoneData
+{
+	SBoneData()
+	{
+	}
+
+	Mat4 m_inverseBindMat;
+};
+
+class CBone
+{
+public:
+	CBone()
+		: m_pParent(nullptr)
+	{
+	}
+
+	void CalcPalette(Vec4* matrixPalette);
+
+	Mat4 m_localMat;
+	Mat4 m_worldMat;
+	SBoneData m_data;
+
+	std::vector<CBone*> m_vChildren;
+	CBone* m_pParent;
+};
+
+class CSkeleton
+{
+public:
+	Vec4* GetMatrixPalette();
+	
+	Vec4* m_matrixPalette;
+	std::vector<CBone*> m_vBone;
 };
