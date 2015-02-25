@@ -5,11 +5,12 @@
 #include "FrameWork/OpenGL/RenderingDataStructure.h"
 
 COGLMesh g_mesh;
+float g_XAngle = 0.0f;
 float g_YAngle = 0.0f;
 
 void init()
 {
-	g_mesh.InitFromFile("Cube.CSTM");
+	g_mesh.InitFromFile("Teapot.CSTM");
 	g_mesh.SetTexture("HelloWorld.png");
 	g_mesh.m_worldPos[1] = -30.0f;
 }
@@ -20,6 +21,7 @@ void display()
 	glClearDepth(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	g_mesh.m_rotation[0] = cml::rad(g_XAngle);
 	g_mesh.m_rotation[1] = cml::rad(g_YAngle);
 	g_mesh.Render();
 
@@ -41,5 +43,7 @@ void keyboard(unsigned char key, int x, int y)
 		return;
 	case 'a': ++g_YAngle; break;
 	case 'd': --g_YAngle; break;
+	case 'w': ++g_XAngle; break;
+	case 's': --g_XAngle; break;
 	}
 }
