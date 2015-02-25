@@ -42,15 +42,14 @@ local.properties
 *.sln.docstates
 *.log
 *.tlog
-*.obj
 
 # Build results
 
-[Dd]ebug/
-[Rr]elease/
-x64/
+#[Dd]ebug/
+#[Rr]elease/
+#x64/
 build/
-[Bb]in/
+#[Bb]in/
 [Oo]bj/
 
 # MSTest test Results
