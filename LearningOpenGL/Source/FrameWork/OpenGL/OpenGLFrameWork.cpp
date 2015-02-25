@@ -29,7 +29,7 @@ namespace OpenGLFramework
 
 	std::string FindFileOrThrow( const std::string &strBasename )
 	{
-		std::string strFilename = LOCAL_FILE_DIR + strBasename;
+		std::string strFilename = strBasename;
 		std::ifstream testFile(strFilename.c_str());
 		if( testFile.is_open() )
 		{
@@ -106,7 +106,7 @@ int main(int argc, char* argv[])
 {
 	glutInit(&argc, argv);
 	glutInitWindowPosition(100, 100);
-	glutInitWindowSize(1024, 768);
+	glutInitWindowSize(RESOLUTION_WIDTH, RESOLUTION_HEIGHT);
 	glutInitDisplayMode(GLUT_RGBA);
 
 	glutCreateWindow("opengl");
@@ -117,6 +117,7 @@ int main(int argc, char* argv[])
 
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
+	glutKeyboardFunc(keyboard);
 
 	glutMainLoop();
 	return 0;

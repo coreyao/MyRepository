@@ -16,7 +16,7 @@ CPNGReader::~CPNGReader()
 
 void CPNGReader::ReadData(const std::string& sFileName)
 {
-	FILE* file = fopen((LOCAL_FILE_DIR + sFileName).c_str(), "rb");
+	FILE* file = fopen((IMAGE_FILE_DIR + sFileName).c_str(), "rb");
 	if ( !file )
 		return;
 

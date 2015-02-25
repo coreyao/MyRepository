@@ -6,9 +6,13 @@
 #include <vector>
 #include <string>
 
+#define RESOLUTION_WIDTH 1024
+#define RESOLUTION_HEIGHT 768
+
 void init();
 void display();
 void reshape(int w, int h);
+void keyboard(unsigned char key, int x, int y);
 
 namespace OpenGLFramework
 {

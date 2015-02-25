@@ -21,7 +21,7 @@
     <ClCompile Include="MeshExporter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\FrameWork\DataStructure.cpp">
+    <ClCompile Include="..\..\..\Source\FrameWork\DataTypes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -40,7 +40,7 @@
     <ClInclude Include="MeshExporter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\FrameWork\DataStructure.h">
+    <ClInclude Include="..\..\..\Source\FrameWork\DataTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

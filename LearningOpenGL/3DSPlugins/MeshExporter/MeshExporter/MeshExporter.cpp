@@ -13,7 +13,7 @@
 //***************************************************************************/
 
 #include "MeshExporter.h"
-#include "../../../Source/FrameWork/DataStructure.h"
+#include "../../../Source/FrameWork/DataTypes.h"
 #include <string>
 #include <vector>
 #include <sstream>
@@ -539,22 +539,17 @@ void MeshExporter::ParseGeomObject(INode* node, SMeshData* pMeshNode)
 				{  
 					SVertex tVertex;  
 					Point3 vert = mesh->verts[i];  
-					tVertex.m_position.x = vert.x;  
-					tVertex.m_position.y = vert.z;  
-					tVertex.m_position.z = vert.y;  
+					tVertex.m_position.set(vert.x, vert.y, vert.z);  
 
 					Point3 norm = mesh->getNormal(i);  
-					tVertex.m_normal.x = norm.x;  
-					tVertex.m_normal.y = norm.z;  
-					tVertex.m_normal.z = norm.y;  
+					tVertex.m_normal.set(norm.x, norm.y, norm.z);
 
 					tVertex.m_color.r = 1.0f;  
 					tVertex.m_color.g = 1.0f;  
 					tVertex.m_color.b = 1.0f;  
 					tVertex.m_color.a = 1.0f;
 
-					tVertex.m_texCoord.x = 0.0f;
-					tVertex.m_texCoord.y = 0.0f;  
+					tVertex.m_texCoord.set(0.0f, 0.0f);
 
 					tVertexVec.push_back(tVertex);  
 				}  
@@ -591,26 +586,26 @@ void MeshExporter::ParseGeomObject(INode* node, SMeshData* pMeshNode)
 					for (int i = 0; i < tFaceNum; i++)  
 					{  
 						TVFace tface = mesh->tvFace[i];  
-						int     tSrcTexIndex1 = tface.getTVert(0);  
-						int     tSrcTexIndex2 = tface.getTVert(1);  
-						int     tSrcTexIndex3 = tface.getTVert(2);  
+						int tSrcTexIndex1 = tface.getTVert(0);  
+						int tSrcTexIndex2 = tface.getTVert(1);  
+						int tSrcTexIndex3 = tface.getTVert(2);  
 
-						int     tDestTexIndex1 = mesh->faces[i].v[0];  
-						int     tDestTexIndex2 = mesh->faces[i].v[1];  
-						int     tDestTexIndex3 = mesh->faces[i].v[2];  
+						int tDestTexIndex1 = mesh->faces[i].v[0];  
+						int tDestTexIndex2 = mesh->faces[i].v[1];  
+						int tDestTexIndex3 = mesh->faces[i].v[2];  
 
 						SVertex& tV1 = tVertexVec[tDestTexIndex1];  
 						SVertex& tV2 = tVertexVec[tDestTexIndex2];  
 						SVertex& tV3 = tVertexVec[tDestTexIndex3];  
 
-						tV1.m_texCoord.x = mesh->tVerts[tSrcTexIndex1].x;  
-						tV1.m_texCoord.y = 1.0 - mesh->tVerts[tSrcTexIndex1].y;  
+						tV1.m_texCoord[0] = mesh->tVerts[tSrcTexIndex1].x;  
+						tV1.m_texCoord[1] = 1.0 - mesh->tVerts[tSrcTexIndex1].y;  
 
-						tV2.m_texCoord.x = mesh->tVerts[tSrcTexIndex2].x;  
-						tV2.m_texCoord.y = 1.0 - mesh->tVerts[tSrcTexIndex2].y;  
+						tV2.m_texCoord[0] = mesh->tVerts[tSrcTexIndex2].x;  
+						tV2.m_texCoord[1] = 1.0 - mesh->tVerts[tSrcTexIndex2].y;  
 
-						tV3.m_texCoord.x = mesh->tVerts[tSrcTexIndex3].x;  
-						tV3.m_texCoord.y = 1.0 - mesh->tVerts[tSrcTexIndex3].y;  
+						tV3.m_texCoord[0] = mesh->tVerts[tSrcTexIndex3].x;  
+						tV3.m_texCoord[1] = 1.0 - mesh->tVerts[tSrcTexIndex3].y;
 					}  
 				}  
   

@@ -1,4 +1,4 @@
-#include "DataStructure.h"
+#include "DataTypes.h"
 
 void SMeshData::WriteToFile(FILE* hFile)
 {

@@ -4,26 +4,14 @@
 #include <string>
 #include <vector>
 
-struct Vec2
-{
-	Vec2() : x(0.0f), y(0.0f)
-	{
-	}
+#include "cml/cml.h"
 
-	float x;
-	float y;
-};
+typedef cml::matrix< float, cml::fixed<3,3>, cml::col_basis, cml::col_major> Mat3;
+typedef cml::matrix< float, cml::fixed<4,4>, cml::col_basis, cml::col_major> Mat4;
 
-struct Vec3
-{
-	Vec3() : x(0.0f), y(0.0f), z(0.0f)
-	{
-	}
-
-	float x;
-	float y;
-	float z;
-};
+typedef cml::vector< float, cml::fixed<2> > Vec2;
+typedef cml::vector< float, cml::fixed<3> > Vec3;
+typedef cml::vector< float, cml::fixed<4> > Vec4;
 
 struct Color4F
 {
@@ -101,11 +89,15 @@ struct SMeshData
 	std::vector<SSubMeshData> m_SubMeshVec;
 };
 
-class CMesh
+class CBaseMesh
 {
 public:
 	virtual void Render() = 0;
 
-private:
+	Vec2 m_worldPos;
+	Vec3 m_rotation;
+	Vec3 m_scale;
+
+protected:
 	SMeshData m_data;
 };
