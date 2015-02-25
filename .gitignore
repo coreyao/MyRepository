@@ -51,6 +51,7 @@ local.properties
 build/
 #[Bb]in/
 [Oo]bj/
+Intermediate/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
