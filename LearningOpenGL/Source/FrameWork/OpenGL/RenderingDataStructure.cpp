@@ -130,7 +130,7 @@ void COGLMesh::Render()
 	cml::matrix_translation(TranslationMatrix, m_worldPos);
 
 	Mat4 ModelViewMatrix;
-	ModelViewMatrix = viewMatrix * TranslationMatrix * RotationMatrix;
+	ModelViewMatrix = viewMatrix * TranslationMatrix * ScaleMatrix * RotationMatrix;
 
 	glUniformMatrix4fv(modelViewMatrixUnif, 1, GL_FALSE, ModelViewMatrix.data());
 

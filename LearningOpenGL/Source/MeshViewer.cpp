@@ -5,6 +5,7 @@
 #include "FrameWork/OpenGL/RenderingDataStructure.h"
 
 COGLMesh g_mesh;
+
 float g_XAngle = 0.0f;
 float g_YAngle = 0.0f;
 
