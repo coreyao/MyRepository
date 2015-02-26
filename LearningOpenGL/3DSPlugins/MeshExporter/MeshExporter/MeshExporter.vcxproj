@@ -545,7 +545,7 @@
       <IgnoreSpecificDefaultLibraries>libcp.lib;libci.lib;msvcirt.lib;libcmt.lib;libcmtd.lib;msvcrt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>.\MeshExporter.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>.\x64\MeshExporter.dle.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>C:\Program Files\Autodesk\3ds Max 2012\plugins\MeshExporter.dle.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <BaseAddress>
       </BaseAddress>

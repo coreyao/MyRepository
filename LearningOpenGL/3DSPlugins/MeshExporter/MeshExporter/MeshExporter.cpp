@@ -274,20 +274,28 @@ BOOL MeshExporter::NodeEnum(INode* node)
 {  
 	if (!node) return FALSE;
 
-	TimeValue tTime = 0;  
-	ObjectState os = node->EvalWorldState(tTime);
-	if (os.obj)
-	{  
-		DWORD SuperclassID = os.obj->SuperClassID();  
-		switch(SuperclassID)  
+	if ( is_bone(node) )
+	{
+		string sName = node->GetName();
+		sName;
+	}
+	else
+	{
+		TimeValue tTime = 0;  
+		ObjectState os = node->EvalWorldState(tTime);
+		if (os.obj)
 		{  
-		case SHAPE_CLASS_ID:
-		case GEOMOBJECT_CLASS_ID:
-			ParseGeomObject(node);
-			break;  
-		default:  
-			break;  
-		}  
+			DWORD SuperclassID = os.obj->SuperClassID();  
+			switch(SuperclassID)  
+			{  
+			case SHAPE_CLASS_ID:
+			case GEOMOBJECT_CLASS_ID:
+				ParseGeomObject(node);
+				break;  
+			default:  
+				break;  
+			}  
+		}
 	}
 
 	for (int i = 0; i < node->NumberOfChildren(); ++i)
@@ -502,37 +510,24 @@ void MeshExporter::ParseBones( INode* pNode )
 
 bool MeshExporter::is_bone( INode* node )
 {
-	if (NULL == node)
-	{
+	ObjectState pObs = node->EvalWorldState(0);
+	if (!pObs.obj)
 		return false;
-	}
 
-	ObjectState os = node->EvalWorldState(0);
-	if (NULL == os.obj)
+	Class_ID id = pObs.obj->ClassID();
+	SClass_ID sid = pObs.obj->SuperClassID();
+	if (pObs.obj->ClassID()==Class_ID(BONE_CLASS_ID,0))
 	{
-		return false;
+		return true; 
 	}
-
-	if (os.obj->SuperClassID() == HELPER_CLASS_ID)
+	if (pObs.obj->ClassID()==BONE_OBJ_CLASSID)
 	{
-		return true;
+		return true; 
 	}
-
-	if (os.obj->SuperClassID() == GEOMOBJECT_CLASS_ID)
+	if (pObs.obj->ClassID()==Class_ID(37157,0))
 	{
-		if (os.obj->ClassID() == BONE_OBJ_CLASSID)
-		{
-			return true;
-		}
+		return true; 
 	}
-
-	Control* ctl = node->GetTMController();
-	if ((ctl->ClassID() == BIPSLAVE_CONTROL_CLASS_ID)
-		|| (ctl->ClassID() == BIPBODY_CONTROL_CLASS_ID))
-	{
-		return true;
-	}
-
 	return false;
 }
 
@@ -589,7 +584,7 @@ void MeshExporter::ExportToFile( const char* szMeshName )
 			{  
 				strEx = strExportPath.substr(pos+1);  
 				strName = strExportPath.substr(0, pos);
-				_snprintf( szExportFileName, _MAX_PATH, "%s_%d.%s", strName.c_str(), m, strEx);  
+				_snprintf( szExportFileName, _MAX_PATH, "%s_%d.%s", strName.c_str(), m, strEx.c_str());  
 			}  
 			else  
 			{  
