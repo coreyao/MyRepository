@@ -27,9 +27,6 @@ void COGLMesh::InitFromFile( const char* pMeshFileName )
 
 	m_data.ReadFromFile(pMeshFile);
 
-	if ( m_data.m_SubMeshVec.empty() )
-		return;
-
 	std::vector<GLuint> shaderList;
 	shaderList.push_back(OpenGLFramework::LoadShader(GL_VERTEX_SHADER, SHADER_FILE_DIR + "Mesh_Vertex_Shader.vert"));
 	shaderList.push_back(OpenGLFramework::LoadShader(GL_FRAGMENT_SHADER, SHADER_FILE_DIR + "Mesh_Fragment_Shader.frag"));
@@ -49,17 +46,17 @@ void COGLMesh::InitFromFile( const char* pMeshFileName )
 
 	glGenBuffers(1, &m_vertexDataObj);
 	glBindBuffer(GL_ARRAY_BUFFER, m_vertexDataObj);
-	glBufferData(GL_ARRAY_BUFFER, m_data.m_SubMeshVec[0].m_vVectex.size() * sizeof(SVertex), &m_data.m_SubMeshVec[0].m_vVectex.front(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_data.m_vVectex.size() * sizeof(SVertex), &m_data.m_vVectex.front(), GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glGenBuffers(1, &m_vertexIndexObj);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vertexIndexObj);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_data.m_SubMeshVec[0].m_vFace.size() * sizeof(SFace), &m_data.m_SubMeshVec[0].m_vFace.front(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_data.m_vFace.size() * sizeof(SFace), &m_data.m_vFace.front(), GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	std::string sTextureFile;
-	if ( !m_data.m_SubMeshVec[0].m_cMaterial.m_SubTextureVec.empty() )
-		sTextureFile = m_data.m_SubMeshVec[0].m_cMaterial.m_SubTextureVec[0].m_sFileName;
+	if ( !m_data.m_cMaterial.m_SubTextureVec.empty() )
+		sTextureFile = m_data.m_cMaterial.m_SubTextureVec[0].m_sFileName;
 
 	if ( !sTextureFile.empty() )
 	{
@@ -118,7 +115,7 @@ void COGLMesh::Render()
 
 	GLuint modelViewMatrixUnif = glGetUniformLocation(m_theProgram, "modelViewMatrix");
 	Mat4 viewMatrix;
-	cml::matrix_translation(viewMatrix, Vec3(0.0f, 0.0f, -100.0f));
+	cml::matrix_translation(viewMatrix, Vec3(0.0f, 0.0f, -300.0f));
 
 	Mat4 ScaleMatrix;
 	cml::matrix_scale(ScaleMatrix, m_scale);
@@ -135,7 +132,7 @@ void COGLMesh::Render()
 	glUniformMatrix4fv(modelViewMatrixUnif, 1, GL_FALSE, ModelViewMatrix.data());
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vertexIndexObj);
-	glDrawElements(GL_TRIANGLES, m_data.m_SubMeshVec[0].m_vFace.size() * 3, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, m_data.m_vFace.size() * 3, GL_UNSIGNED_INT, 0);
 
 	glBindSampler(m_colorTexUnit, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);

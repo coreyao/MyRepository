@@ -21,6 +21,12 @@
 #include <stdmat.h>
 #include <IGame/IGameType.h>
 
+#if VERSION_3DSMAX >= 7 << 16
+#include <CS/bipexp.h>
+#else
+#include <bipexp.h>
+#endif
+
 using namespace std;
 
 #define MeshExporter_CLASS_ID	Class_ID(0x9e2e287e, 0xc6e1aa9e)
@@ -53,11 +59,15 @@ class MeshExporter : public SceneExport
 		BOOL			SupportsOptions(int ext, DWORD options);
 		int				DoExport(const TCHAR *name,ExpInterface *ei,Interface *i, BOOL suppressPrompts=FALSE, DWORD options=0);
 		int             ExportMesh(const char* szMeshName);
+		void			ExportToFile( const char* szMeshName );
+		void			DoClean();
 		BOOL			SubTextureEnum(MtlBase* vMtl, vector<STextureData>& vTextureVec);
-		BOOL			NodeEnum(INode* node, SMeshData* pMeshNode);
-		BOOL			NodeEnum_Child(INode* node, SMeshData*  pMeshNode);
-		void			ParseGeomObject(INode* node, SMeshData* pMeshNode);
+		BOOL			NodeEnum(INode* node);
+		void			ParseAllInfo();
+		void			ParseGeomObject(INode* nodee);
 		void			ParseBones(INode* pNode);
+		void			ParseMaterials();
+		bool			is_bone(INode* node);
 
 		//Constructor/Destructor
 		MeshExporter();
@@ -70,6 +80,7 @@ class MeshExporter : public SceneExport
 
 		vector<SMaterialData>	m_AllMaterialVec;
 		vector<SMeshData>		m_MeshNodeVec;
+		SSkeletonData			m_skeletonData;
 };
 
 class MeshExporterClassDesc : public ClassDesc2 
@@ -250,157 +261,39 @@ int	MeshExporter::DoExport(const TCHAR *name,ExpInterface *ei,Interface *i, BOOL
 
 int MeshExporter::ExportMesh(const char* szMeshName)  
 {  
-	MtlBaseLib* scenemats = m_pInterface->GetSceneMtls(); 
-	if (scenemats)  
-	{     
-		char tText[200] = {0};  
-		int tCount = scenemats->Count();  
-
-		sprintf(tText, " Total Materials : %d ",tCount);  
-		AddStrToOutPutListBox(tText);  
-
-		if(tCount > 0)  
-		{  
-			m_AllMaterialVec.clear();
-			for (int i = 0; i < tCount ; i++)  
-			{   
-				MtlBase * vMtl = (*scenemats)[i];  
-				if (IsMtl(vMtl))  
-				{         
-					SMaterialData pParseMaterial;  
-					pParseMaterial.m_MaterialName = vMtl->GetName();
-					SubTextureEnum(vMtl, pParseMaterial.m_SubTextureVec);
-					m_AllMaterialVec.push_back(pParseMaterial);
-				}
-			}  
-		}  
-	}  
-
-	INode* pRootNode = m_pInterface->GetRootNode();
-
-	
-
-
-	int numChildren = pRootNode->NumberOfChildren();  
-	for (int idx = 0; idx < numChildren; idx++)  
-	{  
-		NodeEnum(pRootNode->GetChildNode(idx), NULL);
-	}
-
-	int nMeshCount = m_MeshNodeVec.size();  
-	for(int m = 0; m < nMeshCount; ++m)  
-	{  
-		SMeshData* pMesh = &m_MeshNodeVec[m];
-		char szExportFileName[_MAX_PATH] = {0};
-		if( 1 == nMeshCount )
-		{  
-			pMesh->m_MeshName = szMeshName;  
-			strcpy(szExportFileName, m_szExportPath);
-		}  
-		else  
-		{  
-			_snprintf(szExportFileName, _MAX_PATH, "%s_%d", szMeshName, m);  
-			pMesh->m_MeshName = szExportFileName;
-			std::string strExportPath = m_szExportPath;
-			std::string strEx;  
-			std::string strName = strExportPath;  
-			std::string::size_type pos = strExportPath.find_last_of(".");  
-			if (pos != std::string::npos)  
-			{  
-				strEx = strExportPath.substr(pos+1);  
-				strName = strExportPath.substr(0, pos);
-				_snprintf( szExportFileName, _MAX_PATH, "%s_%d.%s", strName.c_str(), m, strEx);  
-			}  
-			else  
-			{  
-				_snprintf( szExportFileName, _MAX_PATH, "%s_%d", strName.c_str(), m);  
-			}  
-		}  
-
-		FILE* hFile = fopen(szExportFileName, "wb");
-		if ( hFile )
-		{
-			pMesh->WriteToFile(hFile);
-			fclose(hFile);  
-		}
-	}
-
-	m_AllMaterialVec.clear();
-	m_MeshNodeVec.clear();  
+	ParseAllInfo();
+	ExportToFile(szMeshName);
+	DoClean();
 
 	AddStrToOutPutListBox("Export Finished!");
 
 	return 0;  
 }  
 
-BOOL MeshExporter::NodeEnum(INode* node,SMeshData* pMeshNode)   
+BOOL MeshExporter::NodeEnum(INode* node)   
 {  
-	if (!node)  
-		return FALSE;  
+	if (!node) return FALSE;
 
-	SMeshData       tMeshNode;    
-	TimeValue       tTime = 0;  
-	ObjectState os = node->EvalWorldState(tTime);   
-
+	TimeValue tTime = 0;  
+	ObjectState os = node->EvalWorldState(tTime);
 	if (os.obj)
 	{  
 		DWORD SuperclassID = os.obj->SuperClassID();  
 		switch(SuperclassID)  
 		{  
-		case SHAPE_CLASS_ID:  
-		case GEOMOBJECT_CLASS_ID:   
-			ParseGeomObject(node, &tMeshNode); 
+		case SHAPE_CLASS_ID:
+		case GEOMOBJECT_CLASS_ID:
+			ParseGeomObject(node);
 			break;  
 		default:  
 			break;  
 		}  
-	}  
-
-	for (int c = 0; c < node->NumberOfChildren(); c++)  
-	{  
-		if (!NodeEnum_Child(node->GetChildNode(c), &tMeshNode))
-			break;
 	}
 
-	if(tMeshNode.m_SubMeshVec.size() > 0)  
-		m_MeshNodeVec.push_back(tMeshNode);
-
-	return TRUE;  
-}  
-
-BOOL MeshExporter::NodeEnum_Child(INode* node, SMeshData* pMeshNode)   
-{  
-	if (!node)  
-		return FALSE;  
-
-	TimeValue       tTime = 0;  
-	ObjectState os = node->EvalWorldState(tTime);   
-
-	if (os.obj)  
-	{  
-		char tText[200];  
-		sprintf(tText,"Export<%s>----------------------<%d : %d>",node->GetName(),os.obj->SuperClassID(),os.obj->ClassID());  
-		AddStrToOutPutListBox(tText);
-
-		DWORD   SuperclassID = os.obj->SuperClassID();  
-		switch(SuperclassID)  
-		{  
-		case SHAPE_CLASS_ID:
-		case GEOMOBJECT_CLASS_ID:   
-			ParseGeomObject(node, pMeshNode);
-			break;  
-		default:  
-			break;  
-		}  
-	}  
-
-	for (int c = 0; c < node->NumberOfChildren(); c++)  
-	{  
-		if (!NodeEnum_Child(node->GetChildNode(c), pMeshNode))  
-		{  
-			break;  
-		}  
-	}  
+	for (int i = 0; i < node->NumberOfChildren(); ++i)
+	{
+		NodeEnum(node->GetChildNode(i));
+	}
 
 	return TRUE;  
 }  
@@ -437,102 +330,76 @@ BOOL MeshExporter::SubTextureEnum( MtlBase* vMtl, vector<STextureData>& vTexture
 	return TRUE;  
 }
 
-class NullView : public View
-{
-public:
-	Point2 ViewToScreen(Point3 p)
-	{ 
-		return Point2(p.x,p.y); 
-	}
-
-	NullView()
-	{
-		worldToView.IdentityMatrix();
-		screenW=640.0f; screenH = 480.0f;
-	}
-};
-
-void MeshExporter::ParseGeomObject(INode* node, SMeshData* pMeshNode)
+void MeshExporter::ParseGeomObject(INode* node)
 {  
-	char            tText[200] = {0};
-	TimeValue       tTime = 0;  
-	ObjectState os = node->EvalWorldState(tTime);   
-	if (!os.obj)  
-		return;  
+	char  tText[200] = {0};
+	ObjectState os = node->EvalWorldState(0);   
+	if (!os.obj || os.obj->ClassID() == Class_ID(TARGET_CLASS_ID, 0))  
+		return;
 
-	if (os.obj->ClassID() == Class_ID(TARGET_CLASS_ID, 0))  
-		return;  
-
-	sprintf(tText,"Export Object:<%s>.............", node->GetName());  
-	AddStrToOutPutListBox(tText);  
-
-	SSubMeshData tSubMesh;
-	tSubMesh.m_SubMeshName = node->GetName();  
-
-	Mtl* nodemtl = node->GetMtl();
-	if (nodemtl)  
-	{  
-		MtlBaseLib* scenemats = m_pInterface->GetSceneMtls();  
-		int tCount = scenemats->Count();  
-		for(int i = 0 ; i < tCount ; i++)  
-		{  
-			MtlBase* mtl = (*scenemats)[i];  
-			if(strcmp(mtl->GetName(),nodemtl->GetName()) == 0)  
-			{  
-				tSubMesh.m_cMaterial = m_AllMaterialVec[i];  
-				break;  
-			}  
-		}  
-		sprintf(tText,"Relating Material:<%s>", nodemtl->GetName());  
-		AddStrToOutPutListBox(tText);
-	}  
-
-	bool delMesh = false;  
-	Object *obj = os.obj;  
+	Object *obj = os.obj;
 	if ( obj )  
 	{  
 		if(obj->CanConvertToType(Class_ID(TRIOBJ_CLASS_ID, 0)))  
 		{  
 			TriObject* tri = (TriObject *) obj->ConvertToType(0, Class_ID(TRIOBJ_CLASS_ID, 0));  
-			if (obj != tri)
-				delMesh = true;   
-
 			if (tri)
 			{  
-				NullView maxView;
-				BOOL bDelete = TRUE;  
-				Mesh* mesh = tri->GetRenderMesh(tTime, node, maxView, bDelete);  
-				mesh->buildNormals();  
-				mesh->checkNormals(TRUE);  
+				sprintf(tText,"Export Object:<%s>.............", node->GetName());  
+				AddStrToOutPutListBox(tText);
+
+				SMeshData tMesh;
+				tMesh.m_MeshName = node->GetName();
+				Mtl* nodemtl = node->GetMtl();
+				if (nodemtl)
+				{  
+					MtlBaseLib* scenemats = m_pInterface->GetSceneMtls();  
+					int tCount = scenemats->Count();  
+					for(int i = 0 ; i < tCount ; i++)  
+					{  
+						MtlBase* mtl = (*scenemats)[i];  
+						if(strcmp(mtl->GetName(),nodemtl->GetName()) == 0)  
+						{  
+							tMesh.m_cMaterial = m_AllMaterialVec[i];  
+							break;  
+						}  
+					}  
+
+					sprintf(tText,"Relating Material:<%s>", nodemtl->GetName());  
+					AddStrToOutPutListBox(tText);
+				}
+
+				Mesh* mesh = &tri->GetMesh();
+				mesh->buildNormals();
+				mesh->checkNormals(TRUE);
 
 				sprintf(tText,"Mesh:<%s> VertexCount:<%d>FaceCount<%d>",node->GetName(),mesh->getNumVerts(),mesh->getNumFaces());  
 				AddStrToOutPutListBox(tText);
 
 				int tVertexNum = mesh->getNumVerts();   
-				int tFaceNum   = mesh->getNumFaces();  
-
-				Matrix3 tTMAfterWSMM = node->GetNodeTM(tTime);  
+				int tFaceNum = mesh->getNumFaces();  
+				Matrix3 tTMAfterWSMM = node->GetNodeTM(0);  
 				GMatrix tGMeshTM(tTMAfterWSMM);  
 				for(int m = 0 ; m < 4 ; m++)  
 				{  
 					for(int n = 0 ; n < 4 ; n++)  
 					{  
-						tSubMesh.m_SubMeshMatrix[m*4+n] = tGMeshTM[m][n]; 
-					}  
-				}  
+						tMesh.m_MeshMatrix[m*4+n] = tGMeshTM[m][n]; 
+					}
+				}
 
 				for (int i = 0; i < tFaceNum; i++)  
 				{  
-					int     tDestTexIndex1 = mesh->faces[i].v[0];  
-					int     tDestTexIndex2 = mesh->faces[i].v[1];  
-					int     tDestTexIndex3 = mesh->faces[i].v[2];  
+					int tDestTexIndex1 = mesh->faces[i].v[0];  
+					int tDestTexIndex2 = mesh->faces[i].v[1];  
+					int tDestTexIndex3 = mesh->faces[i].v[2];  
 
 					SFace tFace;
 					tFace.m_VertexIndex1 = tDestTexIndex1;
 					tFace.m_VertexIndex2 = tDestTexIndex2;  
 					tFace.m_VertexIndex3 = tDestTexIndex3;
-					tSubMesh.m_vFace.push_back(tFace); 
-				}  
+					tMesh.m_vFace.push_back(tFace);
+				}
 
 				vector<SVertex> tVertexVec;  
 				for (int i = 0; i < tVertexNum; i++)
@@ -559,13 +426,13 @@ void MeshExporter::ParseGeomObject(INode* node, SMeshData* pMeshNode)
 					for (int i = 0; i < tFaceNum; i++)  
 					{  
 						TVFace   tface = mesh->vcFace[i];  
-						int     tSrcColorIndex1 = tface.getTVert(0);  
-						int     tSrcColorIndex2 = tface.getTVert(1);  
-						int     tSrcColorIndex3 = tface.getTVert(2);  
+						int tSrcColorIndex1 = tface.getTVert(0);  
+						int tSrcColorIndex2 = tface.getTVert(1);  
+						int tSrcColorIndex3 = tface.getTVert(2);  
 
-						int     tDestColorIndex1 = mesh->faces[i].v[0];  
-						int     tDestColorIndex2 = mesh->faces[i].v[1];  
-						int     tDestColorIndex3 = mesh->faces[i].v[2];  
+						int tDestColorIndex1 = mesh->faces[i].v[0];  
+						int tDestColorIndex2 = mesh->faces[i].v[1];  
+						int tDestColorIndex3 = mesh->faces[i].v[2];  
 
 						tVertexVec[tDestColorIndex1].m_color.r = mesh->vertCol[tSrcColorIndex1].x;  
 						tVertexVec[tDestColorIndex1].m_color.g = mesh->vertCol[tSrcColorIndex1].y;  
@@ -609,14 +476,146 @@ void MeshExporter::ParseGeomObject(INode* node, SMeshData* pMeshNode)
 					}  
 				}  
   
-				if (delMesh)
-					delete tri;  
+				tMesh.m_vVectex = tVertexVec;
 
-				tSubMesh.m_vVectex = tVertexVec;
+				m_MeshNodeVec.push_back(tMesh);
+			}  
+		}  
+	}
+}  
+
+void MeshExporter::ParseBones( INode* pNode )
+{
+	if (is_bone(pNode))
+	{
+		SBoneData newBoneData;
+		newBoneData.m_iIndex = m_skeletonData.m_vBone.size() + 1;
+		newBoneData.m_sName = pNode->GetName();
+		//newBoneData.m_inverseBindMat = pNode->GetObjectTM(0);
+	}
+
+	for (int i = 0; i < pNode->NumberOfChildren(); ++ i)
+	{
+		this->ParseBones(pNode->GetChildNode(i));
+	}
+}
+
+bool MeshExporter::is_bone( INode* node )
+{
+	if (NULL == node)
+	{
+		return false;
+	}
+
+	ObjectState os = node->EvalWorldState(0);
+	if (NULL == os.obj)
+	{
+		return false;
+	}
+
+	if (os.obj->SuperClassID() == HELPER_CLASS_ID)
+	{
+		return true;
+	}
+
+	if (os.obj->SuperClassID() == GEOMOBJECT_CLASS_ID)
+	{
+		if (os.obj->ClassID() == BONE_OBJ_CLASSID)
+		{
+			return true;
+		}
+	}
+
+	Control* ctl = node->GetTMController();
+	if ((ctl->ClassID() == BIPSLAVE_CONTROL_CLASS_ID)
+		|| (ctl->ClassID() == BIPBODY_CONTROL_CLASS_ID))
+	{
+		return true;
+	}
+
+	return false;
+}
+
+void MeshExporter::ParseMaterials()
+{
+	MtlBaseLib* scenemats = m_pInterface->GetSceneMtls(); 
+	if (scenemats)  
+	{     
+		char tText[200] = {0};  
+		int tCount = scenemats->Count();  
+
+		sprintf(tText, " Total Materials : %d ",tCount);  
+		AddStrToOutPutListBox(tText);  
+
+		if(tCount > 0)  
+		{  
+			m_AllMaterialVec.clear();
+			for (int i = 0; i < tCount ; i++)  
+			{   
+				MtlBase * vMtl = (*scenemats)[i];  
+				if (IsMtl(vMtl))  
+				{         
+					SMaterialData pParseMaterial;  
+					pParseMaterial.m_MaterialName = vMtl->GetName();
+					SubTextureEnum(vMtl, pParseMaterial.m_SubTextureVec);
+					m_AllMaterialVec.push_back(pParseMaterial);
+				}
 			}  
 		}  
 	}  
+}
 
-	pMeshNode->m_SubMeshVec.push_back(tSubMesh);  
-}  
+void MeshExporter::ExportToFile( const char* szMeshName )
+{
+	int nMeshCount = m_MeshNodeVec.size();  
+	for(int m = 0; m < nMeshCount; ++m)  
+	{  
+		SMeshData* pMesh = &m_MeshNodeVec[m];
+		char szExportFileName[_MAX_PATH] = {0};
+		if( 1 == nMeshCount )
+		{  
+			pMesh->m_MeshName = szMeshName;  
+			strcpy(szExportFileName, m_szExportPath);
+		}  
+		else  
+		{  
+			_snprintf(szExportFileName, _MAX_PATH, "%s_%d", szMeshName, m);  
+			pMesh->m_MeshName = szExportFileName;
+			std::string strExportPath = m_szExportPath;
+			std::string strEx;  
+			std::string strName = strExportPath;  
+			std::string::size_type pos = strExportPath.find_last_of(".");  
+			if (pos != std::string::npos)  
+			{  
+				strEx = strExportPath.substr(pos+1);  
+				strName = strExportPath.substr(0, pos);
+				_snprintf( szExportFileName, _MAX_PATH, "%s_%d.%s", strName.c_str(), m, strEx);  
+			}  
+			else  
+			{  
+				_snprintf( szExportFileName, _MAX_PATH, "%s_%d", strName.c_str(), m);  
+			}  
+		}  
 
+		FILE* hFile = fopen(szExportFileName, "wb");
+		if ( hFile )
+		{
+			pMesh->WriteToFile(hFile);
+			fclose(hFile);  
+		}
+	}
+}
+
+void MeshExporter::DoClean()
+{
+	m_AllMaterialVec.clear();
+	m_MeshNodeVec.clear();  
+}
+
+void MeshExporter::ParseAllInfo()
+{
+	ParseMaterials();
+
+	INode* pRootNode = m_pInterface->GetRootNode();
+	NodeEnum(pRootNode);
+}

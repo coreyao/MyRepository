@@ -68,27 +68,21 @@ struct SMaterialData
 	std::vector<STextureData> m_SubTextureVec;
 };
 
-struct SSubMeshData
-{
-	SSubMeshData()
-	{
-		memset(m_SubMeshMatrix, 0, sizeof(m_SubMeshMatrix));
-	}
-
-	std::string m_SubMeshName;
-	float  m_SubMeshMatrix[16];
-	std::vector<SFace>	m_vFace;
-	std::vector<SVertex> m_vVectex;
-	SMaterialData m_cMaterial;
-};
-
 struct SMeshData
 {
+	SMeshData()
+	{
+		memset(m_MeshMatrix, 0, sizeof(m_MeshMatrix));
+	}
+
 	void WriteToFile(FILE* pFile);
 	void ReadFromFile(FILE* pFile);
 
-	std::string m_MeshName;
-	std::vector<SSubMeshData> m_SubMeshVec;
+	std::string				m_MeshName;
+	float					m_MeshMatrix[16];
+	std::vector<SFace>		m_vFace;
+	std::vector<SVertex>	m_vVectex;
+	SMaterialData			m_cMaterial;
 };
 
 struct SBoneData
@@ -99,10 +93,12 @@ struct SBoneData
 	{
 	}
 
-	Mat4 m_inverseBindMat;
+
+	int m_iParentIndex;
 
 	int m_iIndex;
-	int m_iParentIndex;
+	std::string  m_sName;
+	Mat4 m_inverseBindMat;
 	std::vector<int> m_vChildIndex;
 };
 
