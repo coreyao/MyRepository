@@ -57,6 +57,7 @@ class MeshExporter : public SceneExport
 		BOOL			NodeEnum(INode* node, SMeshData* pMeshNode);
 		BOOL			NodeEnum_Child(INode* node, SMeshData*  pMeshNode);
 		void			ParseGeomObject(INode* node, SMeshData* pMeshNode);
+		void			ParseBones(INode* pNode);
 
 		//Constructor/Destructor
 		MeshExporter();
@@ -275,14 +276,16 @@ int MeshExporter::ExportMesh(const char* szMeshName)
 		}  
 	}  
 
-	int numChildren = m_pInterface->GetRootNode()->NumberOfChildren();  
-	if(numChildren > 0)  
+	INode* pRootNode = m_pInterface->GetRootNode();
+
+	
+
+
+	int numChildren = pRootNode->NumberOfChildren();  
+	for (int idx = 0; idx < numChildren; idx++)  
 	{  
-		for (int idx = 0; idx < numChildren; idx++)  
-		{  
-			NodeEnum(m_pInterface->GetRootNode()->GetChildNode(idx), NULL);
-		}  
-	}  
+		NodeEnum(pRootNode->GetChildNode(idx), NULL);
+	}
 
 	int nMeshCount = m_MeshNodeVec.size();  
 	for(int m = 0; m < nMeshCount; ++m)  
@@ -355,16 +358,13 @@ BOOL MeshExporter::NodeEnum(INode* node,SMeshData* pMeshNode)
 
 	for (int c = 0; c < node->NumberOfChildren(); c++)  
 	{  
-		if (!NodeEnum_Child(node->GetChildNode(c), &tMeshNode))  
-		{  
-			break;  
-		}  
-	}  
+		if (!NodeEnum_Child(node->GetChildNode(c), &tMeshNode))
+			break;
+	}
 
 	if(tMeshNode.m_SubMeshVec.size() > 0)  
-	{  
-		m_MeshNodeVec.push_back(tMeshNode);  
-	}  
+		m_MeshNodeVec.push_back(tMeshNode);
+
 	return TRUE;  
 }  
 

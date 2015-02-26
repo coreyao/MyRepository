@@ -1,7 +1,33 @@
 #pragma once
 
-#include "../DataTypes.h"
+#include "../Utility.h"
 #include "OpenGLFrameWork.h"
+
+class CBone
+{
+public:
+	CBone() : m_pParent(nullptr)
+	{
+	}
+
+	void CalcPalette(Vec4* matrixPalette);
+
+	Mat4 m_localMat;
+	Mat4 m_worldMat;
+	SBoneData m_data;
+
+	std::vector<CBone*> m_vChildren;
+	CBone* m_pParent;
+};
+
+class CSkeleton
+{
+public:
+	Vec4* GetMatrixPalette();
+
+	Vec4* m_matrixPalette;
+	SSkeletonData m_skeletonData;
+};
 
 class COGLMesh : public CBaseMesh
 {

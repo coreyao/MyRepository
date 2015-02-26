@@ -158,3 +158,7 @@ void COGLMesh::SetTexture( const char* pTextureFileName )
 	}
 }
 
+Vec4* CSkeleton::GetMatrixPalette()
+{
+	return nullptr;
+}

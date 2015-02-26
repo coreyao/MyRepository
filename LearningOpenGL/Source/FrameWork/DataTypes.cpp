@@ -109,7 +109,3 @@ void SMeshData::ReadFromFile( FILE* hFile )
 	}
 }
 
-Vec4* CSkeleton::GetMatrixPalette()
-{
-	return nullptr;
-}
