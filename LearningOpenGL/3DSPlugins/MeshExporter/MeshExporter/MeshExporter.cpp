@@ -276,8 +276,7 @@ BOOL MeshExporter::NodeEnum(INode* node)
 
 	if ( is_bone(node) )
 	{
-		string sName = node->GetName();
-		sName;
+		ParseBones(node);
 	}
 	else
 	{
@@ -494,22 +493,36 @@ void MeshExporter::ParseGeomObject(INode* node)
 
 void MeshExporter::ParseBones( INode* pNode )
 {
-	if (is_bone(pNode))
+	SBoneData newBone;
+	newBone.m_iIndex = m_skeletonData.m_vBone.size() + 1;
+	newBone.m_sName = pNode->GetName();
+	GMatrix nodeTransform( pNode->GetNodeTM(0) );
+	for (int i = 0; i < 4; ++i)
 	{
-		SBoneData newBoneData;
-		newBoneData.m_iIndex = m_skeletonData.m_vBone.size() + 1;
-		newBoneData.m_sName = pNode->GetName();
-		//newBoneData.m_inverseBindMat = pNode->GetObjectTM(0);
+		for (int j = 0; j < 4; ++j)
+			newBone.m_inverseBindMat.set_basis_element(i, j, nodeTransform[i][j]);
 	}
+	newBone.m_inverseBindMat.transpose();
+	newBone.m_inverseBindMat.inverse();
+	m_skeletonData.m_vBone.push_back(newBone);
 
-	for (int i = 0; i < pNode->NumberOfChildren(); ++ i)
+	if ( pNode->GetParentNode() && is_bone( pNode->GetParentNode() ) )
 	{
-		this->ParseBones(pNode->GetChildNode(i));
+		for (auto& rBone : m_skeletonData.m_vBone)
+		{
+			if ( rBone.m_sName == pNode->GetParentNode()->GetName() )
+			{
+				newBone.m_iParentIndex = rBone.m_iIndex;
+			}
+		}
 	}
 }
 
 bool MeshExporter::is_bone( INode* node )
 {
+	if ( !node )
+		return false;
+
 	ObjectState pObs = node->EvalWorldState(0);
 	if (!pObs.obj)
 		return false;
