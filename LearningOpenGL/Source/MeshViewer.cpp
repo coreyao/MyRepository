@@ -12,7 +12,7 @@ float g_YAngle = 0.0f;
 void init()
 {
 	g_mesh.InitFromFile("niumowang.CSTM");
-	//g_mesh.SetTexture("HelloWorld.png");
+	g_mesh.SetTexture("niumowang.png");
 	g_mesh.m_worldPos[1] = -30.0f;
 }
 
