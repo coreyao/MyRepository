@@ -38,6 +38,13 @@ void SMeshData::WriteToFile(FILE* hFile)
 		m_skeleton.m_vBone[i].WriteToFile(hFile);
 	}
 
+	int iFrameNum = m_skeleton.m_vFrame.size();
+	fwrite(&iFrameNum, sizeof(int), 1, hFile);
+	for (int i = 0; i < iFrameNum; ++i)
+	{
+		m_skeleton.m_vFrame[i].WriteToFile(hFile);
+	}
+
 	fwrite(&m_MeshMatrix, sizeof(m_MeshMatrix), 1, hFile);
 }
 
@@ -86,11 +93,20 @@ void SMeshData::ReadFromFile( FILE* hFile )
 	fread(&iBoneNum, sizeof(int), 1, hFile);
 	m_skeleton.m_vBone.resize(iBoneNum);
 	for (int i = 0; i < iBoneNum; ++i)
+	{
 		m_skeleton.m_vBone[i].ReadFromFile(hFile);
+	}
+
+	int iFrameNum = 0;
+	fread(&iFrameNum, sizeof(int), 1, hFile);
+	m_skeleton.m_vFrame.resize(iFrameNum);
+	for (int i = 0; i < iFrameNum; ++i)
+	{
+		m_skeleton.m_vFrame[i].ReadFromFile(hFile);
+	}
 
 	fread(&m_MeshMatrix, sizeof(m_MeshMatrix), 1, hFile);
 }
-
 
 void SBoneData::WriteToFile( FILE* hFile )
 {
@@ -121,7 +137,7 @@ void SBoneData::ReadFromFile( FILE* hFile )
 
 	int iNameSize = 0;
 	fread(&iNameSize, sizeof(int), 1, hFile);
-	fread(tempBuf, _MAX_PATH, 1, hFile);
+	fread(tempBuf, iNameSize, 1, hFile);
 	m_sName = tempBuf;
 
 	fread(&m_originalBindMat, sizeof(m_originalBindMat), 1, hFile);
@@ -135,4 +151,25 @@ void SBoneData::ReadFromFile( FILE* hFile )
 		m_vChildIndex.resize(iChildNum);
 		fread(&m_vChildIndex.front(), sizeof(int), iChildNum, hFile);
 	}
+}
+
+void SBoneFrame::WriteToFile( FILE* hFile )
+{
+	fwrite(&m_iIndex, sizeof(int), 1, hFile);
+
+	int iKeyCount = m_vKey.size();
+	fwrite(&iKeyCount, sizeof(int), 1, hFile);
+	if ( iKeyCount > 0 )
+		fwrite(&m_vKey.front(), sizeof(SBoneKey), iKeyCount, hFile);
+}
+
+void SBoneFrame::ReadFromFile( FILE* hFile )
+{
+	fread(&m_iIndex, sizeof(int), 1, hFile);
+
+	int iKeyCount = 0;
+	fread(&iKeyCount, sizeof(int), 1, hFile);
+	m_vKey.resize(iKeyCount);
+	if ( iKeyCount > 0 )
+		fread(&m_vKey.front(), sizeof(SBoneKey), iKeyCount, hFile);
 }

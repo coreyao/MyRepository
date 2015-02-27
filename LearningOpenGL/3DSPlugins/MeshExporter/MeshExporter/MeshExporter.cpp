@@ -16,6 +16,7 @@
 #include "../../../Source/FrameWork/DataTypes.h"
 #include <string>
 #include <vector>
+#include <map>
 #include <sstream>
 #include <algorithm>
 #include <stdmat.h>
@@ -69,10 +70,12 @@ class MeshExporter : public SceneExport
 		void			ParseAllInfo();
 		void			ParseGeomObject(INode* nodee);
 		void			ParseBones(INode* pNode);
+		void			ParseBoneAnimation();
 		void			ParseMaterials();
 		bool			IsBone(INode* node);
 		SBoneData*		FindBoneDataByName(const char* pName);
 		ISkin*			FindSkinModifier(INode* pNode);
+		void			ConvertGMatrixToMat4(Mat4& outMat, const GMatrix& inputMatrix);
 
 		//Constructor/Destructor
 		MeshExporter();
@@ -85,7 +88,8 @@ class MeshExporter : public SceneExport
 
 		vector<SMaterialData>	m_AllMaterialVec;
 		vector<SMeshData>		m_MeshNodeVec;
-		vector<SBoneData>		m_allBoneData;
+		map<INode*, SBoneData>	m_allBoneData;
+		vector<SBoneFrame>		m_allBoneFrames;
 };
 
 class MeshExporterClassDesc : public ClassDesc2 
@@ -394,15 +398,9 @@ void MeshExporter::ParseGeomObject(INode* pNode)
 
 				int tVertexNum = mesh->getNumVerts();   
 				int tFaceNum = mesh->getNumFaces();  
-				Matrix3 tTMAfterWSMM = pNode->GetNodeTM(0);  
+				Matrix3 tTMAfterWSMM = pNode->GetNodeTM(0);
 				GMatrix tGMeshTM(tTMAfterWSMM);  
-				for(int m = 0 ; m < 4 ; m++)  
-				{  
-					for(int n = 0 ; n < 4 ; n++)  
-					{  
-						tMesh.m_MeshMatrix[m*4+n] = tGMeshTM[m][n]; 
-					}
-				}
+				ConvertGMatrixToMat4(tMesh.m_MeshMatrix, tGMeshTM);
 
 				for (int i = 0; i < tFaceNum; i++)  
 				{  
@@ -513,8 +511,11 @@ void MeshExporter::ParseGeomObject(INode* pNode)
 						}
 					}
 				}
+				
+				for (auto& rBone : m_allBoneData)
+					tMesh.m_skeleton.m_vBone.push_back(rBone.second);
 
-				tMesh.m_skeleton.m_vBone = m_allBoneData;
+				tMesh.m_skeleton.m_vFrame = m_allBoneFrames;
 				tMesh.m_vVectex = tVertexVec;
 				m_MeshNodeVec.push_back(tMesh);
 			}  
@@ -528,12 +529,7 @@ void MeshExporter::ParseBones( INode* pNode )
 	newBone.m_iIndex = m_allBoneData.size() + 1;
 	newBone.m_sName = pNode->GetName();
 	GMatrix nodeTransform( pNode->GetNodeTM(0) );
-	for (int i = 0; i < 4; ++i)
-	{
-		for (int j = 0; j < 4; ++j)
-			newBone.m_inverseBindMat.set_basis_element(i, j, nodeTransform[i][j]);
-	}
-	newBone.m_inverseBindMat.transpose();
+	ConvertGMatrixToMat4(newBone.m_inverseBindMat, nodeTransform);
 	newBone.m_inverseBindMat.inverse();
 
 	INode* pParentNode = pNode->GetParentNode();
@@ -542,9 +538,9 @@ void MeshExporter::ParseBones( INode* pNode )
 		SBoneData* pParentBone = nullptr;
 		for (auto& rBone : m_allBoneData)
 		{
-			if ( rBone.m_sName == pNode->GetParentNode()->GetName() )
+			if ( rBone.second.m_sName == pNode->GetParentNode()->GetName() )
 			{
-				pParentBone = &rBone;
+				pParentBone = &rBone.second;
 				break;
 			}
 		}
@@ -556,12 +552,7 @@ void MeshExporter::ParseBones( INode* pNode )
 
 			GMatrix parentTransform(pParentNode->GetNodeTM(0));
 			GMatrix tempMat = parentTransform.Inverse() * nodeTransform;
-			for (int i = 0; i < 4; ++i)
-			{
-				for (int j = 0; j < 4; ++j)
-					newBone.m_originalBindMat.set_basis_element(i, j, tempMat[i][j]);
-			}
-			newBone.m_originalBindMat.transpose();
+			ConvertGMatrixToMat4(newBone.m_originalBindMat, tempMat);
 		}
 	}
 	else
@@ -570,7 +561,7 @@ void MeshExporter::ParseBones( INode* pNode )
 		newBone.m_originalBindMat.identity();
 	}
 
-	m_allBoneData.push_back(newBone);
+	m_allBoneData.insert(std::pair<INode*, SBoneData>(pNode, newBone));
 }
 
 bool MeshExporter::IsBone( INode* node )
@@ -681,6 +672,8 @@ void MeshExporter::ParseAllInfo()
 
 	INode* pRootNode = m_pInterface->GetRootNode();
 	EnumBones(pRootNode);
+	ParseBoneAnimation();
+
 	EnumGeomObjects(pRootNode);
 }
 
@@ -714,11 +707,53 @@ SBoneData* MeshExporter::FindBoneDataByName( const char* pName )
 {
 	for (auto& pValue : m_allBoneData)
 	{
-		if ( pValue.m_sName == pName )
+		if ( pValue.second.m_sName == pName )
 		{
-			return &pValue;
+			return &pValue.second;
 		}
 	}
 
 	return nullptr;
+}
+
+void MeshExporter::ConvertGMatrixToMat4( Mat4& outMat, const GMatrix& inputMatrix )
+{
+	outMat.set(inputMatrix[0][0], inputMatrix[0][1], inputMatrix[0][2], inputMatrix[0][3]
+			, inputMatrix[2][0], inputMatrix[2][2], inputMatrix[2][1], inputMatrix[2][3]
+			, inputMatrix[1][0], inputMatrix[1][2], inputMatrix[1][1], inputMatrix[1][3]
+			, inputMatrix[3][0], inputMatrix[3][2], inputMatrix[3][1], inputMatrix[3][3]
+			);
+}
+
+void MeshExporter::ParseBoneAnimation()
+{
+	Interval ARange = m_pInterface->GetAnimRange();
+	TimeValue tAniTime = ARange.End()-ARange.Start();
+	TimeValue tTime = ARange.Start();
+	int gpf = GetTicksPerFrame();
+	int frameCount = tAniTime / gpf;
+	for(int i = 0; i < frameCount; ++i)
+	{
+		SBoneFrame tempFrame;
+		tempFrame.m_iIndex = i;
+		for(auto& rBone : m_allBoneData)
+		{
+			SBoneKey bKey;
+			GMatrix gm = rBone.first->GetNodeTM( i * gpf );
+			Point3 pos = gm.Translation();
+			Quat dir = gm.Rotation();
+			Point3 scale = gm.Scaling();
+
+			bKey.m_translation.set(pos.x, pos.z, pos.y);
+			bKey.m_rotation[0] = dir.w;
+			bKey.m_rotation[1] = dir.x;
+			bKey.m_rotation[2] = dir.z;
+			bKey.m_rotation[3] = dir.y;
+			bKey.m_scale.set(scale.x, scale.z, scale.y);
+			
+			tempFrame.m_vKey.push_back(bKey);
+		}
+
+		m_allBoneFrames.push_back(tempFrame);
+	}
 }

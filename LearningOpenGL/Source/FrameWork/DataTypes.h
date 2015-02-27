@@ -13,6 +13,8 @@ typedef cml::vector< float, cml::fixed<2> > Vec2;
 typedef cml::vector< float, cml::fixed<3> > Vec3;
 typedef cml::vector< float, cml::fixed<4> > Vec4;
 
+typedef cml::quaternion< float, cml::fixed<>, cml::scalar_first> Quaternion;
+
 struct Color4F
 {
 	Color4F() : r(0.0f), g(0.0f), b(0.0f), a(1.0f)
@@ -68,6 +70,22 @@ struct SMaterialData
 	std::vector<STextureData> m_SubTextureVec;
 };
 
+struct SBoneKey
+{
+	Vec3 m_translation;
+	Quaternion m_rotation;
+	Vec3 m_scale;
+};
+
+struct SBoneFrame 
+{
+	void WriteToFile(FILE* pFile);
+	void ReadFromFile(FILE* pFile);
+
+	int m_iIndex;
+	std::vector<SBoneKey> m_vKey;
+};
+
 struct SBoneData
 {
 	SBoneData()
@@ -91,21 +109,16 @@ class SSkeletonData
 {
 public:
 	std::vector<SBoneData> m_vBone;
+	std::vector<SBoneFrame> m_vFrame;
 };
-
 
 struct SMeshData
 {
-	SMeshData()
-	{
-		memset(m_MeshMatrix, 0, sizeof(m_MeshMatrix));
-	}
-
 	void WriteToFile(FILE* pFile);
 	void ReadFromFile(FILE* pFile);
 
 	std::string				m_MeshName;
-	float					m_MeshMatrix[16];
+	Mat4					m_MeshMatrix;
 	std::vector<SFace>		m_vFace;
 	std::vector<SVertex>	m_vVectex;
 	SMaterialData			m_cMaterial;
