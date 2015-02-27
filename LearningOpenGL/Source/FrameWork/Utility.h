@@ -43,6 +43,7 @@ public:
 	std::vector<CBone> m_vBone; 
 };
 
+class CBaseMesh;
 class CSkeletonAnimator
 {
 public:

@@ -68,5 +68,8 @@
     <None Include="..\Resource\Shaders\Mesh_Vertex_Shader.vert">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\Resource\Shaders\SkinMesh_Vertex_Shader.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
