@@ -37,7 +37,44 @@ void COGLMesh::InitSkeleton()
 {
 	for ( auto& rBoneData : m_data.m_skeleton.m_vBone )
 	{
+		CBone newBone;
+		newBone.m_data = rBoneData;
+		newBone.m_localMat = rBoneData.m_originalBindMat;
+		newBone.m_worldMat = rBoneData.m_originalBindMat;
+		m_skeleton.m_vBone.push_back(newBone);
+	}
 
+	auto FindCBoneByIndex = [this](int iIndex)
+	{
+		for (int i = 0; i < m_skeleton.m_vBone.size(); ++i)
+		{
+			if ( m_skeleton.m_vBone[i].m_data.m_iIndex == iIndex )
+			{
+				return &m_skeleton.m_vBone[i];
+			}
+		}
+
+		return (CBone*)nullptr;
+	};
+
+	for (int i = 0; i < m_skeleton.m_vBone.size(); ++i)
+	{
+		CBone* pCurBone = &m_skeleton.m_vBone[i];
+		int iParentIndex = pCurBone->m_data.m_iParentIndex;
+		if ( iParentIndex > 0 )
+		{
+			pCurBone->m_pParent = FindCBoneByIndex(iParentIndex);
+		}
+
+		for (auto& iChildIndex : pCurBone->m_data.m_vChildIndex)
+		{
+			if ( iChildIndex > 0 )
+			{
+				CBone* pBoneFound = FindCBoneByIndex(iChildIndex);
+				if ( pBoneFound )
+					pCurBone->m_vChildren.push_back( pBoneFound );
+			}
+		}
 	}
 }
 
@@ -62,7 +99,6 @@ void COGLMesh::Render()
 		glBindSampler(m_colorTexUnit, m_Sampler);
 	}
 
-	GLuint modelViewMatrixUnif = glGetUniformLocation(m_theProgram, "modelViewMatrix");
 	Mat4 viewMatrix;
 	cml::matrix_translation(viewMatrix, Vec3(0.0f, 0.0f, -100.0f));
 
@@ -78,7 +114,11 @@ void COGLMesh::Render()
 	Mat4 ModelViewMatrix;
 	ModelViewMatrix = viewMatrix * TranslationMatrix * ScaleMatrix * RotationMatrix;
 
+	GLuint modelViewMatrixUnif = glGetUniformLocation(m_theProgram, "modelViewMatrix");
 	glUniformMatrix4fv(modelViewMatrixUnif, 1, GL_FALSE, ModelViewMatrix.data());
+
+	GLuint matrixPaletteUnif = glGetUniformLocation(m_theProgram, "u_matrixPalette");
+	glUniform4fv( matrixPaletteUnif, (GLsizei)m_skeleton.m_vBone.size() * 3, (const float*)m_skeleton.GetMatrixPalette() );
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vertexIndexObj);
 	glDrawElements(GL_TRIANGLES, m_data.m_vFace.size() * 3, GL_UNSIGNED_INT, 0);
@@ -107,7 +147,7 @@ void COGLMesh::SetTexture( const char* pTextureFileName )
 void COGLMesh::InitProgram()
 {
 	std::vector<GLuint> shaderList;
-	shaderList.push_back(OpenGLFramework::LoadShader(GL_VERTEX_SHADER, SHADER_FILE_DIR + "Mesh_Vertex_Shader.vert"));
+	shaderList.push_back(OpenGLFramework::LoadShader(GL_VERTEX_SHADER, SHADER_FILE_DIR + "SkinMesh_Vertex_Shader.vert"));
 	shaderList.push_back(OpenGLFramework::LoadShader(GL_FRAGMENT_SHADER, SHADER_FILE_DIR + "Mesh_Fragment_Shader.frag"));
 	m_theProgram = OpenGLFramework::CreateProgram(shaderList);
 	std::for_each(shaderList.begin(), shaderList.end(), glDeleteShader);
@@ -165,46 +205,4 @@ void COGLMesh::InitVBOAndVAO()
 	glBindVertexArray(0);
 }
 
-Vec4* CSkeleton::GetMatrixPalette()
-{
-	return nullptr;
-}
 
-CSkeletonAnimator::CSkeletonAnimator()
-	: m_pTarget(nullptr)
-	, m_fElapsedTime(0.0f)
-{
-}
-
-void CSkeletonAnimator::SetTarget( CBaseMesh* pMesh )
-{
-	m_pTarget = pMesh;
-}
-
-void CSkeletonAnimator::Update( float fDeltaTime )
-{
-	if ( !m_pTarget )
-		return;
-
-	m_fElapsedTime += fDeltaTime;
-
-	for (int i = 0; i < m_pTarget->GetMeshData().m_skeleton.m_vFrame.size() - 1; ++i)
-	{
-		const SBoneFrame* pCurFrame = &m_pTarget->GetMeshData().m_skeleton.m_vFrame[i];
-		const SBoneFrame* pNextFrame = &m_pTarget->GetMeshData().m_skeleton.m_vFrame[i + 1];
-
-		float fStartTime = pCurFrame->m_fTime;
-		float fEndTime = pNextFrame->m_fTime;
-		float fCurTotalTime = fEndTime - fStartTime;
-
-		if ( m_fElapsedTime > fEndTime )
-			continue;
-
-		float fElapsedPercent = ( m_fElapsedTime - fStartTime ) / fCurTotalTime;
-
-		/*for ( int i = 0; i < m_pTarget->GetMeshData().m_skeleton.m_vBone.size(); ++i )
-		{
-
-		}*/
-	}
-}
