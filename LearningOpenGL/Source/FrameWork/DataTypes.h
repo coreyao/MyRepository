@@ -68,6 +68,32 @@ struct SMaterialData
 	std::vector<STextureData> m_SubTextureVec;
 };
 
+struct SBoneData
+{
+	SBoneData()
+		: m_iIndex(-1)
+		, m_iParentIndex(-1)
+	{
+	}
+
+	void WriteToFile(FILE* pFile);
+	void ReadFromFile(FILE* pFile);
+
+	int m_iParentIndex;
+	int m_iIndex;
+	std::string  m_sName;
+	Mat4 m_originalBindMat;
+	Mat4 m_inverseBindMat;
+	std::vector<int> m_vChildIndex;
+};
+
+class SSkeletonData
+{
+public:
+	std::vector<SBoneData> m_vBone;
+};
+
+
 struct SMeshData
 {
 	SMeshData()
@@ -85,27 +111,3 @@ struct SMeshData
 	SMaterialData			m_cMaterial;
 	SSkeletonData			m_skeleton;
 };
-
-struct SBoneData
-{
-	SBoneData()
-		: m_iIndex(-1)
-		, m_iParentIndex(-1)
-	{
-	}
-
-
-	int m_iParentIndex;
-
-	int m_iIndex;
-	std::string  m_sName;
-	Mat4 m_inverseBindMat;
-	std::vector<int> m_vChildIndex;
-};
-
-class SSkeletonData
-{
-public:
-	std::vector<SBoneData> m_vBone;
-};
-

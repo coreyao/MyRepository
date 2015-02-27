@@ -20,6 +20,8 @@
 #include <algorithm>
 #include <stdmat.h>
 #include <IGame/IGameType.h>
+#include <iskin.h>
+#include <modstack.h>
 
 #if VERSION_3DSMAX >= 7 << 16
 #include <CS/bipexp.h>
@@ -62,12 +64,15 @@ class MeshExporter : public SceneExport
 		void			ExportToFile( const char* szMeshName );
 		void			DoClean();
 		BOOL			SubTextureEnum(MtlBase* vMtl, vector<STextureData>& vTextureVec);
-		BOOL			NodeEnum(INode* node);
+		BOOL			EnumBones(INode* node);
+		BOOL			EnumGeomObjects(INode* node);
 		void			ParseAllInfo();
 		void			ParseGeomObject(INode* nodee);
 		void			ParseBones(INode* pNode);
 		void			ParseMaterials();
-		bool			is_bone(INode* node);
+		bool			IsBone(INode* node);
+		SBoneData*		FindBoneDataByName(const char* pName);
+		ISkin*			FindSkinModifier(INode* pNode);
 
 		//Constructor/Destructor
 		MeshExporter();
@@ -80,7 +85,7 @@ class MeshExporter : public SceneExport
 
 		vector<SMaterialData>	m_AllMaterialVec;
 		vector<SMeshData>		m_MeshNodeVec;
-		SSkeletonData			m_skeletonData;
+		vector<SBoneData>		m_allBoneData;
 };
 
 class MeshExporterClassDesc : public ClassDesc2 
@@ -270,40 +275,44 @@ int MeshExporter::ExportMesh(const char* szMeshName)
 	return 0;  
 }  
 
-BOOL MeshExporter::NodeEnum(INode* node)   
+BOOL MeshExporter::EnumBones(INode* node)   
 {  
 	if (!node) return FALSE;
 
-	if ( is_bone(node) )
-	{
+	if ( IsBone(node) )
 		ParseBones(node);
-	}
-	else
-	{
-		TimeValue tTime = 0;  
-		ObjectState os = node->EvalWorldState(tTime);
-		if (os.obj)
-		{  
-			DWORD SuperclassID = os.obj->SuperClassID();  
-			switch(SuperclassID)  
-			{  
-			case SHAPE_CLASS_ID:
-			case GEOMOBJECT_CLASS_ID:
-				ParseGeomObject(node);
-				break;  
-			default:  
-				break;  
-			}  
-		}
-	}
-
+	
 	for (int i = 0; i < node->NumberOfChildren(); ++i)
-	{
-		NodeEnum(node->GetChildNode(i));
-	}
+		EnumBones(node->GetChildNode(i));
 
 	return TRUE;  
 }  
+
+BOOL MeshExporter::EnumGeomObjects( INode* node )
+{
+	if (!node || IsBone(node) ) return FALSE;
+	
+	TimeValue tTime = 0;  
+	ObjectState os = node->EvalWorldState(tTime);
+	if (os.obj)
+	{  
+		DWORD SuperclassID = os.obj->SuperClassID();  
+		switch(SuperclassID)  
+		{  
+		case SHAPE_CLASS_ID:
+		case GEOMOBJECT_CLASS_ID:
+			ParseGeomObject(node);
+			break;  
+		default:  
+			break;  
+		}  
+	}
+
+	for (int i = 0; i < node->NumberOfChildren(); ++i)
+		EnumGeomObjects(node->GetChildNode(i));
+
+	return TRUE;  
+}
 
 BOOL MeshExporter::SubTextureEnum( MtlBase* vMtl, vector<STextureData>& vTextureVec )
 {
@@ -337,10 +346,10 @@ BOOL MeshExporter::SubTextureEnum( MtlBase* vMtl, vector<STextureData>& vTexture
 	return TRUE;  
 }
 
-void MeshExporter::ParseGeomObject(INode* node)
+void MeshExporter::ParseGeomObject(INode* pNode)
 {  
 	char  tText[200] = {0};
-	ObjectState os = node->EvalWorldState(0);   
+	ObjectState os = pNode->EvalWorldState(0);   
 	if (!os.obj || os.obj->ClassID() == Class_ID(TARGET_CLASS_ID, 0))  
 		return;
 
@@ -352,12 +361,12 @@ void MeshExporter::ParseGeomObject(INode* node)
 			TriObject* tri = (TriObject *) obj->ConvertToType(0, Class_ID(TRIOBJ_CLASS_ID, 0));  
 			if (tri)
 			{  
-				sprintf(tText,"Export Object:<%s>.............", node->GetName());  
+				sprintf(tText,"Export Object:<%s>.............", pNode->GetName());  
 				AddStrToOutPutListBox(tText);
 
 				SMeshData tMesh;
-				tMesh.m_MeshName = node->GetName();
-				Mtl* nodemtl = node->GetMtl();
+				tMesh.m_MeshName = pNode->GetName();
+				Mtl* nodemtl = pNode->GetMtl();
 				if (nodemtl)
 				{  
 					MtlBaseLib* scenemats = m_pInterface->GetSceneMtls();  
@@ -380,12 +389,12 @@ void MeshExporter::ParseGeomObject(INode* node)
 				mesh->buildNormals();
 				mesh->checkNormals(TRUE);
 
-				sprintf(tText,"Mesh:<%s> VertexCount:<%d>FaceCount<%d>",node->GetName(),mesh->getNumVerts(),mesh->getNumFaces());  
+				sprintf(tText,"Mesh:<%s> VertexCount:<%d>FaceCount<%d>",pNode->GetName(),mesh->getNumVerts(),mesh->getNumFaces());  
 				AddStrToOutPutListBox(tText);
 
 				int tVertexNum = mesh->getNumVerts();   
 				int tFaceNum = mesh->getNumFaces();  
-				Matrix3 tTMAfterWSMM = node->GetNodeTM(0);  
+				Matrix3 tTMAfterWSMM = pNode->GetNodeTM(0);  
 				GMatrix tGMeshTM(tTMAfterWSMM);  
 				for(int m = 0 ; m < 4 ; m++)  
 				{  
@@ -483,8 +492,30 @@ void MeshExporter::ParseGeomObject(INode* node)
 					}  
 				}  
   
-				tMesh.m_vVectex = tVertexVec;
+				ISkin* pSkinInfo = FindSkinModifier(pNode);
+				if ( pSkinInfo )
+				{
+					ISkinContextData* pSkinCtx = pSkinInfo->GetContextInterface(pNode);
+					for (int i = 0; i < tVertexNum; ++i)
+					{
+						int nBones = pSkinCtx->GetNumAssignedBones(i);	
+						for (int j = 0; j < nBones; ++j)
+						{
+							INode* pBone = pSkinInfo->GetBone(j);
+							char* bName = pBone->GetName();
+							float weight = pSkinCtx->GetBoneWeight(i,j);
+							SBoneData* pBoneData = FindBoneDataByName(bName);
+							if ( pBoneData )
+							{
+								tVertexVec[i].m_boneIndex[j] = pBoneData->m_iIndex;
+								tVertexVec[i].m_blendWeight[j] = weight;
+							}
+						}
+					}
+				}
 
+				tMesh.m_skeleton.m_vBone = m_allBoneData;
+				tMesh.m_vVectex = tVertexVec;
 				m_MeshNodeVec.push_back(tMesh);
 			}  
 		}  
@@ -494,7 +525,7 @@ void MeshExporter::ParseGeomObject(INode* node)
 void MeshExporter::ParseBones( INode* pNode )
 {
 	SBoneData newBone;
-	newBone.m_iIndex = m_skeletonData.m_vBone.size() + 1;
+	newBone.m_iIndex = m_allBoneData.size() + 1;
 	newBone.m_sName = pNode->GetName();
 	GMatrix nodeTransform( pNode->GetNodeTM(0) );
 	for (int i = 0; i < 4; ++i)
@@ -504,21 +535,45 @@ void MeshExporter::ParseBones( INode* pNode )
 	}
 	newBone.m_inverseBindMat.transpose();
 	newBone.m_inverseBindMat.inverse();
-	m_skeletonData.m_vBone.push_back(newBone);
 
-	if ( pNode->GetParentNode() && is_bone( pNode->GetParentNode() ) )
+	INode* pParentNode = pNode->GetParentNode();
+	if ( pParentNode && IsBone( pParentNode ) )
 	{
-		for (auto& rBone : m_skeletonData.m_vBone)
+		SBoneData* pParentBone = nullptr;
+		for (auto& rBone : m_allBoneData)
 		{
 			if ( rBone.m_sName == pNode->GetParentNode()->GetName() )
 			{
-				newBone.m_iParentIndex = rBone.m_iIndex;
+				pParentBone = &rBone;
+				break;
 			}
 		}
+
+		if ( pParentBone )
+		{
+			pParentBone->m_vChildIndex.push_back(newBone.m_iIndex);
+			newBone.m_iParentIndex = pParentBone->m_iIndex;
+
+			GMatrix parentTransform(pParentNode->GetNodeTM(0));
+			GMatrix tempMat = parentTransform.Inverse() * nodeTransform;
+			for (int i = 0; i < 4; ++i)
+			{
+				for (int j = 0; j < 4; ++j)
+					newBone.m_originalBindMat.set_basis_element(i, j, tempMat[i][j]);
+			}
+			newBone.m_originalBindMat.transpose();
+		}
 	}
+	else
+	{
+		newBone.m_inverseBindMat.identity();
+		newBone.m_originalBindMat.identity();
+	}
+
+	m_allBoneData.push_back(newBone);
 }
 
-bool MeshExporter::is_bone( INode* node )
+bool MeshExporter::IsBone( INode* node )
 {
 	if ( !node )
 		return false;
@@ -625,5 +680,45 @@ void MeshExporter::ParseAllInfo()
 	ParseMaterials();
 
 	INode* pRootNode = m_pInterface->GetRootNode();
-	NodeEnum(pRootNode);
+	EnumBones(pRootNode);
+	EnumGeomObjects(pRootNode);
+}
+
+ISkin* MeshExporter::FindSkinModifier( INode* pNode )
+{
+	Object* pObject = pNode->GetObjectRef(); 
+	if(pObject == 0) 
+		return 0;
+
+	// 循环检测所有的DerivedObject 
+	while(pObject->SuperClassID() == GEN_DERIVOB_CLASS_ID)
+	{ 
+		IDerivedObject* pDerivedObject = static_cast<IDerivedObject*>(pObject); 
+		for(int stackId = 0; stackId < pDerivedObject->NumModifiers(); stackId++)
+		{ 
+			Modifier * pModifier = pDerivedObject->GetModifier(stackId); 
+			//检测ClassID是不是Skin修改器
+			if(pModifier->ClassID() == SKIN_CLASSID)
+			{ 
+				return (ISkin*)pModifier->GetInterface(I_SKIN);
+			}
+		}
+
+		pObject = pDerivedObject->GetObjRef();//下一个Derived Object 
+	} 
+
+	return nullptr; 
+}
+
+SBoneData* MeshExporter::FindBoneDataByName( const char* pName )
+{
+	for (auto& pValue : m_allBoneData)
+	{
+		if ( pValue.m_sName == pName )
+		{
+			return &pValue;
+		}
+	}
+
+	return nullptr;
 }

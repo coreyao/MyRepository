@@ -29,7 +29,14 @@ void SMeshData::WriteToFile(FILE* hFile)
 	if(iIndexCount > 0 )  
 	{  
 		fwrite(&m_vFace.front(), sizeof(SFace), m_vFace.size(), hFile);  
-	}  
+	}
+
+	int iBoneNum = m_skeleton.m_vBone.size();
+	fwrite(&iBoneNum, sizeof(int), 1, hFile);
+	for (int i = 0; i < iBoneNum; ++i)
+	{
+		m_skeleton.m_vBone[i].WriteToFile(hFile);
+	}
 
 	fwrite(&m_MeshMatrix, sizeof(m_MeshMatrix), 1, hFile);
 }
@@ -75,6 +82,57 @@ void SMeshData::ReadFromFile( FILE* hFile )
 		fread(&m_vFace.front(), sizeof(SFace), iIndexCount, hFile);  
 	}
 
+	int iBoneNum = 0;
+	fread(&iBoneNum, sizeof(int), 1, hFile);
+	m_skeleton.m_vBone.resize(iBoneNum);
+	for (int i = 0; i < iBoneNum; ++i)
+		m_skeleton.m_vBone[i].ReadFromFile(hFile);
+
 	fread(&m_MeshMatrix, sizeof(m_MeshMatrix), 1, hFile);
 }
 
+
+void SBoneData::WriteToFile( FILE* hFile )
+{
+	fwrite(&m_iParentIndex, sizeof(int), 1, hFile);
+	fwrite(&m_iIndex, sizeof(int), 1, hFile);
+
+	int iNameSize = m_sName.size();
+	fwrite(&iNameSize, sizeof(int), 1, hFile);
+	fwrite(m_sName.c_str(), iNameSize, 1, hFile);
+
+	fwrite(&m_originalBindMat, sizeof(m_originalBindMat), 1, hFile);
+	fwrite(&m_inverseBindMat, sizeof(m_inverseBindMat), 1, hFile);
+
+	int iChildNum = m_vChildIndex.size();
+	fwrite(&iChildNum, sizeof(int), 1, hFile);
+	if ( iChildNum > 0 )
+	{
+		fwrite(&m_vChildIndex.front(), sizeof(int), m_vChildIndex.size(), hFile);
+	}
+}
+
+void SBoneData::ReadFromFile( FILE* hFile )
+{
+	char tempBuf[_MAX_PATH] = {0};
+
+	fread(&m_iParentIndex, sizeof(int), 1, hFile);
+	fread(&m_iIndex, sizeof(int), 1, hFile);
+
+	int iNameSize = 0;
+	fread(&iNameSize, sizeof(int), 1, hFile);
+	fread(tempBuf, _MAX_PATH, 1, hFile);
+	m_sName = tempBuf;
+
+	fread(&m_originalBindMat, sizeof(m_originalBindMat), 1, hFile);
+	fread(&m_inverseBindMat, sizeof(m_inverseBindMat), 1, hFile);
+
+	int iChildNum = m_vChildIndex.size();
+	fread(&iChildNum, sizeof(int), 1, hFile);
+
+	if ( iChildNum > 0 )
+	{
+		m_vChildIndex.resize(iChildNum);
+		fread(&m_vChildIndex.front(), sizeof(int), iChildNum, hFile);
+	}
+}

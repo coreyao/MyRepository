@@ -115,7 +115,7 @@ void COGLMesh::Render()
 
 	GLuint modelViewMatrixUnif = glGetUniformLocation(m_theProgram, "modelViewMatrix");
 	Mat4 viewMatrix;
-	cml::matrix_translation(viewMatrix, Vec3(0.0f, 0.0f, -300.0f));
+	cml::matrix_translation(viewMatrix, Vec3(0.0f, 0.0f, -100.0f));
 
 	Mat4 ScaleMatrix;
 	cml::matrix_scale(ScaleMatrix, m_scale);
