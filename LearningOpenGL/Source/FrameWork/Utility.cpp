@@ -18,9 +18,9 @@ void CBone::CalcPalette( Vec4* matrixPalette )
 {
 	Mat4 t = m_worldMat * m_data.m_inverseBindMat;
 
-	matrixPalette[0].set( t.basis_element(0, 0), t.basis_element(1, 0), t.basis_element(2, 0), t.basis_element(3, 0) );
-	matrixPalette[1].set( t.basis_element(0, 1), t.basis_element(1, 1), t.basis_element(2, 1), t.basis_element(3, 1) );
-	matrixPalette[2].set( t.basis_element(0, 2), t.basis_element(1, 2), t.basis_element(2, 2), t.basis_element(3, 2) );
+	matrixPalette[0].set( t.basis_element(0, 0), t.basis_element(0, 1), t.basis_element(0, 2), t.basis_element(0, 3) );
+	matrixPalette[1].set( t.basis_element(1, 0), t.basis_element(1, 1), t.basis_element(1, 2), t.basis_element(1, 3) );
+	matrixPalette[2].set( t.basis_element(2, 0), t.basis_element(2, 1), t.basis_element(2, 2), t.basis_element(2, 3) );
 }
 
 Vec4* CSkeleton::GetMatrixPalette()

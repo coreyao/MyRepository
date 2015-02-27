@@ -37,7 +37,6 @@ vec4 getPosition()
         matrixPalette3 += u_matrixPalette[matrixIndex + 2] * blendWeight;
     }
     
-    
     blendWeight = boneWeight[2];
     if (blendWeight > 0.0)
     {
@@ -57,11 +56,10 @@ vec4 getPosition()
     }
 
     vec4 _skinnedPosition;
-    vec4 pos = vec4(position, 1.0);
-    _skinnedPosition.x = dot(pos, matrixPalette1);
-    _skinnedPosition.y = dot(pos, matrixPalette2);
-    _skinnedPosition.z = dot(pos, matrixPalette3);
-    _skinnedPosition.w = pos.w;
+    _skinnedPosition.x = dot(position, matrixPalette1);
+    _skinnedPosition.y = dot(position, matrixPalette2);
+    _skinnedPosition.z = dot(position, matrixPalette3);
+    _skinnedPosition.w = position.w;
     
     return _skinnedPosition;
 }
