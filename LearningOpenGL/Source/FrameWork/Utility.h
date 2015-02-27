@@ -18,6 +18,7 @@ class CBaseMesh
 {
 public:
 	virtual void Render() = 0;
+	const SMeshData& GetMeshData() {return m_data;}
 
 	Vec2 m_worldPos;
 	Vec3 m_rotation;
@@ -26,4 +27,3 @@ public:
 protected:
 	SMeshData m_data;
 };
-

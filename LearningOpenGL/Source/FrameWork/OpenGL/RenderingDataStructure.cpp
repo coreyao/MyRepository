@@ -27,69 +27,18 @@ void COGLMesh::InitFromFile( const char* pMeshFileName )
 
 	m_data.ReadFromFile(pMeshFile);
 
-	std::vector<GLuint> shaderList;
-	shaderList.push_back(OpenGLFramework::LoadShader(GL_VERTEX_SHADER, SHADER_FILE_DIR + "Mesh_Vertex_Shader.vert"));
-	shaderList.push_back(OpenGLFramework::LoadShader(GL_FRAGMENT_SHADER, SHADER_FILE_DIR + "Mesh_Fragment_Shader.frag"));
-	m_theProgram = OpenGLFramework::CreateProgram(shaderList);
-	std::for_each(shaderList.begin(), shaderList.end(), glDeleteShader);
+	InitProgram();
+	InitMaterial();
+	InitVBOAndVAO();
+	InitSkeleton();
+}
 
-	GLuint colorTextureUnif = glGetUniformLocation(m_theProgram, "colorTexture");
-	glUseProgram(m_theProgram);
-	glUniform1i(colorTextureUnif, m_colorTexUnit);
-
-	GLuint perspectiveMatrixUnif = glGetUniformLocation(m_theProgram, "perspectiveMatrix");
-	Mat4 perspectiveMatrix;
-	cml::matrix_perspective_xfov_RH(perspectiveMatrix, 90.0f, (float)RESOLUTION_WIDTH / (float)RESOLUTION_HEIGHT, 1.0f, 1000.0f, cml::z_clip_neg_one);
-	glUniformMatrix4fv(perspectiveMatrixUnif, 1, GL_FALSE, perspectiveMatrix.data());
-
-	glUseProgram(0);
-
-	glGenBuffers(1, &m_vertexDataObj);
-	glBindBuffer(GL_ARRAY_BUFFER, m_vertexDataObj);
-	glBufferData(GL_ARRAY_BUFFER, m_data.m_vVectex.size() * sizeof(SVertex), &m_data.m_vVectex.front(), GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	glGenBuffers(1, &m_vertexIndexObj);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vertexIndexObj);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_data.m_vFace.size() * sizeof(SFace), &m_data.m_vFace.front(), GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-	std::string sTextureFile;
-	if ( !m_data.m_cMaterial.m_SubTextureVec.empty() )
-		sTextureFile = m_data.m_cMaterial.m_SubTextureVec[0].m_sFileName;
-
-	if ( !sTextureFile.empty() )
+void COGLMesh::InitSkeleton()
+{
+	for ( auto& rBoneData : m_data.m_skeleton.m_vBone )
 	{
-		CPNGReader pngReader(sTextureFile);
-		if ( pngReader.GetData() )
-		{
-			glGenTextures(1, &m_Texture);
-			glBindTexture(GL_TEXTURE_2D, m_Texture);
 
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pngReader.GetWidth(), pngReader.GetHeight(), 0,
-				GL_RGBA, GL_UNSIGNED_BYTE, pngReader.GetData());
-
-			glBindTexture(GL_TEXTURE_2D, 0);
-		}
 	}
-
-	glGenSamplers(1, &m_Sampler);
-	glSamplerParameteri(m_Sampler, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glSamplerParameteri(m_Sampler, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glSamplerParameteri(m_Sampler, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glSamplerParameteri(m_Sampler, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	
-	glGenVertexArrays(1, &m_vertexAttributeObj);
-	glBindVertexArray(m_vertexAttributeObj);
-
-	glBindBuffer(GL_ARRAY_BUFFER, m_vertexDataObj);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(SVertex), 0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), (void*)(6 * sizeof(float)));
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
 }
 
 void COGLMesh::Render()
@@ -155,7 +104,107 @@ void COGLMesh::SetTexture( const char* pTextureFileName )
 	}
 }
 
+void COGLMesh::InitProgram()
+{
+	std::vector<GLuint> shaderList;
+	shaderList.push_back(OpenGLFramework::LoadShader(GL_VERTEX_SHADER, SHADER_FILE_DIR + "Mesh_Vertex_Shader.vert"));
+	shaderList.push_back(OpenGLFramework::LoadShader(GL_FRAGMENT_SHADER, SHADER_FILE_DIR + "Mesh_Fragment_Shader.frag"));
+	m_theProgram = OpenGLFramework::CreateProgram(shaderList);
+	std::for_each(shaderList.begin(), shaderList.end(), glDeleteShader);
+
+	GLuint colorTextureUnif = glGetUniformLocation(m_theProgram, "colorTexture");
+	glUseProgram(m_theProgram);
+	glUniform1i(colorTextureUnif, m_colorTexUnit);
+
+	GLuint perspectiveMatrixUnif = glGetUniformLocation(m_theProgram, "perspectiveMatrix");
+	Mat4 perspectiveMatrix;
+	cml::matrix_perspective_xfov_RH(perspectiveMatrix, 90.0f, (float)RESOLUTION_WIDTH / (float)RESOLUTION_HEIGHT, 1.0f, 1000.0f, cml::z_clip_neg_one);
+	glUniformMatrix4fv(perspectiveMatrixUnif, 1, GL_FALSE, perspectiveMatrix.data());
+
+	glUseProgram(0);
+}
+
+void COGLMesh::InitMaterial()
+{
+	std::string sTextureFile;
+	if ( !m_data.m_cMaterial.m_SubTextureVec.empty() )
+		sTextureFile = m_data.m_cMaterial.m_SubTextureVec[0].m_sFileName;
+
+	if ( !sTextureFile.empty() )
+		SetTexture(sTextureFile.c_str());
+
+	glGenSamplers(1, &m_Sampler);
+	glSamplerParameteri(m_Sampler, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glSamplerParameteri(m_Sampler, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glSamplerParameteri(m_Sampler, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glSamplerParameteri(m_Sampler, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+}
+
+void COGLMesh::InitVBOAndVAO()
+{
+	glGenBuffers(1, &m_vertexDataObj);
+	glBindBuffer(GL_ARRAY_BUFFER, m_vertexDataObj);
+	glBufferData(GL_ARRAY_BUFFER, m_data.m_vVectex.size() * sizeof(SVertex), &m_data.m_vVectex.front(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glGenBuffers(1, &m_vertexIndexObj);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vertexIndexObj);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_data.m_vFace.size() * sizeof(SFace), &m_data.m_vFace.front(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	glGenVertexArrays(1, &m_vertexAttributeObj);
+	glBindVertexArray(m_vertexAttributeObj);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_vertexDataObj);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(SVertex), 0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), (void*)(6 * sizeof(float)));
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+}
+
 Vec4* CSkeleton::GetMatrixPalette()
 {
 	return nullptr;
+}
+
+CSkeletonAnimator::CSkeletonAnimator()
+	: m_pTarget(nullptr)
+	, m_fElapsedTime(0.0f)
+{
+}
+
+void CSkeletonAnimator::SetTarget( CBaseMesh* pMesh )
+{
+	m_pTarget = pMesh;
+}
+
+void CSkeletonAnimator::Update( float fDeltaTime )
+{
+	if ( !m_pTarget )
+		return;
+
+	m_fElapsedTime += fDeltaTime;
+
+	for (int i = 0; i < m_pTarget->GetMeshData().m_skeleton.m_vFrame.size() - 1; ++i)
+	{
+		const SBoneFrame* pCurFrame = &m_pTarget->GetMeshData().m_skeleton.m_vFrame[i];
+		const SBoneFrame* pNextFrame = &m_pTarget->GetMeshData().m_skeleton.m_vFrame[i + 1];
+
+		float fStartTime = pCurFrame->m_fTime;
+		float fEndTime = pNextFrame->m_fTime;
+		float fCurTotalTime = fEndTime - fStartTime;
+
+		if ( m_fElapsedTime > fEndTime )
+			continue;
+
+		float fElapsedPercent = ( m_fElapsedTime - fStartTime ) / fCurTotalTime;
+
+		/*for ( int i = 0; i < m_pTarget->GetMeshData().m_skeleton.m_vBone.size(); ++i )
+		{
+
+		}*/
+	}
 }

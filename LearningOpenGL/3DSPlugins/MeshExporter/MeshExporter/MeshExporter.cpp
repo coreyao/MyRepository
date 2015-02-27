@@ -728,7 +728,7 @@ void MeshExporter::ConvertGMatrixToMat4( Mat4& outMat, const GMatrix& inputMatri
 void MeshExporter::ParseBoneAnimation()
 {
 	Interval ARange = m_pInterface->GetAnimRange();
-	TimeValue tAniTime = ARange.End()-ARange.Start();
+	TimeValue tAniTime = ARange.End() - ARange.Start();
 	TimeValue tTime = ARange.Start();
 	int gpf = GetTicksPerFrame();
 	int frameCount = tAniTime / gpf;
@@ -751,6 +751,7 @@ void MeshExporter::ParseBoneAnimation()
 			bKey.m_rotation[3] = dir.y;
 			bKey.m_scale.set(scale.x, scale.z, scale.y);
 			
+			tempFrame.m_fTime = i / 30.0f;
 			tempFrame.m_vKey.push_back(bKey);
 		}
 

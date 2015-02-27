@@ -24,9 +24,20 @@ class CSkeleton
 {
 public:
 	Vec4* GetMatrixPalette();
+	std::vector<CBone> m_vBone; 
+};
 
-	Vec4* m_matrixPalette;
-	SSkeletonData m_skeletonData;
+class CSkeletonAnimator
+{
+public:
+	CSkeletonAnimator();
+
+	void SetTarget(CBaseMesh* pMesh);
+	void Update(float fDeltaTime);
+
+protected:
+	CBaseMesh* m_pTarget;
+	float m_fElapsedTime;
 };
 
 class COGLMesh : public CBaseMesh
@@ -39,6 +50,13 @@ public:
 	void InitFromFile(const char* pMeshFileName);
 	void SetTexture(const char* pTextureFileName);
 
+private:
+	void InitSkeleton();
+	void InitProgram();
+	void InitMaterial();
+	void InitVBOAndVAO();
+
+private:
 	GLuint m_theProgram;
 	int m_colorTexUnit;
 
@@ -47,4 +65,7 @@ public:
 	GLuint m_vertexAttributeObj;
 	GLuint m_Texture;
 	GLuint m_Sampler;
+
+	CSkeleton m_skeleton;
 };
+

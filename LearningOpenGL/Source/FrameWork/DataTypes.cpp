@@ -156,6 +156,7 @@ void SBoneData::ReadFromFile( FILE* hFile )
 void SBoneFrame::WriteToFile( FILE* hFile )
 {
 	fwrite(&m_iIndex, sizeof(int), 1, hFile);
+	fwrite(&m_fTime, sizeof(float), 1, hFile);
 
 	int iKeyCount = m_vKey.size();
 	fwrite(&iKeyCount, sizeof(int), 1, hFile);
@@ -166,6 +167,7 @@ void SBoneFrame::WriteToFile( FILE* hFile )
 void SBoneFrame::ReadFromFile( FILE* hFile )
 {
 	fread(&m_iIndex, sizeof(int), 1, hFile);
+	fread(&m_fTime, sizeof(float), 1, hFile);
 
 	int iKeyCount = 0;
 	fread(&iKeyCount, sizeof(int), 1, hFile);

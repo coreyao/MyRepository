@@ -79,10 +79,17 @@ struct SBoneKey
 
 struct SBoneFrame 
 {
+	SBoneFrame()
+		: m_iIndex(-1)
+		, m_fTime(0.0f)
+	{
+	}
+
 	void WriteToFile(FILE* pFile);
 	void ReadFromFile(FILE* pFile);
 
 	int m_iIndex;
+	float m_fTime;
 	std::vector<SBoneKey> m_vKey;
 };
 
