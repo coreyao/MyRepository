@@ -119,7 +119,7 @@ void CSkeletonAnimator::Update( float fDeltaTime )
 	if ( bAllFinished )
 	{
 		if ( m_bLoop )
-		Reset();
+			Reset();
 	}
 }
 

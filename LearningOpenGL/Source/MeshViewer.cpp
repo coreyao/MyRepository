@@ -15,6 +15,7 @@ void init()
 	g_mesh.InitFromFile("bat_0.CSTM");
 	g_mesh.SetTexture("BatArmor.png");
 	g_mesh.m_worldPos.set(0, -30, -100);
+	//g_mesh.m_scale.set(2.0f, 2.0f, 2.0f);
 	g_animator.SetTarget(&g_mesh);
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
