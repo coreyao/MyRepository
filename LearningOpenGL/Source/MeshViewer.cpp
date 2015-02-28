@@ -27,7 +27,7 @@ void display()
 	glClearDepth(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	g_animator.Update(0.001f);
+	g_animator.Update(0.005f);
 
 	g_mesh.m_rotation[0] = cml::rad(g_XAngle);
 	g_mesh.m_rotation[1] = cml::rad(g_YAngle);

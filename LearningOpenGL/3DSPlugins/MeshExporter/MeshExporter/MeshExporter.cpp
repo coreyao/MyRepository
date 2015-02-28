@@ -508,7 +508,7 @@ void MeshExporter::ParseGeomObject(INode* pNode)
 								SBoneData* pBoneData = FindBoneDataByName(bName);
 								if ( pBoneData )
 								{
-									tMesh.m_skeleton.m_vSkinBone.insert(pBoneData->m_iIndex);
+									tMesh.m_skeleton.m_vSkinBone.push_back(pBoneData->m_iIndex);
 									int iIndex = 0;
 									for ( auto& rBoneDataIndex : tMesh.m_skeleton.m_vSkinBone )
 									{

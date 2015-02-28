@@ -123,7 +123,7 @@ class SSkeletonData
 {
 public:
 	std::vector<SBoneData> m_vBone;
-	std::set<int> m_vSkinBone;
+	std::vector<int> m_vSkinBone;
 	std::vector<SBoneFrame> m_vFrame;
 };
 

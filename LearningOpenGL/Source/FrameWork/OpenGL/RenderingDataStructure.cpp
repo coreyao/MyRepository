@@ -37,6 +37,12 @@ void COGLMesh::InitFromFile( const char* pMeshFileName )
 			cout << rVertex.m_blendWeight[i] << " "; 
 		}
 		cout << endl;
+
+		for (int i = 0; i < 4; ++i)
+		{
+			cout << rVertex.m_boneIndex[i] << " "; 
+		}
+		cout << endl << endl;
 	}
 
 	InitProgram();
