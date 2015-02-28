@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <string>
 #include <vector>
+#include <set>
 
 #include "cml/cml.h"
 
@@ -116,6 +117,7 @@ class SSkeletonData
 {
 public:
 	std::vector<SBoneData> m_vBone;
+	std::set<int> m_vSkinBone;
 	std::vector<SBoneFrame> m_vFrame;
 };
 

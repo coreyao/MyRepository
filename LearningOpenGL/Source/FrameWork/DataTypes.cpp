@@ -38,6 +38,13 @@ void SMeshData::WriteToFile(FILE* hFile)
 		m_skeleton.m_vBone[i].WriteToFile(hFile);
 	}
 
+	int iSkinBoneNum = m_skeleton.m_vSkinBone.size();
+	fwrite(&iSkinBoneNum, sizeof(int), 1, hFile);
+	for (auto& rBoneIndex : m_skeleton.m_vSkinBone)
+	{
+		fwrite(&rBoneIndex, sizeof(int), 1, hFile);  
+	}
+
 	int iFrameNum = m_skeleton.m_vFrame.size();
 	fwrite(&iFrameNum, sizeof(int), 1, hFile);
 	for (int i = 0; i < iFrameNum; ++i)
@@ -95,6 +102,15 @@ void SMeshData::ReadFromFile( FILE* hFile )
 	for (int i = 0; i < iBoneNum; ++i)
 	{
 		m_skeleton.m_vBone[i].ReadFromFile(hFile);
+	}
+
+	int iSkinBoneNum = 0;
+	fread(&iSkinBoneNum, sizeof(int), 1, hFile);
+	for ( int i = 0; i < iSkinBoneNum; ++i)
+	{
+		int iBoneIndex = 0;
+		fread(&iBoneIndex, sizeof(int), 1, hFile);  
+		m_skeleton.m_vSkinBone.insert(iBoneIndex);
 	}
 
 	int iFrameNum = 0;

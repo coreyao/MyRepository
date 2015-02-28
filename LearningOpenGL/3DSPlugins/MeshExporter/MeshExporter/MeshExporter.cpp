@@ -505,7 +505,17 @@ void MeshExporter::ParseGeomObject(INode* pNode)
 							SBoneData* pBoneData = FindBoneDataByName(bName);
 							if ( pBoneData )
 							{
-								tVertexVec[i].m_boneIndex[j] = pBoneData->m_iIndex;
+								tMesh.m_skeleton.m_vSkinBone.insert(pBoneData->m_iIndex);
+								int iIndex = 0;
+								for ( auto& rBoneDataIndex : tMesh.m_skeleton.m_vSkinBone )
+								{
+									if ( rBoneDataIndex == pBoneData->m_iIndex )
+										break;
+
+									++iIndex;
+								}
+
+								tVertexVec[i].m_boneIndex[j] = iIndex;
 								tVertexVec[i].m_blendWeight[j] = weight;
 							}
 						}
