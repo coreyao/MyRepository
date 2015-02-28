@@ -14,6 +14,12 @@
 #define MESH_FILE_DIR std::string("../Resource/Mesh/")
 #endif
 
+#ifdef  _WIN64
+#define offsetof(s,m)   (size_t)( (ptrdiff_t)&reinterpret_cast<const volatile char&>((((s *)0)->m)) )
+#else
+#define offsetof(s,m)   (size_t)&reinterpret_cast<const volatile char&>((((s *)0)->m))
+#endif
+
 class CBone
 {
 public:
@@ -66,7 +72,7 @@ public:
 	virtual void Render() = 0;
 	const SMeshData& GetMeshData() {return m_data;}
 
-	Vec2 m_worldPos;
+	Vec3 m_worldPos;
 	Vec3 m_rotation;
 	Vec3 m_scale;
 	CSkeleton m_skeleton;

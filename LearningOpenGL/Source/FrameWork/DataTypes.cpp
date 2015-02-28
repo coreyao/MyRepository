@@ -98,12 +98,15 @@ void SMeshData::ReadFromFile( FILE* hFile )
 
 	int iBoneNum = 0;
 	fread(&iBoneNum, sizeof(int), 1, hFile);
-	m_skeleton.m_vBone.resize(iBoneNum);
-	for (int i = 0; i < iBoneNum; ++i)
+	if ( iBoneNum > 0 )
 	{
-		m_skeleton.m_vBone[i].ReadFromFile(hFile);
+		m_skeleton.m_vBone.resize(iBoneNum);
+		for (int i = 0; i < iBoneNum; ++i)
+		{
+			m_skeleton.m_vBone[i].ReadFromFile(hFile);
+		}
 	}
-
+	
 	int iSkinBoneNum = 0;
 	fread(&iSkinBoneNum, sizeof(int), 1, hFile);
 	for ( int i = 0; i < iSkinBoneNum; ++i)
@@ -115,10 +118,13 @@ void SMeshData::ReadFromFile( FILE* hFile )
 
 	int iFrameNum = 0;
 	fread(&iFrameNum, sizeof(int), 1, hFile);
-	m_skeleton.m_vFrame.resize(iFrameNum);
-	for (int i = 0; i < iFrameNum; ++i)
+	if ( iFrameNum > 0 )
 	{
-		m_skeleton.m_vFrame[i].ReadFromFile(hFile);
+		m_skeleton.m_vFrame.resize(iFrameNum);
+		for (int i = 0; i < iFrameNum; ++i)
+		{
+			m_skeleton.m_vFrame[i].ReadFromFile(hFile);
+		}
 	}
 
 	fread(&m_MeshMatrix, sizeof(m_MeshMatrix), 1, hFile);

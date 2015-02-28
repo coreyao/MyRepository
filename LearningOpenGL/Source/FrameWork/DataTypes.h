@@ -44,6 +44,12 @@ struct SFace
 
 struct SVertex
 {
+	SVertex()
+	{
+		m_boneIndex.zero();
+		m_blendWeight.zero();
+	}
+
 	Vec3 m_position;
 	Vec3 m_normal;
 	Vec2 m_texCoord;

@@ -495,8 +495,7 @@ void MeshExporter::ParseGeomObject(INode* pNode)
 				if ( pSkinInfo )
 				{
 					ISkinContextData* pSkinCtx = pSkinInfo->GetContextInterface(pNode);
-					int iPointNum = pSkinCtx->GetNumPoints();
-					for (int i = 0; i < iPointNum; ++i)
+					for (int i = 0; i < tVertexNum; ++i)
 					{
 						int nBones = pSkinCtx->GetNumAssignedBones(i);	
 						for (int j = 0; j < nBones; ++j)
