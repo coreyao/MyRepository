@@ -76,6 +76,15 @@ void COGLMesh::InitSkeleton()
 			}
 		}
 	}
+
+	for (auto& rBoneIndex : m_data.m_skeleton.m_vSkinBone)
+	{
+		CBone* pBoneFound = FindCBoneByIndex(rBoneIndex);
+		if ( pBoneFound )
+		{
+			m_skeleton.m_vSkinBone.push_back(pBoneFound);
+		}
+	}
 }
 
 void COGLMesh::Render()

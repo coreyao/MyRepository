@@ -40,7 +40,8 @@ public:
 	Vec4* GetMatrixPalette();
 
 	Vec4* m_pMatrixPalette;
-	std::vector<CBone> m_vBone; 
+	std::vector<CBone> m_vBone;
+	std::vector<CBone*> m_vSkinBone;
 };
 
 class CBaseMesh;
@@ -51,10 +52,12 @@ public:
 
 	void SetTarget(CBaseMesh* pMesh);
 	void Update(float fDeltaTime);
+	void Reset();
 
 protected:
 	CBaseMesh* m_pTarget;
 	float m_fElapsedTime;
+	bool m_bLoop;
 };
 
 class CBaseMesh

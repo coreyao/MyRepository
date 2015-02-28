@@ -27,13 +27,13 @@ Vec4* CSkeleton::GetMatrixPalette()
 {
 	if ( !m_pMatrixPalette )
 	{
-		m_pMatrixPalette = new Vec4[m_vBone.size() * 3];
+		m_pMatrixPalette = new Vec4[m_vSkinBone.size() * 3];
 	}
 
 	int i = 0;
-	for ( auto& cBone : m_vBone )
+	for ( auto& cBone : m_vSkinBone )
 	{
-		cBone.CalcPalette(&m_pMatrixPalette[i++ * 3]);
+		cBone->CalcPalette(&m_pMatrixPalette[i++ * 3]);
 	}
 
 	return m_pMatrixPalette;
@@ -42,6 +42,7 @@ Vec4* CSkeleton::GetMatrixPalette()
 CSkeletonAnimator::CSkeletonAnimator()
 	: m_pTarget(nullptr)
 	, m_fElapsedTime(0.0f)
+	, m_bLoop(true)
 {
 }
 
@@ -57,6 +58,7 @@ void CSkeletonAnimator::Update( float fDeltaTime )
 
 	m_fElapsedTime += fDeltaTime;
 
+	bool bAllFinished = false;
 	for (int i = 0; i < m_pTarget->GetMeshData().m_skeleton.m_vFrame.size() - 1; ++i)
 	{
 		const SBoneFrame* pCurFrame = &m_pTarget->GetMeshData().m_skeleton.m_vFrame[i];
@@ -67,7 +69,15 @@ void CSkeletonAnimator::Update( float fDeltaTime )
 		float fCurTotalTime = fEndTime - fStartTime;
 
 		if ( m_fElapsedTime > fEndTime )
+		{
+			bool bLast = ( i == m_pTarget->GetMeshData().m_skeleton.m_vFrame.size() - 2 );
+			if ( bLast )
+			{
+				bAllFinished = true;
+				break;
+			}
 			continue;
+		}
 
 		float fElapsedPercent = ( m_fElapsedTime - fStartTime ) / fCurTotalTime;
 		for ( int iBoneIdx = 0; iBoneIdx < m_pTarget->m_skeleton.m_vBone.size(); ++iBoneIdx )
@@ -88,4 +98,15 @@ void CSkeletonAnimator::Update( float fDeltaTime )
 			m_pTarget->m_skeleton.m_vBone[iBoneIdx].m_worldMat = translationMatrix * scaleMatrix * rotationMatrix;
 		}
 	}
+
+	if ( bAllFinished )
+	{
+		/*if ( m_bLoop )
+			Reset();*/
+	}
+}
+
+void CSkeletonAnimator::Reset()
+{
+	m_fElapsedTime = 0.0f;
 }
