@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Network">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="ClientCMD">
+      <UniqueIdentifier>{97114d57-46c9-494f-a558-7805d0b0d435}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Source\Application\Client\Network\ServerConnector.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\Client\ClientCMD.cpp">
+      <Filter>ClientCMD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\Client\ClientPlayer.cpp">
+      <Filter>ClientCMD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\Client\main.cpp" />
+    <ClCompile Include="..\..\..\Source\Application\Client\ChatHistoryManager.cpp">
+      <Filter>ClientCMD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\Client\FileTransManager.cpp">
+      <Filter>ClientCMD</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Source\Application\Client\Network\ServerConnector.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\Client\ClientCMD.h">
+      <Filter>ClientCMD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\Client\ClientPlayer.h">
+      <Filter>ClientCMD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\Client\ChatHistoryManager.h">
+      <Filter>ClientCMD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\Client\FileTransManager.h">
+      <Filter>ClientCMD</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Network">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="GateServer">
+      <UniqueIdentifier>{89630899-f483-49f7-bdc5-66ccffec78fd}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Source\Application\GateServer\Network\ClientListener.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\GateServer\Network\ManagerServerConnector.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\GateServer\ClientSessionExt.cpp">
+      <Filter>GateServer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\GateServer\GateClient.cpp">
+      <Filter>GateServer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\GateServer\GateServer.cpp">
+      <Filter>GateServer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\GateServer\Main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Source\Application\GateServer\Network\ClientListener.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\GateServer\Network\ManagerServerConnector.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\GateServer\ClientSessionExt.h">
+      <Filter>GateServer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\GateServer\GateClient.h">
+      <Filter>GateServer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\GateServer\GateServer.h">
+      <Filter>GateServer</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

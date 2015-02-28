@@ -1,0 +1,315 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Lockers">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="XString">
+      <UniqueIdentifier>{881c3305-4e14-4381-b991-78854478bc07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TimeInfo">
+      <UniqueIdentifier>{85047430-bb0e-44c3-92c6-e4dc161ac951}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SmartPtr">
+      <UniqueIdentifier>{94ba9496-5b55-423d-ae7b-e2fc0319b11d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FileIO">
+      <UniqueIdentifier>{ea521688-830b-48de-b368-62936515a590}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FileIO\Appenders">
+      <UniqueIdentifier>{a1a464e7-6c0e-460f-b8ab-0f2dec939e7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MSINI">
+      <UniqueIdentifier>{f7c576e6-0198-4a62-acef-ff0fa4ebbf19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="XThread">
+      <UniqueIdentifier>{269688cc-4b18-4908-ae9f-1be74e3c17a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LogSystem">
+      <UniqueIdentifier>{b3b0f68f-a4af-4929-b1c1-8f0c0128647b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LogSystem\Appenders">
+      <UniqueIdentifier>{c377b080-51c2-4fe6-aa66-9b40041de2fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LogSystem\Logger">
+      <UniqueIdentifier>{6cd06386-5f2e-45ed-bbff-a178d33d5d2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LogSystem\Params">
+      <UniqueIdentifier>{75eb43fd-bf60-44fa-b03e-7fc92674a00a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network">
+      <UniqueIdentifier>{6ae4cc78-2515-42d7-a4d3-b20b15b80217}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\IOCP">
+      <UniqueIdentifier>{96480d17-78db-4b6f-be75-3f15cfa34236}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\TCP">
+      <UniqueIdentifier>{5ae27cd0-3595-4cb8-b627-78751257a1de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\UDP">
+      <UniqueIdentifier>{9d3e2380-f3a3-42ea-a392-778263d8a035}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\Packet">
+      <UniqueIdentifier>{b2f9b409-1599-45de-bc69-43f3d6859877}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\Session">
+      <UniqueIdentifier>{2a357884-bf3c-4677-9bc5-6f138f57ad91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\Queue">
+      <UniqueIdentifier>{63ef7034-f972-4d8c-bea4-af7bfb1514a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\Worker">
+      <UniqueIdentifier>{5a35e66a-4f8e-4daf-85c8-4ea5d0bff4b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SqliteWrapper">
+      <UniqueIdentifier>{50749a9f-4fe3-48f6-bde5-0266d31d7932}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Timer">
+      <UniqueIdentifier>{e2b5414c-fdf3-4bab-a784-f92a4aecbf1f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Source\Core\Utility\Lockers\Guard.cpp">
+      <Filter>Lockers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\Lockers\Locker.cpp">
+      <Filter>Lockers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\Lockers\LockerBase.cpp">
+      <Filter>Lockers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\XString\XString.cpp">
+      <Filter>XString</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\TimeInfo\TimeInfo.cpp">
+      <Filter>TimeInfo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\FileIO\FileBase.cpp">
+      <Filter>FileIO</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\FileIO\FileReader.cpp">
+      <Filter>FileIO</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\FileIO\FileWriter.cpp">
+      <Filter>FileIO</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\XThread\XThread.cpp">
+      <Filter>XThread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\LogSystem\Appenders\ConsoleAppender.cpp">
+      <Filter>LogSystem\Appenders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\LogSystem\Appenders\DebugWindowAppender.cpp">
+      <Filter>LogSystem\Appenders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\LogSystem\Appenders\FileAppender.cpp">
+      <Filter>LogSystem\Appenders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\LogSystem\Appenders\LogAppender.cpp">
+      <Filter>LogSystem\Appenders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\LogSystem\Logger\Logger.cpp">
+      <Filter>LogSystem\Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\LogSystem\Params\LogParam.cpp">
+      <Filter>LogSystem\Params</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\Network\OverlappedBuff.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\Network\SockAddr.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\Network\Socket.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\Network\ThreadServer.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\Network\IOCP\IOCompletionPort.cpp">
+      <Filter>Network\IOCP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\Network\IOCP\IOCPObject.cpp">
+      <Filter>Network\IOCP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\Network\IOCP\IOCPSessionIdleRunThread.cpp">
+      <Filter>Network\IOCP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\Network\IOCP\IOCPSessionWorkThread.cpp">
+      <Filter>Network\IOCP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\Network\TCP\TcpClient.cpp">
+      <Filter>Network\TCP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\Network\TCP\TcpServer.cpp">
+      <Filter>Network\TCP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\Network\TCP\TcpSocket.cpp">
+      <Filter>Network\TCP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\Network\UDP\UdpSocket.cpp">
+      <Filter>Network\UDP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\Network\Packet\DynamicPacket.cpp">
+      <Filter>Network\Packet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\Network\Session\ClientSession.cpp">
+      <Filter>Network\Session</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\Network\Session\IOCPSession.cpp">
+      <Filter>Network\Session</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\Network\Session\ServerSession.cpp">
+      <Filter>Network\Session</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\Network\Queue\MsgPackQueue.cpp">
+      <Filter>Network\Queue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\Network\Worker\NetworkConnector.cpp">
+      <Filter>Network\Worker</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\Network\Worker\NetworkListener.cpp">
+      <Filter>Network\Worker</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\SqliteWrapper\SQLiteWrapper.cpp">
+      <Filter>SqliteWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\Timer\TimerObject.cpp">
+      <Filter>Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Core\Utility\MSINI\CMSINIReader.cpp">
+      <Filter>MSINI</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Source\Core\Utility\Lockers\Guard.h">
+      <Filter>Lockers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\Lockers\Locker.h">
+      <Filter>Lockers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\Lockers\LockerBase.h">
+      <Filter>Lockers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\XString\XString.h">
+      <Filter>XString</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\XString\XStringTemplate.h">
+      <Filter>XString</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\TimeInfo\TimeInfo.h">
+      <Filter>TimeInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\SmartPtr\SharedPtr.h">
+      <Filter>SmartPtr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\FileIO\FileBase.h">
+      <Filter>FileIO</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\FileIO\FileReader.h">
+      <Filter>FileIO</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\FileIO\FileWriter.h">
+      <Filter>FileIO</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\XThread\XThread.h">
+      <Filter>XThread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\LogSystem\Appenders\ConsoleAppender.h">
+      <Filter>LogSystem\Appenders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\LogSystem\Appenders\DebugWindowAppender.h">
+      <Filter>LogSystem\Appenders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\LogSystem\Appenders\FileAppender.h">
+      <Filter>LogSystem\Appenders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\LogSystem\Appenders\LogAppender.h">
+      <Filter>LogSystem\Appenders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\LogSystem\Logger\Logger.h">
+      <Filter>LogSystem\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\LogSystem\Params\LogParam.h">
+      <Filter>LogSystem\Params</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\Network\OverlappedBuff.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\Network\SockAddr.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\Network\Socket.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\Network\SocketPlatform.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\Network\ThreadServer.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\Network\IOCP\IOCompletionPort.h">
+      <Filter>Network\IOCP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\Network\IOCP\IOCPObject.h">
+      <Filter>Network\IOCP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\Network\IOCP\IOCPSessionIdleRunThread.h">
+      <Filter>Network\IOCP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\Network\IOCP\IOCPSessionWorkThread.h">
+      <Filter>Network\IOCP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\Network\TCP\TcpClient.h">
+      <Filter>Network\TCP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\Network\TCP\TcpServer.h">
+      <Filter>Network\TCP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\Network\TCP\TcpSocket.h">
+      <Filter>Network\TCP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\Network\UDP\UdpSocket.h">
+      <Filter>Network\UDP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\Network\Packet\DynamicPacket.h">
+      <Filter>Network\Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\Network\Packet\Msg.h">
+      <Filter>Network\Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\Network\Session\ClientSession.h">
+      <Filter>Network\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\Network\Session\IOCPSession.h">
+      <Filter>Network\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\Network\Session\ServerSession.h">
+      <Filter>Network\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\Network\Queue\MsgPackQueue.h">
+      <Filter>Network\Queue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\Network\Worker\NetworkConnector.h">
+      <Filter>Network\Worker</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\Network\Worker\NetworkListener.h">
+      <Filter>Network\Worker</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\SqliteWrapper\SQLiteWrapper.h">
+      <Filter>SqliteWrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\BasicDefines.h" />
+    <ClInclude Include="..\..\..\Source\Core\Utility\LogSystem.h" />
+    <ClInclude Include="..\..\..\Source\Core\Utility\Singleton.h" />
+    <ClInclude Include="..\..\..\Source\Core\Utility\UtilityTypes.h" />
+    <ClInclude Include="..\..\..\Source\Core\Utility\DumpGenerator.h" />
+    <ClInclude Include="..\..\..\Source\Core\Utility\Timer\TimerObject.h">
+      <Filter>Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Core\Utility\MSINI\CMSINIReader.h">
+      <Filter>MSINI</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
