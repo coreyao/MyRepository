@@ -508,7 +508,12 @@ void MeshExporter::ParseGeomObject(INode* pNode)
 								SBoneData* pBoneData = FindBoneDataByName(bName);
 								if ( pBoneData )
 								{
-									tMesh.m_skeleton.m_vSkinBone.push_back(pBoneData->m_iIndex);
+									auto it = std::find(tMesh.m_skeleton.m_vSkinBone.begin(), tMesh.m_skeleton.m_vSkinBone.end(), pBoneData->m_iIndex);
+									if ( it == tMesh.m_skeleton.m_vSkinBone.end())
+									{
+										tMesh.m_skeleton.m_vSkinBone.push_back(pBoneData->m_iIndex);
+									}
+
 									int iIndex = 0;
 									for ( auto& rBoneDataIndex : tMesh.m_skeleton.m_vSkinBone )
 									{
@@ -759,6 +764,12 @@ void MeshExporter::ParseBoneAnimation()
 			Point3 scale = gm.Scaling();
 
 			bKey.m_translation.set(pos.x, pos.z, pos.y);
+
+			float x;
+			float y;
+			float z;
+			dir.GetEuler(&x, &y, &z);
+
 			bKey.m_rotation[0] = dir.w;
 			bKey.m_rotation[1] = dir.x;
 			bKey.m_rotation[2] = dir.z;

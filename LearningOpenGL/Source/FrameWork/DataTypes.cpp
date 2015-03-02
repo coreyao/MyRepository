@@ -113,7 +113,7 @@ void SMeshData::ReadFromFile( FILE* hFile )
 	{
 		int iBoneIndex = 0;
 		fread(&iBoneIndex, sizeof(int), 1, hFile);  
-		m_skeleton.m_vSkinBone.insert(iBoneIndex);
+		m_skeleton.m_vSkinBone.push_back(iBoneIndex);
 	}
 
 	int iFrameNum = 0;
