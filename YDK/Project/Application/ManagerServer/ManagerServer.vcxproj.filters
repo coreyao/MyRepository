@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Network">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="ManagerServer">
+      <UniqueIdentifier>{027090c9-6e6f-46d9-86f4-f466a47eb26b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AccountManager">
+      <UniqueIdentifier>{476c03e4-096c-404b-833d-ca9b4b04b5a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CharactorManager">
+      <UniqueIdentifier>{3b801da6-fb19-4d05-aadc-208d10868544}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ChatManager">
+      <UniqueIdentifier>{005574d2-5d9b-4820-bc25-4d930a2bff15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GroupManager">
+      <UniqueIdentifier>{b81ad206-c327-4609-993a-9b4149737fd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RelationManager">
+      <UniqueIdentifier>{f1d56333-c5fd-4397-88e3-7e2d86757fd1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FileTransManager">
+      <UniqueIdentifier>{5bfd39fa-5cfe-45d9-920d-e92923332195}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Source\Application\ManagerServer\Network\DBServerConnector.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\ManagerServer\Network\GateServerListener.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\ManagerServer\Network\GateSession.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\ManagerServer\ManagerServer.cpp">
+      <Filter>ManagerServer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\ManagerServer\AccountManager\AccountManager.cpp">
+      <Filter>AccountManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\ManagerServer\CharactorManager\CharactorManager.cpp">
+      <Filter>CharactorManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\ManagerServer\CharactorManager\GamePlayer.cpp">
+      <Filter>CharactorManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\ManagerServer\ChatManager\ChatManager.cpp">
+      <Filter>ChatManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\ManagerServer\GroupManager\GroupManager.cpp">
+      <Filter>GroupManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\ManagerServer\Main.cpp" />
+    <ClCompile Include="..\..\..\Source\Application\ManagerServer\RelationManager\RelationManager.cpp">
+      <Filter>RelationManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\ManagerServer\GroupManager\Group.cpp">
+      <Filter>GroupManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\ManagerServer\FileTransManager\FileTransManager.cpp">
+      <Filter>FileTransManager</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Source\Application\ManagerServer\Network\DBServerConnector.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\ManagerServer\Network\GateServerListener.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\ManagerServer\Network\GateSession.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\ManagerServer\ManagerServer.h">
+      <Filter>ManagerServer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\ManagerServer\AccountManager\AccountManager.h">
+      <Filter>AccountManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\ManagerServer\CharactorManager\CharactorManager.h">
+      <Filter>CharactorManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\ManagerServer\CharactorManager\GamePlayer.h">
+      <Filter>CharactorManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\ManagerServer\ChatManager\ChatManager.h">
+      <Filter>ChatManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\ManagerServer\GroupManager\GroupManager.h">
+      <Filter>GroupManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\ManagerServer\RelationManager\RelationManager.h">
+      <Filter>RelationManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\ManagerServer\GroupManager\Group.h">
+      <Filter>GroupManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\ManagerServer\FileTransManager\FileTransManager.h">
+      <Filter>FileTransManager</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

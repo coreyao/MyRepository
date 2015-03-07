@@ -74,7 +74,7 @@ class MeshExporter : public SceneExport
 		void			ParseMaterials();
 		bool			IsBone(INode* node);
 		SBoneData*		FindBoneDataByName(const char* pName);
-		ISkin*			FindSkinModifier(INode* pNode);
+		vector<ISkin*>	FindSkinModifier(INode* pNode);
 		void			ConvertGMatrixToMat4(Mat4& outMat, const GMatrix& inputMatrix);
 
 		//Constructor/Destructor
@@ -271,6 +271,7 @@ int	MeshExporter::DoExport(const TCHAR *name,ExpInterface *ei,Interface *i, BOOL
 int MeshExporter::ExportMesh(const char* szMeshName)  
 {  
 	ParseAllInfo();
+
 	ExportToFile(szMeshName);
 	DoClean();
 
@@ -490,23 +491,41 @@ void MeshExporter::ParseGeomObject(INode* pNode)
 					}  
 				}  
   
-				ISkin* pSkinInfo = FindSkinModifier(pNode);
-				if ( pSkinInfo )
+				vector<ISkin*> vSkinInfo = FindSkinModifier(pNode);
+				if ( !vSkinInfo.empty() )
 				{
-					ISkinContextData* pSkinCtx = pSkinInfo->GetContextInterface(pNode);
-					for (int i = 0; i < tVertexNum; ++i)
+					for ( auto& pSkin : vSkinInfo )
 					{
-						int nBones = pSkinCtx->GetNumAssignedBones(i);	
-						for (int j = 0; j < nBones; ++j)
+						ISkinContextData* pSkinCtx = pSkin->GetContextInterface(pNode);
+						for (int i = 0; i < pSkinCtx->GetNumPoints(); ++i)
 						{
-							INode* pBone = pSkinInfo->GetBone(j);
-							char* bName = pBone->GetName();
-							float weight = pSkinCtx->GetBoneWeight(i,j);
-							SBoneData* pBoneData = FindBoneDataByName(bName);
-							if ( pBoneData )
+							int nBones = pSkinCtx->GetNumAssignedBones(i);	
+							for (int j = 0; j < nBones; ++j)
 							{
-								tVertexVec[i].m_boneIndex[j] = pBoneData->m_iIndex;
-								tVertexVec[i].m_blendWeight[j] = weight;
+								INode* pBone = pSkin->GetBone(pSkinCtx->GetAssignedBone(i, j));
+								char* bName = pBone->GetName();
+								float weight = pSkinCtx->GetBoneWeight(i,j);
+								SBoneData* pBoneData = FindBoneDataByName(bName);
+								if ( pBoneData )
+								{
+									auto it = std::find(tMesh.m_skeleton.m_vSkinBone.begin(), tMesh.m_skeleton.m_vSkinBone.end(), pBoneData->m_iIndex);
+									if ( it == tMesh.m_skeleton.m_vSkinBone.end())
+									{
+										tMesh.m_skeleton.m_vSkinBone.push_back(pBoneData->m_iIndex);
+									}
+
+									int iIndex = 0;
+									for ( auto& rBoneDataIndex : tMesh.m_skeleton.m_vSkinBone )
+									{
+										if ( rBoneDataIndex == pBoneData->m_iIndex )
+											break;
+
+										++iIndex;
+									}
+
+									tVertexVec[i].m_boneIndex[j] = iIndex;
+									tVertexVec[i].m_blendWeight[j] = weight;
+								}
 							}
 						}
 					}
@@ -529,8 +548,10 @@ void MeshExporter::ParseBones( INode* pNode )
 	newBone.m_iIndex = m_allBoneData.size() + 1;
 	newBone.m_sName = pNode->GetName();
 	GMatrix nodeTransform( pNode->GetNodeTM(0) );
-	ConvertGMatrixToMat4(newBone.m_inverseBindMat, nodeTransform);
-	newBone.m_inverseBindMat.inverse();
+	ConvertGMatrixToMat4(newBone.m_originalBindMat, nodeTransform);
+
+	GMatrix inverseNodeTransform = nodeTransform.Inverse();
+	ConvertGMatrixToMat4(newBone.m_inverseBindMat, inverseNodeTransform);
 
 	INode* pParentNode = pNode->GetParentNode();
 	if ( pParentNode && IsBone( pParentNode ) )
@@ -550,15 +571,10 @@ void MeshExporter::ParseBones( INode* pNode )
 			pParentBone->m_vChildIndex.push_back(newBone.m_iIndex);
 			newBone.m_iParentIndex = pParentBone->m_iIndex;
 
-			GMatrix parentTransform(pParentNode->GetNodeTM(0));
+			/*GMatrix parentTransform(pParentNode->GetNodeTM(0));
 			GMatrix tempMat = parentTransform.Inverse() * nodeTransform;
-			ConvertGMatrixToMat4(newBone.m_originalBindMat, tempMat);
+			ConvertGMatrixToMat4(newBone.m_originalBindMat, tempMat);*/
 		}
-	}
-	else
-	{
-		newBone.m_inverseBindMat.identity();
-		newBone.m_originalBindMat.identity();
 	}
 
 	m_allBoneData.insert(std::pair<INode*, SBoneData>(pNode, newBone));
@@ -677,12 +693,13 @@ void MeshExporter::ParseAllInfo()
 	EnumGeomObjects(pRootNode);
 }
 
-ISkin* MeshExporter::FindSkinModifier( INode* pNode )
+vector<ISkin*> MeshExporter::FindSkinModifier( INode* pNode )
 {
 	Object* pObject = pNode->GetObjectRef(); 
 	if(pObject == 0) 
-		return 0;
+		return vector<ISkin*>();
 
+	vector<ISkin*> result;
 	// 循环检测所有的DerivedObject 
 	while(pObject->SuperClassID() == GEN_DERIVOB_CLASS_ID)
 	{ 
@@ -693,14 +710,14 @@ ISkin* MeshExporter::FindSkinModifier( INode* pNode )
 			//检测ClassID是不是Skin修改器
 			if(pModifier->ClassID() == SKIN_CLASSID)
 			{ 
-				return (ISkin*)pModifier->GetInterface(I_SKIN);
+				result.push_back( (ISkin*)pModifier->GetInterface(I_SKIN) );
 			}
 		}
 
 		pObject = pDerivedObject->GetObjRef();//下一个Derived Object 
 	} 
 
-	return nullptr; 
+	return result; 
 }
 
 SBoneData* MeshExporter::FindBoneDataByName( const char* pName )
@@ -718,11 +735,13 @@ SBoneData* MeshExporter::FindBoneDataByName( const char* pName )
 
 void MeshExporter::ConvertGMatrixToMat4( Mat4& outMat, const GMatrix& inputMatrix )
 {
-	outMat.set(inputMatrix[0][0], inputMatrix[0][1], inputMatrix[0][2], inputMatrix[0][3]
+	outMat.set(inputMatrix[0][0], inputMatrix[0][2], inputMatrix[0][1], inputMatrix[0][3]
 			, inputMatrix[2][0], inputMatrix[2][2], inputMatrix[2][1], inputMatrix[2][3]
 			, inputMatrix[1][0], inputMatrix[1][2], inputMatrix[1][1], inputMatrix[1][3]
 			, inputMatrix[3][0], inputMatrix[3][2], inputMatrix[3][1], inputMatrix[3][3]
 			);
+
+	outMat.transpose();
 }
 
 void MeshExporter::ParseBoneAnimation()
@@ -745,6 +764,12 @@ void MeshExporter::ParseBoneAnimation()
 			Point3 scale = gm.Scaling();
 
 			bKey.m_translation.set(pos.x, pos.z, pos.y);
+
+			float x;
+			float y;
+			float z;
+			dir.GetEuler(&x, &y, &z);
+
 			bKey.m_rotation[0] = dir.w;
 			bKey.m_rotation[1] = dir.x;
 			bKey.m_rotation[2] = dir.z;

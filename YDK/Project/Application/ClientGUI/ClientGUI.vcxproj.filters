@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="UI">
+      <UniqueIdentifier>{86ac4b05-054c-4041-8f7f-126a23d0efbe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network">
+      <UniqueIdentifier>{a95cc98c-40d5-46fa-a603-293f8cacdccf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ClientGUI">
+      <UniqueIdentifier>{0323b19d-d7b2-4204-addc-d525c815ffe3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Source\Application\ClientGUI\Network\ServerConnector.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\ClientGUI\ClientGUI\ChatHistoryManager.h">
+      <Filter>ClientGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\ClientGUI\ClientGUI\ClientPlayer.h">
+      <Filter>ClientGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\ClientGUI\ClientGUI\ClientGUI.h">
+      <Filter>ClientGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\ClientGUI\UI\LoginFrame.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\ClientGUI\UI\MainFrame.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\ClientGUI\UI\UICommon.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\ClientGUI\ClientGUI\FileTransManager.h">
+      <Filter>ClientGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\ClientGUI\UI\FriendChatFrame.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\ClientGUI\UI\FriendAddFrame.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\ClientGUI\UI\GroupAddFrame.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\ClientGUI\UI\GroupChatFrame.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\ClientGUI\UI\GroupCreateFrame.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\ClientGUI\UI\FileGuageFrame.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\ClientGUI\UI\ChatHistoryFrame.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\ClientGUI\UI\RegisterFrame.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\ClientGUI\UI\FriendGroupCreateFrame.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Source\Application\ClientGUI\Main.cpp" />
+    <ClCompile Include="..\..\..\Source\Application\ClientGUI\Network\ServerConnector.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\ClientGUI\ClientGUI\ChatHistoryManager.cpp">
+      <Filter>ClientGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\ClientGUI\ClientGUI\ClientPlayer.cpp">
+      <Filter>ClientGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\ClientGUI\ClientGUI\ClientGUI.cpp">
+      <Filter>ClientGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\ClientGUI\UI\LoginFrame.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\ClientGUI\UI\MainFrame.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\ClientGUI\ClientGUI\FileTransManager.cpp">
+      <Filter>ClientGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\ClientGUI\UI\FriendChatFrame.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\ClientGUI\UI\FriendAddFrame.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\ClientGUI\UI\GroupAddFrame.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\ClientGUI\UI\GroupChatFrame.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\ClientGUI\UI\GroupCreateFrame.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\ClientGUI\UI\FileGuageFrame.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\ClientGUI\UI\ChatHistoryFrame.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\ClientGUI\UI\RegisterFrame.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Application\ClientGUI\UI\FriendGroupCreateFrame.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="CommonDataStruct">
+      <UniqueIdentifier>{77f55112-38e0-4cd0-a11e-881ab2554df4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Source\Application\Common\CommonDataStruct\ChatData_Struct.h">
+      <Filter>CommonDataStruct</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\Common\CommonDataStruct\FriendList_Struct.h">
+      <Filter>CommonDataStruct</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\Common\CommonDataStruct\GroupData_Struct.h">
+      <Filter>CommonDataStruct</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\Common\CommonDataStruct\PlayerInfo_Struct.h">
+      <Filter>CommonDataStruct</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Application\Common\MsgDef.h" />
+    <ClInclude Include="..\..\..\Source\Application\Common\MsgProtocol.h" />
+  </ItemGroup>
+</Project>

@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <string>
 #include <vector>
+#include <set>
 
 #include "cml/cml.h"
 
@@ -43,6 +44,12 @@ struct SFace
 
 struct SVertex
 {
+	SVertex()
+	{
+		m_boneIndex.zero();
+		m_blendWeight.zero();
+	}
+
 	Vec3 m_position;
 	Vec3 m_normal;
 	Vec2 m_texCoord;
@@ -116,6 +123,7 @@ class SSkeletonData
 {
 public:
 	std::vector<SBoneData> m_vBone;
+	std::vector<int> m_vSkinBone;
 	std::vector<SBoneFrame> m_vFrame;
 };
 

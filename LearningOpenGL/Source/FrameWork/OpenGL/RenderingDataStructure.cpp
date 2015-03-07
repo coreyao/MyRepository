@@ -2,6 +2,9 @@
 #include "../Utility.h"
 #include "../Image/PNGReader.h"
 #include <algorithm>
+#include <iostream>
+
+using namespace std;
 
 COGLMesh::COGLMesh()
 	: m_vertexDataObj(0)
@@ -26,6 +29,21 @@ void COGLMesh::InitFromFile( const char* pMeshFileName )
 		return;
 
 	m_data.ReadFromFile(pMeshFile);
+
+	for (auto& rVertex : m_data.m_vVectex)
+	{
+		for (int i = 0; i < 4; ++i)
+		{
+			cout << rVertex.m_blendWeight[i] << " "; 
+		}
+		cout << endl;
+
+		for (int i = 0; i < 4; ++i)
+		{
+			cout << rVertex.m_boneIndex[i] << " "; 
+		}
+		cout << endl << endl;
+	}
 
 	InitProgram();
 	InitMaterial();
@@ -74,6 +92,15 @@ void COGLMesh::InitSkeleton()
 				if ( pBoneFound )
 					pCurBone->m_vChildren.push_back( pBoneFound );
 			}
+		}
+	}
+
+	for (auto& rBoneIndex : m_data.m_skeleton.m_vSkinBone)
+	{
+		CBone* pBoneFound = FindCBoneByIndex(rBoneIndex);
+		if ( pBoneFound )
+		{
+			m_skeleton.m_vSkinBone.push_back(pBoneFound);
 		}
 	}
 }
@@ -197,13 +224,13 @@ void COGLMesh::InitVBOAndVAO()
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_vertexDataObj);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(SVertex), 0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(SVertex, m_position));
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), (void*)(6 * sizeof(float)));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(SVertex, m_texCoord));
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex), (void*)(12 * sizeof(float)));
+	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(SVertex, m_boneIndex));
 	glEnableVertexAttribArray(3);
-	glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex), (void*)(16 * sizeof(float)));
+	glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(SVertex, m_blendWeight));
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
