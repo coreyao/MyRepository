@@ -8,14 +8,14 @@ COGLMesh g_mesh;
 CSkeletonAnimator g_animator;
 
 float g_XAngle = 0.0f;
-float g_YAngle = 180.0f;
+float g_YAngle = 0;
 
 void init()
 {
 	g_mesh.InitFromFile("test.CSTM");
 	g_mesh.SetTexture("HelloWorld.png");
 	g_mesh.m_worldPos.set(0, -30, -100);
-	//g_mesh.m_scale.set(2.0f, 2.0f, 2.0f);
+	g_mesh.m_scale.set(1.0f, 1.0f, 1.0f);
 	g_animator.SetTarget(&g_mesh);
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -27,7 +27,7 @@ void display()
 	glClearDepth(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	g_animator.Update(0.001f);
+	g_animator.Update(0.0001f);
 
 	g_mesh.m_rotation[0] = cml::rad(g_XAngle);
 	g_mesh.m_rotation[1] = cml::rad(g_YAngle);

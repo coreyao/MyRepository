@@ -68,6 +68,11 @@ void CSkeletonAnimator::Update( float fDeltaTime )
 		float fEndTime = pNextFrame->m_fTime;
 		float fCurTotalTime = fEndTime - fStartTime;
 
+		if ( m_fElapsedTime < fStartTime )
+		{
+			return;
+		}
+
 		if ( m_fElapsedTime > fEndTime )
 		{
 			bool bLast = ( i == m_pTarget->GetMeshData().m_skeleton.m_vFrame.size() - 2 );
@@ -98,7 +103,7 @@ void CSkeletonAnimator::Update( float fDeltaTime )
 
 			Vec3 finalPos = pCurFrame->m_vKey[iBoneIdx].m_translation + fElapsedPercent * ( pNextFrame->m_vKey[iBoneIdx].m_translation - pCurFrame->m_vKey[iBoneIdx].m_translation );
 			Vec3 finalScale = pCurFrame->m_vKey[iBoneIdx].m_scale + fElapsedPercent * ( pNextFrame->m_vKey[iBoneIdx].m_scale - pCurFrame->m_vKey[iBoneIdx].m_scale );
-			Quaternion finalRotation = cml::slerp(pCurFrame->m_vKey[iBoneIdx].m_rotation, pNextFrame->m_vKey[iBoneIdx].m_rotation, fElapsedPercent);
+			Quaternion finalRotation = cml::slerp(pCurFrame->m_vKey[iBoneIdx].m_rotation, pNextFrame->m_vKey[iBoneIdx].m_rotation, fElapsedPercent); //m_pTarget->GetMeshData().m_skeleton.m_vFrame[15].m_vKey[iBoneIdx].m_rotation;
 
 			Mat4 translationMatrix;
 			translationMatrix.identity();
@@ -114,6 +119,8 @@ void CSkeletonAnimator::Update( float fDeltaTime )
 
 			m_pTarget->m_skeleton.m_vBone[iBoneIdx].m_worldMat = translationMatrix * scaleMatrix * rotationMatrix;
 		}
+
+		break;
 	}
 
 	if ( bAllFinished )

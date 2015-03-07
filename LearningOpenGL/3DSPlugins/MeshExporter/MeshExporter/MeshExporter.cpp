@@ -765,11 +765,6 @@ void MeshExporter::ParseBoneAnimation()
 
 			bKey.m_translation.set(pos.x, pos.z, pos.y);
 
-			float x;
-			float y;
-			float z;
-			dir.GetEuler(&x, &y, &z);
-
 			bKey.m_rotation[0] = dir.w;
 			bKey.m_rotation[1] = dir.x;
 			bKey.m_rotation[2] = dir.z;
