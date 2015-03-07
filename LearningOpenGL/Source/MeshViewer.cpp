@@ -30,10 +30,6 @@ void display()
 	if (gettimeofday(&now, nullptr) != 0)
 		return;
 
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	glClearDepth(1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 	if ( g_fLastTime.tv_sec == 0 && g_fLastTime.tv_usec == 0 )
 	{
 		g_fDeltaTime = 0.0f;
@@ -44,12 +40,15 @@ void display()
 		g_fDeltaTime = std::max(0.0f, g_fDeltaTime);
 	}
 
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClearDepth(1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	g_animator.Update(g_fDeltaTime);
 
 	g_mesh.m_rotation[0] = cml::rad(g_XAngle);
 	g_mesh.m_rotation[1] = cml::rad(g_YAngle);
 	g_mesh.Render();
-
 
 	glutSwapBuffers();
 	glutPostRedisplay();
