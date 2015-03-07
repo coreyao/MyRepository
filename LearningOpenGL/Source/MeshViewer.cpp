@@ -7,6 +7,9 @@
 COGLMesh g_mesh;
 CSkeletonAnimator g_animator;
 
+timeval g_fLastTime = {0, 0};
+float g_fDeltaTime = 0.0f;
+
 float g_XAngle = 0.0f;
 float g_YAngle = 0;
 
@@ -23,18 +26,35 @@ void init()
 
 void display()
 {
+	struct timeval now;
+	if (gettimeofday(&now, nullptr) != 0)
+		return;
+
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClearDepth(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	g_animator.Update(0.0001f);
+	if ( g_fLastTime.tv_sec == 0 && g_fLastTime.tv_usec == 0 )
+	{
+		g_fDeltaTime = 0.0f;
+	}
+	else
+	{
+		g_fDeltaTime = (now.tv_sec - g_fLastTime.tv_sec) + (now.tv_usec - g_fLastTime.tv_usec) / 1000000.0f;
+		g_fDeltaTime = std::max(0.0f, g_fDeltaTime);
+	}
+
+	g_animator.Update(g_fDeltaTime);
 
 	g_mesh.m_rotation[0] = cml::rad(g_XAngle);
 	g_mesh.m_rotation[1] = cml::rad(g_YAngle);
 	g_mesh.Render();
 
+
 	glutSwapBuffers();
 	glutPostRedisplay();
+
+	g_fLastTime = now;
 }
 
 void reshape (int w, int h)

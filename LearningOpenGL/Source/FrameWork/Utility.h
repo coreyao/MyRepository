@@ -1,5 +1,6 @@
 #pragma once
 
+#include <winsock.h>
 #include "DataTypes.h"
 
 #ifndef SHADER_FILE_DIR
@@ -19,6 +20,14 @@
 #else
 #define offsetof(s,m)   (size_t)&reinterpret_cast<const volatile char&>((((s *)0)->m))
 #endif
+
+struct timezone
+{
+	int tz_minuteswest;
+	int tz_dsttime;
+};
+
+extern int gettimeofday(struct timeval *, struct timezone *);
 
 class CBone
 {

@@ -42,6 +42,7 @@ local.properties
 *.sln.docstates
 *.log
 *.tlog
+*.exe
 
 # Build results
 
