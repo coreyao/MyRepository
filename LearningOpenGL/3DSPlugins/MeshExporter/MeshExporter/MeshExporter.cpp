@@ -559,7 +559,7 @@ void MeshExporter::ParseBones( INode* pNode )
 		SBoneData* pParentBone = nullptr;
 		for (auto& rBone : m_allBoneData)
 		{
-			if ( rBone.second.m_sName == pNode->GetParentNode()->GetName() )
+			if ( rBone.second.m_sName == pParentNode->GetName() )
 			{
 				pParentBone = &rBone.second;
 				break;
@@ -571,9 +571,9 @@ void MeshExporter::ParseBones( INode* pNode )
 			pParentBone->m_vChildIndex.push_back(newBone.m_iIndex);
 			newBone.m_iParentIndex = pParentBone->m_iIndex;
 
-			/*GMatrix parentTransform(pParentNode->GetNodeTM(0));
-			GMatrix tempMat = parentTransform.Inverse() * nodeTransform;
-			ConvertGMatrixToMat4(newBone.m_originalBindMat, tempMat);*/
+			GMatrix parentTransform(pParentNode->GetNodeTM(0));
+			GMatrix tempMat = nodeTransform * parentTransform.Inverse();
+			ConvertGMatrixToMat4(newBone.m_originalBindMat, tempMat);
 		}
 	}
 
@@ -758,7 +758,15 @@ void MeshExporter::ParseBoneAnimation()
 		for(auto& rBone : m_allBoneData)
 		{
 			SBoneKey bKey;
-			GMatrix gm = rBone.first->GetNodeTM( i * gpf );
+			GMatrix gm = rBone.first->GetNodeTM(i * gpf);
+			INode* pParentNode = rBone.first->GetParentNode();
+			if ( pParentNode && IsBone( pParentNode ) )
+			{
+				GMatrix nodeTransform( gm );
+				GMatrix parentTransform(pParentNode->GetNodeTM(i * gpf));
+				gm = nodeTransform * parentTransform.Inverse();
+			}
+
 			Point3 pos = gm.Translation();
 			Quat dir = gm.Rotation();
 			Point3 scale = gm.Scaling();
