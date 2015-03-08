@@ -138,4 +138,6 @@ struct SMeshData
 	std::vector<SVertex>	m_vVectex;
 	SMaterialData			m_cMaterial;
 	SSkeletonData			m_skeleton;
+
+	std::vector<SMeshData*> m_vChildMesh; 
 };

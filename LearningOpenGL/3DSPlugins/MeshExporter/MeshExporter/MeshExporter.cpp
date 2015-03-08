@@ -73,6 +73,7 @@ class MeshExporter : public SceneExport
 		void			ParseBoneAnimation();
 		void			ParseMaterials();
 		bool			IsBone(INode* node);
+		bool			IsMesh(INode* node);
 		SBoneData*		FindBoneDataByName(const char* pName);
 		vector<ISkin*>	FindSkinModifier(INode* pNode);
 		void			ConvertGMatrixToMat4(Mat4& outMat, const GMatrix& inputMatrix);
@@ -296,22 +297,9 @@ BOOL MeshExporter::EnumBones(INode* node)
 BOOL MeshExporter::EnumGeomObjects( INode* node )
 {
 	if (!node || IsBone(node) ) return FALSE;
-	
-	TimeValue tTime = 0;  
-	ObjectState os = node->EvalWorldState(tTime);
-	if (os.obj)
-	{  
-		DWORD SuperclassID = os.obj->SuperClassID();  
-		switch(SuperclassID)  
-		{  
-		case SHAPE_CLASS_ID:
-		case GEOMOBJECT_CLASS_ID:
-			ParseGeomObject(node);
-			break;  
-		default:  
-			break;  
-		}  
-	}
+
+	if ( IsMesh(node) )
+		ParseGeomObject(node);
 
 	for (int i = 0; i < node->NumberOfChildren(); ++i)
 		EnumGeomObjects(node->GetChildNode(i));
@@ -355,9 +343,6 @@ void MeshExporter::ParseGeomObject(INode* pNode)
 {  
 	char  tText[200] = {0};
 	ObjectState os = pNode->EvalWorldState(0);   
-	if (!os.obj || os.obj->ClassID() == Class_ID(TARGET_CLASS_ID, 0))  
-		return;
-
 	Object *obj = os.obj;
 	if ( obj )  
 	{  
@@ -403,7 +388,7 @@ void MeshExporter::ParseGeomObject(INode* pNode)
 				GMatrix tGMeshTM(tTMAfterWSMM);  
 				ConvertGMatrixToMat4(tMesh.m_MeshMatrix, tGMeshTM);
 
-				for (int i = 0; i < tFaceNum; i++)  
+				for (int i = 0; i < tFaceNum; i++)
 				{  
 					int tDestTexIndex1 = mesh->faces[i].v[0];  
 					int tDestTexIndex2 = mesh->faces[i].v[1];  
@@ -467,7 +452,7 @@ void MeshExporter::ParseGeomObject(INode* pNode)
 				{  
 					for (int i = 0; i < tFaceNum; i++)  
 					{  
-						TVFace tface = mesh->tvFace[i];  
+						TVFace tface = mesh->tvFace[i];
 						int tSrcTexIndex1 = tface.getTVert(0);  
 						int tSrcTexIndex2 = tface.getTVert(1);  
 						int tSrcTexIndex3 = tface.getTVert(2);  
@@ -497,7 +482,7 @@ void MeshExporter::ParseGeomObject(INode* pNode)
 					for ( auto& pSkin : vSkinInfo )
 					{
 						ISkinContextData* pSkinCtx = pSkin->GetContextInterface(pNode);
-						for (int i = 0; i < pSkinCtx->GetNumPoints(); ++i)
+						for (int i = 0; i < tVertexNum/*pSkinCtx->GetNumPoints()*/; ++i)
 						{
 							int nBones = pSkinCtx->GetNumAssignedBones(i);	
 							for (int j = 0; j < nBones; ++j)
@@ -580,29 +565,57 @@ void MeshExporter::ParseBones( INode* pNode )
 	m_allBoneData.insert(std::pair<INode*, SBoneData>(pNode, newBone));
 }
 
+bool MeshExporter::IsMesh( INode* node )
+{
+	if (NULL == node)
+		return false;
+
+	ObjectState os = node->EvalWorldState(0);
+	if (NULL == os.obj)
+		return false;
+
+	if (os.obj->SuperClassID() == GEOMOBJECT_CLASS_ID)
+	{
+		if (os.obj->ClassID() != Class_ID(TARGET_CLASS_ID, 0))
+			return true;
+	}
+
+	return false;
+}
+
 bool MeshExporter::IsBone( INode* node )
 {
-	if ( !node )
+	if (NULL == node)
+	{
 		return false;
+	}
 
-	ObjectState pObs = node->EvalWorldState(0);
-	if (!pObs.obj)
+	ObjectState os = node->EvalWorldState(0);
+	if (NULL == os.obj)
+	{
 		return false;
+	}
 
-	Class_ID id = pObs.obj->ClassID();
-	SClass_ID sid = pObs.obj->SuperClassID();
-	if (pObs.obj->ClassID()==Class_ID(BONE_CLASS_ID,0))
+	if (os.obj->SuperClassID() == HELPER_CLASS_ID)
 	{
-		return true; 
+		return true;
 	}
-	if (pObs.obj->ClassID()==BONE_OBJ_CLASSID)
+
+	if (os.obj->SuperClassID() == GEOMOBJECT_CLASS_ID)
 	{
-		return true; 
+		if (os.obj->ClassID() == BONE_OBJ_CLASSID)
+		{
+			return true;
+		}
 	}
-	if (pObs.obj->ClassID()==Class_ID(37157,0))
+
+	Control* ctl = node->GetTMController();
+	if ((ctl->ClassID() == BIPSLAVE_CONTROL_CLASS_ID)
+		|| (ctl->ClassID() == BIPBODY_CONTROL_CLASS_ID))
 	{
-		return true; 
+		return true;
 	}
+
 	return false;
 }
 
@@ -753,6 +766,9 @@ void MeshExporter::ParseBoneAnimation()
 	int frameCount = tAniTime / gpf;
 	for(int i = 0; i < frameCount; ++i)
 	{
+		if ( i > 0 && i < frameCount - 1 && i % 5 != 0)
+			continue;
+
 		SBoneFrame tempFrame;
 		tempFrame.m_iIndex = i;
 		for(auto& rBone : m_allBoneData)

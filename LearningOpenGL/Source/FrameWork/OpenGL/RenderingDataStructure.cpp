@@ -30,7 +30,7 @@ void COGLMesh::InitFromFile( const char* pMeshFileName )
 
 	m_data.ReadFromFile(pMeshFile);
 
-	for (auto& rVertex : m_data.m_vVectex)
+	/*for (auto& rVertex : m_data.m_vVectex)
 	{
 		for (int i = 0; i < 4; ++i)
 		{
@@ -43,7 +43,7 @@ void COGLMesh::InitFromFile( const char* pMeshFileName )
 			cout << rVertex.m_boneIndex[i] << " "; 
 		}
 		cout << endl << endl;
-	}
+	}*/
 
 	InitProgram();
 	InitMaterial();
