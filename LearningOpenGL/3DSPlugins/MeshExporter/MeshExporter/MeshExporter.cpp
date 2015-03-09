@@ -76,7 +76,7 @@ class MeshExporter : public SceneExport
 		bool			IsMesh(INode* node);
 		SBoneData*		FindBoneDataByName(const char* pName);
 		vector<ISkin*>	FindSkinModifier(INode* pNode);
-		void			ConvertGMatrixToMat4(Mat4& outMat, const GMatrix& inputMatrix);
+		void			ConvertGMatrixToMat4(Mat4& outMat, const Matrix3& mat);
 
 		//Constructor/Destructor
 		MeshExporter();
@@ -385,8 +385,7 @@ void MeshExporter::ParseGeomObject(INode* pNode)
 				int tVertexNum = mesh->getNumVerts();   
 				int tFaceNum = mesh->getNumFaces();  
 				Matrix3 tTMAfterWSMM = pNode->GetNodeTM(0);
-				GMatrix tGMeshTM(tTMAfterWSMM);  
-				ConvertGMatrixToMat4(tMesh.m_MeshMatrix, tGMeshTM);
+				ConvertGMatrixToMat4(tMesh.m_MeshMatrix, tTMAfterWSMM);
 
 				for (int i = 0; i < tFaceNum; i++)
 				{  
@@ -532,11 +531,8 @@ void MeshExporter::ParseBones( INode* pNode )
 	SBoneData newBone;
 	newBone.m_iIndex = m_allBoneData.size() + 1;
 	newBone.m_sName = pNode->GetName();
-	GMatrix nodeTransform( pNode->GetNodeTM(0) );
-	ConvertGMatrixToMat4(newBone.m_originalBindMat, nodeTransform);
-
-	GMatrix inverseNodeTransform = nodeTransform.Inverse();
-	ConvertGMatrixToMat4(newBone.m_inverseBindMat, inverseNodeTransform);
+	ConvertGMatrixToMat4(newBone.m_originalBindMat, pNode->GetNodeTM(0));
+	ConvertGMatrixToMat4(newBone.m_inverseBindMat, Inverse( pNode->GetNodeTM(0) ));
 
 	INode* pParentNode = pNode->GetParentNode();
 	if ( pParentNode && IsBone( pParentNode ) )
@@ -555,10 +551,7 @@ void MeshExporter::ParseBones( INode* pNode )
 		{
 			pParentBone->m_vChildIndex.push_back(newBone.m_iIndex);
 			newBone.m_iParentIndex = pParentBone->m_iIndex;
-
-			GMatrix parentTransform(pParentNode->GetNodeTM(0));
-			GMatrix tempMat = nodeTransform * parentTransform.Inverse();
-			ConvertGMatrixToMat4(newBone.m_originalBindMat, tempMat);
+			ConvertGMatrixToMat4(newBone.m_originalBindMat, pNode->GetNodeTM(0) * Inverse( pParentNode->GetNodeTM(0) ));
 		}
 	}
 
@@ -746,15 +739,20 @@ SBoneData* MeshExporter::FindBoneDataByName( const char* pName )
 	return nullptr;
 }
 
-void MeshExporter::ConvertGMatrixToMat4( Mat4& outMat, const GMatrix& inputMatrix )
+void MeshExporter::ConvertGMatrixToMat4( Mat4& outMat, const Matrix3& mat )
 {
-	outMat.set(inputMatrix[0][0], inputMatrix[0][2], inputMatrix[0][1], inputMatrix[0][3]
+	/*outMat.set(inputMatrix[0][0], inputMatrix[0][2], inputMatrix[0][1], inputMatrix[0][3]
 			, inputMatrix[2][0], inputMatrix[2][2], inputMatrix[2][1], inputMatrix[2][3]
 			, inputMatrix[1][0], inputMatrix[1][2], inputMatrix[1][1], inputMatrix[1][3]
 			, inputMatrix[3][0], inputMatrix[3][2], inputMatrix[3][1], inputMatrix[3][3]
 			);
 
-	outMat.transpose();
+	outMat.transpose();*/
+
+	outMat.set(mat.GetRow(0).x, mat.GetRow(0).z, mat.GetRow(0).y, 0,
+		mat.GetRow(2).x, mat.GetRow(2).z, mat.GetRow(2).y, 0,
+		mat.GetRow(1).x, mat.GetRow(1).z, mat.GetRow(1).y, 0,
+		mat.GetRow(3).x, mat.GetRow(3).z, mat.GetRow(3).y, 1);
 }
 
 void MeshExporter::ParseBoneAnimation()

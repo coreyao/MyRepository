@@ -139,5 +139,5 @@ struct SMeshData
 	SMaterialData			m_cMaterial;
 	SSkeletonData			m_skeleton;
 
-	std::vector<SMeshData*> m_vChildMesh; 
+	//std::vector<SMeshData*> m_vChildMesh; 
 };
