@@ -16,6 +16,8 @@ public:
 	Matrix4X4 operator*(const Matrix4X4& rh);
 	Matrix4X4 operator+(const Matrix4X4& rh);
 
+	static Matrix4X4 IDENTITY;
+
 private:
 	float m[4][4];
 };
