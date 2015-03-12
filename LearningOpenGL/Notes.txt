@@ -1,1 +1,5 @@
 http://liweizhaolili.blog.163.com/blog/static/162307442013111592849927/
+
+   室外地形那块：LOD，场景管理，PVS；
+        渲染方面：LIGHTMAP的使用，烘焙；延迟渲染方面；
+        一些效果：雾，景深，HDR，SSＡＯ；等
