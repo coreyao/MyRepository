@@ -5,16 +5,11 @@
 #include <vector>
 #include <set>
 
-#include "cml/cml.h"
+#include "Math/Vector.h"
+#include "Math/Quaternion.h"
+#include "Math/Matrix.h"
 
-typedef cml::matrix< float, cml::fixed<3,3>, cml::col_basis, cml::col_major> Mat3;
-typedef cml::matrix< float, cml::fixed<4,4>, cml::col_basis, cml::col_major> Mat4;
-
-typedef cml::vector< float, cml::fixed<2> > Vec2;
-typedef cml::vector< float, cml::fixed<3> > Vec3;
-typedef cml::vector< float, cml::fixed<4> > Vec4;
-
-typedef cml::quaternion< float, cml::fixed<>, cml::scalar_first> Quaternion;
+typedef Matrix4X4 Mat4;
 
 struct Color4F
 {
@@ -46,8 +41,6 @@ struct SVertex
 {
 	SVertex()
 	{
-		m_boneIndex.zero();
-		m_blendWeight.zero();
 	}
 
 	Vec3 m_position;
@@ -60,19 +53,11 @@ struct SVertex
 
 struct STextureData
 {
-	STextureData()
-	{
-	}
-
 	std::string m_sFileName;
 };
 
 struct SMaterialData 
 {
-	SMaterialData()
-	{
-	}
-
 	std::string m_MaterialName;
 	std::vector<STextureData> m_SubTextureVec;
 };

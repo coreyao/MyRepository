@@ -126,23 +126,16 @@ void COGLMesh::Render()
 		glBindSampler(m_colorTexUnit, m_Sampler);
 	}
 
-	Mat4 viewMatrix;
-	cml::matrix_translation(viewMatrix, Vec3(0.0f, 0.0f, -100.0f));
-
-	Mat4 ScaleMatrix;
-	cml::matrix_scale(ScaleMatrix, m_scale);
-
-	Mat4 RotationMatrix;
-	cml::matrix_rotation_euler(RotationMatrix, m_rotation[0], m_rotation[1], m_rotation[2], cml::euler_order_xyz);
-
-	Mat4 TranslationMatrix;
-	cml::matrix_translation(TranslationMatrix, m_worldPos);
+	Mat4 viewMatrix = Mat4::CreateFromTranslation(0.0f, 0.0f, -100.0f);
+	Mat4 ScaleMatrix = Mat4::CreateFromScale(m_scale.x, m_scale.y, m_scale.z);
+	Mat4 RotationMatrix = Mat4::CreateFromRotation(m_rotation.x, m_rotation.y, m_rotation.z);
+	Mat4 TranslationMatrix = Mat4::CreateFromTranslation(m_worldPos.x, m_worldPos.y, m_worldPos.z);
 
 	Mat4 ModelViewMatrix;
 	ModelViewMatrix = viewMatrix * TranslationMatrix * ScaleMatrix * RotationMatrix;
 
 	GLuint modelViewMatrixUnif = glGetUniformLocation(m_theProgram, "modelViewMatrix");
-	glUniformMatrix4fv(modelViewMatrixUnif, 1, GL_FALSE, ModelViewMatrix.data());
+	glUniformMatrix4fv(modelViewMatrixUnif, 1, GL_FALSE, ModelViewMatrix.m);
 
 	GLuint matrixPaletteUnif = glGetUniformLocation(m_theProgram, "u_matrixPalette");
 	glUniform4fv( matrixPaletteUnif, (GLsizei)m_skeleton.m_vBone.size() * 3, (const float*)m_skeleton.GetMatrixPalette() );
@@ -184,9 +177,8 @@ void COGLMesh::InitProgram()
 	glUniform1i(colorTextureUnif, m_colorTexUnit);
 
 	GLuint perspectiveMatrixUnif = glGetUniformLocation(m_theProgram, "perspectiveMatrix");
-	Mat4 perspectiveMatrix;
-	cml::matrix_perspective_xfov_RH(perspectiveMatrix, 90.0f, (float)RESOLUTION_WIDTH / (float)RESOLUTION_HEIGHT, 1.0f, 1000.0f, cml::z_clip_neg_one);
-	glUniformMatrix4fv(perspectiveMatrixUnif, 1, GL_FALSE, perspectiveMatrix.data());
+	Mat4 perspectiveMatrix = Mat4::createPerspective(90.0f, (float)RESOLUTION_WIDTH / (float)RESOLUTION_HEIGHT, 1.0f, 1000.0f);
+	glUniformMatrix4fv(perspectiveMatrixUnif, 1, GL_FALSE, perspectiveMatrix.m);
 
 	glUseProgram(0);
 }

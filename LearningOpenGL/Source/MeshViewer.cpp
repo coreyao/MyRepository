@@ -46,8 +46,8 @@ void display()
 
 	g_animator.Update(g_fDeltaTime);
 
-	g_mesh.m_rotation[0] = cml::rad(g_XAngle);
-	g_mesh.m_rotation[1] = cml::rad(g_YAngle);
+	g_mesh.m_rotation.x = g_XAngle;
+	g_mesh.m_rotation.y = g_YAngle;
 	g_mesh.Render();
 
 	glutSwapBuffers();

@@ -31,9 +31,9 @@ void CBone::CalcPalette( Vec4* matrixPalette )
 {
 	Mat4 t = UpdateWorldMat() * m_data.m_inverseBindMat;
 
-	matrixPalette[0].set( t.basis_element(0, 0), t.basis_element(1, 0), t.basis_element(2, 0), t.basis_element(3, 0) );
-	matrixPalette[1].set( t.basis_element(0, 1), t.basis_element(1, 1), t.basis_element(2, 1), t.basis_element(3, 1) );
-	matrixPalette[2].set( t.basis_element(0, 2), t.basis_element(1, 2), t.basis_element(2, 2), t.basis_element(3, 2) );
+	matrixPalette[0].set( t.m[0], t.m[4], t.m[8], t.m[12] );
+	matrixPalette[1].set( t.m[1], t.m[5], t.m[9], t.m[13] );
+	matrixPalette[2].set( t.m[2], t.m[6], t.m[10], t.m[14] );
 }
 
 Vec4* CSkeleton::GetMatrixPalette()
@@ -114,21 +114,14 @@ void CSkeletonAnimator::Update( float fDeltaTime )
 				continue;
 			}
 
-			Vec3 finalPos = pCurFrame->m_vKey[iBoneIdx].m_translation + fElapsedPercent * ( pNextFrame->m_vKey[iBoneIdx].m_translation - pCurFrame->m_vKey[iBoneIdx].m_translation );
-			Vec3 finalScale = pCurFrame->m_vKey[iBoneIdx].m_scale + fElapsedPercent * ( pNextFrame->m_vKey[iBoneIdx].m_scale - pCurFrame->m_vKey[iBoneIdx].m_scale );
-			Quaternion finalRotation = cml::slerp(pCurFrame->m_vKey[iBoneIdx].m_rotation, pNextFrame->m_vKey[iBoneIdx].m_rotation, fElapsedPercent); //m_pTarget->GetMeshData().m_skeleton.m_vFrame[15].m_vKey[iBoneIdx].m_rotation;
+			Vec3 finalPos = pCurFrame->m_vKey[iBoneIdx].m_translation + ( pNextFrame->m_vKey[iBoneIdx].m_translation - pCurFrame->m_vKey[iBoneIdx].m_translation ) * fElapsedPercent;
+			Vec3 finalScale = pCurFrame->m_vKey[iBoneIdx].m_scale + ( pNextFrame->m_vKey[iBoneIdx].m_scale - pCurFrame->m_vKey[iBoneIdx].m_scale ) * fElapsedPercent;
+			Quaternion finalRotation;
+			Quaternion::slerp(pCurFrame->m_vKey[iBoneIdx].m_rotation, pNextFrame->m_vKey[iBoneIdx].m_rotation, fElapsedPercent, &finalRotation);
 
-			Mat4 translationMatrix;
-			translationMatrix.identity();
-			cml::matrix_translation(translationMatrix, finalPos);
-
-			Mat4 scaleMatrix;
-			scaleMatrix.identity();
-			cml::matrix_scale(scaleMatrix, finalScale);
-
-			Mat4 rotationMatrix;
-			rotationMatrix.identity();
-			cml::matrix_rotation_quaternion(rotationMatrix, finalRotation);
+			Mat4 translationMatrix = Mat4::CreateFromTranslation(finalPos.x, finalPos.y, finalPos.z);
+			Mat4 scaleMatrix = Mat4::CreateFromScale(finalScale.x, finalScale.y, finalScale.z);
+			Mat4 rotationMatrix = Mat4::CreateFromRotation(finalRotation);
 
 			m_pTarget->m_skeleton.m_vBone[iBoneIdx].m_localMat = translationMatrix * scaleMatrix * rotationMatrix;
 		}
