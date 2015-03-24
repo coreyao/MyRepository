@@ -72,6 +72,8 @@ Matrix4X4 Matrix4X4::Inverse()
 	inverse.m[15] = m[8] * a3 - m[9] * a1 + m[10] * a0;
 
 	inverse = inverse * ( 1.0f / det );
+
+	return inverse;
 }
 
 Matrix4X4 Matrix4X4::Transpose()

@@ -44,5 +44,7 @@ public:
 
 	void set(float xx, float yy, float zz, float ww);
 
+	float& operator[](int iIndex);
+
 	float x, y, z, w;
 };

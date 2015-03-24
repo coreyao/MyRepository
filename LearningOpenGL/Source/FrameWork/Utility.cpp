@@ -97,33 +97,41 @@ void CSkeletonAnimator::Update( float fDeltaTime )
 			continue;
 		}
 
-		float fElapsedPercent = ( m_fElapsedTime - fStartTime ) / fCurTotalTime;
-		for ( int iBoneIdx = 0; iBoneIdx < m_pTarget->m_skeleton.m_vBone.size(); ++iBoneIdx )
+		auto FindBoneByName = [this](const std::string& sBoneName)
 		{
-			bool bFound = false;
-			for (auto& rSkinBone : m_pTarget->m_skeleton.m_vSkinBone)
+			for (auto& pBone : m_pTarget->m_skeleton.m_vSkinBone)
 			{
-				if ( rSkinBone->m_data.m_iIndex == m_pTarget->m_skeleton.m_vBone[iBoneIdx].m_data.m_iIndex )
+				if ( pBone->m_data.m_sName == sBoneName )
 				{
-					bFound = true;
+					return pBone;
 				}
 			}
 
-			if ( !bFound )
+			return (CBone*)nullptr;
+		};
+
+		//pCurFrame = &m_pTarget->GetMeshData().m_skeleton.m_vFrame[0];
+		//pNextFrame = &m_pTarget->GetMeshData().m_skeleton.m_vFrame[0];
+
+		float fElapsedPercent = ( m_fElapsedTime - fStartTime ) / fCurTotalTime;
+		for ( int iKeyIdx = 0; iKeyIdx < pCurFrame->m_vKey.size(); ++iKeyIdx )
+		{
+			CBone* pBone = FindBoneByName(pCurFrame->m_vKey[iKeyIdx].m_sBoneName);
+			if ( pBone )
 			{
-				continue;
+				//fElapsedPercent = 0;
+
+				Vec3 finalPos = pCurFrame->m_vKey[iKeyIdx].m_translation + ( pNextFrame->m_vKey[iKeyIdx].m_translation - pCurFrame->m_vKey[iKeyIdx].m_translation ) * fElapsedPercent;
+				Vec3 finalScale = pCurFrame->m_vKey[iKeyIdx].m_scale + ( pNextFrame->m_vKey[iKeyIdx].m_scale - pCurFrame->m_vKey[iKeyIdx].m_scale ) * fElapsedPercent;
+				Quaternion finalRotation;
+				Quaternion::slerp(pCurFrame->m_vKey[iKeyIdx].m_rotation, pNextFrame->m_vKey[iKeyIdx].m_rotation, fElapsedPercent, &finalRotation);
+
+				Mat4 translationMatrix = Mat4::CreateFromTranslation(finalPos.x, finalPos.y, finalPos.z);
+				Mat4 scaleMatrix = Mat4::CreateFromScale(finalScale.x, finalScale.y, finalScale.z);
+				Mat4 rotationMatrix = Mat4::CreateFromRotation(finalRotation);
+
+				pBone->m_localMat = translationMatrix * scaleMatrix * rotationMatrix;
 			}
-
-			Vec3 finalPos = pCurFrame->m_vKey[iBoneIdx].m_translation + ( pNextFrame->m_vKey[iBoneIdx].m_translation - pCurFrame->m_vKey[iBoneIdx].m_translation ) * fElapsedPercent;
-			Vec3 finalScale = pCurFrame->m_vKey[iBoneIdx].m_scale + ( pNextFrame->m_vKey[iBoneIdx].m_scale - pCurFrame->m_vKey[iBoneIdx].m_scale ) * fElapsedPercent;
-			Quaternion finalRotation;
-			Quaternion::slerp(pCurFrame->m_vKey[iBoneIdx].m_rotation, pNextFrame->m_vKey[iBoneIdx].m_rotation, fElapsedPercent, &finalRotation);
-
-			Mat4 translationMatrix = Mat4::CreateFromTranslation(finalPos.x, finalPos.y, finalPos.z);
-			Mat4 scaleMatrix = Mat4::CreateFromScale(finalScale.x, finalScale.y, finalScale.z);
-			Mat4 rotationMatrix = Mat4::CreateFromRotation(finalRotation);
-
-			m_pTarget->m_skeleton.m_vBone[iBoneIdx].m_localMat = translationMatrix * scaleMatrix * rotationMatrix;
 		}
 
 		break;

@@ -64,6 +64,12 @@ struct SMaterialData
 
 struct SBoneKey
 {
+	SBoneKey()
+	{
+		memset(m_sBoneName, 0, sizeof(m_sBoneName));
+	}
+
+	char m_sBoneName[256];
 	Vec3 m_translation;
 	Quaternion m_rotation;
 	Vec3 m_scale;

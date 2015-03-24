@@ -415,8 +415,6 @@ void MeshExporter::ParseGeomObject(INode* pNode)
 					tVertex.m_color.b = 1.0f;  
 					tVertex.m_color.a = 1.0f;
 
-					tVertex.m_texCoord.set(0.0f, 0.0f);
-
 					tVertexVec.push_back(tVertex);  
 				}  
 
@@ -464,14 +462,14 @@ void MeshExporter::ParseGeomObject(INode* pNode)
 						SVertex& tV2 = tVertexVec[tDestTexIndex2];  
 						SVertex& tV3 = tVertexVec[tDestTexIndex3];  
 
-						tV1.m_texCoord[0] = mesh->tVerts[tSrcTexIndex1].x;  
-						tV1.m_texCoord[1] = 1.0 - mesh->tVerts[tSrcTexIndex1].y;  
+						tV1.m_texCoord.x = mesh->tVerts[tSrcTexIndex1].x;  
+						tV1.m_texCoord.y = 1.0 - mesh->tVerts[tSrcTexIndex1].y;  
 
-						tV2.m_texCoord[0] = mesh->tVerts[tSrcTexIndex2].x;  
-						tV2.m_texCoord[1] = 1.0 - mesh->tVerts[tSrcTexIndex2].y;  
+						tV2.m_texCoord.x = mesh->tVerts[tSrcTexIndex2].x;  
+						tV2.m_texCoord.y = 1.0 - mesh->tVerts[tSrcTexIndex2].y;  
 
-						tV3.m_texCoord[0] = mesh->tVerts[tSrcTexIndex3].x;  
-						tV3.m_texCoord[1] = 1.0 - mesh->tVerts[tSrcTexIndex3].y;
+						tV3.m_texCoord.x = mesh->tVerts[tSrcTexIndex3].x;  
+						tV3.m_texCoord.y = 1.0 - mesh->tVerts[tSrcTexIndex3].y;
 					}  
 				}  
   
@@ -741,11 +739,14 @@ SBoneData* MeshExporter::FindBoneDataByName( const char* pName )
 
 void MeshExporter::ConvertGMatrixToMat4( Mat4& outMat, const Matrix3& inputMatrix )
 {
-	outMat.set(inputMatrix[0][0], inputMatrix[0][2], inputMatrix[0][1], 0
-			, inputMatrix[2][0], inputMatrix[2][2], inputMatrix[2][1], 0
-			, inputMatrix[1][0], inputMatrix[1][2], inputMatrix[1][1], 0
-			, inputMatrix[3][0], inputMatrix[3][2], inputMatrix[3][1], 1
-			);
+	Mat4 temp(inputMatrix[0][0], inputMatrix[0][2], inputMatrix[0][1], 0
+		, inputMatrix[2][0], inputMatrix[2][2], inputMatrix[2][1], 0
+		, inputMatrix[1][0], inputMatrix[1][2], inputMatrix[1][1], 0
+		, inputMatrix[3][0], inputMatrix[3][2], inputMatrix[3][1], 1);
+
+	temp = temp.Transpose();
+
+	outMat = temp;
 }
 
 void MeshExporter::ParseBoneAnimation()
@@ -765,26 +766,27 @@ void MeshExporter::ParseBoneAnimation()
 		for(auto& rBone : m_allBoneData)
 		{
 			SBoneKey bKey;
-			GMatrix gm = rBone.first->GetNodeTM(i * gpf);
+			Matrix3 gm = rBone.first->GetNodeTM(i * gpf);
 			INode* pParentNode = rBone.first->GetParentNode();
 			if ( pParentNode && IsBone( pParentNode ) )
 			{
-				GMatrix nodeTransform( gm );
-				GMatrix parentTransform(pParentNode->GetNodeTM(i * gpf));
-				gm = nodeTransform * parentTransform.Inverse();
+				gm = gm * Inverse( pParentNode->GetNodeTM(i * gpf) );
 			}
 
-			Point3 pos = gm.Translation();
-			Quat dir = gm.Rotation();
-			Point3 scale = gm.Scaling();
+			GMatrix temp = gm;
+
+			Point3 pos = temp.Translation();
+			Quat dir = temp.Rotation();
+			Point3 scale = temp.Scaling();
 
 			bKey.m_translation.set(pos.x, pos.z, pos.y);
-
-			bKey.m_rotation[0] = dir.w;
-			bKey.m_rotation[1] = dir.x;
-			bKey.m_rotation[2] = dir.z;
-			bKey.m_rotation[3] = dir.y;
+			bKey.m_rotation.w = dir.w;
+			bKey.m_rotation.x = dir.x;
+			bKey.m_rotation.z = dir.z;
+			bKey.m_rotation.y = dir.y;
 			bKey.m_scale.set(scale.x, scale.z, scale.y);
+
+			strcpy(bKey.m_sBoneName, rBone.first->GetName());
 			
 			tempFrame.m_fTime = i / 30.0f;
 			tempFrame.m_vKey.push_back(bKey);

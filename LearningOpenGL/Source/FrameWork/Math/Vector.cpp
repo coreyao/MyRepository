@@ -67,3 +67,25 @@ void Vec4::set( float xx, float yy, float zz, float ww )
 {
 	x = xx; y = yy; z = zz; w = ww;
 }
+
+float& Vec4::operator[]( int iIndex )
+{
+	if ( iIndex == 0 )
+	{
+		return x;
+	}
+	else if ( iIndex == 1 )
+	{
+		return y;
+	}
+	else if ( iIndex == 2 )
+	{
+		return z;
+	}
+	else if ( iIndex == 3 )
+	{
+		return w;
+	}
+
+	return x;
+}
