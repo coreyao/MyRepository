@@ -782,8 +782,8 @@ void MeshExporter::ParseBoneAnimation()
 			bKey.m_translation.set(pos.x, pos.z, pos.y);
 			bKey.m_rotation.w = dir.w;
 			bKey.m_rotation.x = dir.x;
-			bKey.m_rotation.z = dir.z;
-			bKey.m_rotation.y = dir.y;
+			bKey.m_rotation.z = dir.y;
+			bKey.m_rotation.y = dir.z;
 			bKey.m_scale.set(scale.x, scale.z, scale.y);
 
 			strcpy(bKey.m_sBoneName, rBone.first->GetName());
