@@ -88,7 +88,7 @@ class MeshExporter : public SceneExport
 		char				m_szExportPath[_MAX_PATH];
 
 		vector<SMaterialData>	m_AllMaterialVec;
-		vector<SMeshData>		m_MeshNodeVec;
+		SMeshData				m_MeshNode;
 		map<INode*, SBoneData>	m_allBoneData;
 		vector<SBoneFrame>		m_allBoneFrames;
 };
@@ -354,7 +354,7 @@ void MeshExporter::ParseGeomObject(INode* pNode)
 				sprintf(tText,"Export Object:<%s>.............", pNode->GetName());  
 				AddStrToOutPutListBox(tText);
 
-				SMeshData tMesh;
+				SSubMeshData tMesh;
 				tMesh.m_MeshName = pNode->GetName();
 				Mtl* nodemtl = pNode->GetMtl();
 				if (nodemtl)
@@ -518,7 +518,7 @@ void MeshExporter::ParseGeomObject(INode* pNode)
 
 				tMesh.m_skeleton.m_vFrame = m_allBoneFrames;
 				tMesh.m_vVectex = tVertexVec;
-				m_MeshNodeVec.push_back(tMesh);
+				m_MeshNode.m_vChildMesh.push_back(tMesh);
 			}  
 		}  
 	}
@@ -641,49 +641,18 @@ void MeshExporter::ParseMaterials()
 
 void MeshExporter::ExportToFile( const char* szMeshName )
 {
-	int nMeshCount = m_MeshNodeVec.size();  
-	for(int m = 0; m < nMeshCount; ++m)  
-	{  
-		SMeshData* pMesh = &m_MeshNodeVec[m];
-		char szExportFileName[_MAX_PATH] = {0};
-		if( 1 == nMeshCount )
-		{  
-			pMesh->m_MeshName = szMeshName;  
-			strcpy(szExportFileName, m_szExportPath);
-		}  
-		else  
-		{  
-			_snprintf(szExportFileName, _MAX_PATH, "%s_%d", szMeshName, m);  
-			pMesh->m_MeshName = szExportFileName;
-			std::string strExportPath = m_szExportPath;
-			std::string strEx;  
-			std::string strName = strExportPath;  
-			std::string::size_type pos = strExportPath.find_last_of(".");  
-			if (pos != std::string::npos)  
-			{  
-				strEx = strExportPath.substr(pos+1);  
-				strName = strExportPath.substr(0, pos);
-				_snprintf( szExportFileName, _MAX_PATH, "%s_%d.%s", strName.c_str(), m, strEx.c_str());  
-			}  
-			else  
-			{  
-				_snprintf( szExportFileName, _MAX_PATH, "%s_%d", strName.c_str(), m);  
-			}  
-		}  
-
-		FILE* hFile = fopen(szExportFileName, "wb");
-		if ( hFile )
-		{
-			pMesh->WriteToFile(hFile);
-			fclose(hFile);  
-		}
+	FILE* hFile = fopen(szMeshName, "wb");
+	if ( hFile )
+	{
+		m_MeshNode.WriteToFile(hFile);
+		fclose(hFile);  
 	}
 }
 
 void MeshExporter::DoClean()
 {
 	m_AllMaterialVec.clear();
-	m_MeshNodeVec.clear();  
+	m_MeshNode.m_vChildMesh.clear();
 }
 
 void MeshExporter::ParseAllInfo()

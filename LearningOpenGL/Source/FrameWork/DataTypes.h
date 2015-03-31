@@ -118,7 +118,7 @@ public:
 	std::vector<SBoneFrame> m_vFrame;
 };
 
-struct SMeshData
+struct SSubMeshData
 {
 	void WriteToFile(FILE* pFile);
 	void ReadFromFile(FILE* pFile);
@@ -130,5 +130,12 @@ struct SMeshData
 	SMaterialData			m_cMaterial;
 	SSkeletonData			m_skeleton;
 
-	//std::vector<SMeshData*> m_vChildMesh; 
+};
+
+struct SMeshData
+{
+	void WriteToFile(FILE* pFile);
+	void ReadFromFile(FILE* pFile);
+
+	std::vector<SSubMeshData> m_vChildMesh;
 };

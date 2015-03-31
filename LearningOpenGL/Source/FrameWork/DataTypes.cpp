@@ -1,6 +1,6 @@
 #include "DataTypes.h"
 
-void SMeshData::WriteToFile(FILE* hFile)
+void SSubMeshData::WriteToFile(FILE* hFile)
 {
 	int iMeshNameSize = m_MeshName.size();
 	fwrite(&iMeshNameSize, sizeof(int), 1, hFile);
@@ -55,7 +55,7 @@ void SMeshData::WriteToFile(FILE* hFile)
 	fwrite(&m_MeshMatrix, sizeof(m_MeshMatrix), 1, hFile);
 }
 
-void SMeshData::ReadFromFile( FILE* hFile )
+void SSubMeshData::ReadFromFile( FILE* hFile )
 {
 	int iMeshNameSize = 0;
 	fread(&iMeshNameSize, sizeof(int), 1, hFile);
@@ -196,4 +196,27 @@ void SBoneFrame::ReadFromFile( FILE* hFile )
 	m_vKey.resize(iKeyCount);
 	if ( iKeyCount > 0 )
 		fread(&m_vKey.front(), sizeof(SBoneKey), iKeyCount, hFile);
+}
+
+void SMeshData::WriteToFile( FILE* hFile )
+{
+	int iSubMeshNum = m_vChildMesh.size();
+	fwrite(&iSubMeshNum, sizeof(int), 1, hFile);
+
+	for (int i = 0; i < iSubMeshNum; ++i)
+	{
+		m_vChildMesh[i].WriteToFile(hFile);
+	}
+}
+
+void SMeshData::ReadFromFile( FILE* hFile )
+{
+	int iSubMeshNum = 0;
+	fread(&iSubMeshNum, sizeof(int), 1, hFile);
+	m_vChildMesh.resize(iSubMeshNum);
+
+	for (int i = 0; i < iSubMeshNum; ++i)
+	{
+		m_vChildMesh[i].ReadFromFile(hFile);
+	}
 }
