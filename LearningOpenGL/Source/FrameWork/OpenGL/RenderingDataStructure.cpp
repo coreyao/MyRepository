@@ -10,7 +10,7 @@ COGLMesh::COGLMesh()
 	: m_vertexDataObj(0)
 	, m_vertexIndexObj(0)
 	, m_vertexAttributeObj(0)
-	, m_Texture(0)
+	, m_vTexture(0)
 	, m_Sampler(0)
 	, m_theProgram(0)
 	, m_colorTexUnit(0)
@@ -119,10 +119,10 @@ void COGLMesh::Render()
 	glUseProgram(m_theProgram);
 	glBindVertexArray(m_vertexAttributeObj);
 
-	if ( m_Texture > 0 )
+	if ( m_vTexture > 0 )
 	{
 		glActiveTexture(GL_TEXTURE0 + m_colorTexUnit);
-		glBindTexture(GL_TEXTURE_2D, m_Texture);
+		glBindTexture(GL_TEXTURE_2D, m_vTexture);
 		glBindSampler(m_colorTexUnit, m_Sampler);
 	}
 
@@ -154,8 +154,8 @@ void COGLMesh::SetTexture( const char* pTextureFileName )
 	CPNGReader pngReader(pTextureFileName);
 	if ( pngReader.GetData() )
 	{
-		glGenTextures(1, &m_Texture);
-		glBindTexture(GL_TEXTURE_2D, m_Texture);
+		glGenTextures(1, &m_vTexture);
+		glBindTexture(GL_TEXTURE_2D, m_vTexture);
 
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pngReader.GetWidth(), pngReader.GetHeight(), 0,
 			GL_RGBA, GL_UNSIGNED_BYTE, pngReader.GetData());
@@ -186,7 +186,7 @@ void COGLMesh::InitProgram()
 void COGLMesh::InitMaterial()
 {
 	std::string sTextureFile;
-	if ( !m_data.m_cMaterial.m_SubTextureVec.empty() )
+	if ( !m_data.m_vChildMesh[0].m_cMaterial.m_SubTextureVec.empty() )
 		sTextureFile = m_data.m_cMaterial.m_SubTextureVec[0].m_sFileName;
 
 	if ( !sTextureFile.empty() )

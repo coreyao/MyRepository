@@ -26,7 +26,7 @@ private:
 	GLuint m_vertexDataObj;
 	GLuint m_vertexIndexObj;
 	GLuint m_vertexAttributeObj;
-	GLuint m_Texture;
+	vector<GLuint> m_vTexture;
 	GLuint m_Sampler;
 };
 
