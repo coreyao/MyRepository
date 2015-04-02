@@ -15,8 +15,9 @@ float g_YAngle = 0;
 
 void init()
 {
-	g_mesh.InitFromFile("test.CSTM");
-	g_mesh.SetTexture("HelloWorld.png");
+	g_mesh.InitFromFile("bat.CSTM");
+	g_mesh.SetTexture("BatArmor.png", 0);
+	g_mesh.SetTexture("HelloWorld.png", 1);
 	g_mesh.m_worldPos.set(0, -30, -100);
 	//g_mesh.m_scale.set(50.0f, 50.0f, 50.0f);
 	g_animator.SetTarget(&g_mesh);

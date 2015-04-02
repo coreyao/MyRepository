@@ -126,20 +126,13 @@ INT_PTR CALLBACK MeshExporterOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam
 				std::string strPathName = imp->m_szExportPath;
 				std::string strFileName;  
 				std::string::size_type pos1 = strPathName.find_last_of('\\');  
-				std::string strFileName_NoExt;  
 				if (pos1 != std::string::npos)  
 					strFileName = strPathName.substr(pos1 + 1);  
 				else  
-					strFileName = strPathName;  
-
-				std::string::size_type pos2 = strFileName.find_last_of('.');  
-				if (pos2 != std::string::npos)  
-					strFileName_NoExt = strFileName.substr(0, pos2);  
-				else  
-					strFileName_NoExt = strFileName;
+					strFileName = strPathName;
 
 				HWND hNameEdit = ::GetDlgItem(hWnd, IDC_EDIT1);  
-				SetWindowText(hNameEdit,strFileName_NoExt.c_str()); 
+				SetWindowText(hNameEdit,strFileName.c_str()); 
 			}
 			return TRUE;
 		case WM_COMMAND:  
@@ -479,9 +472,9 @@ void MeshExporter::ParseGeomObject(INode* pNode)
 					for ( auto& pSkin : vSkinInfo )
 					{
 						ISkinContextData* pSkinCtx = pSkin->GetContextInterface(pNode);
-						for (int i = 0; i < tVertexNum/*pSkinCtx->GetNumPoints()*/; ++i)
+						for (int i = 0; i < /*tVertexNum*/pSkinCtx->GetNumPoints(); ++i)
 						{
-							int nBones = pSkinCtx->GetNumAssignedBones(i);	
+							int nBones = pSkinCtx->GetNumAssignedBones(i);
 							for (int j = 0; j < nBones; ++j)
 							{
 								INode* pBone = pSkin->GetBone(pSkinCtx->GetAssignedBone(i, j));
@@ -490,14 +483,14 @@ void MeshExporter::ParseGeomObject(INode* pNode)
 								SBoneData* pBoneData = FindBoneDataByName(bName);
 								if ( pBoneData )
 								{
-									auto it = std::find(tMesh.m_skeleton.m_vSkinBone.begin(), tMesh.m_skeleton.m_vSkinBone.end(), pBoneData->m_iIndex);
-									if ( it == tMesh.m_skeleton.m_vSkinBone.end())
+									auto it = std::find(m_MeshNode.m_skeleton.m_vSkinBone.begin(), m_MeshNode.m_skeleton.m_vSkinBone.end(), pBoneData->m_iIndex);
+									if ( it == m_MeshNode.m_skeleton.m_vSkinBone.end())
 									{
-										tMesh.m_skeleton.m_vSkinBone.push_back(pBoneData->m_iIndex);
+										m_MeshNode.m_skeleton.m_vSkinBone.push_back(pBoneData->m_iIndex);
 									}
 
 									int iIndex = 0;
-									for ( auto& rBoneDataIndex : tMesh.m_skeleton.m_vSkinBone )
+									for ( auto& rBoneDataIndex : m_MeshNode.m_skeleton.m_vSkinBone )
 									{
 										if ( rBoneDataIndex == pBoneData->m_iIndex )
 											break;
@@ -513,10 +506,6 @@ void MeshExporter::ParseGeomObject(INode* pNode)
 					}
 				}
 				
-				for (auto& rBone : m_allBoneData)
-					tMesh.m_skeleton.m_vBone.push_back(rBone.second);
-
-				tMesh.m_skeleton.m_vFrame = m_allBoneFrames;
 				tMesh.m_vVectex = tVertexVec;
 				m_MeshNode.m_vChildMesh.push_back(tMesh);
 			}  
@@ -653,6 +642,7 @@ void MeshExporter::DoClean()
 {
 	m_AllMaterialVec.clear();
 	m_MeshNode.m_vChildMesh.clear();
+	m_MeshNode.m_skeleton.m_vBone.clear();
 }
 
 void MeshExporter::ParseAllInfo()
@@ -662,6 +652,9 @@ void MeshExporter::ParseAllInfo()
 	INode* pRootNode = m_pInterface->GetRootNode();
 	EnumBones(pRootNode);
 	ParseBoneAnimation();
+	for (auto& rBone : m_allBoneData)
+		m_MeshNode.m_skeleton.m_vBone.push_back(rBone.second);
+	m_MeshNode.m_skeleton.m_vFrame = m_allBoneFrames;
 
 	EnumGeomObjects(pRootNode);
 }
@@ -727,8 +720,8 @@ void MeshExporter::ParseBoneAnimation()
 	int frameCount = tAniTime / gpf;
 	for(int i = 0; i < frameCount; ++i)
 	{
-		if ( i > 0 && i < frameCount - 1 && i % 5 != 0)
-			continue;
+		//if ( i > 0 && i < frameCount - 1 && i % 5 != 0)
+		//	continue;
 
 		SBoneFrame tempFrame;
 		tempFrame.m_iIndex = i;

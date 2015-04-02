@@ -15,9 +15,14 @@ uniform vec4 u_matrixPalette[SKINNING_JOINT_COUNT * 3];
 vec4 getPosition()
 {
 	int matrixIndex = 0;
-    vec4 matrixPalette1 = vec4(1.0, 0.0, 0.0, 0.0);
-    vec4 matrixPalette2 = vec4(0.0, 1.0, 0.0, 0.0);
-    vec4 matrixPalette3 = vec4(0.0, 0.0, 1.0, 0.0);
+    vec4 matrixPalette1 = vec4(0.0, 0.0, 0.0, 0.0);
+    vec4 matrixPalette2 = vec4(0.0, 0.0, 0.0, 0.0);
+    vec4 matrixPalette3 = vec4(0.0, 0.0, 0.0, 0.0);
+
+	if (boneWeight[0] == 0 && boneWeight[1] == 0 && boneWeight[2] == 0 && boneWeight[3] == 0)
+	{
+		return position;
+	}
 
     float blendWeight = boneWeight[0];
     if (blendWeight > 0.0)

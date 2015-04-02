@@ -7,11 +7,7 @@
 using namespace std;
 
 COGLMesh::COGLMesh()
-	: m_vertexDataObj(0)
-	, m_vertexIndexObj(0)
-	, m_vertexAttributeObj(0)
-	, m_vTexture(0)
-	, m_Sampler(0)
+	: m_Sampler(0)
 	, m_theProgram(0)
 	, m_colorTexUnit(0)
 {
@@ -30,7 +26,7 @@ void COGLMesh::InitFromFile( const char* pMeshFileName )
 
 	m_data.ReadFromFile(pMeshFile);
 
-	/*for (auto& rVertex : m_data.m_vVectex)
+	for (auto& rVertex : m_data.m_vChildMesh[0].m_vVectex)
 	{
 		for (int i = 0; i < 4; ++i)
 		{
@@ -43,7 +39,7 @@ void COGLMesh::InitFromFile( const char* pMeshFileName )
 			cout << rVertex.m_boneIndex[i] << " "; 
 		}
 		cout << endl << endl;
-	}*/
+	}
 
 	InitProgram();
 	InitMaterial();
@@ -53,15 +49,6 @@ void COGLMesh::InitFromFile( const char* pMeshFileName )
 
 void COGLMesh::InitSkeleton()
 {
-	for ( auto& rBoneData : m_data.m_skeleton.m_vBone )
-	{
-		CBone newBone;
-		newBone.m_data = rBoneData;
-		newBone.m_localMat = rBoneData.m_originalBindMat;
-		newBone.m_worldMat = rBoneData.m_originalBindMat;
-		m_skeleton.m_vBone.push_back(newBone);
-	}
-
 	auto FindCBoneByIndex = [this](int iIndex)
 	{
 		for (int i = 0; i < m_skeleton.m_vBone.size(); ++i)
@@ -74,6 +61,15 @@ void COGLMesh::InitSkeleton()
 
 		return (CBone*)nullptr;
 	};
+
+	for ( auto& rBoneData : m_data.m_skeleton.m_vBone )
+	{
+		CBone newBone;
+		newBone.m_data = rBoneData;
+		newBone.m_localMat = rBoneData.m_originalBindMat;
+		newBone.m_worldMat = rBoneData.m_originalBindMat;
+		m_skeleton.m_vBone.push_back(newBone);
+	}
 
 	for (int i = 0; i < m_skeleton.m_vBone.size(); ++i)
 	{
@@ -117,45 +113,50 @@ void COGLMesh::Render()
 	glDepthRange(0.0f, 1.0f);
 
 	glUseProgram(m_theProgram);
-	glBindVertexArray(m_vertexAttributeObj);
-
-	if ( m_vTexture > 0 )
-	{
-		glActiveTexture(GL_TEXTURE0 + m_colorTexUnit);
-		glBindTexture(GL_TEXTURE_2D, m_vTexture);
-		glBindSampler(m_colorTexUnit, m_Sampler);
-	}
 
 	Mat4 viewMatrix = Mat4::CreateFromTranslation(0.0f, 0.0f, -100.0f);
 	Mat4 ScaleMatrix = Mat4::CreateFromScale(m_scale.x, m_scale.y, m_scale.z);
 	Mat4 RotationMatrix = Mat4::CreateFromRotation(m_rotation.x, m_rotation.y, m_rotation.z);
 	Mat4 TranslationMatrix = Mat4::CreateFromTranslation(m_worldPos.x, m_worldPos.y, m_worldPos.z);
 
-	Mat4 ModelViewMatrix;
-	ModelViewMatrix = viewMatrix * TranslationMatrix * ScaleMatrix * RotationMatrix;
+	for ( int i = 0; i < m_data.m_vChildMesh.size(); ++i )
+	{
+		glBindVertexArray(m_vertexAttributeObj[i]);
 
-	GLuint modelViewMatrixUnif = glGetUniformLocation(m_theProgram, "modelViewMatrix");
-	glUniformMatrix4fv(modelViewMatrixUnif, 1, GL_FALSE, ModelViewMatrix.m);
+		if ( m_vTexture[i] > 0 )
+		{
+			glActiveTexture(GL_TEXTURE0 + m_colorTexUnit);
+			glBindTexture(GL_TEXTURE_2D, m_vTexture[i]);
+			glBindSampler(m_colorTexUnit, m_Sampler);
+		}
 
-	GLuint matrixPaletteUnif = glGetUniformLocation(m_theProgram, "u_matrixPalette");
-	glUniform4fv( matrixPaletteUnif, (GLsizei)m_skeleton.m_vBone.size() * 3, (const float*)m_skeleton.GetMatrixPalette() );
+		Mat4 ModelViewMatrix;
+		ModelViewMatrix = viewMatrix * TranslationMatrix * ScaleMatrix * RotationMatrix * m_data.m_vChildMesh[i].m_MeshMatrix;
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vertexIndexObj);
-	glDrawElements(GL_TRIANGLES, m_data.m_vFace.size() * 3, GL_UNSIGNED_INT, 0);
+		GLuint modelViewMatrixUnif = glGetUniformLocation(m_theProgram, "modelViewMatrix");
+		glUniformMatrix4fv(modelViewMatrixUnif, 1, GL_FALSE, ModelViewMatrix.m);
 
-	glBindSampler(m_colorTexUnit, 0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glBindVertexArray(0);
+		GLuint matrixPaletteUnif = glGetUniformLocation(m_theProgram, "u_matrixPalette");
+		glUniform4fv( matrixPaletteUnif, (GLsizei)m_skeleton.m_vBone.size() * 3, (const float*)m_skeleton.GetMatrixPalette() );
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vertexIndexObj[i]);
+		glDrawElements(GL_TRIANGLES, m_data.m_vChildMesh[i].m_vFace.size() * 3, GL_UNSIGNED_INT, 0);
+
+		glBindSampler(m_colorTexUnit, 0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glBindVertexArray(0);
+	}
+	
 	glUseProgram(0);
 }
 
-void COGLMesh::SetTexture( const char* pTextureFileName )
+void COGLMesh::SetTexture( const char* pTextureFileName, int iIndex )
 {
 	CPNGReader pngReader(pTextureFileName);
 	if ( pngReader.GetData() )
 	{
-		glGenTextures(1, &m_vTexture);
-		glBindTexture(GL_TEXTURE_2D, m_vTexture);
+		glGenTextures(1, &m_vTexture[iIndex]);
+		glBindTexture(GL_TEXTURE_2D, m_vTexture[iIndex]);
 
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pngReader.GetWidth(), pngReader.GetHeight(), 0,
 			GL_RGBA, GL_UNSIGNED_BYTE, pngReader.GetData());
@@ -185,12 +186,18 @@ void COGLMesh::InitProgram()
 
 void COGLMesh::InitMaterial()
 {
-	std::string sTextureFile;
-	if ( !m_data.m_vChildMesh[0].m_cMaterial.m_SubTextureVec.empty() )
-		sTextureFile = m_data.m_cMaterial.m_SubTextureVec[0].m_sFileName;
+	int iSubMeshCount = m_data.m_vChildMesh.size();
+	m_vTexture.resize(iSubMeshCount);
 
-	if ( !sTextureFile.empty() )
-		SetTexture(sTextureFile.c_str());
+	for ( int i = 0; i < iSubMeshCount; ++i )
+	{
+		std::string sTextureFile;
+		if ( !m_data.m_vChildMesh[i].m_cMaterial.m_SubTextureVec.empty() )
+			sTextureFile = m_data.m_vChildMesh[i].m_cMaterial.m_SubTextureVec[0].m_sFileName;
+
+		if ( !sTextureFile.empty() )
+			SetTexture(sTextureFile.c_str(), i);
+	}
 
 	glGenSamplers(1, &m_Sampler);
 	glSamplerParameteri(m_Sampler, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -201,31 +208,39 @@ void COGLMesh::InitMaterial()
 
 void COGLMesh::InitVBOAndVAO()
 {
-	glGenBuffers(1, &m_vertexDataObj);
-	glBindBuffer(GL_ARRAY_BUFFER, m_vertexDataObj);
-	glBufferData(GL_ARRAY_BUFFER, m_data.m_vVectex.size() * sizeof(SVertex), &m_data.m_vVectex.front(), GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	int iSubMeshCount = m_data.m_vChildMesh.size();
+	m_vertexDataObj.resize(iSubMeshCount);
+	m_vertexIndexObj.resize(iSubMeshCount);
+	m_vertexAttributeObj.resize(iSubMeshCount);
 
-	glGenBuffers(1, &m_vertexIndexObj);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vertexIndexObj);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_data.m_vFace.size() * sizeof(SFace), &m_data.m_vFace.front(), GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	for ( int i = 0; i < iSubMeshCount; ++i )
+	{
+		glGenBuffers(1, &m_vertexDataObj[i]);
+		glBindBuffer(GL_ARRAY_BUFFER, m_vertexDataObj[i]);
+		glBufferData(GL_ARRAY_BUFFER, m_data.m_vChildMesh[i].m_vVectex.size() * sizeof(SVertex), &m_data.m_vChildMesh[i].m_vVectex.front(), GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	glGenVertexArrays(1, &m_vertexAttributeObj);
-	glBindVertexArray(m_vertexAttributeObj);
+		glGenBuffers(1, &m_vertexIndexObj[i]);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vertexIndexObj[i]);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_data.m_vChildMesh[i].m_vFace.size() * sizeof(SFace), &m_data.m_vChildMesh[i].m_vFace.front(), GL_STATIC_DRAW);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-	glBindBuffer(GL_ARRAY_BUFFER, m_vertexDataObj);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(SVertex, m_position));
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(SVertex, m_texCoord));
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(SVertex, m_boneIndex));
-	glEnableVertexAttribArray(3);
-	glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(SVertex, m_blendWeight));
+		glGenVertexArrays(1, &m_vertexAttributeObj[i]);
+		glBindVertexArray(m_vertexAttributeObj[i]);
 
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, m_vertexDataObj[i]);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(SVertex, m_position));
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(SVertex, m_texCoord));
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(SVertex, m_boneIndex));
+		glEnableVertexAttribArray(3);
+		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(SVertex, m_blendWeight));
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
 }
 
 

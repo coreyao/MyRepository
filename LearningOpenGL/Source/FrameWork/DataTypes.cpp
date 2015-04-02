@@ -31,27 +31,6 @@ void SSubMeshData::WriteToFile(FILE* hFile)
 		fwrite(&m_vFace.front(), sizeof(SFace), m_vFace.size(), hFile);  
 	}
 
-	int iBoneNum = m_skeleton.m_vBone.size();
-	fwrite(&iBoneNum, sizeof(int), 1, hFile);
-	for (int i = 0; i < iBoneNum; ++i)
-	{
-		m_skeleton.m_vBone[i].WriteToFile(hFile);
-	}
-
-	int iSkinBoneNum = m_skeleton.m_vSkinBone.size();
-	fwrite(&iSkinBoneNum, sizeof(int), 1, hFile);
-	for (auto& rBoneIndex : m_skeleton.m_vSkinBone)
-	{
-		fwrite(&rBoneIndex, sizeof(int), 1, hFile);  
-	}
-
-	int iFrameNum = m_skeleton.m_vFrame.size();
-	fwrite(&iFrameNum, sizeof(int), 1, hFile);
-	for (int i = 0; i < iFrameNum; ++i)
-	{
-		m_skeleton.m_vFrame[i].WriteToFile(hFile);
-	}
-
 	fwrite(&m_MeshMatrix, sizeof(m_MeshMatrix), 1, hFile);
 }
 
@@ -94,37 +73,6 @@ void SSubMeshData::ReadFromFile( FILE* hFile )
 	{  
 		m_vFace.resize(iIndexCount);
 		fread(&m_vFace.front(), sizeof(SFace), iIndexCount, hFile);  
-	}
-
-	int iBoneNum = 0;
-	fread(&iBoneNum, sizeof(int), 1, hFile);
-	if ( iBoneNum > 0 )
-	{
-		m_skeleton.m_vBone.resize(iBoneNum);
-		for (int i = 0; i < iBoneNum; ++i)
-		{
-			m_skeleton.m_vBone[i].ReadFromFile(hFile);
-		}
-	}
-	
-	int iSkinBoneNum = 0;
-	fread(&iSkinBoneNum, sizeof(int), 1, hFile);
-	for ( int i = 0; i < iSkinBoneNum; ++i)
-	{
-		int iBoneIndex = 0;
-		fread(&iBoneIndex, sizeof(int), 1, hFile);  
-		m_skeleton.m_vSkinBone.push_back(iBoneIndex);
-	}
-
-	int iFrameNum = 0;
-	fread(&iFrameNum, sizeof(int), 1, hFile);
-	if ( iFrameNum > 0 )
-	{
-		m_skeleton.m_vFrame.resize(iFrameNum);
-		for (int i = 0; i < iFrameNum; ++i)
-		{
-			m_skeleton.m_vFrame[i].ReadFromFile(hFile);
-		}
 	}
 
 	fread(&m_MeshMatrix, sizeof(m_MeshMatrix), 1, hFile);
@@ -207,6 +155,27 @@ void SMeshData::WriteToFile( FILE* hFile )
 	{
 		m_vChildMesh[i].WriteToFile(hFile);
 	}
+
+	int iBoneNum = m_skeleton.m_vBone.size();
+	fwrite(&iBoneNum, sizeof(int), 1, hFile);
+	for (int i = 0; i < iBoneNum; ++i)
+	{
+		m_skeleton.m_vBone[i].WriteToFile(hFile);
+	}
+
+	int iSkinBoneNum = m_skeleton.m_vSkinBone.size();
+	fwrite(&iSkinBoneNum, sizeof(int), 1, hFile);
+	for (auto& rBoneIndex : m_skeleton.m_vSkinBone)
+	{
+		fwrite(&rBoneIndex, sizeof(int), 1, hFile);  
+	}
+
+	int iFrameNum = m_skeleton.m_vFrame.size();
+	fwrite(&iFrameNum, sizeof(int), 1, hFile);
+	for (int i = 0; i < iFrameNum; ++i)
+	{
+		m_skeleton.m_vFrame[i].WriteToFile(hFile);
+	}
 }
 
 void SMeshData::ReadFromFile( FILE* hFile )
@@ -218,5 +187,36 @@ void SMeshData::ReadFromFile( FILE* hFile )
 	for (int i = 0; i < iSubMeshNum; ++i)
 	{
 		m_vChildMesh[i].ReadFromFile(hFile);
+	}
+
+	int iBoneNum = 0;
+	fread(&iBoneNum, sizeof(int), 1, hFile);
+	if ( iBoneNum > 0 )
+	{
+		m_skeleton.m_vBone.resize(iBoneNum);
+		for (int i = 0; i < iBoneNum; ++i)
+		{
+			m_skeleton.m_vBone[i].ReadFromFile(hFile);
+		}
+	}
+
+	int iSkinBoneNum = 0;
+	fread(&iSkinBoneNum, sizeof(int), 1, hFile);
+	for ( int i = 0; i < iSkinBoneNum; ++i)
+	{
+		int iBoneIndex = 0;
+		fread(&iBoneIndex, sizeof(int), 1, hFile);  
+		m_skeleton.m_vSkinBone.push_back(iBoneIndex);
+	}
+
+	int iFrameNum = 0;
+	fread(&iFrameNum, sizeof(int), 1, hFile);
+	if ( iFrameNum > 0 )
+	{
+		m_skeleton.m_vFrame.resize(iFrameNum);
+		for (int i = 0; i < iFrameNum; ++i)
+		{
+			m_skeleton.m_vFrame[i].ReadFromFile(hFile);
+		}
 	}
 }
