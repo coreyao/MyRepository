@@ -14,6 +14,7 @@
     <ClCompile Include="..\Source\FrameWork\BaseRenderingDataStructure.cpp" />
     <ClCompile Include="..\Source\FrameWork\DataTypes.cpp" />
     <ClCompile Include="..\Source\FrameWork\GLMesh.cpp" />
+    <ClCompile Include="..\Source\FrameWork\GLParticleSystem.cpp" />
     <ClCompile Include="..\Source\FrameWork\Image\ImageReader.cpp" />
     <ClCompile Include="..\Source\FrameWork\Image\PNGReader.cpp" />
     <ClCompile Include="..\Source\FrameWork\Math\Matrix.cpp" />
@@ -28,6 +29,7 @@
     <ClInclude Include="..\Source\FrameWork\BaseRenderingDataStructure.h" />
     <ClInclude Include="..\Source\FrameWork\DataTypes.h" />
     <ClInclude Include="..\Source\FrameWork\GLMesh.h" />
+    <ClInclude Include="..\Source\FrameWork\GLParticleSystem.h" />
     <ClInclude Include="..\Source\FrameWork\Image\ImageReader.h" />
     <ClInclude Include="..\Source\FrameWork\Image\PNGReader.h" />
     <ClInclude Include="..\Source\FrameWork\Math\Matrix.h" />
