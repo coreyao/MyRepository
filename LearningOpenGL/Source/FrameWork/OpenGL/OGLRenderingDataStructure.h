@@ -30,7 +30,5 @@ private:
 	std::vector<GLuint> m_vertexIndexObj;
 	std::vector<GLuint> m_vTexture;
 	std::vector<GLuint> m_vertexAttributeObj;
-
-	CSkeletonAnimator m_animator;
 };
 

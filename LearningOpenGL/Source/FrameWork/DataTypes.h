@@ -135,6 +135,6 @@ struct SMeshData
 	void WriteToFile(FILE* pFile);
 	void ReadFromFile(FILE* pFile);
 
-	std::vector<SSubMeshData>	m_vChildMesh;
+	std::vector<SSubMeshData>	m_vSubMesh;
 	SSkeletonData				m_skeleton;
 };

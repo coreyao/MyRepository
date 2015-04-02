@@ -66,4 +66,5 @@ public:
 
 protected:
 	SMeshData m_data;
+	CSkeletonAnimator m_animator;
 };

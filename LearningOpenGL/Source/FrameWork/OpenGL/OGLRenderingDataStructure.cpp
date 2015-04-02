@@ -109,9 +109,16 @@ void COGLMesh::Update(float dt)
 
 void COGLMesh::Render()
 {
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-	glFrontFace(GL_CCW);
+	if ( m_bEnableCullFace )
+	{
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+		glFrontFace(GL_CCW);
+	}
+	else
+	{
+		glDisable(GL_CULL_FACE);
+	}
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
@@ -125,7 +132,7 @@ void COGLMesh::Render()
 	Mat4 RotationMatrix = Mat4::CreateFromRotation(m_rotation.x, m_rotation.y, m_rotation.z);
 	Mat4 TranslationMatrix = Mat4::CreateFromTranslation(m_worldPos.x, m_worldPos.y, m_worldPos.z);
 
-	for ( int i = 0; i < m_data.m_vChildMesh.size(); ++i )
+	for ( int i = 0; i < m_data.m_vSubMesh.size(); ++i )
 	{
 		glBindVertexArray(m_vertexAttributeObj[i]);
 
@@ -137,7 +144,7 @@ void COGLMesh::Render()
 		}
 
 		Mat4 ModelViewMatrix;
-		ModelViewMatrix = viewMatrix * TranslationMatrix * ScaleMatrix * RotationMatrix * m_data.m_vChildMesh[i].m_MeshMatrix;
+		ModelViewMatrix = viewMatrix * TranslationMatrix * ScaleMatrix * RotationMatrix * m_data.m_vSubMesh[i].m_MeshMatrix;
 
 		GLuint modelViewMatrixUnif = glGetUniformLocation(m_theProgram, "modelViewMatrix");
 		glUniformMatrix4fv(modelViewMatrixUnif, 1, GL_FALSE, ModelViewMatrix.m);
@@ -146,7 +153,7 @@ void COGLMesh::Render()
 		glUniform4fv( matrixPaletteUnif, (GLsizei)m_skeleton.m_vBone.size() * 3, (const float*)m_skeleton.GetMatrixPalette() );
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vertexIndexObj[i]);
-		glDrawElements(GL_TRIANGLES, m_data.m_vChildMesh[i].m_vFace.size() * 3, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, m_data.m_vSubMesh[i].m_vFace.size() * 3, GL_UNSIGNED_INT, 0);
 
 		glBindSampler(m_colorTexUnit, 0);
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -192,14 +199,14 @@ void COGLMesh::InitProgram()
 
 void COGLMesh::InitMaterial()
 {
-	int iSubMeshCount = m_data.m_vChildMesh.size();
+	int iSubMeshCount = m_data.m_vSubMesh.size();
 	m_vTexture.resize(iSubMeshCount);
 
 	for ( int i = 0; i < iSubMeshCount; ++i )
 	{
 		std::string sTextureFile;
-		if ( !m_data.m_vChildMesh[i].m_cMaterial.m_SubTextureVec.empty() )
-			sTextureFile = m_data.m_vChildMesh[i].m_cMaterial.m_SubTextureVec[0].m_sFileName;
+		if ( !m_data.m_vSubMesh[i].m_cMaterial.m_SubTextureVec.empty() )
+			sTextureFile = m_data.m_vSubMesh[i].m_cMaterial.m_SubTextureVec[0].m_sFileName;
 
 		if ( !sTextureFile.empty() )
 			SetTexture(sTextureFile.c_str(), i);
@@ -214,7 +221,7 @@ void COGLMesh::InitMaterial()
 
 void COGLMesh::InitVBOAndVAO()
 {
-	int iSubMeshCount = m_data.m_vChildMesh.size();
+	int iSubMeshCount = m_data.m_vSubMesh.size();
 	m_vertexDataObj.resize(iSubMeshCount);
 	m_vertexIndexObj.resize(iSubMeshCount);
 	m_vertexAttributeObj.resize(iSubMeshCount);
@@ -223,12 +230,12 @@ void COGLMesh::InitVBOAndVAO()
 	{
 		glGenBuffers(1, &m_vertexDataObj[i]);
 		glBindBuffer(GL_ARRAY_BUFFER, m_vertexDataObj[i]);
-		glBufferData(GL_ARRAY_BUFFER, m_data.m_vChildMesh[i].m_vVectex.size() * sizeof(SVertex), &m_data.m_vChildMesh[i].m_vVectex.front(), GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, m_data.m_vSubMesh[i].m_vVectex.size() * sizeof(SVertex), &m_data.m_vSubMesh[i].m_vVectex.front(), GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		glGenBuffers(1, &m_vertexIndexObj[i]);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vertexIndexObj[i]);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_data.m_vChildMesh[i].m_vFace.size() * sizeof(SFace), &m_data.m_vChildMesh[i].m_vFace.front(), GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_data.m_vSubMesh[i].m_vFace.size() * sizeof(SFace), &m_data.m_vSubMesh[i].m_vFace.front(), GL_STATIC_DRAW);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 		glGenVertexArrays(1, &m_vertexAttributeObj[i]);

@@ -2,7 +2,7 @@
 #include "FrameWork/Utility.h"
 #include "FrameWork/Image/PNGReader.h"
 #include "FrameWork/DataTypes.h"
-#include "FrameWork/OpenGL/RenderingDataStructure.h"
+#include "FrameWork/OpenGL/OGLRenderingDataStructure.h"
 
 std::vector<COGLMesh*> g_vMesh;
 
@@ -14,34 +14,32 @@ float g_YAngle = 0;
 
 void init()
 {
+	COGLMesh* pPlane = new COGLMesh;
+	pPlane->InitFromFile("plane.CSTM");
+	for ( int i = 0; i < pPlane->GetMeshData().m_vSubMesh.size(); ++i )
+	{
+		pPlane->SetTexture("HelloWorld.png", i);
+	}
+
+	pPlane->m_worldPos.set(0, -60, -100);
+	pPlane->m_scale.set(100, 100, -100);
+	pPlane->m_bEnableCullFace = false;
+
+	g_vMesh.push_back(pPlane);
+
 	{
 		COGLMesh* mesh = new COGLMesh;
-		mesh->InitFromFile("plane.CSTM");
-		for ( int i = 0; i < mesh->GetMeshData().m_vChildMesh.size(); ++i )
+		mesh->InitFromFile("bat.CSTM");
+		for ( int i = 0; i < mesh->GetMeshData().m_vSubMesh.size(); ++i )
 		{
 			mesh->SetTexture("BatArmor.png", i);
 		}
 
-		mesh->m_worldPos.set(0, 0, -100);
+		mesh->m_worldPos.set(pPlane->m_worldPos.x, pPlane->m_worldPos.y + 30, pPlane->m_worldPos.z);
 		mesh->m_scale.set(1, 1, -1);
 
 		g_vMesh.push_back(mesh);
 	}
-
-	/*{
-	COGLMesh* mesh = new COGLMesh;
-	mesh->InitFromFile("bat.CSTM");
-	for ( int i = 0; i < mesh->GetMeshData().m_vChildMesh.size(); ++i )
-	{
-	mesh->SetTexture("HelloWorld.png", i);
-	}
-
-	mesh->m_worldPos.set(0, 0, -50);
-	mesh->m_rotation.set(0, 30, 0);
-	mesh->m_scale.set(10, 10, -10);
-
-	g_vMesh.push_back(mesh);
-	}*/
 	
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);

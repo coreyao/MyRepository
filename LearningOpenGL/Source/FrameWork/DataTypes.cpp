@@ -148,12 +148,12 @@ void SBoneFrame::ReadFromFile( FILE* hFile )
 
 void SMeshData::WriteToFile( FILE* hFile )
 {
-	int iSubMeshNum = m_vChildMesh.size();
+	int iSubMeshNum = m_vSubMesh.size();
 	fwrite(&iSubMeshNum, sizeof(int), 1, hFile);
 
 	for (int i = 0; i < iSubMeshNum; ++i)
 	{
-		m_vChildMesh[i].WriteToFile(hFile);
+		m_vSubMesh[i].WriteToFile(hFile);
 	}
 
 	int iBoneNum = m_skeleton.m_vBone.size();
@@ -182,11 +182,11 @@ void SMeshData::ReadFromFile( FILE* hFile )
 {
 	int iSubMeshNum = 0;
 	fread(&iSubMeshNum, sizeof(int), 1, hFile);
-	m_vChildMesh.resize(iSubMeshNum);
+	m_vSubMesh.resize(iSubMeshNum);
 
 	for (int i = 0; i < iSubMeshNum; ++i)
 	{
-		m_vChildMesh[i].ReadFromFile(hFile);
+		m_vSubMesh[i].ReadFromFile(hFile);
 	}
 
 	int iBoneNum = 0;
