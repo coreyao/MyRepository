@@ -1,4 +1,4 @@
-#include "OGLRenderingDataStructure.h"
+#include "GLMesh.h"
 #include "../Utility.h"
 #include "../Image/PNGReader.h"
 #include <algorithm>
@@ -25,24 +25,9 @@ void COGLMesh::InitFromFile( const char* pMeshFileName )
 		return;
 
 	m_data.ReadFromFile(pMeshFile);
+	m_vSubMeshVisibility.resize(m_data.m_vSubMesh.size(), true);
 	m_animator.SetTarget(this);
 
-	//for (auto& rVertex : m_data.m_vChildMesh[0].m_vVectex)
-	//{
-	//	for (int i = 0; i < 4; ++i)
-	//	{
-	//		cout << rVertex.m_blendWeight[i] << " "; 
-	//	}
-	//	cout << endl;
-
-	//	for (int i = 0; i < 4; ++i)
-	//	{
-	//		cout << rVertex.m_boneIndex[i] << " "; 
-	//	}
-	//	cout << endl << endl;
-	//}
-
-	InitProgram();
 	InitMaterial();
 	InitVBOAndVAO();
 	InitSkeleton();
@@ -134,6 +119,9 @@ void COGLMesh::Render()
 
 	for ( int i = 0; i < m_data.m_vSubMesh.size(); ++i )
 	{
+		if ( !m_vSubMeshVisibility[i] )
+			continue;
+
 		glBindVertexArray(m_vertexAttributeObj[i]);
 
 		if ( m_vTexture[i] > 0 )
@@ -143,14 +131,25 @@ void COGLMesh::Render()
 			glBindSampler(m_colorTexUnit, m_Sampler);
 		}
 
-		Mat4 ModelViewMatrix;
-		ModelViewMatrix = viewMatrix * TranslationMatrix * ScaleMatrix * RotationMatrix * m_data.m_vSubMesh[i].m_MeshMatrix;
-
 		GLuint modelViewMatrixUnif = glGetUniformLocation(m_theProgram, "modelViewMatrix");
-		glUniformMatrix4fv(modelViewMatrixUnif, 1, GL_FALSE, ModelViewMatrix.m);
+		if ( modelViewMatrixUnif > 0 )
+		{
+			Mat4 ModelViewMatrix;
+			ModelViewMatrix = viewMatrix * TranslationMatrix * ScaleMatrix * RotationMatrix * m_data.m_vSubMesh[i].m_MeshMatrix;
+			glUniformMatrix4fv(modelViewMatrixUnif, 1, GL_FALSE, ModelViewMatrix.m);
+		}
 
 		GLuint matrixPaletteUnif = glGetUniformLocation(m_theProgram, "u_matrixPalette");
-		glUniform4fv( matrixPaletteUnif, (GLsizei)m_skeleton.m_vBone.size() * 3, (const float*)m_skeleton.GetMatrixPalette() );
+		if ( matrixPaletteUnif > 0 )
+		{
+			glUniform4fv( matrixPaletteUnif, (GLsizei)m_skeleton.m_vBone.size() * 3, (const float*)m_skeleton.GetMatrixPalette() );
+		}
+
+		GLuint colorUnif = glGetUniformLocation(m_theProgram, "u_color");
+		if ( colorUnif > 0 )
+		{
+			glUniform4f( colorUnif, m_color.r, m_color.g, m_color.b, m_color.a );
+		}
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vertexIndexObj[i]);
 		glDrawElements(GL_TRIANGLES, m_data.m_vSubMesh[i].m_vFace.size() * 3, GL_UNSIGNED_INT, 0);
@@ -178,21 +177,22 @@ void COGLMesh::SetTexture( const char* pTextureFileName, int iIndex )
 	}
 }
 
-void COGLMesh::InitProgram()
+void COGLMesh::InitUniform()
 {
-	std::vector<GLuint> shaderList;
-	shaderList.push_back(OpenGLFramework::LoadShader(GL_VERTEX_SHADER, SHADER_FILE_DIR + "SkinMesh_Vertex_Shader.vert"));
-	shaderList.push_back(OpenGLFramework::LoadShader(GL_FRAGMENT_SHADER, SHADER_FILE_DIR + "Mesh_Fragment_Shader.frag"));
-	m_theProgram = OpenGLFramework::CreateProgram(shaderList);
-	std::for_each(shaderList.begin(), shaderList.end(), glDeleteShader);
+	glUseProgram(m_theProgram);
 
 	GLuint colorTextureUnif = glGetUniformLocation(m_theProgram, "colorTexture");
-	glUseProgram(m_theProgram);
-	glUniform1i(colorTextureUnif, m_colorTexUnit);
+	if ( colorTextureUnif > 0 )
+	{
+		glUniform1i(colorTextureUnif, m_colorTexUnit);
+	}
 
 	GLuint perspectiveMatrixUnif = glGetUniformLocation(m_theProgram, "perspectiveMatrix");
-	Mat4 perspectiveMatrix = Mat4::createPerspective(90.0f, (float)RESOLUTION_WIDTH / (float)RESOLUTION_HEIGHT, 1.0f, 1000.0f);
-	glUniformMatrix4fv(perspectiveMatrixUnif, 1, GL_FALSE, perspectiveMatrix.m);
+	if ( perspectiveMatrixUnif > 0 )
+	{
+		Mat4 perspectiveMatrix = Mat4::createPerspective(90.0f, (float)RESOLUTION_WIDTH / (float)RESOLUTION_HEIGHT, 1.0f, 1000.0f);
+		glUniformMatrix4fv(perspectiveMatrixUnif, 1, GL_FALSE, perspectiveMatrix.m);
+	}
 
 	glUseProgram(0);
 }
@@ -253,6 +253,30 @@ void COGLMesh::InitVBOAndVAO()
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
+	}
+}
+
+void COGLMesh::SetGLProgram( GLuint theProgram )
+{
+	m_theProgram = theProgram;
+	InitUniform();
+}
+
+void COGLMesh::SetVisible(bool bVisible, const std::string& sSubMeshName)
+{
+	int iIndex = -1;
+	for (int i = 0; i < m_data.m_vSubMesh.size(); ++i)
+	{
+		if ( m_data.m_vSubMesh[i].m_MeshName == sSubMeshName )
+		{
+			iIndex = i;
+			break;
+		}
+	}
+
+	if ( iIndex >= 0 )
+	{
+		m_vSubMeshVisibility[iIndex] = bVisible;
 	}
 }
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../BaseRenderingDataStructure.h"
-#include "OpenGLFrameWork.h"
+#include "GLFrameWork.h"
 
 class COGLMesh : public CBaseMesh
 {
@@ -13,10 +13,12 @@ public:
 	virtual void Render();
 	void InitFromFile(const char* pMeshFileName);
 	void SetTexture(const char* pTextureFileName, int iIndex);
+	void SetGLProgram(GLuint theProgram);
+	void SetVisible(bool bVisible, const std::string& sSubMeshName);
 
 private:
 	void InitSkeleton();
-	void InitProgram();
+	void InitUniform();
 	void InitMaterial();
 	void InitVBOAndVAO();
 

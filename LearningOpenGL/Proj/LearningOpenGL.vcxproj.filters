@@ -22,9 +22,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Source\FrameWork\OpenGL\OpenGLFrameWork.cpp">
-      <Filter>Source Files\FrameWork\OpenGL</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\FrameWork\Utility.cpp">
       <Filter>Source Files\FrameWork</Filter>
     </ClCompile>
@@ -49,17 +46,20 @@
     <ClCompile Include="..\Source\FrameWork\Math\Vector.cpp">
       <Filter>Source Files\FrameWork\Math</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\FrameWork\OpenGL\OGLRenderingDataStructure.cpp">
-      <Filter>Source Files\FrameWork\OpenGL</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\FrameWork\BaseRenderingDataStructure.cpp">
       <Filter>Source Files\FrameWork</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\OpenGL\GLFrameWork.cpp">
+      <Filter>Source Files\FrameWork\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\OpenGL\GLProgramManager.cpp">
+      <Filter>Source Files\FrameWork\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\OpenGL\GLMesh.cpp">
+      <Filter>Source Files\FrameWork\OpenGL</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Source\FrameWork\OpenGL\OpenGLFrameWork.h">
-      <Filter>Source Files\FrameWork\OpenGL</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\FrameWork\Utility.h">
       <Filter>Source Files\FrameWork</Filter>
     </ClInclude>
@@ -81,11 +81,17 @@
     <ClInclude Include="..\Source\FrameWork\Math\Vector.h">
       <Filter>Source Files\FrameWork\Math</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\FrameWork\OpenGL\OGLRenderingDataStructure.h">
-      <Filter>Source Files\FrameWork\OpenGL</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\FrameWork\BaseRenderingDataStructure.h">
       <Filter>Source Files\FrameWork</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\OpenGL\GLFrameWork.h">
+      <Filter>Source Files\FrameWork\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\OpenGL\GLProgramManager.h">
+      <Filter>Source Files\FrameWork\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\OpenGL\GLMesh.h">
+      <Filter>Source Files\FrameWork\OpenGL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

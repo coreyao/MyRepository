@@ -60,11 +60,13 @@ public:
 	Vec3 m_worldPos;
 	Vec3 m_rotation;
 	Vec3 m_scale;
+	Color4F m_color;
 	CSkeleton m_skeleton;
 
 	bool m_bEnableCullFace;
 
 protected:
 	SMeshData m_data;
+	std::vector<bool> m_vSubMeshVisibility;
 	CSkeletonAnimator m_animator;
 };

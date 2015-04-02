@@ -5,6 +5,8 @@
 
 #include <vector>
 #include <string>
+#include <map>
+#include <algorithm>
 
 #define RESOLUTION_WIDTH 1024
 #define RESOLUTION_HEIGHT 768

@@ -1,4 +1,4 @@
-#include "OpenGLFrameWork.h"
+#include "GLFrameWork.h"
 #include "../Utility.h"
 
 #include <fstream>

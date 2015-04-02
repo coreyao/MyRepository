@@ -1,10 +1,13 @@
-#include "FrameWork/OpenGL/OpenGLFrameWork.h"
+#include "FrameWork/OpenGL/GLFrameWork.h"
+#include "FrameWork/OpenGL/GLMesh.h"
+#include "FrameWork/OpenGL/GLProgramManager.h"
 #include "FrameWork/Utility.h"
 #include "FrameWork/Image/PNGReader.h"
 #include "FrameWork/DataTypes.h"
-#include "FrameWork/OpenGL/OGLRenderingDataStructure.h"
 
+COGLMesh* g_planeMesh = nullptr;
 std::vector<COGLMesh*> g_vMesh;
+std::vector<GLuint> g_vGLProgram;
 
 timeval g_fLastTime = {0, 0};
 float g_fDeltaTime = 0.0f;
@@ -14,33 +17,30 @@ float g_YAngle = 0;
 
 void init()
 {
-	COGLMesh* pPlane = new COGLMesh;
-	pPlane->InitFromFile("plane.CSTM");
-	for ( int i = 0; i < pPlane->GetMeshData().m_vSubMesh.size(); ++i )
+	CGLProgramManager::GetInstance()->Add("SkinMesh", SHADER_FILE_DIR + "SkinMesh_Vertex_Shader.vert", SHADER_FILE_DIR + "Mesh_Fragment_Shader.frag");
+	CGLProgramManager::GetInstance()->Add("NormalMesh", SHADER_FILE_DIR + "Mesh_Vertex_Shader.vert", SHADER_FILE_DIR + "Mesh_Fragment_Shader.frag");
+
+	g_planeMesh = new COGLMesh;
+	g_planeMesh->InitFromFile("plane.CSTM");
+	for ( int i = 0; i < g_planeMesh->GetMeshData().m_vSubMesh.size(); ++i )
+		g_planeMesh->SetTexture("default.png", i);
+	g_planeMesh->m_worldPos.set(0, -60, -100);
+	g_planeMesh->m_scale.set(1000, 1000, -1000);
+	g_planeMesh->m_color = Color4F(0.5f, 0.5f, 0.5f, 1.0f);
+	g_planeMesh->m_bEnableCullFace = false;
+	g_planeMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("NormalMesh") );
+
+	COGLMesh* pSkinMesh = new COGLMesh;
+	pSkinMesh->InitFromFile("bat.CSTM");
+	for ( int i = 0; i < pSkinMesh->GetMeshData().m_vSubMesh.size(); ++i )
 	{
-		pPlane->SetTexture("HelloWorld.png", i);
+		pSkinMesh->SetTexture("BatArmor.png", i);
 	}
-
-	pPlane->m_worldPos.set(0, -60, -100);
-	pPlane->m_scale.set(100, 100, -100);
-	pPlane->m_bEnableCullFace = false;
-
-	g_vMesh.push_back(pPlane);
-
-	{
-		COGLMesh* mesh = new COGLMesh;
-		mesh->InitFromFile("bat.CSTM");
-		for ( int i = 0; i < mesh->GetMeshData().m_vSubMesh.size(); ++i )
-		{
-			mesh->SetTexture("BatArmor.png", i);
-		}
-
-		mesh->m_worldPos.set(pPlane->m_worldPos.x, pPlane->m_worldPos.y + 30, pPlane->m_worldPos.z);
-		mesh->m_scale.set(1, 1, -1);
-
-		g_vMesh.push_back(mesh);
-	}
-	
+	pSkinMesh->m_worldPos.set(g_planeMesh->m_worldPos.x, g_planeMesh->m_worldPos.y + 30, g_planeMesh->m_worldPos.z);
+	pSkinMesh->m_scale.set(1, 1, -1);
+	pSkinMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("SkinMesh") );
+	pSkinMesh->SetVisible(false, "Box01");
+	g_vMesh.push_back(pSkinMesh);
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
@@ -65,6 +65,7 @@ void display()
 	glClearDepth(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	g_planeMesh->Render();
 	for (int i = 0; i < g_vMesh.size(); ++i)
 	{
 		g_vMesh[i]->m_rotation.x = g_XAngle;

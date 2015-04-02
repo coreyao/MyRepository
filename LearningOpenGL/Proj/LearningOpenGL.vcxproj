@@ -18,8 +18,9 @@
     <ClCompile Include="..\Source\FrameWork\Math\Matrix.cpp" />
     <ClCompile Include="..\Source\FrameWork\Math\Quaternion.cpp" />
     <ClCompile Include="..\Source\FrameWork\Math\Vector.cpp" />
-    <ClCompile Include="..\Source\FrameWork\OpenGL\OpenGLFrameWork.cpp" />
-    <ClCompile Include="..\Source\FrameWork\OpenGL\OGLRenderingDataStructure.cpp" />
+    <ClCompile Include="..\Source\FrameWork\OpenGL\GLFrameWork.cpp" />
+    <ClCompile Include="..\Source\FrameWork\OpenGL\GLProgramManager.cpp" />
+    <ClCompile Include="..\Source\FrameWork\OpenGL\GLMesh.cpp" />
     <ClCompile Include="..\Source\FrameWork\Utility.cpp" />
     <ClCompile Include="..\Source\MeshViewer.cpp" />
   </ItemGroup>
@@ -31,8 +32,9 @@
     <ClInclude Include="..\Source\FrameWork\Math\Matrix.h" />
     <ClInclude Include="..\Source\FrameWork\Math\Quaternion.h" />
     <ClInclude Include="..\Source\FrameWork\Math\Vector.h" />
-    <ClInclude Include="..\Source\FrameWork\OpenGL\OpenGLFrameWork.h" />
-    <ClInclude Include="..\Source\FrameWork\OpenGL\OGLRenderingDataStructure.h" />
+    <ClInclude Include="..\Source\FrameWork\OpenGL\GLFrameWork.h" />
+    <ClInclude Include="..\Source\FrameWork\OpenGL\GLProgramManager.h" />
+    <ClInclude Include="..\Source\FrameWork\OpenGL\GLMesh.h" />
     <ClInclude Include="..\Source\FrameWork\Utility.h" />
   </ItemGroup>
   <ItemGroup>
