@@ -1,9 +1,9 @@
 #include "FrameWork/OpenGL/GLFrameWork.h"
-#include "FrameWork/OpenGL/GLMesh.h"
 #include "FrameWork/OpenGL/GLProgramManager.h"
 #include "FrameWork/Utility.h"
 #include "FrameWork/Image/PNGReader.h"
 #include "FrameWork/DataTypes.h"
+#include "FrameWork/GLMesh.h"
 
 COGLMesh* g_planeMesh = nullptr;
 std::vector<COGLMesh*> g_vMesh;

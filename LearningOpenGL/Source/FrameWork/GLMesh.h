@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../BaseRenderingDataStructure.h"
-#include "GLFrameWork.h"
+#include "BaseRenderingDataStructure.h"
+#include "OpenGL/GLFrameWork.h"
 
 class COGLMesh : public CBaseMesh
 {

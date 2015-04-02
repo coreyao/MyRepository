@@ -55,8 +55,8 @@
     <ClCompile Include="..\Source\FrameWork\OpenGL\GLProgramManager.cpp">
       <Filter>Source Files\FrameWork\OpenGL</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\FrameWork\OpenGL\GLMesh.cpp">
-      <Filter>Source Files\FrameWork\OpenGL</Filter>
+    <ClCompile Include="..\Source\FrameWork\GLMesh.cpp">
+      <Filter>Source Files\FrameWork</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -90,8 +90,8 @@
     <ClInclude Include="..\Source\FrameWork\OpenGL\GLProgramManager.h">
       <Filter>Source Files\FrameWork\OpenGL</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\FrameWork\OpenGL\GLMesh.h">
-      <Filter>Source Files\FrameWork\OpenGL</Filter>
+    <ClInclude Include="..\Source\FrameWork\GLMesh.h">
+      <Filter>Source Files\FrameWork</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

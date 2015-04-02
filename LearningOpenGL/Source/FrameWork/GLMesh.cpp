@@ -1,6 +1,6 @@
 #include "GLMesh.h"
-#include "../Utility.h"
-#include "../Image/PNGReader.h"
+#include "Utility.h"
+#include "Image/PNGReader.h"
 #include <algorithm>
 #include <iostream>
 
