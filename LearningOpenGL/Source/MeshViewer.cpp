@@ -4,7 +4,7 @@
 #include "FrameWork/DataTypes.h"
 #include "FrameWork/OpenGL/RenderingDataStructure.h"
 
-COGLMesh g_mesh;
+std::vector<COGLMesh*> g_vMesh;
 
 timeval g_fLastTime = {0, 0};
 float g_fDeltaTime = 0.0f;
@@ -14,14 +14,35 @@ float g_YAngle = 0;
 
 void init()
 {
-	g_mesh.InitFromFile("bat.CSTM");
-	for ( int i = 0; i < g_mesh.GetMeshData().m_vChildMesh.size(); ++i )
 	{
-		g_mesh.SetTexture("BatArmor.png", i);
+		COGLMesh* mesh = new COGLMesh;
+		mesh->InitFromFile("plane.CSTM");
+		for ( int i = 0; i < mesh->GetMeshData().m_vChildMesh.size(); ++i )
+		{
+			mesh->SetTexture("BatArmor.png", i);
+		}
+
+		mesh->m_worldPos.set(0, 0, -100);
+		mesh->m_scale.set(1, 1, -1);
+
+		g_vMesh.push_back(mesh);
 	}
 
-	g_mesh.m_worldPos.set(0, -50, -100);
-	g_mesh.m_scale.set(1, 1, -1);
+	/*{
+	COGLMesh* mesh = new COGLMesh;
+	mesh->InitFromFile("bat.CSTM");
+	for ( int i = 0; i < mesh->GetMeshData().m_vChildMesh.size(); ++i )
+	{
+	mesh->SetTexture("HelloWorld.png", i);
+	}
+
+	mesh->m_worldPos.set(0, 0, -50);
+	mesh->m_rotation.set(0, 30, 0);
+	mesh->m_scale.set(10, 10, -10);
+
+	g_vMesh.push_back(mesh);
+	}*/
+	
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
@@ -46,10 +67,13 @@ void display()
 	glClearDepth(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	g_mesh.m_rotation.x = g_XAngle;
-	g_mesh.m_rotation.y = g_YAngle;
-	g_mesh.Update(g_fDeltaTime);
-	g_mesh.Render();
+	for (int i = 0; i < g_vMesh.size(); ++i)
+	{
+		g_vMesh[i]->m_rotation.x = g_XAngle;
+		g_vMesh[i]->m_rotation.y = g_YAngle;
+		g_vMesh[i]->Update(g_fDeltaTime);
+		g_vMesh[i]->Render();
+	}
 
 	glutSwapBuffers();
 	glutPostRedisplay();

@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Source\FrameWork\BaseRenderingDataStructure.cpp" />
     <ClCompile Include="..\Source\FrameWork\DataTypes.cpp" />
     <ClCompile Include="..\Source\FrameWork\Image\ImageReader.cpp" />
     <ClCompile Include="..\Source\FrameWork\Image\PNGReader.cpp" />
@@ -18,11 +19,12 @@
     <ClCompile Include="..\Source\FrameWork\Math\Quaternion.cpp" />
     <ClCompile Include="..\Source\FrameWork\Math\Vector.cpp" />
     <ClCompile Include="..\Source\FrameWork\OpenGL\OpenGLFrameWork.cpp" />
-    <ClCompile Include="..\Source\FrameWork\OpenGL\RenderingDataStructure.cpp" />
+    <ClCompile Include="..\Source\FrameWork\OpenGL\OGLRenderingDataStructure.cpp" />
     <ClCompile Include="..\Source\FrameWork\Utility.cpp" />
     <ClCompile Include="..\Source\MeshViewer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Source\FrameWork\BaseRenderingDataStructure.h" />
     <ClInclude Include="..\Source\FrameWork\DataTypes.h" />
     <ClInclude Include="..\Source\FrameWork\Image\ImageReader.h" />
     <ClInclude Include="..\Source\FrameWork\Image\PNGReader.h" />
@@ -30,7 +32,7 @@
     <ClInclude Include="..\Source\FrameWork\Math\Quaternion.h" />
     <ClInclude Include="..\Source\FrameWork\Math\Vector.h" />
     <ClInclude Include="..\Source\FrameWork\OpenGL\OpenGLFrameWork.h" />
-    <ClInclude Include="..\Source\FrameWork\OpenGL\RenderingDataStructure.h" />
+    <ClInclude Include="..\Source\FrameWork\OpenGL\OGLRenderingDataStructure.h" />
     <ClInclude Include="..\Source\FrameWork\Utility.h" />
   </ItemGroup>
   <ItemGroup>

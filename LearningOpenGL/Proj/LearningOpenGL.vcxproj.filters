@@ -37,9 +37,6 @@
     <ClCompile Include="..\Source\FrameWork\Image\ImageReader.cpp">
       <Filter>Source Files\FrameWork\Image</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\FrameWork\OpenGL\RenderingDataStructure.cpp">
-      <Filter>Source Files\FrameWork\OpenGL</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\FrameWork\DataTypes.cpp">
       <Filter>Source Files\FrameWork</Filter>
     </ClCompile>
@@ -51,6 +48,12 @@
     </ClCompile>
     <ClCompile Include="..\Source\FrameWork\Math\Vector.cpp">
       <Filter>Source Files\FrameWork\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\OpenGL\OGLRenderingDataStructure.cpp">
+      <Filter>Source Files\FrameWork\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\BaseRenderingDataStructure.cpp">
+      <Filter>Source Files\FrameWork</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -66,9 +69,6 @@
     <ClInclude Include="..\Source\FrameWork\Image\ImageReader.h">
       <Filter>Source Files\FrameWork\Image</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\FrameWork\OpenGL\RenderingDataStructure.h">
-      <Filter>Source Files\FrameWork\OpenGL</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\FrameWork\DataTypes.h">
       <Filter>Source Files\FrameWork</Filter>
     </ClInclude>
@@ -80,6 +80,12 @@
     </ClInclude>
     <ClInclude Include="..\Source\FrameWork\Math\Vector.h">
       <Filter>Source Files\FrameWork\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\OpenGL\OGLRenderingDataStructure.h">
+      <Filter>Source Files\FrameWork\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\BaseRenderingDataStructure.h">
+      <Filter>Source Files\FrameWork</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
