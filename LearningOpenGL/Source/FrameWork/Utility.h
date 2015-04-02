@@ -78,6 +78,7 @@ protected:
 class CBaseMesh
 {
 public:
+	virtual void Update(float dt) = 0;
 	virtual void Render() = 0;
 	const SMeshData& GetMeshData() {return m_data;}
 

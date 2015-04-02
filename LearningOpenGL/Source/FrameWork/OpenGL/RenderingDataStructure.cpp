@@ -25,21 +25,22 @@ void COGLMesh::InitFromFile( const char* pMeshFileName )
 		return;
 
 	m_data.ReadFromFile(pMeshFile);
+	m_animator.SetTarget(this);
 
-	for (auto& rVertex : m_data.m_vChildMesh[0].m_vVectex)
-	{
-		for (int i = 0; i < 4; ++i)
-		{
-			cout << rVertex.m_blendWeight[i] << " "; 
-		}
-		cout << endl;
+	//for (auto& rVertex : m_data.m_vChildMesh[0].m_vVectex)
+	//{
+	//	for (int i = 0; i < 4; ++i)
+	//	{
+	//		cout << rVertex.m_blendWeight[i] << " "; 
+	//	}
+	//	cout << endl;
 
-		for (int i = 0; i < 4; ++i)
-		{
-			cout << rVertex.m_boneIndex[i] << " "; 
-		}
-		cout << endl << endl;
-	}
+	//	for (int i = 0; i < 4; ++i)
+	//	{
+	//		cout << rVertex.m_boneIndex[i] << " "; 
+	//	}
+	//	cout << endl << endl;
+	//}
 
 	InitProgram();
 	InitMaterial();
@@ -101,11 +102,16 @@ void COGLMesh::InitSkeleton()
 	}
 }
 
+void COGLMesh::Update(float dt)
+{
+	m_animator.Update(dt);
+}
+
 void COGLMesh::Render()
 {
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
-	glFrontFace(GL_CW);
+	glFrontFace(GL_CCW);
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);

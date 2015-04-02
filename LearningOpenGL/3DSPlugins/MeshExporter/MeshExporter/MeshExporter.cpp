@@ -332,6 +332,11 @@ BOOL MeshExporter::SubTextureEnum( MtlBase* vMtl, vector<STextureData>& vTexture
 	return TRUE;  
 }
 
+bool Less(const pair<int, float>& lh, const pair<int, float>& rh)
+{
+	return lh.second > rh.second;
+}
+
 void MeshExporter::ParseGeomObject(INode* pNode)
 {  
 	char  tText[200] = {0};
@@ -472,8 +477,9 @@ void MeshExporter::ParseGeomObject(INode* pNode)
 					for ( auto& pSkin : vSkinInfo )
 					{
 						ISkinContextData* pSkinCtx = pSkin->GetContextInterface(pNode);
-						for (int i = 0; i < /*tVertexNum*/pSkinCtx->GetNumPoints(); ++i)
+						for (int i = 0; i < tVertexNum/*pSkinCtx->GetNumPoints()*/; ++i)
 						{
+							vector<pair<int, float>> mTempBoneIdx;
 							int nBones = pSkinCtx->GetNumAssignedBones(i);
 							for (int j = 0; j < nBones; ++j)
 							{
@@ -498,9 +504,15 @@ void MeshExporter::ParseGeomObject(INode* pNode)
 										++iIndex;
 									}
 
-									tVertexVec[i].m_boneIndex[j] = iIndex;
-									tVertexVec[i].m_blendWeight[j] = weight;
+									mTempBoneIdx.push_back(std::pair<int, float>(iIndex, weight));
 								}
+							}
+
+							std::sort(mTempBoneIdx.begin(), mTempBoneIdx.end(), Less);
+							for (int j = 0; j < mTempBoneIdx.size() && j < 4; ++j)
+							{
+								tVertexVec[i].m_boneIndex[j] = mTempBoneIdx[j].first;
+								tVertexVec[i].m_blendWeight[j] = mTempBoneIdx[j].second;
 							}
 						}
 					}

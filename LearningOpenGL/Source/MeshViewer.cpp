@@ -5,7 +5,6 @@
 #include "FrameWork/OpenGL/RenderingDataStructure.h"
 
 COGLMesh g_mesh;
-CSkeletonAnimator g_animator;
 
 timeval g_fLastTime = {0, 0};
 float g_fDeltaTime = 0.0f;
@@ -16,11 +15,13 @@ float g_YAngle = 0;
 void init()
 {
 	g_mesh.InitFromFile("bat.CSTM");
-	g_mesh.SetTexture("BatArmor.png", 0);
-	g_mesh.SetTexture("HelloWorld.png", 1);
-	g_mesh.m_worldPos.set(0, -30, -100);
-	//g_mesh.m_scale.set(50.0f, 50.0f, 50.0f);
-	g_animator.SetTarget(&g_mesh);
+	for ( int i = 0; i < g_mesh.GetMeshData().m_vChildMesh.size(); ++i )
+	{
+		g_mesh.SetTexture("BatArmor.png", i);
+	}
+
+	g_mesh.m_worldPos.set(0, -50, -100);
+	g_mesh.m_scale.set(1, 1, -1);
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
@@ -45,10 +46,9 @@ void display()
 	glClearDepth(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	g_animator.Update(g_fDeltaTime);
-
 	g_mesh.m_rotation.x = g_XAngle;
 	g_mesh.m_rotation.y = g_YAngle;
+	g_mesh.Update(g_fDeltaTime);
 	g_mesh.Render();
 
 	glutSwapBuffers();
