@@ -61,6 +61,12 @@
     <ClCompile Include="..\Source\FrameWork\GLParticleSystem.cpp">
       <Filter>Source Files\FrameWork</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\FreeCamera.cpp">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\Director.cpp">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\FrameWork\Utility.h">
@@ -97,6 +103,12 @@
       <Filter>Source Files\FrameWork</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\FrameWork\GLParticleSystem.h">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\FreeCamera.h">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\Director.h">
       <Filter>Source Files\FrameWork</Filter>
     </ClInclude>
   </ItemGroup>
