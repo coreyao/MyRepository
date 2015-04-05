@@ -5,5 +5,5 @@ in vec4 vertexColor;
 
 void main()
 {
-	outputColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	outputColor = vertexColor;
 }
