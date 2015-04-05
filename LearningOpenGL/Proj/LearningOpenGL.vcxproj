@@ -14,7 +14,7 @@
     <ClCompile Include="..\Source\FrameWork\BaseRenderingDataStructure.cpp" />
     <ClCompile Include="..\Source\FrameWork\DataTypes.cpp" />
     <ClCompile Include="..\Source\FrameWork\Director.cpp" />
-    <ClCompile Include="..\Source\FrameWork\FreeCamera.cpp" />
+    <ClCompile Include="..\Source\FrameWork\Camera.cpp" />
     <ClCompile Include="..\Source\FrameWork\GLMesh.cpp" />
     <ClCompile Include="..\Source\FrameWork\GLParticleSystem.cpp" />
     <ClCompile Include="..\Source\FrameWork\Image\ImageReader.cpp" />
@@ -31,7 +31,7 @@
     <ClInclude Include="..\Source\FrameWork\BaseRenderingDataStructure.h" />
     <ClInclude Include="..\Source\FrameWork\DataTypes.h" />
     <ClInclude Include="..\Source\FrameWork\Director.h" />
-    <ClInclude Include="..\Source\FrameWork\FreeCamera.h" />
+    <ClInclude Include="..\Source\FrameWork\Camera.h" />
     <ClInclude Include="..\Source\FrameWork\GLMesh.h" />
     <ClInclude Include="..\Source\FrameWork\GLParticleSystem.h" />
     <ClInclude Include="..\Source\FrameWork\Image\ImageReader.h" />

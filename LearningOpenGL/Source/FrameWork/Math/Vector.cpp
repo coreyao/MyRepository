@@ -26,7 +26,7 @@ float Vec3::Dot( const Vec3& rh )
 	return x * rh.x + y * rh.y + z * rh.z;
 }
 
-Vec3 Vec3::Cross( const Vec3& rh )
+Vec3 Vec3::Cross( const Vec3& rh ) const
 {
 	float x = (this->y * rh.z) - (this->z * rh.y);
 	float y = (this->z * rh.x) - (this->x * rh.z);
@@ -61,6 +61,12 @@ Vec3 Vec3::operator*( float fScalar ) const
 void Vec3::set( float xx, float yy, float zz )
 {
 	x = xx; y = yy; z = zz;
+}
+
+Vec3 Vec3::operator+=( const Vec3& rh )
+{
+	*this = *this + rh;
+	return *this;
 }
 
 void Vec4::set( float xx, float yy, float zz, float ww )

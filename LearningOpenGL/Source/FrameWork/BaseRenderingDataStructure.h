@@ -62,11 +62,11 @@ public:
 	Vec3 m_scale;
 	Color4F m_color;
 	CSkeleton m_skeleton;
+	CSkeletonAnimator m_animator;
 
+	std::vector<bool> m_vSubMeshVisibility;
 	bool m_bEnableCullFace;
 
 protected:
 	SMeshData m_data;
-	std::vector<bool> m_vSubMeshVisibility;
-	CSkeletonAnimator m_animator;
 };

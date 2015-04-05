@@ -279,6 +279,41 @@ Matrix4X4 Matrix4X4::createPerspective( float fieldOfView, float aspectRatio, fl
 	return ret;
 }
 
+Matrix4X4 Matrix4X4::createLookAt( const Vec3& eyePos, const Vec3& lookAtDir, const Vec3& up )
+{
+	Matrix4X4 ret = ZERO;
+
+	Vec3 forwardDir(-lookAtDir.x, -lookAtDir.y, -lookAtDir.z);
+	forwardDir.normalize();
+	
+	Vec3 rightDir = up.Cross(forwardDir);
+	rightDir.normalize();
+
+	ret.m[0] = rightDir.x;
+	ret.m[1] = rightDir.y;
+	ret.m[2] = rightDir.z;
+	ret.m[3] = 0;
+
+	ret.m[4] = up.x;
+	ret.m[5] = up.y;
+	ret.m[6] = up.z;
+	ret.m[7] = 0;
+
+	ret.m[8] = forwardDir.x;
+	ret.m[9] = forwardDir.y;
+	ret.m[10] = forwardDir.z;
+	ret.m[11] = 0;
+
+	ret.m[12] = eyePos.x;
+	ret.m[13] = eyePos.y;
+	ret.m[14] = eyePos.z;
+	ret.m[15] = 1.0f;
+
+	ret = ret.Inverse();
+
+	return ret;
+}
+
 Matrix4X4 Matrix4X4::ZERO= Matrix4X4(0, 0, 0, 0, 
 									 0, 0, 0, 0, 
 									 0, 0, 0, 0, 

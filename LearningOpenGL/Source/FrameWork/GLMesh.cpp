@@ -1,6 +1,8 @@
 #include "GLMesh.h"
 #include "Utility.h"
 #include "Image/PNGReader.h"
+#include "Camera.h"
+#include "Director.h"
 #include <algorithm>
 #include <iostream>
 
@@ -112,7 +114,7 @@ void COGLMesh::Render()
 
 	glUseProgram(m_theProgram);
 
-	Mat4 viewMatrix = Mat4::CreateFromTranslation(0.0f, 0.0f, -100.0f);
+	Mat4 viewMatrix = CDirector::GetInstance()->GetCurCamera()->GetViewMat();
 	Mat4 ScaleMatrix = Mat4::CreateFromScale(m_scale.x, m_scale.y, m_scale.z);
 	Mat4 RotationMatrix = Mat4::CreateFromRotation(m_rotation.x, m_rotation.y, m_rotation.z);
 	Mat4 TranslationMatrix = Mat4::CreateFromTranslation(m_worldPos.x, m_worldPos.y, m_worldPos.z);
@@ -190,8 +192,8 @@ void COGLMesh::InitUniform()
 	GLuint perspectiveMatrixUnif = glGetUniformLocation(m_theProgram, "perspectiveMatrix");
 	if ( perspectiveMatrixUnif > 0 )
 	{
-		Mat4 perspectiveMatrix = Mat4::createPerspective(90.0f, (float)RESOLUTION_WIDTH / (float)RESOLUTION_HEIGHT, 1.0f, 1000.0f);
-		glUniformMatrix4fv(perspectiveMatrixUnif, 1, GL_FALSE, perspectiveMatrix.m);
+		const Mat4& projMat = CDirector::GetInstance()->GetCurCamera()->GetProjMat();
+		glUniformMatrix4fv(perspectiveMatrixUnif, 1, GL_FALSE, projMat.m);
 	}
 
 	glUseProgram(0);

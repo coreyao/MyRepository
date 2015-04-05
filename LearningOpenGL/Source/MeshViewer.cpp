@@ -4,6 +4,7 @@
 #include "FrameWork/Image/PNGReader.h"
 #include "FrameWork/DataTypes.h"
 #include "FrameWork/GLMesh.h"
+#include "FrameWork/Director.h"
 
 COGLMesh* g_planeMesh = nullptr;
 std::vector<COGLMesh*> g_vMesh;
@@ -68,8 +69,8 @@ void display()
 	g_planeMesh->Render();
 	for (int i = 0; i < g_vMesh.size(); ++i)
 	{
-		g_vMesh[i]->m_rotation.x = g_XAngle;
-		g_vMesh[i]->m_rotation.y = g_YAngle;
+		//g_vMesh[i]->m_rotation.x = g_XAngle;
+		//g_vMesh[i]->m_rotation.y = g_YAngle;
 		g_vMesh[i]->Update(g_fDeltaTime);
 		g_vMesh[i]->Render();
 	}
@@ -92,9 +93,11 @@ void keyboard(unsigned char key, int x, int y)
 	case 27:
 		glutLeaveMainLoop();
 		return;
-	case 'a': ++g_YAngle; break;
-	case 'd': --g_YAngle; break;
-	case 'w': ++g_XAngle; break;
-	case 's': --g_XAngle; break;
+	case 'a': g_YAngle = 1; break;
+	case 'd': g_YAngle = -1; break;
+	case 'w': g_XAngle = 1; break;
+	case 's': g_XAngle = -1; break;
 	}
+
+	CDirector::GetInstance()->GetCurCamera()->Rotate(g_XAngle, g_YAngle);
 }
