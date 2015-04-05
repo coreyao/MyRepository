@@ -150,8 +150,8 @@ Vec3 Matrix4X4::operator*( const Vec3& vec )
 {
 	Vec3 ret;
 	ret.x = m[0] * vec.x + m[4] * vec.y + m[8] * vec.z;
-	ret.x = m[1] * vec.x + m[5] * vec.y + m[9] * vec.z;
-	ret.x = m[2] * vec.x + m[6] * vec.y + m[10] * vec.z;
+	ret.y = m[1] * vec.x + m[5] * vec.y + m[9] * vec.z;
+	ret.z = m[2] * vec.x + m[6] * vec.y + m[10] * vec.z;
 
 	return ret;
 }

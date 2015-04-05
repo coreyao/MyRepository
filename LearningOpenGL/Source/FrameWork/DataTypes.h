@@ -155,6 +155,7 @@ struct STransform
 	}
 
 	Mat4 GetRotationMat();
+	void Reset();
 
 	Vec3 m_pos;
 	Vec3 m_rotation;

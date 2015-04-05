@@ -65,6 +65,7 @@ public:
 		m_vVertexIndex.push_back(3);
 	}
 
+	void Reset();
 	void Update(float dt);
 	void Render();
 	void BuildVBOAndVAO();

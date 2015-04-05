@@ -37,13 +37,19 @@ void CEmitter::Update( float dt )
 		}
 	}
 
+	std::vector<CParticleInstance*> toRecycle;
 	for (auto& pParticle : m_vActiveParticle)
 	{
 		pParticle->Update(dt);
 		if ( pParticle->m_age >= pParticle->m_lifeTime )
 		{
-			RecycleParticle(pParticle);
+			toRecycle.push_back(pParticle);
 		}
+	}
+
+	for (auto& pParticle : toRecycle)
+	{
+		RecycleParticle(pParticle);
 	}
 }
 
@@ -67,10 +73,11 @@ void CEmitter::AddParticle()
 	{
 		pParticle = new CParticleInstance;
 		pParticle->BuildVBOAndVAO();
-		pParticle->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("NormalMesh") );
+		pParticle->m_pParent = this;
+		pParticle->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("Particle") );
 	}
 
-	pParticle->m_pParent = this;
+	pParticle->Reset();
 	m_vActiveParticle.push_back(pParticle);
 }
 
@@ -93,7 +100,7 @@ void CParticleInstance::Update( float dt )
 	Mat4 rotationMat = m_pParent->m_pParent->m_transform.GetRotationMat() 
 		* m_pParent->m_transform.GetRotationMat()
 		* m_transform.GetRotationMat();
-	Vec3 dir(0, 0, 1);
+	Vec3 dir(0, 1, 0);
 	dir = rotationMat * dir;
 
 	m_transform.m_pos += dir * m_fSpeed * dt;
@@ -131,10 +138,9 @@ void CParticleInstance::Render()
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(CParticleInstance::SVertex, m_pos));
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(CParticleInstance::SVertex, m_color));
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(CParticleInstance::SVertex, m_color));
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(CParticleInstance::SVertex, m_UV));
-	glBindVertexArray(0);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(CParticleInstance::SVertex, m_UV));
 
 	Mat4 viewMatrix = CDirector::GetInstance()->GetCurCamera()->GetViewMat();
 	Mat4 TranslationMatrix = Mat4::CreateFromTranslation(m_transform.m_pos.x, m_transform.m_pos.y, m_transform.m_pos.z);
@@ -165,4 +171,9 @@ void CParticleInstance::Render()
 void CParticleInstance::SetGLProgram( GLuint theProgram )
 {
 	m_theProgram = theProgram;
+}
+
+void CParticleInstance::Reset()
+{
+	m_transform.Reset();
 }
