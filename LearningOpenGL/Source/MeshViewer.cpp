@@ -27,6 +27,7 @@ void init()
 
 	g_particleSystem = new GLParticleSystem;
 	CEmitter* pEmitter = new CEmitter;
+	pEmitter->m_transform.m_pos.x += 10;
 	g_particleSystem->AddEmitter(pEmitter);
 
 	g_planeMesh = new COGLMesh;

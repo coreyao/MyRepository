@@ -71,9 +71,9 @@ public:
 	void BuildVBOAndVAO();
 	void SetGLProgram(GLuint theProgram);
 
-private:
 	STransform m_transform;
 
+private:
 	float m_fSpeed;
 	float m_fAcceleration;
 	float m_lifeTime;
@@ -108,9 +108,8 @@ public:
 	void Update(float dt);
 	void Render();
 
-private:
 	STransform m_transform;
-
+private:
 	float m_fEmissionRate;
 	float m_fCurEmissionTime;
 

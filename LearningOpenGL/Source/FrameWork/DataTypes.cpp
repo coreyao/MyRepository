@@ -234,3 +234,10 @@ void STransform::Reset()
 	m_rotation = Vec3(0, 0, 0);
 	m_scale = Vec3(1.0f, 1.0f, 1.0f);
 }
+
+Mat4 STransform::GetTransformMat()
+{
+	return Mat4::CreateFromTranslation(m_pos.x, m_pos.y, m_pos.z)
+		* Mat4::CreateFromScale(m_scale.x, m_scale.y, m_scale.z)
+		* GetRotationMat();
+}

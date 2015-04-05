@@ -97,13 +97,13 @@ void CParticleInstance::Update( float dt )
 {
 	m_age += dt;
 
-	Mat4 rotationMat = m_pParent->m_pParent->m_transform.GetRotationMat() 
-		* m_pParent->m_transform.GetRotationMat()
-		* m_transform.GetRotationMat();
-	Vec3 dir(0, 1, 0);
-	dir = rotationMat * dir;
-
-	m_transform.m_pos += dir * m_fSpeed * dt;
+	Mat4 transformMat = m_transform.GetTransformMat();
+	Vec4 pos(0, 0, 0, 1);
+	Vec4 dir(0, 1, 0, 0);
+	dir = transformMat * dir;
+	pos = transformMat * pos;
+	Vec4 tempPos = pos + dir * m_fSpeed * dt;
+	m_transform.m_pos = Vec3(tempPos.x, tempPos.y, tempPos.z);
 }
 
 void CParticleInstance::BuildVBOAndVAO()
@@ -151,7 +151,7 @@ void CParticleInstance::Render()
 	if ( modelViewMatrixUnif > 0 )
 	{
 		Mat4 ModelViewMatrix;
-		ModelViewMatrix = viewMatrix * TranslationMatrix;
+		ModelViewMatrix = viewMatrix * m_pParent->m_pParent->m_transform.GetTransformMat() * m_pParent->m_transform.GetTransformMat() * TranslationMatrix;
 		glUniformMatrix4fv(modelViewMatrixUnif, 1, GL_FALSE, ModelViewMatrix.m);
 	}
 

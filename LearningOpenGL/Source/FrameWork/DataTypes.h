@@ -154,6 +154,7 @@ struct STransform
 		m_scale.set(1.0f, 1.0f, 1.0f);
 	}
 
+	Mat4 GetTransformMat();
 	Mat4 GetRotationMat();
 	void Reset();
 

@@ -95,3 +95,13 @@ float& Vec4::operator[]( int iIndex )
 
 	return x;
 }
+
+Vec4 Vec4::operator*( float fScalar ) const
+{
+	return Vec4(this->x * fScalar, this->y * fScalar, this->z * fScalar, w);
+}
+
+Vec4 Vec4::operator+( const Vec4& rh ) const
+{
+	return Vec4(this->x + rh.x, this->y + rh.y, this->z + rh.z, this->w );
+}

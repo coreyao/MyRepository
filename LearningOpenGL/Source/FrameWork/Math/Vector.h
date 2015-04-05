@@ -48,9 +48,11 @@ public:
 		set(xx, yy, zz, ww);
 	}
 
-	void set(float xx, float yy, float zz, float ww);
-
+	Vec4 operator*(float fScalar) const;
+	Vec4 operator+(const Vec4& rh) const;
 	float& operator[](int iIndex);
+
+	void set(float xx, float yy, float zz, float ww);
 
 	float x, y, z, w;
 };
