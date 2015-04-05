@@ -29,17 +29,17 @@ void init()
 	CEmitter* pEmitter = new CEmitter;
 	g_particleSystem->AddEmitter(pEmitter);
 
-	//g_planeMesh = new COGLMesh;
-	//g_planeMesh->InitFromFile("plane.CSTM");
-	//for ( int i = 0; i < g_planeMesh->GetMeshData().m_vSubMesh.size(); ++i )
-	//	g_planeMesh->SetTexture("default.png", i);
-	//g_planeMesh->m_worldPos.set(0, -60, -100);
-	//g_planeMesh->m_scale.set(1000, 1000, -1000);
-	//g_planeMesh->m_color = Color4F(0.5f, 0.5f, 0.5f, 1.0f);
-	//g_planeMesh->m_bEnableCullFace = false;
-	//g_planeMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("NormalMesh") );
+	g_planeMesh = new COGLMesh;
+	g_planeMesh->InitFromFile("plane.CSTM");
+	for ( int i = 0; i < g_planeMesh->GetMeshData().m_vSubMesh.size(); ++i )
+		g_planeMesh->SetTexture("default.png", i);
+	g_planeMesh->m_worldPos.set(0, -60, -100);
+	g_planeMesh->m_scale.set(1000, 1000, -1000);
+	g_planeMesh->m_color = Color4F(0.5f, 0.5f, 0.5f, 1.0f);
+	g_planeMesh->m_bEnableCullFace = false;
+	g_planeMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("NormalMesh") );
 
-	/*COGLMesh* pSkinMesh = new COGLMesh;
+	COGLMesh* pSkinMesh = new COGLMesh;
 	pSkinMesh->InitFromFile("bat.CSTM");
 	for ( int i = 0; i < pSkinMesh->GetMeshData().m_vSubMesh.size(); ++i )
 	{
@@ -49,7 +49,7 @@ void init()
 	pSkinMesh->m_scale.set(1, 1, -1);
 	pSkinMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("SkinMesh") );
 	pSkinMesh->SetVisible(false, "Box01");
-	g_vMesh.push_back(pSkinMesh);*/
+	g_vMesh.push_back(pSkinMesh);
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
@@ -77,12 +77,12 @@ void display()
 	g_particleSystem->Update(g_fDeltaTime);
 	g_particleSystem->Render();
 
-	//g_planeMesh->Render();
-	/*for (int i = 0; i < g_vMesh.size(); ++i)
+	g_planeMesh->Render();
+	for (int i = 0; i < g_vMesh.size(); ++i)
 	{
 		g_vMesh[i]->Update(g_fDeltaTime);
 		g_vMesh[i]->Render();
-	}*/
+	}
 
 	glutSwapBuffers();
 	glutPostRedisplay();
