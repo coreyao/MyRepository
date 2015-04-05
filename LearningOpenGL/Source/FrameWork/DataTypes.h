@@ -146,3 +146,17 @@ struct SMeshData
 	std::vector<SSubMeshData>	m_vSubMesh;
 	SSkeletonData				m_skeleton;
 };
+
+struct STransform 
+{
+	STransform()
+	{
+		m_scale.set(1.0f, 1.0f, 1.0f);
+	}
+
+	Mat4 GetRotationMat();
+
+	Vec3 m_pos;
+	Vec3 m_rotation;
+	Vec3 m_scale;
+};

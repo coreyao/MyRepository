@@ -43,6 +43,11 @@ public:
 	{
 	}
 
+	Vec4(float xx, float yy, float zz, float ww)
+	{
+		set(xx, yy, zz, ww);
+	}
+
 	void set(float xx, float yy, float zz, float ww);
 
 	float& operator[](int iIndex);

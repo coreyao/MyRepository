@@ -20,6 +20,9 @@ public:
 	Matrix4X4 operator*(float fScalar);
 	Matrix4X4 operator+(const Matrix4X4& rh);
 
+	Vec4 operator*(const Vec4& vec);
+	Vec3 operator*(const Vec3& vec);
+
 	static Matrix4X4 createPerspective(float fieldOfView, float aspectRatio, float zNearPlane, float zFarPlane);
 	static Matrix4X4 createLookAt(const Vec3& eyePos, const Vec3& lookAtDir, const Vec3& up);
 	static Matrix4X4 CreateFromTranslation(float x, float y, float z);

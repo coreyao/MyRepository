@@ -135,6 +135,27 @@ Matrix4X4 Matrix4X4::operator*( float scalar )
 	return ret;
 }
 
+Vec4 Matrix4X4::operator*( const Vec4& vec )
+{
+	Vec4 ret;
+	ret.x = m[0] * vec.x + m[4] * vec.y + m[8] * vec.z + m[12] * vec.w;
+	ret.x = m[1] * vec.x + m[5] * vec.y + m[9] * vec.z + m[13] * vec.w;
+	ret.x = m[2] * vec.x + m[6] * vec.y + m[10] * vec.z + m[14] * vec.w;
+	ret.w = vec.w;
+
+	return ret;
+}
+
+Vec3 Matrix4X4::operator*( const Vec3& vec )
+{
+	Vec3 ret;
+	ret.x = m[0] * vec.x + m[4] * vec.y + m[8] * vec.z;
+	ret.x = m[1] * vec.x + m[5] * vec.y + m[9] * vec.z;
+	ret.x = m[2] * vec.x + m[6] * vec.y + m[10] * vec.z;
+
+	return ret;
+}
+
 Matrix4X4 Matrix4X4::operator+( const Matrix4X4& rh )
 {
 	Matrix4X4 r;

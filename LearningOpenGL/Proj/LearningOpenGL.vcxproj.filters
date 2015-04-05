@@ -122,5 +122,11 @@
     <None Include="..\Resource\Shaders\SkinMesh_Vertex_Shader.vert">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\Resource\Shaders\Particle_Fragment_Shader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Resource\Shaders\Particle_Vertex_Shader.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
