@@ -93,11 +93,13 @@ void keyboard(unsigned char key, int x, int y)
 	case 27:
 		glutLeaveMainLoop();
 		return;
-	case 'a': g_YAngle = 1; break;
-	case 'd': g_YAngle = -1; break;
-	case 'w': g_XAngle = 1; break;
-	case 's': g_XAngle = -1; break;
+	case 'a': g_YAngle = -10; break;
+	case 'd': g_YAngle = 10; break;
+	case 'w': g_XAngle = 10; break;
+	case 's': g_XAngle = -10; break;
 	}
 
-	CDirector::GetInstance()->GetCurCamera()->Rotate(g_XAngle, g_YAngle);
+	CDirector::GetInstance()->GetCurCamera()->Move(g_YAngle, 0, g_XAngle);
+	g_XAngle = 0;
+	g_YAngle = 0;
 }
