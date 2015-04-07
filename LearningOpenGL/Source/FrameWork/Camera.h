@@ -13,6 +13,8 @@ public:
 	Mat4 GetViewMat();
 	Mat4 GetProjMat();
 
+	Vec3 GetEyePos();
+
 private:
 	void UpdateProjectionViewMat();
 

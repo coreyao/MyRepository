@@ -16,8 +16,10 @@ GLParticleSystem* g_particleSystem = nullptr;
 timeval g_fLastTime = {0, 0};
 float g_fDeltaTime = 0.0f;
 
-float g_XAngle = 0.0f;
-float g_YAngle = 0;
+float g_LeftRight = 0.0f;
+float g_forwardBackward = 0.0f;
+float g_pitch = 0.0f;
+float g_yaw = 0;
 
 bool bDrawMesh = true;
 
@@ -29,7 +31,7 @@ void init()
 
 	g_particleSystem = new GLParticleSystem;
 	CEmitter* pEmitter = new CEmitter;
-	pEmitter->SetTexture("bang.png");
+	pEmitter->SetTexture("T_FX_guangyun01.png");
 	pEmitter->m_transform.m_scale.set(5, 5, 1);
 	g_particleSystem->AddEmitter(pEmitter);
 
@@ -111,13 +113,22 @@ void keyboard(unsigned char key, int x, int y)
 	case 27:
 		glutLeaveMainLoop();
 		return;
-	case 'a': g_YAngle = -10; break;
-	case 'd': g_YAngle = 10; break;
-	case 'w': g_XAngle = 10; break;
-	case 's': g_XAngle = -10; break;
+	case 'a': g_LeftRight = -10; break;
+	case 'd': g_LeftRight = 10; break;
+	case 'w': g_forwardBackward = 10; break;
+	case 's': g_forwardBackward = -10; break;
+
+	case 'j': g_yaw = -10; break;
+	case 'k': g_yaw = 10; break;
+	case 'm': g_pitch = 10; break;
+	case 'n': g_pitch = -10; break;
 	}
 
-	CDirector::GetInstance()->GetCurCamera()->Move(g_YAngle, 0, g_XAngle);
-	g_XAngle = 0;
-	g_YAngle = 0;
+	CDirector::GetInstance()->GetCurCamera()->Move(g_LeftRight, 0, g_forwardBackward);
+	g_LeftRight = 0;
+	g_forwardBackward = 0;
+
+	CDirector::GetInstance()->GetCurCamera()->Rotate(g_pitch, g_yaw);
+	g_pitch = 0;
+	g_yaw = 0;
 }

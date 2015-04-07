@@ -110,6 +110,14 @@ void CParticleInstance::Update( float dt )
 	m_fCurLifeTime -= dt;
 
 	m_position += m_direction * m_fCurSpeed * dt;
+
+	Vec3 dir = CDirector::GetInstance()->GetCurCamera()->GetEyePos() - m_position;
+	dir.normalize();
+	dir = Vec3(-dir.x, -dir.y, -dir.z);
+
+	Vec3 up(0, 1, 0);
+	Vec3 right = dir.Cross(up);
+	right.normalize();
 }
 
 void CParticleInstance::BuildVBOAndVAO()

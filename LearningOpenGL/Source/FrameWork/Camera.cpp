@@ -56,3 +56,8 @@ void CCamera::UpdateProjectionViewMat()
 	m_lookAtDir.normalize();
 	m_viewMat = Mat4::createLookAt(m_eyePos, m_lookAtDir, m_UpDir);
 }
+
+Vec3 CCamera::GetEyePos()
+{
+	return m_eyePos;
+}
