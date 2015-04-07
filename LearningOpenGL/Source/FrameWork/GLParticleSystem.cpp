@@ -1,10 +1,11 @@
 #include "GLParticleSystem.h"
 #include "OpenGL/GLProgramManager.h"
 #include "Director.h"
+#include "Image/PNGReader.h"
 
 void GLParticleSystem::AddEmitter( CEmitter* pNewEmitter )
 {
-	pNewEmitter->m_pParent = this;
+	pNewEmitter->m_pParticleSystem = this;
 	m_vEmitter.push_back(pNewEmitter);
 }
 
@@ -41,7 +42,7 @@ void CEmitter::Update( float dt )
 	for (auto& pParticle : m_vActiveParticle)
 	{
 		pParticle->Update(dt);
-		if ( pParticle->m_age >= pParticle->m_lifeTime )
+		if ( pParticle->m_fCurLifeTime < 0 )
 		{
 			toRecycle.push_back(pParticle);
 		}
@@ -68,23 +69,19 @@ void CEmitter::AddParticle()
 	{
 		pParticle = m_vInactiveParticle.back();
 		m_vInactiveParticle.pop_back();
+		pParticle->Reset();
 	}
 	else
 	{
 		pParticle = new CParticleInstance;
-		pParticle->BuildVBOAndVAO();
-		pParticle->m_pParent = this;
-		pParticle->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("Particle") );
+		pParticle->Init(this);
 	}
 
-	pParticle->Reset();
 	m_vActiveParticle.push_back(pParticle);
 }
 
 void CEmitter::RecycleParticle(CParticleInstance* pParticle)
 {
-	pParticle->m_age = 0;
-
 	auto it = std::find(m_vActiveParticle.begin(), m_vActiveParticle.end(), pParticle);
 	if ( it != m_vActiveParticle.end() )
 	{
@@ -93,17 +90,26 @@ void CEmitter::RecycleParticle(CParticleInstance* pParticle)
 	}
 }
 
+void CEmitter::SetTexture( const std::string& sTexFileName )
+{
+	CPNGReader pngReader(sTexFileName);
+	if ( pngReader.GetData() )
+	{
+		glGenTextures(1, &m_iTexture);
+		glBindTexture(GL_TEXTURE_2D, m_iTexture);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pngReader.GetWidth(), pngReader.GetHeight(), 0,
+			GL_RGBA, GL_UNSIGNED_BYTE, pngReader.GetData());
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+}
+
 void CParticleInstance::Update( float dt )
 {
-	m_age += dt;
+	m_fCurLifeTime -= dt;
 
-	Mat4 transformMat = m_transform.GetTransformMat();
-	Vec4 pos(0, 0, 0, 1);
-	Vec4 dir(0, 1, 0, 0);
-	dir = transformMat * dir;
-	pos = transformMat * pos;
-	Vec4 tempPos = pos + dir * m_fSpeed * dt;
-	m_transform.m_pos = Vec3(tempPos.x, tempPos.y, tempPos.z);
+	m_position += m_direction * m_fCurSpeed * dt;
 }
 
 void CParticleInstance::BuildVBOAndVAO()
@@ -119,6 +125,12 @@ void CParticleInstance::BuildVBOAndVAO()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	glGenVertexArrays(1, &m_vao);
+
+	glGenSamplers(1, &m_Sampler);
+	glSamplerParameteri(m_Sampler, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glSamplerParameteri(m_Sampler, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glSamplerParameteri(m_Sampler, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glSamplerParameteri(m_Sampler, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 }
 
 void CParticleInstance::Render()
@@ -145,21 +157,28 @@ void CParticleInstance::Render()
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(CParticleInstance::SVertex, m_UV));
 
 	Mat4 viewMatrix = CDirector::GetInstance()->GetCurCamera()->GetViewMat();
-	Mat4 TranslationMatrix = Mat4::CreateFromTranslation(m_transform.m_pos.x, m_transform.m_pos.y, m_transform.m_pos.z);
+	Mat4 TranslationMatrix = Mat4::CreateFromTranslation(m_position.x,m_position.y, m_position.z);
 
-	GLuint modelViewMatrixUnif = glGetUniformLocation(m_theProgram, "modelViewMatrix");
-	if ( modelViewMatrixUnif > 0 )
+	GLint modelViewMatrixUnif = glGetUniformLocation(m_theProgram, "modelViewMatrix");
+	if ( modelViewMatrixUnif >= 0 )
 	{
 		Mat4 ModelViewMatrix;
-		ModelViewMatrix = viewMatrix * m_pParent->m_pParent->m_transform.GetTransformMat() * m_pParent->m_transform.GetTransformMat() * TranslationMatrix;
+		ModelViewMatrix = viewMatrix * m_pEmitter->m_pParticleSystem->m_transform.GetTransformMat() * m_pEmitter->m_transform.GetTransformMat() * TranslationMatrix;
 		glUniformMatrix4fv(modelViewMatrixUnif, 1, GL_FALSE, ModelViewMatrix.m);
 	}
 
-	GLuint perspectiveMatrixUnif = glGetUniformLocation(m_theProgram, "perspectiveMatrix");
-	if ( perspectiveMatrixUnif > 0 )
+	GLint perspectiveMatrixUnif = glGetUniformLocation(m_theProgram, "perspectiveMatrix");
+	if ( perspectiveMatrixUnif >= 0 )
 	{
 		const Mat4& projMat = CDirector::GetInstance()->GetCurCamera()->GetProjMat();
 		glUniformMatrix4fv(perspectiveMatrixUnif, 1, GL_FALSE, projMat.m);
+	}
+
+	if ( m_pEmitter->m_iTexture >= 0 )
+	{
+		glActiveTexture(GL_TEXTURE0 + m_colorTexUnit);
+		glBindTexture(GL_TEXTURE_2D, m_pEmitter->m_iTexture);
+		glBindSampler(m_colorTexUnit, m_Sampler);
 	}
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_vbo);
@@ -167,6 +186,7 @@ void CParticleInstance::Render()
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+	glBindSampler(m_colorTexUnit, 0);
 	glUseProgram(0);
 }
 
@@ -177,5 +197,29 @@ void CParticleInstance::SetGLProgram( GLuint theProgram )
 
 void CParticleInstance::Reset()
 {
-	m_transform.Reset();
+	m_position = Vec3(RANDOM_MINUS1_1(), 0, 0);
+	m_fCurSpeed = m_pEmitter->m_fParticleStartSpeed;
+	m_fCurLifeTime = m_pEmitter->m_fParticleLifeTime;
+	m_fCurSize = m_pEmitter->m_fParticleStartSize;
+	m_direction = Vec3(0, 1, 0);
+	m_direction.normalize();
+}
+
+void CParticleInstance::Init( CEmitter* pParent )
+{
+	m_pEmitter = pParent;
+
+	BuildVBOAndVAO();
+	SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("Particle") );
+	InitUniform();
+	Reset();
+}
+
+void CParticleInstance::InitUniform()
+{
+	GLint colorTextureUnif = glGetUniformLocation(m_theProgram, "colorTexture");
+	if ( colorTextureUnif >= 0 )
+	{
+		glUniform1i(colorTextureUnif, m_colorTexUnit);
+	}
 }

@@ -126,29 +126,29 @@ void COGLMesh::Render()
 
 		glBindVertexArray(m_vertexAttributeObj[i]);
 
-		if ( m_vTexture[i] > 0 )
+		if ( m_vTexture[i] >= 0 )
 		{
 			glActiveTexture(GL_TEXTURE0 + m_colorTexUnit);
 			glBindTexture(GL_TEXTURE_2D, m_vTexture[i]);
 			glBindSampler(m_colorTexUnit, m_Sampler);
 		}
 
-		GLuint modelViewMatrixUnif = glGetUniformLocation(m_theProgram, "modelViewMatrix");
-		if ( modelViewMatrixUnif > 0 )
+		GLint modelViewMatrixUnif = glGetUniformLocation(m_theProgram, "modelViewMatrix");
+		if ( modelViewMatrixUnif >= 0 )
 		{
 			Mat4 ModelViewMatrix;
 			ModelViewMatrix = viewMatrix * TranslationMatrix * ScaleMatrix * RotationMatrix * m_data.m_vSubMesh[i].m_MeshMatrix;
 			glUniformMatrix4fv(modelViewMatrixUnif, 1, GL_FALSE, ModelViewMatrix.m);
 		}
 
-		GLuint matrixPaletteUnif = glGetUniformLocation(m_theProgram, "u_matrixPalette");
-		if ( matrixPaletteUnif > 0 )
+		GLint matrixPaletteUnif = glGetUniformLocation(m_theProgram, "u_matrixPalette");
+		if ( matrixPaletteUnif >= 0 )
 		{
 			glUniform4fv( matrixPaletteUnif, (GLsizei)m_skeleton.m_vBone.size() * 3, (const float*)m_skeleton.GetMatrixPalette() );
 		}
 
-		GLuint colorUnif = glGetUniformLocation(m_theProgram, "u_color");
-		if ( colorUnif > 0 )
+		GLint colorUnif = glGetUniformLocation(m_theProgram, "u_color");
+		if ( colorUnif >= 0 )
 		{
 			glUniform4f( colorUnif, m_color.r, m_color.g, m_color.b, m_color.a );
 		}
@@ -183,14 +183,14 @@ void COGLMesh::InitUniform()
 {
 	glUseProgram(m_theProgram);
 
-	GLuint colorTextureUnif = glGetUniformLocation(m_theProgram, "colorTexture");
-	if ( colorTextureUnif > 0 )
+	GLint colorTextureUnif = glGetUniformLocation(m_theProgram, "colorTexture");
+	if ( colorTextureUnif >= 0 )
 	{
 		glUniform1i(colorTextureUnif, m_colorTexUnit);
 	}
 
-	GLuint perspectiveMatrixUnif = glGetUniformLocation(m_theProgram, "perspectiveMatrix");
-	if ( perspectiveMatrixUnif > 0 )
+	GLint perspectiveMatrixUnif = glGetUniformLocation(m_theProgram, "perspectiveMatrix");
+	if ( perspectiveMatrixUnif >= 0 )
 	{
 		const Mat4& projMat = CDirector::GetInstance()->GetCurCamera()->GetProjMat();
 		glUniformMatrix4fv(perspectiveMatrixUnif, 1, GL_FALSE, projMat.m);

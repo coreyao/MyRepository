@@ -19,6 +19,8 @@ float g_fDeltaTime = 0.0f;
 float g_XAngle = 0.0f;
 float g_YAngle = 0;
 
+bool bDrawMesh = true;
+
 void init()
 {
 	CGLProgramManager::GetInstance()->Add("SkinMesh", SHADER_FILE_DIR + "SkinMesh_Vertex_Shader.vert", SHADER_FILE_DIR + "Mesh_Fragment_Shader.frag");
@@ -27,7 +29,8 @@ void init()
 
 	g_particleSystem = new GLParticleSystem;
 	CEmitter* pEmitter = new CEmitter;
-	pEmitter->m_transform.m_pos.x += 10;
+	pEmitter->SetTexture("bang.png");
+	pEmitter->m_transform.m_scale.set(5, 5, 1);
 	g_particleSystem->AddEmitter(pEmitter);
 
 	g_planeMesh = new COGLMesh;
@@ -52,6 +55,8 @@ void init()
 	pSkinMesh->SetVisible(false, "Box01");
 	g_vMesh.push_back(pSkinMesh);
 
+	bDrawMesh = false;
+
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
@@ -71,20 +76,23 @@ void display()
 		g_fDeltaTime = std::max(0.0f, g_fDeltaTime);
 	}
 
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClearColor(1.0f, 1.0f, 1.0f, .0f);
 	glClearDepth(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	g_particleSystem->Update(g_fDeltaTime);
 	g_particleSystem->Render();
 
-	g_planeMesh->Render();
-	for (int i = 0; i < g_vMesh.size(); ++i)
+	if ( bDrawMesh )
 	{
-		g_vMesh[i]->Update(g_fDeltaTime);
-		g_vMesh[i]->Render();
+		g_planeMesh->Render();
+		for (int i = 0; i < g_vMesh.size(); ++i)
+		{
+			g_vMesh[i]->Update(g_fDeltaTime);
+			g_vMesh[i]->Render();
+		}
 	}
-
+	
 	glutSwapBuffers();
 	glutPostRedisplay();
 

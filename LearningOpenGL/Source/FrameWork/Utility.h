@@ -21,6 +21,9 @@
 #define offsetof(s,m)   (size_t)&reinterpret_cast<const volatile char&>((((s *)0)->m))
 #endif
 
+#define RANDOM_0_1() ((float)rand()/RAND_MAX)
+#define RANDOM_MINUS1_1() ((2.0f*((float)rand()/RAND_MAX))-1.0f)
+
 struct timezone
 {
 	int tz_minuteswest;
@@ -28,3 +31,8 @@ struct timezone
 };
 
 extern int gettimeofday(struct timeval *, struct timezone *);
+
+class CLinerInterpolation
+{
+
+};
