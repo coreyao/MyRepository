@@ -148,6 +148,9 @@ void CParticleInstance::Render()
 	glDepthFunc(GL_LEQUAL);
 	glDepthRange(0.0f, 1.0f);
 
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(CParticleInstance::SVertex, m_pos));

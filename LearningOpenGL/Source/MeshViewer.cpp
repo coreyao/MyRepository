@@ -55,7 +55,7 @@ void init()
 	pSkinMesh->SetVisible(false, "Box01");
 	g_vMesh.push_back(pSkinMesh);
 
-	bDrawMesh = false;
+	//bDrawMesh = false;
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
@@ -76,12 +76,9 @@ void display()
 		g_fDeltaTime = std::max(0.0f, g_fDeltaTime);
 	}
 
-	glClearColor(1.0f, 1.0f, 1.0f, .0f);
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClearDepth(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	g_particleSystem->Update(g_fDeltaTime);
-	g_particleSystem->Render();
 
 	if ( bDrawMesh )
 	{
@@ -92,6 +89,9 @@ void display()
 			g_vMesh[i]->Render();
 		}
 	}
+
+	g_particleSystem->Update(g_fDeltaTime);
+	g_particleSystem->Render();
 	
 	glutSwapBuffers();
 	glutPostRedisplay();
