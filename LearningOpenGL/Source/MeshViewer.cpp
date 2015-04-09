@@ -78,7 +78,7 @@ void display()
 		g_fDeltaTime = std::max(0.0f, g_fDeltaTime);
 	}
 
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClearDepth(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

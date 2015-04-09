@@ -78,7 +78,7 @@ private:
 	float m_fCurLifeTime;
 	float m_fCurSize;
 	Vec3 m_position;
-	Vec3 m_direction;
+	Vec3 m_moveDir;
 
 	CEmitter* m_pEmitter;
 

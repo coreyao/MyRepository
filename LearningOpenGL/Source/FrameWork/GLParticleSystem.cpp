@@ -109,15 +109,7 @@ void CParticleInstance::Update( float dt )
 {
 	m_fCurLifeTime -= dt;
 
-	m_position += m_direction * m_fCurSpeed * dt;
-
-	Vec3 dir = CDirector::GetInstance()->GetCurCamera()->GetEyePos() - m_position;
-	dir.normalize();
-	dir = Vec3(-dir.x, -dir.y, -dir.z);
-
-	Vec3 up(0, 1, 0);
-	Vec3 right = dir.Cross(up);
-	right.normalize();
+	m_position += m_moveDir * m_fCurSpeed * dt;
 }
 
 void CParticleInstance::BuildVBOAndVAO()
@@ -169,12 +161,26 @@ void CParticleInstance::Render()
 
 	Mat4 viewMatrix = CDirector::GetInstance()->GetCurCamera()->GetViewMat();
 	Mat4 TranslationMatrix = Mat4::CreateFromTranslation(m_position.x,m_position.y, m_position.z);
+	Mat4 BillboardMatrix = Mat4::IDENTITY;
+
+	Vec3 forward = CDirector::GetInstance()->GetCurCamera()->GetEyePos() - m_pEmitter->m_pParticleSystem->m_transform.GetTransformMat() * m_pEmitter->m_transform.GetTransformMat() * TranslationMatrix * Vec3(0, 0, 0);
+	forward.normalize();
+	Vec3 up(0, 1, 0);
+	Vec3 right = up.Cross(forward);
+	right.normalize();
+	up = forward.Cross(right);
+	up.normalize();
+	BillboardMatrix.SetForward(forward.x, forward.y, forward.z);
+	BillboardMatrix.SetRight(right.x, right.y, right.z);
+	BillboardMatrix.SetUp(up.x, up.y, up.z);
+
+	BillboardMatrix = Mat4::CreateFromRotationY(60);
 
 	GLint modelViewMatrixUnif = glGetUniformLocation(m_theProgram, "modelViewMatrix");
 	if ( modelViewMatrixUnif >= 0 )
 	{
 		Mat4 ModelViewMatrix;
-		ModelViewMatrix = viewMatrix * m_pEmitter->m_pParticleSystem->m_transform.GetTransformMat() * m_pEmitter->m_transform.GetTransformMat() * TranslationMatrix;
+		ModelViewMatrix = viewMatrix * m_pEmitter->m_pParticleSystem->m_transform.GetTransformMat() * m_pEmitter->m_transform.GetTransformMat() * TranslationMatrix * BillboardMatrix;
 		glUniformMatrix4fv(modelViewMatrixUnif, 1, GL_FALSE, ModelViewMatrix.m);
 	}
 
@@ -212,8 +218,8 @@ void CParticleInstance::Reset()
 	m_fCurSpeed = m_pEmitter->m_fParticleStartSpeed;
 	m_fCurLifeTime = m_pEmitter->m_fParticleLifeTime;
 	m_fCurSize = m_pEmitter->m_fParticleStartSize;
-	m_direction = Vec3(0, 1, 0);
-	m_direction.normalize();
+	m_moveDir = Vec3(0, 1, 0);
+	m_moveDir.normalize();
 }
 
 void CParticleInstance::Init( CEmitter* pParent )

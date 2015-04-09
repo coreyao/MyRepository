@@ -16,6 +16,10 @@ public:
 	Matrix4X4 Inverse();
 	Matrix4X4 Transpose();
 
+	void SetRight(float a00, float a10, float a20);
+	void SetUp(float a01, float a11, float a21);
+	void SetForward(float a02, float a12, float a22);
+
 	Matrix4X4 operator*(const Matrix4X4& rh);
 	Matrix4X4 operator*(float fScalar);
 	Matrix4X4 operator+(const Matrix4X4& rh);
@@ -24,7 +28,7 @@ public:
 	Vec3 operator*(const Vec3& vec);
 
 	static Matrix4X4 createPerspective(float fieldOfView, float aspectRatio, float zNearPlane, float zFarPlane);
-	static Matrix4X4 createLookAt(const Vec3& eyePos, const Vec3& lookAtDir, const Vec3& up);
+	static Matrix4X4 createLookAt(const Vec3& eyePos, const Vec3& lookAtDir, Vec3 up);
 	static Matrix4X4 CreateFromTranslation(float x, float y, float z);
 	static Matrix4X4 CreateFromRotation(const Quaternion& quat);
 	static Matrix4X4 CreateFromRotation(float degX, float degY, float degZ);
