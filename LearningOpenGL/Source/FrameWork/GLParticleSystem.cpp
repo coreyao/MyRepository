@@ -176,7 +176,7 @@ void CParticleInstance::Render()
 
 	BillboardMatrix = Mat4::CreateFromRotationY(60);
 
-	GLint modelViewMatrixUnif = glGetUniformLocation(m_theProgram, "modelViewMatrix");
+	GLint modelViewMatrixUnif = glGetUniformLocation(m_theProgram, "modelViewMatrix");	
 	if ( modelViewMatrixUnif >= 0 )
 	{
 		Mat4 ModelViewMatrix;
