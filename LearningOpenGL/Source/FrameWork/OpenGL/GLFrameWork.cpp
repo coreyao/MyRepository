@@ -118,9 +118,12 @@ int main(int argc, char* argv[])
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
 	glutKeyboardFunc(keyboard);
+	glutMouseFunc(mouse_down);
+	glutMotionFunc(mouse_move);
 
 	glutMainLoop();
 	return 0;
 }
+
 
 

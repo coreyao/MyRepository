@@ -2,6 +2,7 @@
 #include "OpenGL/GLProgramManager.h"
 #include "Director.h"
 #include "Image/PNGReader.h"
+#include "GLMesh.h"
 
 void GLParticleSystem::AddEmitter( CEmitter* pNewEmitter )
 {
@@ -109,7 +110,7 @@ void CParticleInstance::Update( float dt )
 {
 	m_fCurLifeTime -= dt;
 
-	m_position += m_moveDir * m_fCurSpeed * dt;
+	//m_position += m_moveDir * m_fCurSpeed * dt;
 }
 
 void CParticleInstance::BuildVBOAndVAO()
@@ -133,15 +134,19 @@ void CParticleInstance::BuildVBOAndVAO()
 	glSamplerParameteri(m_Sampler, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 }
 
+extern COGLMesh* g_planeMesh;
+
 void CParticleInstance::Render()
 {
 	glUseProgram(m_theProgram);
 
 	glBindVertexArray(m_vao);
 
-	glEnable(GL_CULL_FACE);
+	/*glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
-	glFrontFace(GL_CW);
+	glFrontFace(GL_CW);*/
+
+	glDisable(GL_CULL_FACE);
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
@@ -163,18 +168,18 @@ void CParticleInstance::Render()
 	Mat4 TranslationMatrix = Mat4::CreateFromTranslation(m_position.x,m_position.y, m_position.z);
 	Mat4 BillboardMatrix = Mat4::IDENTITY;
 
-	Vec3 forward = CDirector::GetInstance()->GetCurCamera()->GetEyePos() - m_pEmitter->m_pParticleSystem->m_transform.GetTransformMat() * m_pEmitter->m_transform.GetTransformMat() * TranslationMatrix * Vec3(0, 0, 0);
-	forward.normalize();
-	Vec3 up(0, 1, 0);
-	Vec3 right = up.Cross(forward);
-	right.normalize();
-	up = forward.Cross(right);
-	up.normalize();
-	BillboardMatrix.SetForward(forward.x, forward.y, forward.z);
-	BillboardMatrix.SetRight(right.x, right.y, right.z);
-	BillboardMatrix.SetUp(up.x, up.y, up.z);
+	//Vec3 forward = CDirector::GetInstance()->GetCurCamera()->GetEyePos() - m_pEmitter->m_pParticleSystem->m_transform.GetTransformMat() * m_pEmitter->m_transform.GetTransformMat() * TranslationMatrix * Vec3(0, 0, 0);
+	//forward.normalize();
+	//Vec3 up(0, 1, 0);
+	//Vec3 right = up.Cross(forward);
+	//right.normalize();
+	//up = forward.Cross(right);
+	//up.normalize();
+	//BillboardMatrix.SetForward(forward.x, forward.y, forward.z);
+	//BillboardMatrix.SetRight(right.x, right.y, right.z);
+	//BillboardMatrix.SetUp(up.x, up.y, up.z);
 
-	BillboardMatrix = Mat4::CreateFromRotationY(60);
+	BillboardMatrix = Mat4::CreateFromRotationY(-g_planeMesh->m_rotation.z);
 
 	GLint modelViewMatrixUnif = glGetUniformLocation(m_theProgram, "modelViewMatrix");	
 	if ( modelViewMatrixUnif >= 0 )
@@ -214,7 +219,7 @@ void CParticleInstance::SetGLProgram( GLuint theProgram )
 
 void CParticleInstance::Reset()
 {
-	m_position = Vec3(RANDOM_MINUS1_1(), 0, 0);
+	//m_position = Vec3(RANDOM_MINUS1_1(), 0, 0);
 	m_fCurSpeed = m_pEmitter->m_fParticleStartSpeed;
 	m_fCurLifeTime = m_pEmitter->m_fParticleLifeTime;
 	m_fCurSize = m_pEmitter->m_fParticleStartSize;

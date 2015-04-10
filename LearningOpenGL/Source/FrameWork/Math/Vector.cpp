@@ -1,6 +1,16 @@
 #include "Vector.h"
 #include <cmath>
 
+bool Vec2::operator==( const Vec2& rh )
+{
+	return this->x == rh.x && this->y == rh.y;
+}
+
+bool Vec2::operator!=( const Vec2& rh )
+{
+	return !(*this == rh);
+}
+
 Vec3::Vec3()
 	: x(0), y(0), z(0)
 {

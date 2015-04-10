@@ -11,6 +11,15 @@ public:
 		: x(0), y(0)
 	{
 	}
+
+	Vec2( float _x, float _y )
+	{
+		x = _x;
+		y = _y;
+	}
+
+	bool operator==( const Vec2& rh );
+	bool operator!=( const Vec2& rh );
 	
 	float x, y;
 };

@@ -16,10 +16,8 @@ GLParticleSystem* g_particleSystem = nullptr;
 timeval g_fLastTime = {0, 0};
 float g_fDeltaTime = 0.0f;
 
-float g_LeftRight = 0.0f;
-float g_forwardBackward = 0.0f;
-float g_pitch = 0.0f;
-float g_yaw = 0;
+Vec2 g_lastMousePos;
+bool g_bMouseRightButtonClicked = false;
 
 bool bDrawMesh = true;
 
@@ -32,15 +30,16 @@ void init()
 	g_particleSystem = new GLParticleSystem;
 	CEmitter* pEmitter = new CEmitter;
 	pEmitter->SetTexture("T_FX_guangyun01.png");
-	pEmitter->m_transform.m_scale.set(5, 5, 1);
+	pEmitter->m_transform.m_scale.set(10, 10, 1);
+	pEmitter->m_transform.m_pos.set(50, 0, 0);
 	g_particleSystem->AddEmitter(pEmitter);
 
 	g_planeMesh = new COGLMesh;
 	g_planeMesh->InitFromFile("plane.CSTM");
 	for ( int i = 0; i < g_planeMesh->GetMeshData().m_vSubMesh.size(); ++i )
 		g_planeMesh->SetTexture("default.png", i);
-	g_planeMesh->m_worldPos.set(0, -60, -100);
-	g_planeMesh->m_scale.set(1000, 1000, -1000);
+	//g_planeMesh->m_worldPos.set(0, -60, -100);
+	//g_planeMesh->m_scale.set(1000, 1000, -1000);
 	g_planeMesh->m_color = Color4F(0.5f, 0.5f, 0.5f, 1.0f);
 	g_planeMesh->m_bEnableCullFace = false;
 	g_planeMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("NormalMesh") );
@@ -84,6 +83,8 @@ void display()
 
 	if ( bDrawMesh )
 	{
+		g_planeMesh->m_rotation.x = 90;
+		g_planeMesh->m_rotation.z += g_fDeltaTime * 5;
 		g_planeMesh->Render();
 		for (int i = 0; i < g_vMesh.size(); ++i)
 		{
@@ -108,27 +109,43 @@ void reshape (int w, int h)
 
 void keyboard(unsigned char key, int x, int y)
 {
+	int iMoveLeftRight = 0;
+	int iMoveForwardBack = 0;
 	switch (key)
 	{
 	case 27:
 		glutLeaveMainLoop();
 		return;
-	case 'a': g_LeftRight = -10; break;
-	case 'd': g_LeftRight = 10; break;
-	case 'w': g_forwardBackward = 10; break;
-	case 's': g_forwardBackward = -10; break;
-
-	case 'j': g_yaw = -10; break;
-	case 'k': g_yaw = 10; break;
-	case 'm': g_pitch = 10; break;
-	case 'n': g_pitch = -10; break;
+	case 'a': iMoveLeftRight = -10; break;
+	case 'd': iMoveLeftRight = 10; break;
+	case 'w': iMoveForwardBack = 10; break;
+	case 's': iMoveForwardBack = -10; break;
 	}
 
-	CDirector::GetInstance()->GetCurCamera()->Move(g_LeftRight, 0, g_forwardBackward);
-	g_LeftRight = 0;
-	g_forwardBackward = 0;
+	CDirector::GetInstance()->GetCurCamera()->Move(iMoveLeftRight, 0, iMoveForwardBack);
+}
 
-	CDirector::GetInstance()->GetCurCamera()->Rotate(g_pitch, g_yaw);
-	g_pitch = 0;
-	g_yaw = 0;
+void mouse_down( int button, int state, int x, int y )
+{
+	if ( button == GLUT_RIGHT_BUTTON )
+	{
+		if ( state == GLUT_DOWN )
+			g_bMouseRightButtonClicked = true;
+		else
+			g_bMouseRightButtonClicked = false;
+
+		g_lastMousePos = Vec2(x, y);
+	}
+}
+
+void mouse_move(int x,int y)
+{
+	if ( g_bMouseRightButtonClicked )
+	{
+		float fPitchDelta = (g_lastMousePos.y - y) * 0.1f;
+		float fYawDelta = (g_lastMousePos.x - x) * 0.1f;
+
+		CDirector::GetInstance()->GetCurCamera()->Rotate(fPitchDelta, fYawDelta);
+		g_lastMousePos = Vec2(x, y);
+	}
 }
