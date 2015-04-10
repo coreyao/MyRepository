@@ -31,7 +31,7 @@ void COGLMesh::InitFromFile( const char* pMeshFileName )
 	m_animator.SetTarget(this);
 
 	InitMaterial();
-	InitVBOAndVAO();
+	//InitVBOAndVAO();
 	InitSkeleton();
 }
 

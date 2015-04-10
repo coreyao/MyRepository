@@ -15,12 +15,12 @@ public:
 	void SetTexture(const char* pTextureFileName, int iIndex);
 	void SetGLProgram(GLuint theProgram);
 	void SetVisible(bool bVisible, const std::string& sSubMeshName);
+	void InitVBOAndVAO();
 
 private:
 	void InitSkeleton();
 	void InitUniform();
 	void InitMaterial();
-	void InitVBOAndVAO();
 
 private:
 	GLuint m_theProgram;

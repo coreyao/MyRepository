@@ -36,6 +36,9 @@ void init()
 
 	g_planeMesh = new COGLMesh;
 	g_planeMesh->InitFromFile("plane.CSTM");
+	auto& pSubMesh = g_planeMesh->m_data.m_vSubMesh[0];
+	
+	g_planeMesh->InitVBOAndVAO();
 	for ( int i = 0; i < g_planeMesh->GetMeshData().m_vSubMesh.size(); ++i )
 		g_planeMesh->SetTexture("default.png", i);
 	//g_planeMesh->m_worldPos.set(0, -60, -100);
@@ -86,15 +89,15 @@ void display()
 		g_planeMesh->m_rotation.x = 90;
 		g_planeMesh->m_rotation.z += g_fDeltaTime * 5;
 		g_planeMesh->Render();
-		for (int i = 0; i < g_vMesh.size(); ++i)
+		/*for (int i = 0; i < g_vMesh.size(); ++i)
 		{
-			g_vMesh[i]->Update(g_fDeltaTime);
-			g_vMesh[i]->Render();
-		}
+		g_vMesh[i]->Update(g_fDeltaTime);
+		g_vMesh[i]->Render();
+		}*/
 	}
 
-	g_particleSystem->Update(g_fDeltaTime);
-	g_particleSystem->Render();
+	//g_particleSystem->Update(g_fDeltaTime);
+	//g_particleSystem->Render();
 	
 	glutSwapBuffers();
 	glutPostRedisplay();
