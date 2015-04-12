@@ -57,9 +57,7 @@ public:
 	virtual void Render() = 0;
 	const SMeshData& GetMeshData() {return m_data;}
 
-	Vec3 m_worldPos;
-	Vec3 m_rotation;
-	Vec3 m_scale;
+	STransform m_transform;
 	Color4F m_color;
 	CSkeleton m_skeleton;
 	CSkeletonAnimator m_animator;

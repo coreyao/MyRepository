@@ -6,5 +6,5 @@ uniform sampler2D colorTexture;
 
 void main()
 {
-	outputColor = vec4(1.0, 1.0, 1.0, 1.0);//texture(colorTexture, colorCoord) * vertexColor;
+	outputColor = texture(colorTexture, colorCoord) * vertexColor;
 }

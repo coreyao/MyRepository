@@ -519,7 +519,7 @@ void MeshExporter::ParseGeomObject(INode* pNode)
 				}
 				
 				tMesh.m_vVectex = tVertexVec;
-				m_MeshNode.m_vChildMesh.push_back(tMesh);
+				m_MeshNode.m_vSubMesh.push_back(tMesh);
 			}  
 		}  
 	}
@@ -653,7 +653,7 @@ void MeshExporter::ExportToFile( const char* szMeshName )
 void MeshExporter::DoClean()
 {
 	m_AllMaterialVec.clear();
-	m_MeshNode.m_vChildMesh.clear();
+	m_MeshNode.m_vSubMesh.clear();
 	m_MeshNode.m_skeleton.m_vBone.clear();
 }
 

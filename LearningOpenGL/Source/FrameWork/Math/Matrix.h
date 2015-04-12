@@ -17,8 +17,13 @@ public:
 	Matrix4X4 Transpose();
 
 	void SetRight(float a00, float a10, float a20);
+	Vec3 GetRight();
+
 	void SetUp(float a01, float a11, float a21);
+	Vec3 GetUp();
+
 	void SetForward(float a02, float a12, float a22);
+	Vec3 GetForward();
 
 	Matrix4X4 operator*(const Matrix4X4& rh);
 	Matrix4X4 operator*(float fScalar);

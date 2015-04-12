@@ -13,7 +13,6 @@ COGLMesh::COGLMesh()
 	, m_theProgram(0)
 	, m_colorTexUnit(0)
 {
-	m_scale.set(1.0f, 1.0f, 1.0f);
 }
 
 COGLMesh::~COGLMesh()
@@ -31,7 +30,7 @@ void COGLMesh::InitFromFile( const char* pMeshFileName )
 	m_animator.SetTarget(this);
 
 	InitMaterial();
-	//InitVBOAndVAO();
+	InitVBOAndVAO();
 	InitSkeleton();
 }
 
@@ -115,10 +114,6 @@ void COGLMesh::Render()
 	glUseProgram(m_theProgram);
 
 	Mat4 viewMatrix = CDirector::GetInstance()->GetCurCamera()->GetViewMat();
-	Mat4 ScaleMatrix = Mat4::CreateFromScale(m_scale.x, m_scale.y, m_scale.z);
-	Mat4 RotationMatrix = Mat4::CreateFromRotation(m_rotation.x, m_rotation.y, m_rotation.z);
-	Mat4 TranslationMatrix = Mat4::CreateFromTranslation(m_worldPos.x, m_worldPos.y, m_worldPos.z);
-
 	for ( int i = 0; i < m_data.m_vSubMesh.size(); ++i )
 	{
 		if ( !m_vSubMeshVisibility[i] )
@@ -136,8 +131,22 @@ void COGLMesh::Render()
 		GLint modelViewMatrixUnif = glGetUniformLocation(m_theProgram, "modelViewMatrix");
 		if ( modelViewMatrixUnif >= 0 )
 		{
-			Mat4 ModelViewMatrix;
-			ModelViewMatrix = viewMatrix * TranslationMatrix * ScaleMatrix * RotationMatrix * m_data.m_vSubMesh[i].m_MeshMatrix;
+			Mat4 temp = m_transform.GetTransformMat();
+
+			Mat4 BillboardMatrix = Mat4::IDENTITY;
+			Vec3 forward = m_transform.GetTransformMat().Inverse() * CDirector::GetInstance()->GetCurCamera()->GetEyePos();
+			forward.normalize();
+			Vec3 up(0, 0, 1);
+			Vec3 right = forward.Cross(up);
+			right.normalize();
+			up = right.Cross(forward);
+			up.normalize();
+			BillboardMatrix.SetRight(right.x, right.y, right.z);
+			BillboardMatrix.SetForward(up.x, up.y, up.z);
+			BillboardMatrix.SetUp(forward.x, forward.y, forward.z);
+
+			Mat4 ModelViewMatrix = BillboardMatrix * m_transform.GetTransformMat() * m_data.m_vSubMesh[i].m_MeshMatrix;
+			ModelViewMatrix = viewMatrix * ModelViewMatrix;
 			glUniformMatrix4fv(modelViewMatrixUnif, 1, GL_FALSE, ModelViewMatrix.m);
 		}
 

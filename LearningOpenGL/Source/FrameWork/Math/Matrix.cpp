@@ -359,6 +359,21 @@ void Matrix4X4::SetForward( float a02, float a12, float a22 )
 	m[10] = a22;
 }
 
+Vec3 Matrix4X4::GetUp()
+{
+	return Vec3( m[4], m[5], m[6] );
+}
+
+Vec3 Matrix4X4::GetRight()
+{
+	return Vec3( m[0], m[1], m[2] );
+}
+
+Vec3 Matrix4X4::GetForward()
+{
+	return Vec3( m[8], m[9], m[10] );
+}
+
 Matrix4X4 Matrix4X4::ZERO= Matrix4X4(0, 0, 0, 0, 
 									 0, 0, 0, 0, 
 									 0, 0, 0, 0, 

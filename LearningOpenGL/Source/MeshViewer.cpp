@@ -30,19 +30,16 @@ void init()
 	g_particleSystem = new GLParticleSystem;
 	CEmitter* pEmitter = new CEmitter;
 	pEmitter->SetTexture("T_FX_guangyun01.png");
-	pEmitter->m_transform.m_scale.set(10, 10, 1);
-	pEmitter->m_transform.m_pos.set(50, 0, 0);
+	pEmitter->m_transform.m_scale.set(10, 10, 10);
+	pEmitter->m_transform.m_pos.set(0, 0, 0);
 	g_particleSystem->AddEmitter(pEmitter);
 
 	g_planeMesh = new COGLMesh;
 	g_planeMesh->InitFromFile("plane.CSTM");
-	auto& pSubMesh = g_planeMesh->m_data.m_vSubMesh[0];
-	
-	g_planeMesh->InitVBOAndVAO();
+	g_planeMesh->m_transform.m_rotation.x = 90;
+	//g_planeMesh->m_transform.m_scale.set(1, 1, -1);
 	for ( int i = 0; i < g_planeMesh->GetMeshData().m_vSubMesh.size(); ++i )
 		g_planeMesh->SetTexture("default.png", i);
-	//g_planeMesh->m_worldPos.set(0, -60, -100);
-	//g_planeMesh->m_scale.set(1000, 1000, -1000);
 	g_planeMesh->m_color = Color4F(0.5f, 0.5f, 0.5f, 1.0f);
 	g_planeMesh->m_bEnableCullFace = false;
 	g_planeMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("NormalMesh") );
@@ -53,8 +50,8 @@ void init()
 	{
 		pSkinMesh->SetTexture("BatArmor.png", i);
 	}
-	pSkinMesh->m_worldPos.set(g_planeMesh->m_worldPos.x, g_planeMesh->m_worldPos.y + 30, g_planeMesh->m_worldPos.z);
-	pSkinMesh->m_scale.set(1, 1, -1);
+	pSkinMesh->m_transform.m_pos.set(g_planeMesh->m_transform.m_pos.x, g_planeMesh->m_transform.m_pos.y + 30, g_planeMesh->m_transform.m_pos.z);
+	pSkinMesh->m_transform.m_scale.set(1, 1, -1);
 	pSkinMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("SkinMesh") );
 	pSkinMesh->SetVisible(false, "Box01");
 	g_vMesh.push_back(pSkinMesh);
@@ -86,8 +83,6 @@ void display()
 
 	if ( bDrawMesh )
 	{
-		g_planeMesh->m_rotation.x = 90;
-		g_planeMesh->m_rotation.z += g_fDeltaTime * 5;
 		g_planeMesh->Render();
 		/*for (int i = 0; i < g_vMesh.size(); ++i)
 		{
@@ -130,7 +125,7 @@ void keyboard(unsigned char key, int x, int y)
 
 void mouse_down( int button, int state, int x, int y )
 {
-	if ( button == GLUT_RIGHT_BUTTON )
+	if ( button == GLUT_LEFT_BUTTON )
 	{
 		if ( state == GLUT_DOWN )
 			g_bMouseRightButtonClicked = true;
