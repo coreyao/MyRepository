@@ -61,3 +61,8 @@ Vec3 CCamera::GetEyePos()
 {
 	return m_eyePos;
 }
+
+Vec3 CCamera::GetLookAtDir()
+{
+	return m_lookAtDir;
+}

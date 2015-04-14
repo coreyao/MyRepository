@@ -223,9 +223,11 @@ void SMeshData::ReadFromFile( FILE* hFile )
 
 Mat4 STransform::GetRotationMat()
 {
-	return Mat4::CreateFromRotationX(m_rotation.x)
-		* Mat4::CreateFromRotationY(m_rotation.y)
-		* Mat4::CreateFromRotationZ(m_rotation.z);
+	Mat4 rotateZ = Mat4::CreateFromRotationZ(m_rotation.z);
+	Mat4 rotateY = Mat4::CreateFromRotationY(m_rotation.y);
+	Mat4 rotateX = Mat4::CreateFromRotationX(m_rotation.x);
+
+	return rotateX * rotateY * rotateZ;
 }
 
 void STransform::Reset()

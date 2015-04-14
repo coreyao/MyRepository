@@ -36,8 +36,8 @@ void init()
 
 	g_planeMesh = new COGLMesh;
 	g_planeMesh->InitFromFile("plane.CSTM");
-	g_planeMesh->m_transform.m_rotation.x = 90;
-	//g_planeMesh->m_transform.m_scale.set(1, 1, -1);
+	g_planeMesh->m_transform.m_scale.set(10, 10, -10);
+	g_planeMesh->m_transform.m_pos.set(0, -30, -100);
 	for ( int i = 0; i < g_planeMesh->GetMeshData().m_vSubMesh.size(); ++i )
 		g_planeMesh->SetTexture("default.png", i);
 	g_planeMesh->m_color = Color4F(0.5f, 0.5f, 0.5f, 1.0f);
@@ -91,8 +91,8 @@ void display()
 		}*/
 	}
 
-	//g_particleSystem->Update(g_fDeltaTime);
-	//g_particleSystem->Render();
+	g_particleSystem->Update(g_fDeltaTime);
+	g_particleSystem->Render();
 	
 	glutSwapBuffers();
 	glutPostRedisplay();

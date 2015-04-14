@@ -134,17 +134,6 @@ void COGLMesh::Render()
 			Mat4 temp = m_transform.GetTransformMat();
 
 			Mat4 BillboardMatrix = Mat4::IDENTITY;
-			Vec3 forward = m_transform.GetTransformMat().Inverse() * CDirector::GetInstance()->GetCurCamera()->GetEyePos();
-			forward.normalize();
-			Vec3 up(0, 0, 1);
-			Vec3 right = forward.Cross(up);
-			right.normalize();
-			up = right.Cross(forward);
-			up.normalize();
-			BillboardMatrix.SetRight(right.x, right.y, right.z);
-			BillboardMatrix.SetForward(up.x, up.y, up.z);
-			BillboardMatrix.SetUp(forward.x, forward.y, forward.z);
-
 			Mat4 ModelViewMatrix = BillboardMatrix * m_transform.GetTransformMat() * m_data.m_vSubMesh[i].m_MeshMatrix;
 			ModelViewMatrix = viewMatrix * ModelViewMatrix;
 			glUniformMatrix4fv(modelViewMatrixUnif, 1, GL_FALSE, ModelViewMatrix.m);

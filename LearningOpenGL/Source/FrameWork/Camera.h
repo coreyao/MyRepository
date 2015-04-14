@@ -14,6 +14,7 @@ public:
 	Mat4 GetProjMat();
 
 	Vec3 GetEyePos();
+	Vec3 GetLookAtDir();
 
 private:
 	void UpdateProjectionViewMat();

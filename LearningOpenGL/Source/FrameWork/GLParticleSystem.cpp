@@ -168,15 +168,15 @@ void CParticleInstance::Render()
 	Mat4 TranslationMatrix = Mat4::CreateFromTranslation(m_position.x,m_position.y, m_position.z);
 	Mat4 BillboardMatrix = Mat4::IDENTITY;
 
-	Vec3 forward = CDirector::GetInstance()->GetCurCamera()->GetViewMat().GetForward(); //(m_pEmitter->m_pParticleSystem->m_transform.GetTransformMat() * m_pEmitter->m_transform.GetTransformMat() ).Inverse() * CDirector::GetInstance()->GetCurCamera()->GetEyePos() - m_position;
+	Vec3 forward = (m_pEmitter->m_pParticleSystem->m_transform.GetTransformMat() * m_pEmitter->m_transform.GetTransformMat()).Inverse() * CDirector::GetInstance()->GetCurCamera()->GetLookAtDir() * (-1);
 	forward.normalize();
 	Vec3 up(0, 1, 0);
-	Vec3 right = up.Cross(forward);
+	Vec3 right = forward.Cross(up);
 	right.normalize();
 	up = forward.Cross(right);
 	up.normalize();
-	BillboardMatrix.SetForward(forward.x, forward.y, forward.z);
 	BillboardMatrix.SetRight(right.x, right.y, right.z);
+	BillboardMatrix.SetForward(forward.x, forward.y, forward.z);
 	BillboardMatrix.SetUp(up.x, up.y, up.z);
 
 	GLint modelViewMatrixUnif = glGetUniformLocation(m_theProgram, "modelViewMatrix");	
