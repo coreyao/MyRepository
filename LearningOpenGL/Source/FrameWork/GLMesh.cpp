@@ -27,6 +27,7 @@ void COGLMesh::InitFromFile( const char* pMeshFileName )
 
 	m_data.ReadFromFile(pMeshFile);
 	m_vSubMeshVisibility.resize(m_data.m_vSubMesh.size(), true);
+	m_MV.resize(m_data.m_vSubMesh.size());
 	m_animator.SetTarget(this);
 
 	InitMaterial();
@@ -91,6 +92,12 @@ void COGLMesh::InitSkeleton()
 void COGLMesh::Update(float dt)
 {
 	m_animator.Update(dt);
+
+	Mat4 viewMatrix = CDirector::GetInstance()->GetCurCamera()->GetViewMat();
+	for ( int i = 0; i < m_data.m_vSubMesh.size(); ++i )
+	{
+		m_MV[i] = viewMatrix * m_transform.GetTransformMat() * m_data.m_vSubMesh[i].m_MeshMatrix;
+	}
 }
 
 void COGLMesh::Render()
@@ -113,7 +120,6 @@ void COGLMesh::Render()
 
 	glUseProgram(m_theProgram);
 
-	Mat4 viewMatrix = CDirector::GetInstance()->GetCurCamera()->GetViewMat();
 	for ( int i = 0; i < m_data.m_vSubMesh.size(); ++i )
 	{
 		if ( !m_vSubMeshVisibility[i] )
@@ -131,12 +137,7 @@ void COGLMesh::Render()
 		GLint modelViewMatrixUnif = glGetUniformLocation(m_theProgram, "modelViewMatrix");
 		if ( modelViewMatrixUnif >= 0 )
 		{
-			Mat4 temp = m_transform.GetTransformMat();
-
-			Mat4 BillboardMatrix = Mat4::IDENTITY;
-			Mat4 ModelViewMatrix = BillboardMatrix * m_transform.GetTransformMat() * m_data.m_vSubMesh[i].m_MeshMatrix;
-			ModelViewMatrix = viewMatrix * ModelViewMatrix;
-			glUniformMatrix4fv(modelViewMatrixUnif, 1, GL_FALSE, ModelViewMatrix.m);
+			glUniformMatrix4fv(modelViewMatrixUnif, 1, GL_FALSE, m_MV[i].m);
 		}
 
 		GLint matrixPaletteUnif = glGetUniformLocation(m_theProgram, "u_matrixPalette");

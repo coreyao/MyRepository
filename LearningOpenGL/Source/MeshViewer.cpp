@@ -83,12 +83,13 @@ void display()
 
 	if ( bDrawMesh )
 	{
+		g_planeMesh->Update(g_fDeltaTime);
 		g_planeMesh->Render();
-		/*for (int i = 0; i < g_vMesh.size(); ++i)
+		for (int i = 0; i < g_vMesh.size(); ++i)
 		{
-		g_vMesh[i]->Update(g_fDeltaTime);
-		g_vMesh[i]->Render();
-		}*/
+			g_vMesh[i]->Update(g_fDeltaTime);
+			g_vMesh[i]->Render();
+		}
 	}
 
 	g_particleSystem->Update(g_fDeltaTime);

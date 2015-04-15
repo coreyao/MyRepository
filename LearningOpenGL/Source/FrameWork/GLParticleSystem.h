@@ -79,6 +79,7 @@ private:
 	float m_fCurSize;
 	Vec3 m_position;
 	Vec3 m_moveDir;
+	Mat4 m_MV;
 
 	CEmitter* m_pEmitter;
 

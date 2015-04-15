@@ -111,6 +111,23 @@ void CParticleInstance::Update( float dt )
 	m_fCurLifeTime -= dt;
 
 	m_position += m_moveDir * m_fCurSpeed * dt;
+
+	Mat4 viewMatrix = CDirector::GetInstance()->GetCurCamera()->GetViewMat();
+	Mat4 TranslationMatrix = Mat4::CreateFromTranslation(m_position.x,m_position.y, m_position.z);
+	Mat4 BillboardMatrix = Mat4::IDENTITY;
+
+	Vec3 forward = (m_pEmitter->m_pParticleSystem->m_transform.GetTransformMat() * m_pEmitter->m_transform.GetTransformMat()).Inverse() * CDirector::GetInstance()->GetCurCamera()->GetLookAtDir() * (-1);
+	forward.normalize();
+	Vec3 up(0, 1, 0);
+	Vec3 right = forward.Cross(up);
+	right.normalize();
+	up = forward.Cross(right);
+	up.normalize();
+	BillboardMatrix.SetRight(right.x, right.y, right.z);
+	BillboardMatrix.SetForward(forward.x, forward.y, forward.z);
+	BillboardMatrix.SetUp(up.x, up.y, up.z);
+
+	m_MV = viewMatrix * m_pEmitter->m_pParticleSystem->m_transform.GetTransformMat() * m_pEmitter->m_transform.GetTransformMat() * TranslationMatrix * BillboardMatrix;
 }
 
 void CParticleInstance::BuildVBOAndVAO()
@@ -142,16 +159,12 @@ void CParticleInstance::Render()
 
 	glBindVertexArray(m_vao);
 
-	/*glEnable(GL_CULL_FACE);
+	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
-	glFrontFace(GL_CW);*/
-
-	glDisable(GL_CULL_FACE);
+	glFrontFace(GL_CW);
 
 	glEnable(GL_DEPTH_TEST);
-	glDepthMask(GL_TRUE);
-	glDepthFunc(GL_LEQUAL);
-	glDepthRange(0.0f, 1.0f);
+	glDepthMask(false);
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
@@ -164,27 +177,10 @@ void CParticleInstance::Render()
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(CParticleInstance::SVertex, m_UV));
 
-	Mat4 viewMatrix = CDirector::GetInstance()->GetCurCamera()->GetViewMat();
-	Mat4 TranslationMatrix = Mat4::CreateFromTranslation(m_position.x,m_position.y, m_position.z);
-	Mat4 BillboardMatrix = Mat4::IDENTITY;
-
-	Vec3 forward = (m_pEmitter->m_pParticleSystem->m_transform.GetTransformMat() * m_pEmitter->m_transform.GetTransformMat()).Inverse() * CDirector::GetInstance()->GetCurCamera()->GetLookAtDir() * (-1);
-	forward.normalize();
-	Vec3 up(0, 1, 0);
-	Vec3 right = forward.Cross(up);
-	right.normalize();
-	up = forward.Cross(right);
-	up.normalize();
-	BillboardMatrix.SetRight(right.x, right.y, right.z);
-	BillboardMatrix.SetForward(forward.x, forward.y, forward.z);
-	BillboardMatrix.SetUp(up.x, up.y, up.z);
-
 	GLint modelViewMatrixUnif = glGetUniformLocation(m_theProgram, "modelViewMatrix");	
 	if ( modelViewMatrixUnif >= 0 )
 	{
-		Mat4 ModelViewMatrix;
-		ModelViewMatrix = viewMatrix * m_pEmitter->m_pParticleSystem->m_transform.GetTransformMat() * m_pEmitter->m_transform.GetTransformMat() * TranslationMatrix * BillboardMatrix;
-		glUniformMatrix4fv(modelViewMatrixUnif, 1, GL_FALSE, ModelViewMatrix.m);
+		glUniformMatrix4fv(modelViewMatrixUnif, 1, GL_FALSE, m_MV.m);
 	}
 
 	GLint perspectiveMatrixUnif = glGetUniformLocation(m_theProgram, "perspectiveMatrix");
@@ -208,6 +204,8 @@ void CParticleInstance::Render()
 	glBindVertexArray(0);
 	glBindSampler(m_colorTexUnit, 0);
 	glUseProgram(0);
+
+	glDepthMask(true);
 }
 
 void CParticleInstance::SetGLProgram( GLuint theProgram )

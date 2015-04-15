@@ -27,6 +27,7 @@ private:
 
 	int m_colorTexUnit;
 	GLuint m_Sampler;
+	std::vector<Mat4> m_MV;
 
 	std::vector<GLuint> m_vertexDataObj;
 	std::vector<GLuint> m_vertexIndexObj;
