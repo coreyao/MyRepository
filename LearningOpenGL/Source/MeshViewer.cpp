@@ -15,6 +15,7 @@ GLParticleSystem* g_particleSystem = nullptr;
 
 timeval g_fLastTime = {0, 0};
 float g_fDeltaTime = 0.0f;
+float g_fElapsedTime = 0.0f;
 
 Vec2 g_lastMousePos;
 bool g_bMouseRightButtonClicked = false;
@@ -30,7 +31,7 @@ void init()
 	g_particleSystem = new GLParticleSystem;
 	CEmitter* pEmitter = new CEmitter;
 	pEmitter->SetTexture("T_FX_guangyun01.png");
-	pEmitter->SetEmitMode(CEmitter::EEmitMode_Relative);
+	pEmitter->SetEmitMode(CEmitter::EEmitMode_Free);
 	pEmitter->SetParticleStartSize(10.0f);
 	pEmitter->SetParticleStartSpeed(50.0f);
 	g_particleSystem->AddEmitter(pEmitter);
@@ -78,6 +79,8 @@ void display()
 		g_fDeltaTime = std::max(0.0f, g_fDeltaTime);
 	}
 
+	g_fElapsedTime += g_fDeltaTime;
+
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClearDepth(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -92,7 +95,9 @@ void display()
 			g_vMesh[i]->Render();
 		}
 	}
-
+	//g_particleSystem->GetTransformData().m_rotation.z = 30;
+	//g_particleSystem->GetTransformData().m_rotation.y += 90 * g_fDeltaTime;
+	//g_particleSystem->GetTransformData().m_pos.x = 10 * sin(10 * g_fElapsedTime);
 	g_particleSystem->Update(g_fDeltaTime);
 	g_particleSystem->Render();
 	

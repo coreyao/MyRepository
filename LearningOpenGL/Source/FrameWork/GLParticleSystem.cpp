@@ -26,6 +26,11 @@ void GLParticleSystem::Render()
 	}
 }
 
+STransform& GLParticleSystem::GetTransformData()
+{
+	return m_transform;
+}
+
 void CEmitter::Update( float dt )
 {
 	if ( m_fEmissionRate > 0 )
@@ -152,7 +157,11 @@ void CParticleInstance::Update( float dt )
 	Mat4 ScaleMatrix = Mat4::CreateFromScale(m_fCurSize, m_fCurSize, m_fCurSize);
 
 	Mat4 BillboardMatrix = Mat4::IDENTITY;
-	Vec3 forward = m_parentMat.Inverse() * CDirector::GetInstance()->GetCurCamera()->GetLookAtDir() * (-1);
+	Vec3 forward;
+	if ( m_pEmitter->m_emitMode == CEmitter::EEmitMode_Free )
+		forward = CDirector::GetInstance()->GetCurCamera()->GetLookAtDir() * (-1);
+	else if ( m_pEmitter->m_emitMode == CEmitter::EEmitMode_Relative )
+		forward = m_parentMat.Inverse() * CDirector::GetInstance()->GetCurCamera()->GetLookAtDir() * (-1);
 	forward.normalize();
 	Vec3 up(0, 1, 0);
 	Vec3 right = forward.Cross(up);
@@ -169,6 +178,7 @@ void CParticleInstance::Update( float dt )
 	}
 	else if ( m_pEmitter->m_emitMode == CEmitter::EEmitMode_Relative )
 	{
+		m_parentMat = m_pEmitter->m_pParticleSystem->m_transform.GetTransformMat() * m_pEmitter->m_transform.GetTransformMat();
 		m_MV = viewMatrix * m_parentMat * TranslationMatrix * BillboardMatrix * ScaleMatrix;
 	}
 }
@@ -205,6 +215,7 @@ void CParticleInstance::Render()
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CW);
+	//glDisable(GL_CULL_FACE);
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(false);
@@ -263,8 +274,8 @@ void CParticleInstance::Reset()
 	m_parentMat = m_pEmitter->m_pParticleSystem->m_transform.GetTransformMat() * m_pEmitter->m_transform.GetTransformMat();
 	if ( m_pEmitter->m_emitMode == CEmitter::EEmitMode_Free )
 	{
-		m_position = m_parentMat * m_position;
-		m_moveDir = m_parentMat * m_moveDir;
+		m_position = m_parentMat.TransformPoint(m_position);
+		m_moveDir = m_parentMat.TransformVector(m_moveDir);
 	}
 	m_moveDir.normalize();
 

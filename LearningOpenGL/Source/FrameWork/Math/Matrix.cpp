@@ -374,6 +374,18 @@ Vec3 Matrix4X4::GetForward()
 	return Vec3( m[8], m[9], m[10] );
 }
 
+Vec3 Matrix4X4::TransformPoint( const Vec3& point )
+{
+	Vec4 pp(point.x, point.y, point.z, 1.0f);
+	pp = *this * pp;
+	return Vec3(pp.x, pp.y, pp.z);
+}
+
+Vec3 Matrix4X4::TransformVector( const Vec3& vec )
+{
+	return *this * vec;
+}
+
 Matrix4X4 Matrix4X4::ZERO= Matrix4X4(0, 0, 0, 0, 
 									 0, 0, 0, 0, 
 									 0, 0, 0, 0, 

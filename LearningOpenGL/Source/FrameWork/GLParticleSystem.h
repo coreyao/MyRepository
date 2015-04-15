@@ -167,6 +167,7 @@ public:
 	}
 
 	void AddEmitter(CEmitter* pNewEmitter);
+	STransform& GetTransformData();
 
 	void Update(float dt);
 	void Render();
