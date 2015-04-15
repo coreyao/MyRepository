@@ -80,6 +80,7 @@ private:
 	Vec3 m_position;
 	Vec3 m_moveDir;
 	Mat4 m_MV;
+	Mat4 m_parentMat;
 
 	CEmitter* m_pEmitter;
 
@@ -100,6 +101,12 @@ class CEmitter
 	friend class CParticleInstance;
 
 public:
+	enum EEmitMode
+	{
+		EEmitMode_Relative,
+		EEmitMode_Free,
+	};
+
 	CEmitter()
 		: m_fEmissionRate(10.0f)
 		, m_fCurEmissionTime(0)
@@ -111,6 +118,7 @@ public:
 		, m_iMaxParticles(1000)
 		, m_iTexture(-1)
 		, m_pParticleSystem(nullptr)
+		, m_emitMode(EEmitMode_Relative)
 	{
 	}
 
@@ -119,10 +127,19 @@ public:
 	void Update(float dt);
 	void Render();
 	void SetTexture(const std::string& sTexFileName);
+	void SetParticleLifeTime(float fLifeTime);
+	void SetParticleStartSpeed(float fStartSpeed);
+	void SetParticleStartAcceleration(float fStartAcceleration);
+	void SetParticleStartZRotation(float fStartZRotation);
+	void SetParticleStartSize(float fStartSize);
+	void SetEmitMode(EEmitMode mode);
+	STransform& GetTransformData();
 
-	STransform m_transform;
 private:
 	int m_iMaxParticles;
+
+	STransform m_transform;
+	EEmitMode m_emitMode;
 
 	float m_fEmissionRate;
 	float m_fCurEmissionTime;

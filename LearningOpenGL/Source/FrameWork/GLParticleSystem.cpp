@@ -106,6 +106,41 @@ void CEmitter::SetTexture( const std::string& sTexFileName )
 	}
 }
 
+void CEmitter::SetParticleLifeTime(float fLifeTime)
+{
+	m_fParticleLifeTime = fLifeTime;
+}
+
+void CEmitter::SetParticleStartSpeed(float fStartSpeed)
+{
+	m_fParticleStartSpeed = fStartSpeed;
+}
+
+void CEmitter::SetParticleStartAcceleration(float fStartAcceleration)
+{
+	m_fParticleStartAcceleration = fStartAcceleration;
+}
+
+void CEmitter::SetParticleStartZRotation(float fStartZRotation)
+{
+	m_fParticleStartZRotation = fStartZRotation;
+}
+
+void CEmitter::SetEmitMode( EEmitMode mode )
+{
+	m_emitMode = mode;
+}
+
+void CEmitter::SetParticleStartSize( float fStartSize )
+{
+	m_fParticleStartSize = fStartSize;
+}
+
+STransform& CEmitter::GetTransformData()
+{
+	return m_transform;
+}
+
 void CParticleInstance::Update( float dt )
 {
 	m_fCurLifeTime -= dt;
@@ -114,9 +149,10 @@ void CParticleInstance::Update( float dt )
 
 	Mat4 viewMatrix = CDirector::GetInstance()->GetCurCamera()->GetViewMat();
 	Mat4 TranslationMatrix = Mat4::CreateFromTranslation(m_position.x,m_position.y, m_position.z);
-	Mat4 BillboardMatrix = Mat4::IDENTITY;
+	Mat4 ScaleMatrix = Mat4::CreateFromScale(m_fCurSize, m_fCurSize, m_fCurSize);
 
-	Vec3 forward = (m_pEmitter->m_pParticleSystem->m_transform.GetTransformMat() * m_pEmitter->m_transform.GetTransformMat()).Inverse() * CDirector::GetInstance()->GetCurCamera()->GetLookAtDir() * (-1);
+	Mat4 BillboardMatrix = Mat4::IDENTITY;
+	Vec3 forward = m_parentMat.Inverse() * CDirector::GetInstance()->GetCurCamera()->GetLookAtDir() * (-1);
 	forward.normalize();
 	Vec3 up(0, 1, 0);
 	Vec3 right = forward.Cross(up);
@@ -127,7 +163,14 @@ void CParticleInstance::Update( float dt )
 	BillboardMatrix.SetForward(forward.x, forward.y, forward.z);
 	BillboardMatrix.SetUp(up.x, up.y, up.z);
 
-	m_MV = viewMatrix * m_pEmitter->m_pParticleSystem->m_transform.GetTransformMat() * m_pEmitter->m_transform.GetTransformMat() * TranslationMatrix * BillboardMatrix;
+	if ( m_pEmitter->m_emitMode == CEmitter::EEmitMode_Free )
+	{
+		m_MV = viewMatrix * TranslationMatrix * BillboardMatrix * ScaleMatrix;
+	}
+	else if ( m_pEmitter->m_emitMode == CEmitter::EEmitMode_Relative )
+	{
+		m_MV = viewMatrix * m_parentMat * TranslationMatrix * BillboardMatrix * ScaleMatrix;
+	}
 }
 
 void CParticleInstance::BuildVBOAndVAO()
@@ -215,12 +258,19 @@ void CParticleInstance::SetGLProgram( GLuint theProgram )
 
 void CParticleInstance::Reset()
 {
-	m_position = Vec3(RANDOM_MINUS1_1(), 0, 0);
+	m_moveDir = Vec3(0, 1, 0);
+	m_position = Vec3(0, 0, 0);
+	m_parentMat = m_pEmitter->m_pParticleSystem->m_transform.GetTransformMat() * m_pEmitter->m_transform.GetTransformMat();
+	if ( m_pEmitter->m_emitMode == CEmitter::EEmitMode_Free )
+	{
+		m_position = m_parentMat * m_position;
+		m_moveDir = m_parentMat * m_moveDir;
+	}
+	m_moveDir.normalize();
+
 	m_fCurSpeed = m_pEmitter->m_fParticleStartSpeed;
 	m_fCurLifeTime = m_pEmitter->m_fParticleLifeTime;
 	m_fCurSize = m_pEmitter->m_fParticleStartSize;
-	m_moveDir = Vec3(0, 1, 0);
-	m_moveDir.normalize();
 }
 
 void CParticleInstance::Init( CEmitter* pParent )

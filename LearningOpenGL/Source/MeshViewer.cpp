@@ -30,8 +30,9 @@ void init()
 	g_particleSystem = new GLParticleSystem;
 	CEmitter* pEmitter = new CEmitter;
 	pEmitter->SetTexture("T_FX_guangyun01.png");
-	pEmitter->m_transform.m_scale.set(10, 10, 10);
-	pEmitter->m_transform.m_pos.set(0, 0, 0);
+	pEmitter->SetEmitMode(CEmitter::EEmitMode_Relative);
+	pEmitter->SetParticleStartSize(10.0f);
+	pEmitter->SetParticleStartSpeed(50.0f);
 	g_particleSystem->AddEmitter(pEmitter);
 
 	g_planeMesh = new COGLMesh;
