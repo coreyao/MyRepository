@@ -243,3 +243,6 @@ Mat4 STransform::GetTransformMat()
 		* Mat4::CreateFromScale(m_scale.x, m_scale.y, m_scale.z)
 		* GetRotationMat();
 }
+
+const Color4F Color4F::WHITE (1.0f, 1.0f, 1.0f, 1.0f);
+const Color4F Color4F::GREEN (0.0f, 1.0f, 0.0f, 1.0f);

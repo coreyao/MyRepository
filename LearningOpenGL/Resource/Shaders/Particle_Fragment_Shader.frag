@@ -2,9 +2,10 @@
 out vec4 outputColor;
 in vec2 colorCoord;
 in vec4 vertexColor;
-uniform sampler2D colorTexture;
+uniform sampler2D u_colorTexture;
+uniform vec4 u_color;
 
 void main()
 {
-	outputColor = texture(colorTexture, colorCoord) * vertexColor;
+	outputColor = texture(u_colorTexture, colorCoord) * vertexColor * u_color;
 }

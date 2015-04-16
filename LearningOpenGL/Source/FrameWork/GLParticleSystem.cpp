@@ -33,6 +33,10 @@ STransform& GLParticleSystem::GetTransformData()
 
 void CEmitter::Update( float dt )
 {
+	m_fCurDuration += dt;
+	if ( m_fCurDuration > m_fTotalDuration )
+		m_fCurDuration = 0.0f;
+
 	if ( m_fEmissionRate > 0 )
 	{
 		float fRate = 1.0f / m_fEmissionRate;
@@ -111,24 +115,64 @@ void CEmitter::SetTexture( const std::string& sTexFileName )
 	}
 }
 
-void CEmitter::SetParticleLifeTime(float fLifeTime)
+void CEmitter::InitParticleLifeTime(float fLifeTime)
 {
-	m_fParticleLifeTime = fLifeTime;
+	m_fParticleLifeTime.SetPropertyType(EPropertyType_Constant);
+	m_fParticleLifeTime.AddCtrl(new CConstantCtrl<float>);
+	m_fParticleLifeTime.SetValue(fLifeTime);
 }
 
-void CEmitter::SetParticleStartSpeed(float fStartSpeed)
+void CEmitter::InitParticleLifeTime( float fLifeTimeLH, float fLifeTimeRH )
 {
-	m_fParticleStartSpeed = fStartSpeed;
+	m_fParticleLifeTime.SetPropertyType(EPropertyType_RandomBetweenContant);
+
+	auto pCtrl = new CConstantCtrl<float>;
+	pCtrl->SetValue(fLifeTimeLH);
+	m_fParticleLifeTime.AddCtrl(pCtrl);
+
+	pCtrl = new CConstantCtrl<float>;
+	pCtrl->SetValue(fLifeTimeRH);
+	m_fParticleLifeTime.AddCtrl(pCtrl);
 }
 
-void CEmitter::SetParticleStartAcceleration(float fStartAcceleration)
+void CEmitter::InitParticleStartSpeed(float fStartSpeed)
 {
-	m_fParticleStartAcceleration = fStartAcceleration;
+	m_fParticleStartSpeed.SetPropertyType(EPropertyType_Constant);
+	m_fParticleStartSpeed.AddCtrl(new CConstantCtrl<float>);
+	m_fParticleStartSpeed.SetValue(fStartSpeed);
 }
 
-void CEmitter::SetParticleStartZRotation(float fStartZRotation)
+void CEmitter::InitParticleStartSpeed( float fStartSpeedLH, float fStartSpeedRH )
 {
-	m_fParticleStartZRotation = fStartZRotation;
+	m_fParticleStartSpeed.SetPropertyType(EPropertyType_RandomBetweenContant);
+
+	auto pCtrl = new CConstantCtrl<float>;
+	pCtrl->SetValue(fStartSpeedLH);
+	m_fParticleStartSpeed.AddCtrl(pCtrl);
+
+	pCtrl = new CConstantCtrl<float>;
+	pCtrl->SetValue(fStartSpeedRH);
+	m_fParticleStartSpeed.AddCtrl(pCtrl);
+}
+
+void CEmitter::InitParticleStartZRotation(float fStartZRotation)
+{
+	m_fParticleStartZRotation.SetPropertyType(EPropertyType_Constant);
+	m_fParticleStartZRotation.AddCtrl(new CConstantCtrl<float>);
+	m_fParticleStartZRotation.SetValue(fStartZRotation);
+}
+
+void CEmitter::InitParticleStartZRotation( float fStartZRotationLH, float fStartZRotationRH )
+{
+	m_fParticleStartZRotation.SetPropertyType(EPropertyType_RandomBetweenContant);
+
+	auto pCtrl = new CConstantCtrl<float>;
+	pCtrl->SetValue(fStartZRotationLH);
+	m_fParticleStartZRotation.AddCtrl(pCtrl);
+
+	pCtrl = new CConstantCtrl<float>;
+	pCtrl->SetValue(fStartZRotationRH);
+	m_fParticleStartZRotation.AddCtrl(pCtrl);
 }
 
 void CEmitter::SetEmitMode( EEmitMode mode )
@@ -136,14 +180,49 @@ void CEmitter::SetEmitMode( EEmitMode mode )
 	m_emitMode = mode;
 }
 
-void CEmitter::SetParticleStartSize( float fStartSize )
+void CEmitter::InitParticleStartSize( float fStartSize )
 {
-	m_fParticleStartSize = fStartSize;
+	m_fParticleStartSize.SetPropertyType(EPropertyType_Constant);
+	m_fParticleStartSize.AddCtrl(new CConstantCtrl<float>);
+	m_fParticleStartSize.SetValue(fStartSize);
+}
+
+void CEmitter::InitParticleStartSize( float fStartSizeLH, float fStartSizeRH )
+{
+	m_fParticleStartSize.SetPropertyType(EPropertyType_RandomBetweenContant);
+
+	auto pCtrl = new CConstantCtrl<float>;
+	pCtrl->SetValue(fStartSizeLH);
+	m_fParticleStartSize.AddCtrl(pCtrl);
+
+	pCtrl = new CConstantCtrl<float>;
+	pCtrl->SetValue(fStartSizeRH);
+	m_fParticleStartSize.AddCtrl(pCtrl);
 }
 
 STransform& CEmitter::GetTransformData()
 {
 	return m_transform;
+}
+
+void CEmitter::InitParticleStartColor( Color4F color )
+{
+	m_particleStartColor.SetPropertyType(EPropertyType_Constant);
+	m_particleStartColor.AddCtrl(new CConstantCtrl<Color4F>);
+	m_particleStartColor.SetValue(color);
+}
+
+void CEmitter::InitParticleStartColor( Color4F colorLH, Color4F colorRH )
+{
+	m_particleStartColor.SetPropertyType(EPropertyType_RandomBetweenContant);
+
+	auto pCtrl = new CConstantCtrl<Color4F>;
+	pCtrl->SetValue(colorLH);
+	m_particleStartColor.AddCtrl(pCtrl);
+
+	pCtrl = new CConstantCtrl<Color4F>;
+	pCtrl->SetValue(colorRH);
+	m_particleStartColor.AddCtrl(pCtrl);
 }
 
 void CParticleInstance::Update( float dt )
@@ -244,6 +323,12 @@ void CParticleInstance::Render()
 		glUniformMatrix4fv(perspectiveMatrixUnif, 1, GL_FALSE, projMat.m);
 	}
 
+	GLint colorUnif = glGetUniformLocation(m_theProgram, "u_color");
+	if ( colorUnif >= 0 )
+	{
+		glUniform4f( colorUnif, m_curColor.r, m_curColor.g, m_curColor.b, m_curColor.a );
+	}
+
 	if ( m_pEmitter->m_iTexture >= 0 )
 	{
 		glActiveTexture(GL_TEXTURE0 + m_colorTexUnit);
@@ -279,9 +364,11 @@ void CParticleInstance::Reset()
 	}
 	m_moveDir.normalize();
 
-	m_fCurSpeed = m_pEmitter->m_fParticleStartSpeed;
-	m_fCurLifeTime = m_pEmitter->m_fParticleLifeTime;
-	m_fCurSize = m_pEmitter->m_fParticleStartSize;
+	float fElapsedRatio = m_pEmitter->m_fCurDuration / m_pEmitter->m_fTotalDuration;
+	m_fCurSpeed = m_pEmitter->m_fParticleStartSpeed.GetValue(fElapsedRatio);
+	m_fCurLifeTime = m_pEmitter->m_fParticleLifeTime.GetValue(fElapsedRatio);
+	m_fCurSize = m_pEmitter->m_fParticleStartSize.GetValue(fElapsedRatio);
+	m_curColor = m_pEmitter->m_particleStartColor.GetValue(fElapsedRatio);
 }
 
 void CParticleInstance::Init( CEmitter* pParent )
@@ -296,7 +383,7 @@ void CParticleInstance::Init( CEmitter* pParent )
 
 void CParticleInstance::InitUniform()
 {
-	GLint colorTextureUnif = glGetUniformLocation(m_theProgram, "colorTexture");
+	GLint colorTextureUnif = glGetUniformLocation(m_theProgram, "u_colorTexture");
 	if ( colorTextureUnif >= 0 )
 	{
 		glUniform1i(colorTextureUnif, m_colorTexUnit);

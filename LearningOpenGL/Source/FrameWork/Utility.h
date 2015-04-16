@@ -33,30 +33,31 @@ struct timezone
 extern int gettimeofday(struct timeval *, struct timezone *);
 
 template <typename T>
+struct SKeyNode
+{
+	T m_value;
+	float m_fTimePercent;
+};
+
+template <typename T>
 class CCtrlBase
 {
 public:
-	virtual T GetValue( float fRatio );
+	virtual T GetValue( float fRatio = 0.0f ) = 0;
 };
 
 template <typename T>
 class CLinerCtrl : public CCtrlBase<T>
 {
 public:
-	struct SKeyNode
-	{
-		T m_value;
-		float m_fTimePercent;
-	};
-
 	CLinerCtrl();
 
-	void AddKeyNode(const SKeyNode& rKeyNode);
-	virtual T GetValue( float fRatio ) override;
+	void AddKeyNode(const SKeyNode<T>& rKeyNode);
+	virtual T GetValue( float fRatio = 0.0f ) override;
 
 protected:
-	bool Less(const SKeyNode& lh, const SKeyNode& rh);
-	std::vector<SKeyNode> m_vNodeItem;
+	bool Less(const SKeyNode<T>& lh, const SKeyNode<T>& rh);
+	std::vector<SKeyNode<T>> m_vNodeItem;
 };
 
 template <typename T>
@@ -69,8 +70,8 @@ T CLinerCtrl<T>::GetValue( float fRatio )
 	{
 		if ( i > 0 )
 		{
-			SKeyNode* pStartKeyNode = &m_vNodeItem[i - 1];
-			SKeyNode* pEndKeyNode = &m_vNodeItem[i];
+			SKeyNode<T>* pStartKeyNode = &m_vNodeItem[i - 1];
+			SKeyNode<T>* pEndKeyNode = &m_vNodeItem[i];
 			if ( fRatio >= pStartKeyNode->m_fTimePercent && fRatio <= pEndKeyNode->m_fTimePercent )
 			{
 				return pStartKeyNode->m_value + ( pEndKeyNode->m_value - pStartKeyNode->m_value ) * fRatio;
@@ -82,7 +83,7 @@ T CLinerCtrl<T>::GetValue( float fRatio )
 }
 
 template <typename T>
-bool CLinerCtrl<T>::Less( const SKeyNode& lh, const SKeyNode& rh )
+bool CLinerCtrl<T>::Less( const SKeyNode<T>& lh, const SKeyNode<T>& rh )
 {
 	return lh.m_fTimePercent < rh.m_fTimePercent;
 }
@@ -94,7 +95,7 @@ CLinerCtrl<T>::CLinerCtrl()
 }
 
 template <typename T>
-void CLinerCtrl<T>::AddKeyNode( const SKeyNode& rKeyNode )
+void CLinerCtrl<T>::AddKeyNode( const SKeyNode<T>& rKeyNode )
 {
 	m_vNodeItem.push_back(rKeyNode);
 	std::sort( m_vNodeItem.begin(), m_vNodeItem.end(), Less );
@@ -104,7 +105,7 @@ template <typename T>
 class CCurveCtrl : public CLinerCtrl<T>
 {
 public:
-	virtual T GetValue( float fRatio ) override;
+	virtual T GetValue( float fRatio = 0.0f ) override;
 };
 
 template <typename T>
@@ -131,7 +132,7 @@ public:
 	CConstantCtrl();
 
 	void SetValue( const T& rValue );
-	virtual T GetValue( float fRatio ) override;
+	virtual T GetValue( float fRatio = 0.0f ) override;
 
 private:
 	T m_value;
@@ -155,53 +156,48 @@ void CConstantCtrl<T>::SetValue( const T& rValue )
 	m_value = rValue;
 }
 
-template < typename T >
-class CRandomCtrl : public CCtrlBase<T>
+enum EPropertyType
 {
-public:
-	void SetValue(const T& rStartValue, const T& rEndValue);
-	virtual T GetValue( float fRatio ) override;
-
-private:
-	T m_startValue;
-	T m_endValue;
+	EPropertyType_Constant,
+	EPropertyType_Liner,
+	EPropertyType_Curve,
+	EPropertyType_RandomBetweenLiner,
+	EPropertyType_RandomBetweenContant,
+	EPropertyType_RandomBetweenCurve,
 };
-
-template < typename T >
-T CRandomCtrl<T>::GetValue( float fRatio )
-{
-	return RANDOM_0_1() * ( m_endValue - m_startValue );
-}
-
-template < typename T >
-void CRandomCtrl<T>::SetValue( const T& rStartValue, const T& rEndValue )
-{
-	m_startValue = rStartValue;
-	m_endValue = rEndValue;
-}
 
 template < typename T >
 class CProperty
 {
 public:
-	enum EPropertyType
-	{
-		EPropertyType_Constant,
-		EPropertyType_Liner,
-		EPropertyType_Curve,
-		EPropertyType_RandomBetweenLiner,
-		EPropertyType_RandomBetweenContant,
-		EPropertyType_RandomBetweenCurve,
-	};
-
 	void SetPropertyType( EPropertyType eType );
-	T GetValue( float fRatio );
+	EPropertyType GetPropertyType();
+
 	void AddCtrl( CCtrlBase<T>* pCtrl );
+	T GetValue( float fRatio = 0.0f );
+	void SetValue( const T& rValue );
 
 private:
 	std::vector< CCtrlBase<T>* > m_vCtrl;
 	EPropertyType m_eType;
 };
+
+template < typename T >
+EPropertyType CProperty<T>::GetPropertyType()
+{
+	return m_eType;
+}
+
+template < typename T >
+void CProperty<T>::SetValue( const T& rValue )
+{
+	if ( m_eType == EPropertyType_Constant )
+	{
+		CConstantCtrl<T>* pCtrl = dynamic_cast<CConstantCtrl<T>*>(m_vCtrl[0]);
+		if ( pCtrl )
+			return pCtrl->SetValue( rValue );
+	}
+}
 
 template < typename T >
 void CProperty<T>::AddCtrl( CCtrlBase<T>* pCtrl )
@@ -221,6 +217,8 @@ T CProperty<T>::GetValue( float fRatio )
 		int iIndex = rand() % m_vCtrl.size();
 		return m_vCtrl[iIndex]->GetValue( fRatio );
 	}
+
+	return T();
 }
 
 template < typename T >

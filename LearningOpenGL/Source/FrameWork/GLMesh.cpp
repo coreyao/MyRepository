@@ -182,7 +182,7 @@ void COGLMesh::InitUniform()
 {
 	glUseProgram(m_theProgram);
 
-	GLint colorTextureUnif = glGetUniformLocation(m_theProgram, "colorTexture");
+	GLint colorTextureUnif = glGetUniformLocation(m_theProgram, "u_colorTexture");
 	if ( colorTextureUnif >= 0 )
 	{
 		glUniform1i(colorTextureUnif, m_colorTexUnit);

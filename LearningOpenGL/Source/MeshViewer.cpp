@@ -32,8 +32,11 @@ void init()
 	CEmitter* pEmitter = new CEmitter;
 	pEmitter->SetTexture("T_FX_guangyun01.png");
 	pEmitter->SetEmitMode(CEmitter::EEmitMode_Free);
-	pEmitter->SetParticleStartSize(10.0f);
-	pEmitter->SetParticleStartSpeed(50.0f);
+	pEmitter->InitParticleLifeTime(5.0f);
+	pEmitter->InitParticleStartSize(10.0f);
+	pEmitter->InitParticleStartSpeed(50.0f);
+	pEmitter->InitParticleStartZRotation(0);
+	pEmitter->InitParticleStartColor(Color4F::WHITE, Color4F::GREEN);
 	g_particleSystem->AddEmitter(pEmitter);
 
 	g_planeMesh = new COGLMesh;

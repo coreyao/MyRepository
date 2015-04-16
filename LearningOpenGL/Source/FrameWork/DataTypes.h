@@ -29,6 +29,9 @@ struct Color4F
 	float g;
 	float b;
 	float a;
+
+	static const Color4F WHITE;
+	static const Color4F GREEN;
 };
 
 

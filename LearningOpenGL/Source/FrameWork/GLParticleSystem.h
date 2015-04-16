@@ -17,8 +17,7 @@ private:
 
 public:
 	CParticleInstance()
-		: m_fCurSpeed(0.0f)
-		, m_fCurLifeTime(0.0f)
+		: m_fCurLifeTime(0.0f)
 		, m_fCurSize(1.0f)
 		, m_pEmitter(nullptr)
 		, m_theProgram(-1)
@@ -77,6 +76,8 @@ private:
 	float m_fCurSpeed;
 	float m_fCurLifeTime;
 	float m_fCurSize;
+	Color4F m_curColor;
+
 	Vec3 m_position;
 	Vec3 m_moveDir;
 	Mat4 m_MV;
@@ -110,11 +111,8 @@ public:
 	CEmitter()
 		: m_fEmissionRate(10.0f)
 		, m_fCurEmissionTime(0)
-		, m_fParticleLifeTime(5.0f)
-		, m_fParticleStartSpeed(5.0f)
-		, m_fParticleStartAcceleration(0.0f)
-		, m_fParticleStartZRotation(0.0f)
-		, m_fParticleStartSize(1.0f)
+		, m_fTotalDuration(5.0f)
+		, m_fCurDuration(0.0f)
 		, m_iMaxParticles(1000)
 		, m_iTexture(-1)
 		, m_pParticleSystem(nullptr)
@@ -127,11 +125,23 @@ public:
 	void Update(float dt);
 	void Render();
 	void SetTexture(const std::string& sTexFileName);
-	void SetParticleLifeTime(float fLifeTime);
-	void SetParticleStartSpeed(float fStartSpeed);
-	void SetParticleStartAcceleration(float fStartAcceleration);
-	void SetParticleStartZRotation(float fStartZRotation);
-	void SetParticleStartSize(float fStartSize);
+
+	void InitParticleLifeTime(float fLifeTime);
+	void InitParticleLifeTime(float fLifeTimeLH, float fLifeTimeRH);
+	//void InitParticleLifeTime( const std::vector< SKeyNode<float> >& vKeyNode );
+
+	void InitParticleStartSpeed(float fStartSpeed);
+	void InitParticleStartSpeed(float fStartSpeedLH, float fStartSpeedRH);
+
+	void InitParticleStartZRotation(float fStartZRotation);
+	void InitParticleStartZRotation(float fStartZRotationLH, float fStartZRotationRH);
+
+	void InitParticleStartSize(float fStartSize);
+	void InitParticleStartSize(float fStartSizeLH, float fStartSizeRH);
+
+	void InitParticleStartColor(Color4F color);
+	void InitParticleStartColor(Color4F colorLH, Color4F colorRH);
+
 	void SetEmitMode(EEmitMode mode);
 	STransform& GetTransformData();
 
@@ -141,15 +151,17 @@ private:
 	STransform m_transform;
 	EEmitMode m_emitMode;
 
+	float m_fTotalDuration;
+	float m_fCurDuration;
+
 	float m_fEmissionRate;
 	float m_fCurEmissionTime;
 
-	float m_fParticleStartSpeed;
-	float m_fParticleStartAcceleration;
-	float m_fParticleStartZRotation;
-	float m_fParticleStartSize;
-	float m_fParticleLifeTime;
-	Color4F m_startColor;
+	CProperty<float> m_fParticleStartSpeed;
+	CProperty<float> m_fParticleStartZRotation;
+	CProperty<float> m_fParticleStartSize;
+	CProperty<float> m_fParticleLifeTime;
+	CProperty<Color4F> m_particleStartColor;
 
 	GLParticleSystem* m_pParticleSystem;
 	std::vector<CParticleInstance*> m_vActiveParticle;

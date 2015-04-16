@@ -12,4 +12,3 @@ int gettimeofday( struct timeval * val, struct timezone * )
 	}
 	return 0;
 }
-
