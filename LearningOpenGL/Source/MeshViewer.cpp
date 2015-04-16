@@ -33,8 +33,8 @@ void init()
 	pEmitter->SetTexture("T_FX_guangyun01.png");
 	pEmitter->SetEmitMode(CEmitter::EEmitMode_Free);
 	pEmitter->InitParticleLifeTime(5.0f);
-	pEmitter->InitParticleStartSize(10.0f);
-	pEmitter->InitParticleStartSpeed(50.0f);
+	pEmitter->InitParticleStartSize(10.0f, 20.0f);
+	pEmitter->InitParticleStartSpeed(50.0f, 70.0f);
 	pEmitter->InitParticleStartZRotation(0, 60);
 	pEmitter->InitParticleStartColor(Color4F::WHITE, Color4F::GREEN);
 	g_particleSystem->AddEmitter(pEmitter);
