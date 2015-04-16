@@ -227,7 +227,7 @@ Mat4 STransform::GetRotationMat()
 	Mat4 rotateY = Mat4::CreateFromRotationY(m_rotation.y);
 	Mat4 rotateX = Mat4::CreateFromRotationX(m_rotation.x);
 
-	return rotateX * rotateY * rotateZ;
+	return rotateY * rotateX * rotateZ;
 }
 
 void STransform::Reset()

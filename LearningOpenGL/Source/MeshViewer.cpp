@@ -29,9 +29,10 @@ void init()
 	CGLProgramManager::GetInstance()->Add("Particle", SHADER_FILE_DIR + "Particle_Vertex_Shader.vert", SHADER_FILE_DIR + "Particle_Fragment_Shader.frag");
 
 	g_particleSystem = new GLParticleSystem;
+	g_particleSystem->GetTransformData().m_rotation.x = -90;
 	CEmitter* pEmitter = new CEmitter;
 	pEmitter->SetTexture("T_FX_guangyun01.png");
-	pEmitter->SetEmitMode(CEmitter::EEmitMode_Free);
+	pEmitter->SetEmitMode(CEmitter::EEmitMode_Relative);
 	pEmitter->InitParticleLifeTime(5.0f);
 	pEmitter->InitParticleStartSize(10.0f, 20.0f);
 	pEmitter->InitParticleStartSpeed(50.0f, 70.0f);
@@ -99,9 +100,7 @@ void display()
 		}
 	}
 
-	g_particleSystem->GetTransformData().m_rotation.z = 30;
-	g_particleSystem->GetTransformData().m_rotation.y += 90 * g_fDeltaTime;
-	g_particleSystem->GetTransformData().m_pos.x = 10 * sin(10 * g_fElapsedTime);
+	//g_particleSystem->GetTransformData().m_pos.x = 10 * sin(10 * g_fElapsedTime);
 	g_particleSystem->Update(g_fDeltaTime);
 	g_particleSystem->Render();
 	

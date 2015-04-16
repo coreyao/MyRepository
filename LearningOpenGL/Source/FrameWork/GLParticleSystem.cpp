@@ -355,8 +355,9 @@ void CParticleInstance::SetGLProgram( GLuint theProgram )
 
 void CParticleInstance::Reset()
 {
-	m_moveDir = Vec3(0, 1, 0);
-	m_position = Vec3(0, 0, 0);
+	m_moveDir = Vec3(0, 0, 1);
+	m_pEmitter->m_emiterShape.GeneratePositionAndDirection(m_position, m_moveDir);
+
 	m_parentMat = m_pEmitter->m_pParticleSystem->m_transform.GetTransformMat() * m_pEmitter->m_transform.GetTransformMat();
 	if ( m_pEmitter->m_emitMode == CEmitter::EEmitMode_Free )
 	{
@@ -389,5 +390,20 @@ void CParticleInstance::InitUniform()
 	if ( colorTextureUnif >= 0 )
 	{
 		glUniform1i(colorTextureUnif, m_colorTexUnit);
+	}
+}
+
+void CEmitterShape::GeneratePositionAndDirection( Vec3& outPos, Vec3& outDir )
+{
+	if ( m_eEmitFromType == EEmitFrom_Base )
+	{
+		outPos = Vec3( RANDOM_MINUS1_1(), RANDOM_MINUS1_1(), 0 ) * m_fRadius;
+
+		float fRandomAngle = RANDOM_MINUS1_1() * m_fAngle;
+		Mat4 rotateXMat = Mat4::CreateFromRotationX(fRandomAngle);
+		Mat4 rotateYMat = Mat4::CreateFromRotationY(fRandomAngle);
+		Mat4 rotateZMat = Mat4::CreateFromRotationZ(fRandomAngle);
+		outDir = rotateYMat * rotateZMat * rotateXMat * outDir;
+		outDir.normalize();
 	}
 }
