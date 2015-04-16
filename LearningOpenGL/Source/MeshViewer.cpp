@@ -35,7 +35,7 @@ void init()
 	pEmitter->InitParticleLifeTime(5.0f);
 	pEmitter->InitParticleStartSize(10.0f);
 	pEmitter->InitParticleStartSpeed(50.0f);
-	pEmitter->InitParticleStartZRotation(0);
+	pEmitter->InitParticleStartZRotation(0, 60);
 	pEmitter->InitParticleStartColor(Color4F::WHITE, Color4F::GREEN);
 	g_particleSystem->AddEmitter(pEmitter);
 
@@ -98,9 +98,10 @@ void display()
 			g_vMesh[i]->Render();
 		}
 	}
-	//g_particleSystem->GetTransformData().m_rotation.z = 30;
-	//g_particleSystem->GetTransformData().m_rotation.y += 90 * g_fDeltaTime;
-	//g_particleSystem->GetTransformData().m_pos.x = 10 * sin(10 * g_fElapsedTime);
+
+	g_particleSystem->GetTransformData().m_rotation.z = 30;
+	g_particleSystem->GetTransformData().m_rotation.y += 90 * g_fDeltaTime;
+	g_particleSystem->GetTransformData().m_pos.x = 10 * sin(10 * g_fElapsedTime);
 	g_particleSystem->Update(g_fDeltaTime);
 	g_particleSystem->Render();
 	

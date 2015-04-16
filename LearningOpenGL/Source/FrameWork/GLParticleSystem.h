@@ -19,6 +19,8 @@ public:
 	CParticleInstance()
 		: m_fCurLifeTime(0.0f)
 		, m_fCurSize(1.0f)
+		, m_fCurZRotation(0.0f)
+		, m_fCurSpeed(0.0f)
 		, m_pEmitter(nullptr)
 		, m_theProgram(-1)
 		, m_colorTexUnit(0)
@@ -75,6 +77,7 @@ public:
 private:
 	float m_fCurSpeed;
 	float m_fCurLifeTime;
+	float m_fCurZRotation;
 	float m_fCurSize;
 	Color4F m_curColor;
 

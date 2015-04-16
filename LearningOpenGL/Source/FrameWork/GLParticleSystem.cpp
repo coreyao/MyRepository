@@ -234,6 +234,7 @@ void CParticleInstance::Update( float dt )
 	Mat4 viewMatrix = CDirector::GetInstance()->GetCurCamera()->GetViewMat();
 	Mat4 TranslationMatrix = Mat4::CreateFromTranslation(m_position.x,m_position.y, m_position.z);
 	Mat4 ScaleMatrix = Mat4::CreateFromScale(m_fCurSize, m_fCurSize, m_fCurSize);
+	Mat4 ZRotationMatrix = Mat4::CreateFromRotationZ(m_fCurZRotation);
 
 	Mat4 BillboardMatrix = Mat4::IDENTITY;
 	Vec3 forward;
@@ -253,12 +254,12 @@ void CParticleInstance::Update( float dt )
 
 	if ( m_pEmitter->m_emitMode == CEmitter::EEmitMode_Free )
 	{
-		m_MV = viewMatrix * TranslationMatrix * BillboardMatrix * ScaleMatrix;
+		m_MV = viewMatrix * TranslationMatrix * ScaleMatrix * BillboardMatrix * ZRotationMatrix;
 	}
 	else if ( m_pEmitter->m_emitMode == CEmitter::EEmitMode_Relative )
 	{
 		m_parentMat = m_pEmitter->m_pParticleSystem->m_transform.GetTransformMat() * m_pEmitter->m_transform.GetTransformMat();
-		m_MV = viewMatrix * m_parentMat * TranslationMatrix * BillboardMatrix * ScaleMatrix;
+		m_MV = viewMatrix * m_parentMat * TranslationMatrix * ScaleMatrix * BillboardMatrix * ZRotationMatrix;
 	}
 }
 
@@ -369,6 +370,7 @@ void CParticleInstance::Reset()
 	m_fCurLifeTime = m_pEmitter->m_fParticleLifeTime.GetValue(fElapsedRatio);
 	m_fCurSize = m_pEmitter->m_fParticleStartSize.GetValue(fElapsedRatio);
 	m_curColor = m_pEmitter->m_particleStartColor.GetValue(fElapsedRatio);
+	m_fCurZRotation = m_pEmitter->m_fParticleStartZRotation.GetValue(fElapsedRatio);
 }
 
 void CParticleInstance::Init( CEmitter* pParent )
