@@ -151,11 +151,11 @@ private:
 	float m_fParticleLifeTime;
 	Color4F m_startColor;
 
-	GLuint m_iTexture;
-
 	GLParticleSystem* m_pParticleSystem;
 	std::vector<CParticleInstance*> m_vActiveParticle;
 	std::vector<CParticleInstance*> m_vInactiveParticle;
+
+	GLuint m_iTexture;
 };
 
 class GLParticleSystem
@@ -174,6 +174,5 @@ public:
 
 private:
 	STransform m_transform;
-
 	std::vector<CEmitter*> m_vEmitter;
 };
