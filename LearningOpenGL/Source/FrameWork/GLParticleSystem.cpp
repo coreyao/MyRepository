@@ -396,12 +396,29 @@ void CEmitterShape::GeneratePositionAndDirection( Vec3& outPos, Vec3& outDir )
 {
 	if ( m_eEmitFromType == EEmitFrom_Base )
 	{
-		outDir = Vec3(0, 0, 1);
-		outPos = Vec3( RANDOM_MINUS1_1(), RANDOM_MINUS1_1(), 0 ) * m_fRadius;
+		if ( m_eShapeType == EShape_Cone )
+		{
+			float fRandomRadius = RANDOM_MINUS1_1() * m_fRadius;
+			float fRandomAngle = RANDOM_0_1() * DEGREES_TO_RADIANS(360.0f);
 
-		Mat4 rotateX = Mat4::CreateFromRotationX(RANDOM_MINUS1_1() * m_fAngle);
-		Mat4 rotateZ = Mat4::CreateFromRotationZ(RANDOM_MINUS1_1() * m_fAngle);
-		outDir = rotateZ * rotateX * outDir;
-		outDir.normalize();
+			outPos = Vec3( cosf(fRandomAngle), sinf(fRandomAngle), 0 ) * fRandomRadius;
+		}
 	}
+	else if ( m_eEmitFromType == EEmitFrom_Base_Shell )
+	{
+		if ( m_eShapeType == EShape_Cone )
+		{
+			float fRandomAngle = RANDOM_0_1() * DEGREES_TO_RADIANS(360.0f);
+			outPos = Vec3( cosf(fRandomAngle), sinf(fRandomAngle), 0 ) * m_fRadius;
+		}
+	}
+
+	outDir = Vec3(0, 0, 1);
+	Mat4 rotateX = Mat4::CreateFromRotationX(RANDOM_MINUS1_1() * m_fAngle);
+	Mat4 rotateZ = Mat4::CreateFromRotationZ(RANDOM_MINUS1_1() * m_fAngle);
+	outDir = rotateZ * rotateX * outDir;
+
+	
+
+	outDir.normalize();
 }
