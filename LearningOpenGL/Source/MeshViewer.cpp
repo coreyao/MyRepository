@@ -38,6 +38,10 @@ void init()
 	pEmitter->InitParticleStartSpeed(50.0f, 70.0f);
 	pEmitter->InitParticleStartZRotation(0, 60);
 	pEmitter->InitParticleStartColor(Color4F::WHITE, Color4F::GREEN);
+	pEmitter->GetEmitterShape().SetShape(CEmitterShape::EShape_Cone);
+	pEmitter->GetEmitterShape().SetAngle(30.0f);
+	pEmitter->GetEmitterShape().SetRadius(5.0f);
+	pEmitter->GetEmitterShape().SetRandomDirection(true);
 	g_particleSystem->AddEmitter(pEmitter);
 
 	g_planeMesh = new COGLMesh;
@@ -100,7 +104,7 @@ void display()
 		}*/
 	}
 
-	g_particleSystem->GetTransformData().m_pos.x = 50 * sin(10 * g_fElapsedTime);
+	//g_particleSystem->GetTransformData().m_pos.x = 50 * sin(10 * g_fElapsedTime);
 	g_particleSystem->Update(g_fDeltaTime);
 	g_particleSystem->Render();
 	

@@ -200,6 +200,7 @@ public:
 
 	void SetEmitMode(EEmitMode mode);
 	STransform& GetTransformData();
+	CEmitterShape& GetEmitterShape();
 
 private:
 	int m_iMaxParticles;

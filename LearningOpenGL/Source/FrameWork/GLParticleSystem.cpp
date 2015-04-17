@@ -225,6 +225,11 @@ void CEmitter::InitParticleStartColor( Color4F colorLH, Color4F colorRH )
 	m_particleStartColor.AddCtrl(pCtrl);
 }
 
+CEmitterShape& CEmitter::GetEmitterShape()
+{
+	return m_emiterShape;
+}
+
 void CParticleInstance::Update( float dt )
 {
 	m_fCurLifeTime -= dt;
@@ -414,11 +419,19 @@ void CEmitterShape::GeneratePositionAndDirection( Vec3& outPos, Vec3& outDir )
 	}
 
 	outDir = Vec3(0, 0, 1);
-	Mat4 rotateX = Mat4::CreateFromRotationX(RANDOM_MINUS1_1() * m_fAngle);
-	Mat4 rotateZ = Mat4::CreateFromRotationZ(RANDOM_MINUS1_1() * m_fAngle);
-	outDir = rotateZ * rotateX * outDir;
-
-	
+	if ( m_eShapeType == EShape_Cone )
+	{
+		Mat4 rotateX = Mat4::CreateFromRotationX(RANDOM_MINUS1_1() * m_fAngle);
+		Mat4 rotateZ = Mat4::CreateFromRotationZ(RANDOM_MINUS1_1() * m_fAngle);
+		outDir = rotateZ * rotateX * outDir;
+	}
+	else
+	{
+		if ( m_bRandomDirection )
+		{
+			outDir = Vec3(RANDOM_MINUS1_1(), RANDOM_MINUS1_1(), RANDOM_MINUS1_1());
+		}
+	}
 
 	outDir.normalize();
 }
