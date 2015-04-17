@@ -119,8 +119,8 @@ public:
 	CEmitterShape()
 		: m_eShapeType(EShape_Cone)
 		, m_eEmitFromType(EEmitFrom_Base)
-		, m_fAngle(100.0f)
-		, m_fRadius(0.1f)
+		, m_fAngle(60.0f)
+		, m_fRadius(50.0f)
 		, m_bRandomDirection(false)
 	{
 	}

@@ -32,7 +32,7 @@ void init()
 	g_particleSystem->GetTransformData().m_rotation.x = -90;
 	CEmitter* pEmitter = new CEmitter;
 	pEmitter->SetTexture("T_FX_guangyun01.png");
-	pEmitter->SetEmitMode(CEmitter::EEmitMode_Relative);
+	pEmitter->SetEmitMode(CEmitter::EEmitMode_Free);
 	pEmitter->InitParticleLifeTime(5.0f);
 	pEmitter->InitParticleStartSize(10.0f, 20.0f);
 	pEmitter->InitParticleStartSpeed(50.0f, 70.0f);
@@ -93,14 +93,14 @@ void display()
 	{
 		g_planeMesh->Update(g_fDeltaTime);
 		g_planeMesh->Render();
-		for (int i = 0; i < g_vMesh.size(); ++i)
+		/*for (int i = 0; i < g_vMesh.size(); ++i)
 		{
-			g_vMesh[i]->Update(g_fDeltaTime);
-			g_vMesh[i]->Render();
-		}
+		g_vMesh[i]->Update(g_fDeltaTime);
+		g_vMesh[i]->Render();
+		}*/
 	}
 
-	//g_particleSystem->GetTransformData().m_pos.x = 10 * sin(10 * g_fElapsedTime);
+	g_particleSystem->GetTransformData().m_pos.x = 50 * sin(10 * g_fElapsedTime);
 	g_particleSystem->Update(g_fDeltaTime);
 	g_particleSystem->Render();
 	
