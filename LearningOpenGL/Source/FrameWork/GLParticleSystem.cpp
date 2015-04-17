@@ -355,7 +355,6 @@ void CParticleInstance::SetGLProgram( GLuint theProgram )
 
 void CParticleInstance::Reset()
 {
-	m_moveDir = Vec3(0, 0, 1);
 	m_pEmitter->m_emiterShape.GeneratePositionAndDirection(m_position, m_moveDir);
 
 	m_parentMat = m_pEmitter->m_pParticleSystem->m_transform.GetTransformMat() * m_pEmitter->m_transform.GetTransformMat();
@@ -397,13 +396,12 @@ void CEmitterShape::GeneratePositionAndDirection( Vec3& outPos, Vec3& outDir )
 {
 	if ( m_eEmitFromType == EEmitFrom_Base )
 	{
+		outDir = Vec3(0, 0, 1);
 		outPos = Vec3( RANDOM_MINUS1_1(), RANDOM_MINUS1_1(), 0 ) * m_fRadius;
 
-		float fRandomAngle = RANDOM_MINUS1_1() * m_fAngle;
-		Mat4 rotateXMat = Mat4::CreateFromRotationX(fRandomAngle);
-		Mat4 rotateYMat = Mat4::CreateFromRotationY(fRandomAngle);
-		Mat4 rotateZMat = Mat4::CreateFromRotationZ(fRandomAngle);
-		outDir = rotateYMat * rotateZMat * rotateXMat * outDir;
+		Mat4 rotateX = Mat4::CreateFromRotationX(RANDOM_MINUS1_1() * m_fAngle);
+		Mat4 rotateZ = Mat4::CreateFromRotationZ(RANDOM_MINUS1_1() * m_fAngle);
+		outDir = rotateZ * rotateX * outDir;
 		outDir.normalize();
 	}
 }

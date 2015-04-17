@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Vector.h"
+
 class Quaternion
 {
 public:
@@ -10,6 +12,7 @@ public:
 
 	Quaternion();
 	Quaternion(float xx, float yy, float zz, float ww);
+	Quaternion(const Vec3& axis, float angle);
 
 	void normalize();
 	static void slerp(const Quaternion& q1, const Quaternion& q2, float t, Quaternion* dst);
