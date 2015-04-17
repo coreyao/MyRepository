@@ -35,7 +35,8 @@ void init()
 	pEmitter->SetEmitMode(CEmitter::EEmitMode_Free);
 	pEmitter->GetParticleStartLifeTimeRef().Init<double>(EPropertyType_Constant, 5.0f);
 	pEmitter->GetParticleStartSizeRef().Init<double>(EPropertyType_Constant, 10.0f);
-	pEmitter->GetParticleSizeOverLifeTimeRef().Init<double>(EPropertyType_Liner, 2, SKeyNode<float>(0.0f, 10.0f), SKeyNode<float>(1.0f, 100.0f));
+	//pEmitter->GetParticleSizeOverLifeTimeRef().Init<double>(EPropertyType_Liner, 2, SKeyNode<float>(0.0f, 10.0f), SKeyNode<float>(1.0f, 100.0f));
+	pEmitter->GetParticleSizeOverLifeTimeRef().Init<double>(EPropertyType_Curve, 4, SKeyNode<float>(0.0f, 10.0f), SKeyNode<float>(0.25f, 100.0f), SKeyNode<float>(0.75f, 10.0f), SKeyNode<float>(1.0f, 100.0f));
 	pEmitter->GetParticleStartSpeedRef().Init<double>(EPropertyType_RandomBetweenConstant, 50.0f, 70.0f);
 	pEmitter->GetParticleStartZRotationRef().Init<double>(EPropertyType_RandomBetweenConstant, 0, 60);
 	pEmitter->GetParticleStartColorRef().Init<Color3B>(EPropertyType_RandomBetweenConstant, Color3B::WHITE, Color3B::GREEN);

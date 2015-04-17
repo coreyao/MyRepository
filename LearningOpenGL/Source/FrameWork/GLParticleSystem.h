@@ -168,7 +168,7 @@ public:
 	};
 
 	CEmitter()
-		: m_fEmissionRate(10.0f)
+		: m_fEmissionRate(1.0f)
 		, m_fCurEmissionTime(0)
 		, m_fTotalDuration(5.0f)
 		, m_fCurDuration(0.0f)

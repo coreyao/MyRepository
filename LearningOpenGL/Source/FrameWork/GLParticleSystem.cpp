@@ -54,7 +54,7 @@ void CEmitter::Update( float dt )
 	for (auto& pParticle : m_vActiveParticle)
 	{
 		pParticle->Update(dt);
-		if ( pParticle->m_fCurLifeTime < 0 )
+		if ( pParticle->m_fCurLifeTime <= 0 )
 		{
 			toRecycle.push_back(pParticle);
 		}

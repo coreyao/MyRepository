@@ -85,7 +85,8 @@ T CLinerCtrl<T>::GetValue( float fRatio )
 			SKeyNode<T>* pEndKeyNode = &m_vNodeItem[i];
 			if ( fRatio >= pStartKeyNode->m_fTimePercent && fRatio <= pEndKeyNode->m_fTimePercent )
 			{
-				return pStartKeyNode->m_value + ( pEndKeyNode->m_value - pStartKeyNode->m_value ) * fRatio;
+				return pStartKeyNode->m_value + ( pEndKeyNode->m_value - pStartKeyNode->m_value ) * 
+					( (fRatio - pStartKeyNode->m_fTimePercent) / ( pEndKeyNode->m_fTimePercent - pStartKeyNode->m_fTimePercent ));
 			}
 		}
 	}
@@ -123,7 +124,7 @@ template <typename T>
 T CCurveCtrl<T>::GetValue( float fRatio )
 {
 	if ( m_vNodeItem.size() < 4)
-		return;
+		return T();
 
 	T p0 = m_vNodeItem[0].m_value;
 	T p1 = m_vNodeItem[1].m_value;
@@ -131,8 +132,8 @@ T CCurveCtrl<T>::GetValue( float fRatio )
 	T p3 = m_vNodeItem[3].m_value;
 
 	return p0 * ( 1 - fRatio ) * ( 1 - fRatio ) * ( 1 - fRatio ) +
-		3 * p1 * fRatio * ( 1 - fRatio ) * ( 1 - fRatio ) +
-		3 * p2 * fRatio * fRatio * ( 1 - fRatio ) +
+		p1 * fRatio * ( 1 - fRatio ) * ( 1 - fRatio ) * 3 +
+		p2 * fRatio * fRatio * ( 1 - fRatio ) * 3 +
 		p3 * fRatio * fRatio * fRatio;
 }
 
@@ -192,59 +193,67 @@ public:
 		m_eType = eType;
 		if ( m_eType == EPropertyType_Constant )
 		{
-			if ( m_vCtrl.empty() )
-			{
-				va_list params;
-				va_start(params, eType);
-				
-				T lValue = va_arg(params, U);
-				auto pCtrl = new CConstantCtrl<T>;
-				pCtrl->SetValue( lValue );
-				AddCtrl(pCtrl);
+			va_list params;
+			va_start(params, eType);
 
-				va_end(params);
-			}
+			T lValue = va_arg(params, U);
+			auto pCtrl = new CConstantCtrl<T>;
+			pCtrl->SetValue( lValue );
+			AddCtrl(pCtrl);
+
+			va_end(params);
 		}
 		else if ( m_eType == EPropertyType_Liner )
 		{
-			if ( m_vCtrl.empty() )
+			va_list params;
+			va_start(params, eType);
+
+			auto pCtrl = new CLinerCtrl<T>;
+			AddCtrl(pCtrl);
+
+			int iKeyNodeCount = va_arg(params, int);
+			for (int i = 0; i < iKeyNodeCount; ++i)
 			{
-				va_list params;
-				va_start(params, eType);
-
-				auto pCtrl = new CLinerCtrl<T>;
-				AddCtrl(pCtrl);
-
-				int iKeyNodeCount = va_arg(params, int);
-				for (int i = 0; i < iKeyNodeCount; ++i)
-				{
-					SKeyNode<T> key = va_arg(params, SKeyNode<T>);
-					pCtrl->AddKeyNode(key);
-				}
-
-				va_end(params);
+				SKeyNode<T> key = va_arg(params, SKeyNode<T>);
+				pCtrl->AddKeyNode(key);
 			}
+
+			va_end(params);
+		}
+		else if ( m_eType == EPropertyType_Curve )
+		{
+			va_list params;
+			va_start(params, eType);
+
+			auto pCtrl = new CCurveCtrl<T>;
+			AddCtrl(pCtrl);
+
+			int iKeyNodeCount = va_arg(params, int);
+			for (int i = 0; i < iKeyNodeCount; ++i)
+			{
+				SKeyNode<T> key = va_arg(params, SKeyNode<T>);
+				pCtrl->AddKeyNode(key);
+			}
+
+			va_end(params);
 		}
 		else if ( m_eType == EPropertyType_RandomBetweenConstant )
 		{
-			if ( m_vCtrl.empty() )
-			{
-				va_list params;
-				va_start(params, eType);
+			va_list params;
+			va_start(params, eType);
 
-				T lValue = va_arg(params, U);
-				T rValue = va_arg(params, U);
+			T lValue = va_arg(params, U);
+			T rValue = va_arg(params, U);
 
-				auto pCtrl = new CConstantCtrl<T>;
-				pCtrl->SetValue(lValue);
-				AddCtrl(pCtrl);
+			auto pCtrl = new CConstantCtrl<T>;
+			pCtrl->SetValue(lValue);
+			AddCtrl(pCtrl);
 
-				pCtrl = new CConstantCtrl<T>;
-				pCtrl->SetValue(rValue);
-				AddCtrl(pCtrl);
+			pCtrl = new CConstantCtrl<T>;
+			pCtrl->SetValue(rValue);
+			AddCtrl(pCtrl);
 
-				va_end(params);
-			}
+			va_end(params);
 		}
 	}
 
