@@ -185,80 +185,83 @@ public:
 
 	void AddCtrl( CCtrlBase<T>* pCtrl );
 	T GetValue( float fRatio = 0.0f );
-	void Init( EPropertyType eType, ... );
 
-private:
+	template < typename U >
+	void Init( EPropertyType eType, ... )
+	{
+		m_eType = eType;
+		if ( m_eType == EPropertyType_Constant )
+		{
+			if ( m_vCtrl.empty() )
+			{
+				va_list params;
+				va_start(params, eType);
+				
+				T lValue = va_arg(params, U);
+				auto pCtrl = new CConstantCtrl<T>;
+				pCtrl->SetValue( lValue );
+				AddCtrl(pCtrl);
+
+				va_end(params);
+			}
+		}
+		else if ( m_eType == EPropertyType_Liner )
+		{
+			if ( m_vCtrl.empty() )
+			{
+				va_list params;
+				va_start(params, eType);
+
+				auto pCtrl = new CLinerCtrl<T>;
+				AddCtrl(pCtrl);
+
+				int iKeyNodeCount = va_arg(params, int);
+				for (int i = 0; i < iKeyNodeCount; ++i)
+				{
+					SKeyNode<T> key = va_arg(params, SKeyNode<T>);
+					pCtrl->AddKeyNode(key);
+				}
+
+				va_end(params);
+			}
+		}
+		else if ( m_eType == EPropertyType_RandomBetweenConstant )
+		{
+			if ( m_vCtrl.empty() )
+			{
+				va_list params;
+				va_start(params, eType);
+
+				T lValue = va_arg(params, U);
+				T rValue = va_arg(params, U);
+
+				auto pCtrl = new CConstantCtrl<T>;
+				pCtrl->SetValue(lValue);
+				AddCtrl(pCtrl);
+
+				pCtrl = new CConstantCtrl<T>;
+				pCtrl->SetValue(rValue);
+				AddCtrl(pCtrl);
+
+				va_end(params);
+			}
+		}
+	}
+
+protected:
 	std::vector< CCtrlBase<T>* > m_vCtrl;
 	EPropertyType m_eType;
+};
+
+template < typename T >
+class CFloatProperty : public CProperty<T>
+{
 };
 
 template < typename T >
 EPropertyType CProperty<T>::GetPropertyType()
 {
 	return m_eType;
-}
-
-template < typename T >
-void CProperty<T>::Init( EPropertyType eType, ... )
-{
-	m_eType = eType;
-	if ( m_eType == EPropertyType_Constant )
-	{
-		if ( m_vCtrl.empty() )
-		{
-			va_list params;
-			va_start(params, eType);
-
-			T lValue = va_arg(params, T);
-
-			va_end(params);
-
-			auto pCtrl = new CConstantCtrl<T>;
-			pCtrl->SetValue( lValue );
-			AddCtrl(pCtrl);
-		}
-	}
-	else if ( m_eType == EPropertyType_Liner )
-	{
-		if ( m_vCtrl.empty() )
-		{
-			va_list params;
-			va_start(params, eType);
-
-			auto pCtrl = new CLinerCtrl<T>;
-			AddCtrl(pCtrl);
-
-			int iKeyNodeCount = va_arg(params, int);
-			for (int i = 0; i < iKeyNodeCount; ++i)
-			{
-				SKeyNode<T> key = va_arg(params, SKeyNode<T>);
-				pCtrl->AddKeyNode(key);
-			}
-			
-			va_end(params);
-		}
-	}
-	else if ( m_eType == EPropertyType_RandomBetweenConstant )
-	{
-		if ( m_vCtrl.empty() )
-		{
-			va_list params;
-			va_start(params, eType);
-
-			T lValue = va_arg(params, T);
-			T rValue = va_arg(params, T);
-
-			va_end(params);
-
-			auto pCtrl = new CConstantCtrl<T>;
-			pCtrl->SetValue(lValue);
-			AddCtrl(pCtrl);
-
-			pCtrl = new CConstantCtrl<T>;
-			pCtrl->SetValue(rValue);
-			AddCtrl(pCtrl);
-		}
-	}
 }
 
 template < typename T >

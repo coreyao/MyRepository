@@ -188,16 +188,16 @@ public:
 	STransform& GetTransformData();
 	CEmitterShape& GetEmitterShapeRef();
 
-	CProperty<double>& GetParticleStartSpeedRef() { return m_fParticleStartSpeed; }
-	CProperty<double>& GetParticleStartZRotationRef() { return m_fParticleStartZRotation; }
-	CProperty<double>& GetParticleStartSizeRef() { return m_fParticleStartSize; }
-	CProperty<double>& GetParticleStartLifeTimeRef() { return m_fParticleLifeTime; }
+	CFloatProperty<float>& GetParticleStartSpeedRef() { return m_fParticleStartSpeed; }
+	CFloatProperty<float>& GetParticleStartZRotationRef() { return m_fParticleStartZRotation; }
+	CFloatProperty<float>& GetParticleStartSizeRef() { return m_fParticleStartSize; }
+	CFloatProperty<float>& GetParticleStartLifeTimeRef() { return m_fParticleLifeTime; }
 	CProperty<Color3B>& GetParticleStartColorRef()  { return m_particleStartColor; }
-	CProperty<double>& GetParticleStartAlphaRef() { return m_fParticleStartAlpha; }
+	CFloatProperty<float>& GetParticleStartAlphaRef() { return m_fParticleStartAlpha; }
 
-	CProperty<float>& GetParticleSizeOverLifeTimeRef() { return m_sizeOverLifeTime; }
+	CFloatProperty<float>& GetParticleSizeOverLifeTimeRef() { return m_sizeOverLifeTime; }
 	CProperty<Color3B>& GetParticleColorOverLifeTimeRef() { return m_colorOverLifeTime; }
-	CProperty<double>& GetParticleAlphaOverLifeTimeRef() { return m_fAlphaOverLifeTime; }
+	CFloatProperty<float>& GetParticleAlphaOverLifeTimeRef() { return m_fAlphaOverLifeTime; }
 
 private:
 	int m_iMaxParticles;
@@ -205,16 +205,16 @@ private:
 	STransform m_transform;
 	EEmitMode m_emitMode;
 
-	CProperty<double> m_fParticleStartSpeed;
-	CProperty<double> m_fParticleStartZRotation;
-	CProperty<double> m_fParticleStartSize;
-	CProperty<double> m_fParticleLifeTime;
+	CFloatProperty<float> m_fParticleStartSpeed;
+	CFloatProperty<float> m_fParticleStartZRotation;
+	CFloatProperty<float> m_fParticleStartSize;
+	CFloatProperty<float> m_fParticleLifeTime;
 	CProperty<Color3B> m_particleStartColor;
-	CProperty<double> m_fParticleStartAlpha;
+	CFloatProperty<float> m_fParticleStartAlpha;
 
-	CProperty<float> m_sizeOverLifeTime;
+	CFloatProperty<float> m_sizeOverLifeTime;
 	CProperty<Color3B> m_colorOverLifeTime;
-	CProperty<double> m_fAlphaOverLifeTime;
+	CFloatProperty<float> m_fAlphaOverLifeTime;
 
 	float m_fTotalDuration;
 	float m_fCurDuration;
