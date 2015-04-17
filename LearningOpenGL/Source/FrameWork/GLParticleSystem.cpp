@@ -135,9 +135,10 @@ CEmitterShape& CEmitter::GetEmitterShapeRef()
 void CParticleInstance::Update( float dt )
 {
 	m_fCurLifeTime -= dt;
-	m_fCurLifeTime = std::max(m_fCurLifeTime, 0.0f);
+	float fTotalLifeTime = m_pEmitter->m_fParticleLifeTime.GetValue(m_fElapsedRatio);
+	m_fCurLifeTime = max(m_fCurLifeTime, 0.0f);
 
-	float fLifeTimeRatio = m_fCurLifeTime / m_pEmitter->m_fParticleLifeTime.GetValue(m_fElapsedRatio);
+	float fLifeTimeRatio = ( fTotalLifeTime - m_fCurLifeTime ) / fTotalLifeTime;
 	m_fCurSize = m_pEmitter->m_sizeOverLifeTime.GetValue(fLifeTimeRatio);
 
 	m_position += m_moveDir * m_fCurSpeed * dt;
