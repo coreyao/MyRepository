@@ -1,6 +1,7 @@
 #pragma once
 
 #include <winsock.h>
+#include <functional>
 #include "DataTypes.h"
 
 #ifndef SHADER_FILE_DIR
@@ -35,8 +36,18 @@ extern int gettimeofday(struct timeval *, struct timezone *);
 template <typename T>
 struct SKeyNode
 {
-	T m_value;
+	SKeyNode() : m_value(T()), m_fTimePercent(0.0f) 
+	{
+	}
+
+	SKeyNode( float fTimePercent, T value )
+	{
+		m_fTimePercent = fTimePercent;
+		m_value = value;
+	}
+
 	float m_fTimePercent;
+	T m_value;
 };
 
 template <typename T>
@@ -64,7 +75,7 @@ template <typename T>
 T CLinerCtrl<T>::GetValue( float fRatio )
 {
 	if ( m_vNodeItem.size() <= 1)
-		return;
+		return T();
 
 	for (int i = 0; i < m_vNodeItem.size(); ++i)
 	{
@@ -98,7 +109,7 @@ template <typename T>
 void CLinerCtrl<T>::AddKeyNode( const SKeyNode<T>& rKeyNode )
 {
 	m_vNodeItem.push_back(rKeyNode);
-	std::sort( m_vNodeItem.begin(), m_vNodeItem.end(), Less );
+	std::sort( m_vNodeItem.begin(), m_vNodeItem.end(), std::bind(&CLinerCtrl<T>::Less, this, std::placeholders::_1, std::placeholders::_2) );
 }
 
 template <typename T>
@@ -162,7 +173,7 @@ enum EPropertyType
 	EPropertyType_Liner,
 	EPropertyType_Curve,
 	EPropertyType_RandomBetweenLiner,
-	EPropertyType_RandomBetweenContant,
+	EPropertyType_RandomBetweenConstant,
 	EPropertyType_RandomBetweenCurve,
 };
 
@@ -170,12 +181,11 @@ template < typename T >
 class CProperty
 {
 public:
-	void SetPropertyType( EPropertyType eType );
 	EPropertyType GetPropertyType();
 
 	void AddCtrl( CCtrlBase<T>* pCtrl );
 	T GetValue( float fRatio = 0.0f );
-	void SetValue( const T& rValue );
+	void Init( EPropertyType eType, ... );
 
 private:
 	std::vector< CCtrlBase<T>* > m_vCtrl;
@@ -189,13 +199,65 @@ EPropertyType CProperty<T>::GetPropertyType()
 }
 
 template < typename T >
-void CProperty<T>::SetValue( const T& rValue )
+void CProperty<T>::Init( EPropertyType eType, ... )
 {
+	m_eType = eType;
 	if ( m_eType == EPropertyType_Constant )
 	{
-		CConstantCtrl<T>* pCtrl = dynamic_cast<CConstantCtrl<T>*>(m_vCtrl[0]);
-		if ( pCtrl )
-			return pCtrl->SetValue( rValue );
+		if ( m_vCtrl.empty() )
+		{
+			va_list params;
+			va_start(params, eType);
+
+			T lValue = va_arg(params, T);
+
+			va_end(params);
+
+			auto pCtrl = new CConstantCtrl<T>;
+			pCtrl->SetValue( lValue );
+			AddCtrl(pCtrl);
+		}
+	}
+	else if ( m_eType == EPropertyType_Liner )
+	{
+		if ( m_vCtrl.empty() )
+		{
+			va_list params;
+			va_start(params, eType);
+
+			auto pCtrl = new CLinerCtrl<T>;
+			AddCtrl(pCtrl);
+
+			int iKeyNodeCount = va_arg(params, int);
+			for (int i = 0; i < iKeyNodeCount; ++i)
+			{
+				SKeyNode<T> key = va_arg(params, SKeyNode<T>);
+				pCtrl->AddKeyNode(key);
+			}
+			
+			va_end(params);
+		}
+	}
+	else if ( m_eType == EPropertyType_RandomBetweenConstant )
+	{
+		if ( m_vCtrl.empty() )
+		{
+			va_list params;
+			va_start(params, eType);
+
+			T lValue = va_arg(params, T);
+			T rValue = va_arg(params, T);
+
+			va_end(params);
+
+			auto pCtrl = new CConstantCtrl<T>;
+			pCtrl->SetValue(lValue);
+			AddCtrl(pCtrl);
+
+			pCtrl = new CConstantCtrl<T>;
+			pCtrl->SetValue(rValue);
+			AddCtrl(pCtrl);
+		}
 	}
 }
 
@@ -212,17 +274,11 @@ T CProperty<T>::GetValue( float fRatio )
 	{
 		return m_vCtrl[0]->GetValue( fRatio );
 	}
-	else if ( m_eType == EPropertyType_RandomBetweenLiner || m_eType == EPropertyType_RandomBetweenContant || m_eType == EPropertyType_RandomBetweenCurve )
+	else if ( m_eType == EPropertyType_RandomBetweenLiner || m_eType == EPropertyType_RandomBetweenConstant || m_eType == EPropertyType_RandomBetweenCurve )
 	{
 		int iIndex = rand() % m_vCtrl.size();
 		return m_vCtrl[iIndex]->GetValue( fRatio );
 	}
 
 	return T();
-}
-
-template < typename T >
-void CProperty<T>::SetPropertyType( EPropertyType eType )
-{
-	m_eType = eType;
 }

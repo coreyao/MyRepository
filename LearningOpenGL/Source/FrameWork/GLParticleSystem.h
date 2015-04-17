@@ -24,6 +24,7 @@ public:
 		, m_pEmitter(nullptr)
 		, m_theProgram(-1)
 		, m_colorTexUnit(0)
+		, m_fCurAlpha(255)
 	{
 		SVertex leftTop;
 		leftTop.m_pos.x = -0.5f;
@@ -75,11 +76,13 @@ public:
 	void SetGLProgram(GLuint theProgram);
 
 private:
+	float m_fElapsedRatio;
 	float m_fCurSpeed;
 	float m_fCurLifeTime;
 	float m_fCurZRotation;
 	float m_fCurSize;
-	Color4F m_curColor;
+	Color3B m_curColor;
+	float m_fCurAlpha;
 
 	Vec3 m_position;
 	Vec3 m_moveDir;
@@ -181,26 +184,20 @@ public:
 	void Update(float dt);
 	void Render();
 	void SetTexture(const std::string& sTexFileName);
-
-	void InitParticleLifeTime(float fLifeTime);
-	void InitParticleLifeTime(float fLifeTimeLH, float fLifeTimeRH);
-	//void InitParticleLifeTime( const std::vector< SKeyNode<float> >& vKeyNode );
-
-	void InitParticleStartSpeed(float fStartSpeed);
-	void InitParticleStartSpeed(float fStartSpeedLH, float fStartSpeedRH);
-
-	void InitParticleStartZRotation(float fStartZRotation);
-	void InitParticleStartZRotation(float fStartZRotationLH, float fStartZRotationRH);
-
-	void InitParticleStartSize(float fStartSize);
-	void InitParticleStartSize(float fStartSizeLH, float fStartSizeRH);
-
-	void InitParticleStartColor(Color4F color);
-	void InitParticleStartColor(Color4F colorLH, Color4F colorRH);
-
 	void SetEmitMode(EEmitMode mode);
 	STransform& GetTransformData();
-	CEmitterShape& GetEmitterShape();
+	CEmitterShape& GetEmitterShapeRef();
+
+	CProperty<double>& GetParticleStartSpeedRef() { return m_fParticleStartSpeed; }
+	CProperty<double>& GetParticleStartZRotationRef() { return m_fParticleStartZRotation; }
+	CProperty<double>& GetParticleStartSizeRef() { return m_fParticleStartSize; }
+	CProperty<double>& GetParticleStartLifeTimeRef() { return m_fParticleLifeTime; }
+	CProperty<Color3B>& GetParticleStartColorRef()  { return m_particleStartColor; }
+	CProperty<double>& GetParticleStartAlphaRef() { return m_fParticleStartAlpha; }
+
+	CProperty<float>& GetParticleSizeOverLifeTimeRef() { return m_sizeOverLifeTime; }
+	CProperty<Color3B>& GetParticleColorOverLifeTimeRef() { return m_colorOverLifeTime; }
+	CProperty<double>& GetParticleAlphaOverLifeTimeRef() { return m_fAlphaOverLifeTime; }
 
 private:
 	int m_iMaxParticles;
@@ -208,17 +205,22 @@ private:
 	STransform m_transform;
 	EEmitMode m_emitMode;
 
+	CProperty<double> m_fParticleStartSpeed;
+	CProperty<double> m_fParticleStartZRotation;
+	CProperty<double> m_fParticleStartSize;
+	CProperty<double> m_fParticleLifeTime;
+	CProperty<Color3B> m_particleStartColor;
+	CProperty<double> m_fParticleStartAlpha;
+
+	CProperty<float> m_sizeOverLifeTime;
+	CProperty<Color3B> m_colorOverLifeTime;
+	CProperty<double> m_fAlphaOverLifeTime;
+
 	float m_fTotalDuration;
 	float m_fCurDuration;
 
 	float m_fEmissionRate;
 	float m_fCurEmissionTime;
-
-	CProperty<float> m_fParticleStartSpeed;
-	CProperty<float> m_fParticleStartZRotation;
-	CProperty<float> m_fParticleStartSize;
-	CProperty<float> m_fParticleLifeTime;
-	CProperty<Color4F> m_particleStartColor;
 
 	CEmitterShape m_emiterShape;
 

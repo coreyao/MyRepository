@@ -246,3 +246,21 @@ Mat4 STransform::GetTransformMat()
 
 const Color4F Color4F::WHITE (1.0f, 1.0f, 1.0f, 1.0f);
 const Color4F Color4F::GREEN (0.0f, 1.0f, 0.0f, 1.0f);
+
+const Color3B Color3B::WHITE (255, 255, 255);
+const Color3B Color3B::GREEN (0, 255, 0);
+
+Color3B Color3B::operator+( const Color3B& rh )
+{
+	return Color3B( r + rh.r, g + rh.g, b + rh.b );
+}
+
+Color3B Color3B::operator-( const Color3B& rh )
+{
+	return Color3B( r - rh.r, g - rh.g, b - rh.b );
+}
+
+Color3B Color3B::operator*( float fScale )
+{
+	return Color3B( r * fScale, g * fScale, b * fScale);
+}

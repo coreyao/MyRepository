@@ -34,6 +34,30 @@ struct Color4F
 	static const Color4F GREEN;
 };
 
+struct Color3B
+{
+	Color3B() : r(0), g(0), b(0)
+	{
+	}
+
+	Color3B( int _r, int _g, int _b )
+	{
+		r = _r;
+		g = _g;
+		b = _b;
+	}
+
+	Color3B operator+(const Color3B& rh);
+	Color3B operator-(const Color3B& rh);
+	Color3B operator*(float fScale);
+
+	int r;
+	int g;
+	int b;
+
+	static const Color3B WHITE;
+	static const Color3B GREEN;
+};
 
 struct SFace
 {

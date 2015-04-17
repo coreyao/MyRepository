@@ -33,15 +33,16 @@ void init()
 	CEmitter* pEmitter = new CEmitter;
 	pEmitter->SetTexture("T_FX_guangyun01.png");
 	pEmitter->SetEmitMode(CEmitter::EEmitMode_Free);
-	pEmitter->InitParticleLifeTime(5.0f);
-	pEmitter->InitParticleStartSize(10.0f, 20.0f);
-	pEmitter->InitParticleStartSpeed(50.0f, 70.0f);
-	pEmitter->InitParticleStartZRotation(0, 60);
-	pEmitter->InitParticleStartColor(Color4F::WHITE, Color4F::GREEN);
-	pEmitter->GetEmitterShape().SetShape(CEmitterShape::EShape_Cone);
-	pEmitter->GetEmitterShape().SetAngle(30.0f);
-	pEmitter->GetEmitterShape().SetRadius(5.0f);
-	pEmitter->GetEmitterShape().SetRandomDirection(true);
+	pEmitter->GetParticleStartLifeTimeRef().Init(EPropertyType_Constant, 5.0f);
+	pEmitter->GetParticleStartSizeRef().Init(EPropertyType_Constant, 10.0f);
+	pEmitter->GetParticleSizeOverLifeTimeRef().Init(EPropertyType_Liner, 2, SKeyNode<float>(0.0f, 10.0f), SKeyNode<float>(1.0f, 20.0f));
+	pEmitter->GetParticleStartSpeedRef().Init(EPropertyType_RandomBetweenConstant, 50.0f, 70.0f);
+	pEmitter->GetParticleStartZRotationRef().Init(EPropertyType_RandomBetweenConstant, 0, 60);
+	pEmitter->GetParticleStartColorRef().Init(EPropertyType_RandomBetweenConstant, Color3B::WHITE, Color3B::GREEN);
+	pEmitter->GetEmitterShapeRef().SetShape(CEmitterShape::EShape_Cone);
+	pEmitter->GetEmitterShapeRef().SetAngle(30.0f);
+	pEmitter->GetEmitterShapeRef().SetRadius(5.0f);
+	pEmitter->GetEmitterShapeRef().SetRandomDirection(true);
 	g_particleSystem->AddEmitter(pEmitter);
 
 	g_planeMesh = new COGLMesh;
