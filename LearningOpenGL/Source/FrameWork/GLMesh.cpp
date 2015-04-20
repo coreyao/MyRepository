@@ -118,6 +118,9 @@ void COGLMesh::Render()
 	glDepthFunc(GL_LEQUAL);
 	glDepthRange(0.0f, 1.0f);
 
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+
 	glUseProgram(m_theProgram);
 
 	for ( int i = 0; i < m_data.m_vSubMesh.size(); ++i )

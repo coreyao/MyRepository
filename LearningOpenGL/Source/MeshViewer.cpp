@@ -29,24 +29,45 @@ void init()
 	CGLProgramManager::GetInstance()->Add("Particle", SHADER_FILE_DIR + "Particle_Vertex_Shader.vert", SHADER_FILE_DIR + "Particle_Fragment_Shader.frag");
 
 	g_particleSystem = new GLParticleSystem;
-	g_particleSystem->GetTransformData().m_rotation.x = -90;
+	g_particleSystem->GetTransformData().m_rotation.x = 0;
+	//CEmitter* pEmitter = new CEmitter;
+	//pEmitter->SetTotalDuration(5.0f);
+	//pEmitter->SetTexture("ParticleCloudWhite.png");
+	//pEmitter->SetEmitMode(CEmitter::EEmitMode_Free);
+	//pEmitter->SetEmissionRate(20.0f);
+	//pEmitter->GetParticleStartLifeTimeRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 3.0f, 7.0f);
+	//pEmitter->GetParticleStartSpeedRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 20.0f, 40.0f);
+	//pEmitter->GetParticleStartSizeRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 2.0f, 3.0f);
+	//pEmitter->GetParticleStartZRotationRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, -180, 180);
+	//pEmitter->GetParticleStartColorRef().Init<Color3B>(EPropertyType_RandomBetweenConstant, 2, Color3B(2, 2, 2), Color3B(8, 8, 8));
+	//pEmitter->GetParticleStartAlphaRef().Init<double>(EPropertyType_Constant, 255.0f);
+	//pEmitter->GetParticleAlphaOverLifeTimeRef().Init<double>(EPropertyType_Liner, 4, SKeyNode<float>(0.0f, 0.0f), SKeyNode<float>(0.079f, 255.0f), SKeyNode<float>(0.435f, 255.0f), SKeyNode<float>(1.0f, 0.0f));
+	//pEmitter->GetParticleSizeOverLifeTimeRef().Init<double>(EPropertyType_Curve, 4, 1.0f, 0.6f, 4.0f, 4.0f);
+	//pEmitter->GetParticleZRotationOverLifeTimeRef().Init<double>(EPropertyType_RandomBetweenCurve, 2, 4, 180.0f, 180.0f, 30.0f, 30.0f, 4, -180.0f, -180.0f, -30.0f, -30.0f);
+	//pEmitter->GetEmitterShapeRef().SetShape(CEmitterShape::EShape_Cone);
+	//pEmitter->GetEmitterShapeRef().SetAngle(5.0f);
+	//pEmitter->GetEmitterShapeRef().SetRadius(0.1f);
+	//g_particleSystem->AddEmitter(pEmitter);
+
 	CEmitter* pEmitter = new CEmitter;
 	pEmitter->SetTotalDuration(5.0f);
 	pEmitter->SetTexture("ParticleCloudWhite.png");
-	pEmitter->SetEmitMode(CEmitter::EEmitMode_Free);
-	pEmitter->SetEmissionRate(20.0f);
-	pEmitter->GetParticleStartLifeTimeRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 3.0f, 7.0f);
+	pEmitter->SetEmitMode(CEmitter::EEmitMode_Relative);
+	pEmitter->SetEmissionRate(100.0f);
+	pEmitter->SetMaxParticles(1000);
+	pEmitter->SetShaderColor(Color4F(204.0f / 255, 190.0f / 255, 174.0f / 255, 18.0f / 255));
+	pEmitter->GetParticleStartLifeTimeRef().Init<double>(EPropertyType_Constant, 5.0f);
 	pEmitter->GetParticleStartSpeedRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 20.0f, 40.0f);
-	pEmitter->GetParticleStartSizeRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 2.0f, 3.0f);
-	pEmitter->GetParticleStartZRotationRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, -180, 180);
-	pEmitter->GetParticleStartColorRef().Init<Color3B>(EPropertyType_RandomBetweenConstant, 2, Color3B(2, 2, 2), Color3B(8, 8, 8));
+	pEmitter->GetParticleStartSizeRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 15.0f, 25.0f);
+	pEmitter->GetParticleStartZRotationRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 0, 360);
+	pEmitter->GetParticleStartColorRef().Init<Color3B>(EPropertyType_RandomBetweenConstant, 2, Color3B(79, 79, 79), Color3B(161, 161, 161));
 	pEmitter->GetParticleStartAlphaRef().Init<double>(EPropertyType_Constant, 255.0f);
-	pEmitter->GetParticleAlphaOverLifeTimeRef().Init<double>(EPropertyType_Liner, 4, SKeyNode<float>(0.0f, 0.0f), SKeyNode<float>(0.079f, 255.0f), SKeyNode<float>(0.435f, 255.0f), SKeyNode<float>(1.0f, 0.0f));
-	pEmitter->GetParticleSizeOverLifeTimeRef().Init<double>(EPropertyType_Curve, 4, 1.0f, 0.6f, 4.0f, 4.0f);
+	pEmitter->GetParticleAlphaOverLifeTimeRef().Init<double>(EPropertyType_Liner, 4, SKeyNode<float>(0.0f, 0.0f), SKeyNode<float>(0.211f, 255.0f), SKeyNode<float>(0.67f, 255.0f), SKeyNode<float>(1.0f, 0.0f));
+	pEmitter->GetParticleSizeOverLifeTimeRef().Init<double>(EPropertyType_Constant, 1.0f);
 	pEmitter->GetParticleZRotationOverLifeTimeRef().Init<double>(EPropertyType_RandomBetweenCurve, 2, 4, 180.0f, 180.0f, 30.0f, 30.0f, 4, -180.0f, -180.0f, -30.0f, -30.0f);
 	pEmitter->GetEmitterShapeRef().SetShape(CEmitterShape::EShape_Cone);
 	pEmitter->GetEmitterShapeRef().SetAngle(5.0f);
-	pEmitter->GetEmitterShapeRef().SetRadius(0.1f);
+	pEmitter->GetEmitterShapeRef().SetRadius(100.0f);
 	g_particleSystem->AddEmitter(pEmitter);
 
 	g_planeMesh = new COGLMesh;
@@ -94,7 +115,7 @@ void display()
 
 	g_fElapsedTime += g_fDeltaTime;
 
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClearDepth(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

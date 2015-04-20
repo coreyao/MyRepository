@@ -7,5 +7,5 @@ uniform vec4 u_color;
 
 void main()
 {
-	outputColor = texture(u_colorTexture, colorCoord) * vertexColor * u_color;
+	outputColor = texture(u_colorTexture, colorCoord) * vertexColor * u_color * 2.0;
 }

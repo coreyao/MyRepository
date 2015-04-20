@@ -24,7 +24,7 @@ public:
 		, m_pEmitter(nullptr)
 		, m_theProgram(-1)
 		, m_colorTexUnit(0)
-		, m_fStartAlpha(255)
+		, m_fStartVertexAlpha(255)
 	{
 		SVertex leftTop;
 		leftTop.m_pos.x = -0.5f;
@@ -72,6 +72,7 @@ public:
 	void Update(float dt);
 	void Render();
 	void BuildVBOAndVAO();
+	void SetVertexColor();
 	void InitUniform();
 	void SetGLProgram(GLuint theProgram);
 
@@ -81,11 +82,11 @@ private:
 	float m_fCurSpeed;
 	float m_fCurLifeTime;
 	float m_fCurZRotation;
-	Color4F m_CurColor;
+	Color4F m_VertexColor;
 
 	float m_fStartSize;
-	Color3B m_startColor;
-	float m_fStartAlpha;
+	Color3B m_startVertexColor;
+	float m_fStartVertexAlpha;
 
 	CProperty<float> m_SizeOverLifeTime;
 	CProperty<Color3B> m_colorOverLifeTime;
@@ -185,6 +186,7 @@ public:
 		, m_pParticleSystem(nullptr)
 		, m_emitMode(EEmitMode_Relative)
 	{
+		m_ShaderColor = Color4F(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 
 	void AddParticle();
@@ -196,6 +198,7 @@ public:
 	void SetEmissionRate(float fEmitRate);
 	void SetTotalDuration(float fTotalDuration);
 	void SetMaxParticles(int iMaxParticles);
+	void SetShaderColor(const Color4F& rColor);
 	STransform& GetTransformData();
 	CEmitterShape& GetEmitterShapeRef();
 
@@ -228,6 +231,8 @@ private:
 	CProperty<Color3B> m_colorOverLifeTime;
 	CProperty<float> m_AlphaOverLifeTime;
 	CProperty<float> m_ZRotationOverLifeTime;
+
+	Color4F m_ShaderColor;
 
 	float m_fTotalDuration;
 	float m_fCurDuration;

@@ -11,29 +11,6 @@
 
 typedef Matrix4X4 Mat4;
 
-struct Color4F
-{
-	Color4F() : r(1.0f), g(1.0f), b(1.0f), a(1.0f)
-	{
-	}
-
-	Color4F( float _r, float _g, float _b, float _a )
-	{
-		r = _r;
-		g = _g;
-		b = _b;
-		a = _a;
-	}
-
-	float r;
-	float g;
-	float b;
-	float a;
-
-	static const Color4F WHITE;
-	static const Color4F GREEN;
-};
-
 struct Color3B
 {
 	Color3B() : r(0), g(0), b(0)
@@ -61,6 +38,39 @@ struct Color3B
 
 	static const Color3B WHITE;
 	static const Color3B GREEN;
+};
+
+struct Color4F
+{
+	Color4F() : r(1.0f), g(1.0f), b(1.0f), a(1.0f)
+	{
+	}
+
+	Color4F( float _r, float _g, float _b, float _a )
+	{
+		r = _r;
+		g = _g;
+		b = _b;
+		a = _a;
+	}
+
+	Color4F( Color3B color3B, float _a )
+	{
+		r = color3B.r / 255.0f;
+		g = color3B.g / 255.0f;
+		b = color3B.b / 255.0f;
+		a = _a;
+	}
+
+	Color4F operator*(const Color4F& rh);
+
+	float r;
+	float g;
+	float b;
+	float a;
+
+	static const Color4F WHITE;
+	static const Color4F GREEN;
 };
 
 struct SFace

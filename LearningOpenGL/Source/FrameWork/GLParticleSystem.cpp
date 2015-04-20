@@ -147,17 +147,22 @@ void CEmitter::SetMaxParticles(int iMaxParticles)
 	m_iMaxParticles = iMaxParticles;
 }
 
+void CEmitter::SetShaderColor( const Color4F& rColor )
+{
+	m_ShaderColor = rColor;
+}
+
 void CParticleInstance::Update( float dt )
 {
 	m_fCurLifeTime -= dt;
-	float fTotalLifeTime = m_pEmitter->m_fParticleLifeTime.GetValue(m_fElapsedRatio);
 	m_fCurLifeTime = max(m_fCurLifeTime, 0.0f);
+	float fTotalLifeTime = m_pEmitter->m_fParticleLifeTime.GetValue(m_fElapsedRatio);
 	float fLifeTimeRatio = ( fTotalLifeTime - m_fCurLifeTime ) / fTotalLifeTime;
 
 	float fFinalSize = m_SizeOverLifeTime.GetValue(fLifeTimeRatio, 1.0f) * m_fStartSize;
-	Color3B finalColor3B = m_startColor * m_colorOverLifeTime.GetValue(fLifeTimeRatio, Color3B::WHITE) * 91.0f / 255.0f / 255.0f;
-	float fFinalAlpha = m_fStartAlpha * m_AlphaOverLifeTime.GetValue(fLifeTimeRatio, 255) * 193.0f / 255.0f / 255.0f;
-	m_CurColor = Color4F( finalColor3B.r / 255.0f, finalColor3B.g / 255.0f, finalColor3B.b / 255.0f, fFinalAlpha / 255.0f );
+	Color4F finalVertexColor = Color4F(m_startVertexColor, 1.0f) * Color4F(m_colorOverLifeTime.GetValue(fLifeTimeRatio, Color3B::WHITE), 1.0f);
+	float fFinalAlpha = ( m_fStartVertexAlpha / 255.0f ) * ( m_AlphaOverLifeTime.GetValue(fLifeTimeRatio, 255) / 255.0f );
+	m_VertexColor = Color4F( finalVertexColor.r, finalVertexColor.g, finalVertexColor.b, fFinalAlpha );
 	m_fCurZRotation = m_ZRotationOverLifeTime.GetValue(fLifeTimeRatio, 0.0f);
 
 	m_position += m_moveDir * m_fCurSpeed * dt;
@@ -198,7 +203,7 @@ void CParticleInstance::BuildVBOAndVAO()
 {
 	glGenBuffers(1, &m_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-	glBufferData(GL_ARRAY_BUFFER, m_vVertex.size() * sizeof(CParticleInstance::SVertex), &m_vVertex.front(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_vVertex.size() * sizeof(CParticleInstance::SVertex), &m_vVertex.front(), GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glGenBuffers(1, &m_index_vbo);
@@ -232,7 +237,9 @@ void CParticleInstance::Render()
 	glDepthMask(false);
 
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+	glBlendFunc(GL_SRC_ALPHA,GL_ONE);
+
+	SetVertexColor();
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 	glEnableVertexAttribArray(0);
@@ -258,7 +265,7 @@ void CParticleInstance::Render()
 	GLint colorUnif = glGetUniformLocation(m_theProgram, "u_color");
 	if ( colorUnif >= 0 )
 	{
-		glUniform4f( colorUnif, m_CurColor.r, m_CurColor.g, m_CurColor.b, m_CurColor.a );
+		glUniform4f( colorUnif, m_pEmitter->m_ShaderColor.r, m_pEmitter->m_ShaderColor.g, m_pEmitter->m_ShaderColor.b, m_pEmitter->m_ShaderColor.a );
 	}
 
 	if ( m_pEmitter->m_iTexture >= 0 )
@@ -300,8 +307,8 @@ void CParticleInstance::Reset()
 	m_fCurSpeed = m_pEmitter->m_fParticleStartSpeed.GetValue(m_fElapsedRatio);
 	m_fCurLifeTime = m_pEmitter->m_fParticleLifeTime.GetValue(m_fElapsedRatio);
 	m_fStartSize = m_pEmitter->m_fParticleStartSize.GetValue(m_fElapsedRatio, 1.0f);
-	m_startColor = m_pEmitter->m_particleStartColor.GetValue(m_fElapsedRatio, Color3B::WHITE);
-	m_fStartAlpha = m_pEmitter->m_fParticleStartAlpha.GetValue(m_fElapsedRatio, 255.0f);
+	m_startVertexColor = m_pEmitter->m_particleStartColor.GetValue(m_fElapsedRatio, Color3B::WHITE);
+	m_fStartVertexAlpha = m_pEmitter->m_fParticleStartAlpha.GetValue(m_fElapsedRatio, 255.0f);
 	m_fCurZRotation = m_pEmitter->m_fParticleStartZRotation.GetValue(m_fElapsedRatio);
 
 	m_SizeOverLifeTime.RandomPickIndex();
@@ -331,6 +338,18 @@ void CParticleInstance::InitUniform()
 	{
 		glUniform1i(colorTextureUnif, m_colorTexUnit);
 	}
+}
+
+void CParticleInstance::SetVertexColor()
+{
+	for (auto& rVertex : m_vVertex)
+	{
+		rVertex.m_color = m_VertexColor;
+	}
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+	glBufferData(GL_ARRAY_BUFFER, m_vVertex.size() * sizeof(CParticleInstance::SVertex), &m_vVertex.front(), GL_DYNAMIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void CEmitterShape::GeneratePositionAndDirection( Vec3& outPos, Vec3& outDir )
