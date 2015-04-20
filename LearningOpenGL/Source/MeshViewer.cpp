@@ -42,6 +42,7 @@ void init()
 	pEmitter->GetParticleStartZRotationRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 0, 60);
 	pEmitter->GetParticleStartColorRef().Init<Color3B>(EPropertyType_Constant, Color3B::WHITE);
 	pEmitter->GetParticleAlphaOverLifeTimeRef().Init<double>(EPropertyType_Liner, 2, SKeyNode<float>(0.0f, 1.0f * 255), SKeyNode<float>(1.0f, 0.1f * 255));
+	pEmitter->GetParticleZRotationOverLifeTimeRef().Init<double>(EPropertyType_RandomBetweenCurve, 2, 4, 10.0f, 100.0f, 10.0f, 100.0f, 4, 10.0f, 200.0f, 10.0f, 200.0f);
 	pEmitter->GetEmitterShapeRef().SetShape(CEmitterShape::EShape_Cone);
 	pEmitter->GetEmitterShapeRef().SetAngle(30.0f);
 	pEmitter->GetEmitterShapeRef().SetRadius(5.0f);

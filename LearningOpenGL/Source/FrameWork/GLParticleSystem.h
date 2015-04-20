@@ -84,9 +84,10 @@ private:
 	Color3B m_curColor;
 	float m_fCurAlpha;
 
-	CProperty<float> m_sizeOverLifeTime;
+	CProperty<float> m_SizeOverLifeTime;
 	CProperty<Color3B> m_colorOverLifeTime;
-	CProperty<float> m_fAlphaOverLifeTime;
+	CProperty<float> m_AlphaOverLifeTime;
+	CProperty<float> m_ZRotationOverLifeTime;
 
 	Vec3 m_position;
 	Vec3 m_moveDir;
@@ -204,7 +205,8 @@ public:
 
 	CProperty<float>& GetParticleSizeOverLifeTimeRef() { return m_sizeOverLifeTime; }
 	CProperty<Color3B>& GetParticleColorOverLifeTimeRef() { return m_colorOverLifeTime; }
-	CProperty<float>& GetParticleAlphaOverLifeTimeRef() { return m_fAlphaOverLifeTime; }
+	CProperty<float>& GetParticleAlphaOverLifeTimeRef() { return m_AlphaOverLifeTime; }
+	CProperty<float>& GetParticleZRotationOverLifeTimeRef() { return m_ZRotationOverLifeTime; }
 
 private:
 	int m_iMaxParticles;
@@ -221,7 +223,8 @@ private:
 
 	CProperty<float> m_sizeOverLifeTime;
 	CProperty<Color3B> m_colorOverLifeTime;
-	CProperty<float> m_fAlphaOverLifeTime;
+	CProperty<float> m_AlphaOverLifeTime;
+	CProperty<float> m_ZRotationOverLifeTime;
 
 	float m_fTotalDuration;
 	float m_fCurDuration;
