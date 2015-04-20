@@ -18,13 +18,13 @@ private:
 public:
 	CParticleInstance()
 		: m_fCurLifeTime(0.0f)
-		, m_fCurSize(1.0f)
+		, m_fStartSize(1.0f)
 		, m_fCurZRotation(0.0f)
 		, m_fCurSpeed(0.0f)
 		, m_pEmitter(nullptr)
 		, m_theProgram(-1)
 		, m_colorTexUnit(0)
-		, m_fCurAlpha(255)
+		, m_fStartAlpha(255)
 	{
 		SVertex leftTop;
 		leftTop.m_pos.x = -0.5f;
@@ -77,16 +77,19 @@ public:
 
 private:
 	float m_fElapsedRatio;
+
 	float m_fCurSpeed;
 	float m_fCurLifeTime;
 	float m_fCurZRotation;
-	float m_fCurSize;
-	Color3B m_curColor;
-	int m_fCurAlpha;
+	Color4F m_CurColor;
+
+	float m_fStartSize;
+	Color3B m_startColor;
+	float m_fStartAlpha;
 
 	CProperty<float> m_SizeOverLifeTime;
 	CProperty<Color3B> m_colorOverLifeTime;
-	CProperty<int> m_AlphaOverLifeTime;
+	CProperty<float> m_AlphaOverLifeTime;
 	CProperty<float> m_ZRotationOverLifeTime;
 
 	Vec3 m_position;
@@ -205,7 +208,7 @@ public:
 
 	CProperty<float>& GetParticleSizeOverLifeTimeRef() { return m_sizeOverLifeTime; }
 	CProperty<Color3B>& GetParticleColorOverLifeTimeRef() { return m_colorOverLifeTime; }
-	CProperty<int>& GetParticleAlphaOverLifeTimeRef() { return m_AlphaOverLifeTime; }
+	CProperty<float>& GetParticleAlphaOverLifeTimeRef() { return m_AlphaOverLifeTime; }
 	CProperty<float>& GetParticleZRotationOverLifeTimeRef() { return m_ZRotationOverLifeTime; }
 
 private:
@@ -223,7 +226,7 @@ private:
 
 	CProperty<float> m_sizeOverLifeTime;
 	CProperty<Color3B> m_colorOverLifeTime;
-	CProperty<int> m_AlphaOverLifeTime;
+	CProperty<float> m_AlphaOverLifeTime;
 	CProperty<float> m_ZRotationOverLifeTime;
 
 	float m_fTotalDuration;

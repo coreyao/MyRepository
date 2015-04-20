@@ -50,6 +50,10 @@ struct Color3B
 	Color3B operator+(const Color3B& rh);
 	Color3B operator-(const Color3B& rh);
 	Color3B operator*(float fScale);
+	Color3B operator/(float fScale);
+	Color3B operator*=(float fScale);
+	Color3B operator*(const Color3B& rh);
+	Color3B operator*=(const Color3B& rh);
 
 	int r;
 	int g;

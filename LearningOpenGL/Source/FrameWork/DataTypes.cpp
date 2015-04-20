@@ -264,3 +264,25 @@ Color3B Color3B::operator*( float fScale )
 {
 	return Color3B( r * fScale, g * fScale, b * fScale);
 }
+
+Color3B Color3B::operator*( const Color3B& rh )
+{
+	return Color3B( r * rh.r, g * rh.g, b * rh.b );
+}
+
+Color3B Color3B::operator/( float fScale )
+{
+	return Color3B( r / fScale, g / fScale, b / fScale);
+}
+
+Color3B Color3B::operator*=( float fScale )
+{
+	*this = *this * fScale;
+	return *this;
+}
+
+Color3B Color3B::operator*=( const Color3B& rh )
+{
+	*this = Color3B( r * rh.r, g * rh.g, b * rh.b);
+	return *this;
+}

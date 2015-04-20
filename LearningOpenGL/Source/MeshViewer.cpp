@@ -37,11 +37,12 @@ void init()
 	pEmitter->SetEmissionRate(20.0f);
 	pEmitter->GetParticleStartLifeTimeRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 3.0f, 7.0f);
 	pEmitter->GetParticleStartSpeedRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 20.0f, 40.0f);
-	pEmitter->GetParticleStartSizeRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 20.0f, 30.0f);
+	pEmitter->GetParticleStartSizeRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 2.0f, 3.0f);
 	pEmitter->GetParticleStartZRotationRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, -180, 180);
 	pEmitter->GetParticleStartColorRef().Init<Color3B>(EPropertyType_RandomBetweenConstant, 2, Color3B(2, 2, 2), Color3B(8, 8, 8));
-	pEmitter->GetParticleAlphaOverLifeTimeRef().Init<int>(EPropertyType_Liner, 4, SKeyNode<int>(0.0f, 0), SKeyNode<int>(0.079f, 255), SKeyNode<int>(0.435f, 255), SKeyNode<int>(1.0f, 0));
-	pEmitter->GetParticleSizeOverLifeTimeRef().Init<double>(EPropertyType_Curve, 4, 10.0f, 6.0f, 40.0f, 40.0f);
+	pEmitter->GetParticleStartAlphaRef().Init<double>(EPropertyType_Constant, 255.0f);
+	pEmitter->GetParticleAlphaOverLifeTimeRef().Init<double>(EPropertyType_Liner, 4, SKeyNode<float>(0.0f, 0.0f), SKeyNode<float>(0.079f, 255.0f), SKeyNode<float>(0.435f, 255.0f), SKeyNode<float>(1.0f, 0.0f));
+	pEmitter->GetParticleSizeOverLifeTimeRef().Init<double>(EPropertyType_Curve, 4, 1.0f, 0.6f, 4.0f, 4.0f);
 	pEmitter->GetParticleZRotationOverLifeTimeRef().Init<double>(EPropertyType_RandomBetweenCurve, 2, 4, 180.0f, 180.0f, 30.0f, 30.0f, 4, -180.0f, -180.0f, -30.0f, -30.0f);
 	pEmitter->GetEmitterShapeRef().SetShape(CEmitterShape::EShape_Cone);
 	pEmitter->GetEmitterShapeRef().SetAngle(5.0f);
@@ -93,7 +94,7 @@ void display()
 
 	g_fElapsedTime += g_fDeltaTime;
 
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClearDepth(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

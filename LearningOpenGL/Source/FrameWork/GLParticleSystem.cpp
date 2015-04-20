@@ -152,18 +152,19 @@ void CParticleInstance::Update( float dt )
 	m_fCurLifeTime -= dt;
 	float fTotalLifeTime = m_pEmitter->m_fParticleLifeTime.GetValue(m_fElapsedRatio);
 	m_fCurLifeTime = max(m_fCurLifeTime, 0.0f);
-
 	float fLifeTimeRatio = ( fTotalLifeTime - m_fCurLifeTime ) / fTotalLifeTime;
-	m_fCurSize = m_SizeOverLifeTime.GetValue(fLifeTimeRatio, 1.0f);
-	m_curColor = m_colorOverLifeTime.GetValue(fLifeTimeRatio, Color3B::WHITE);
-	m_fCurAlpha = m_AlphaOverLifeTime.GetValue(fLifeTimeRatio, 255);
+
+	float fFinalSize = m_SizeOverLifeTime.GetValue(fLifeTimeRatio, 1.0f) * m_fStartSize;
+	Color3B finalColor3B = m_startColor * m_colorOverLifeTime.GetValue(fLifeTimeRatio, Color3B::WHITE) * 91.0f / 255.0f / 255.0f;
+	float fFinalAlpha = m_fStartAlpha * m_AlphaOverLifeTime.GetValue(fLifeTimeRatio, 255) * 193.0f / 255.0f / 255.0f;
+	m_CurColor = Color4F( finalColor3B.r / 255.0f, finalColor3B.g / 255.0f, finalColor3B.b / 255.0f, fFinalAlpha / 255.0f );
 	m_fCurZRotation = m_ZRotationOverLifeTime.GetValue(fLifeTimeRatio, 0.0f);
 
 	m_position += m_moveDir * m_fCurSpeed * dt;
 
 	Mat4 viewMatrix = CDirector::GetInstance()->GetCurCamera()->GetViewMat();
 	Mat4 TranslationMatrix = Mat4::CreateFromTranslation(m_position.x,m_position.y, m_position.z);
-	Mat4 ScaleMatrix = Mat4::CreateFromScale(m_fCurSize, m_fCurSize, m_fCurSize);
+	Mat4 ScaleMatrix = Mat4::CreateFromScale(fFinalSize, fFinalSize, fFinalSize);
 	Mat4 ZRotationMatrix = Mat4::CreateFromRotationZ(m_fCurZRotation);
 
 	Mat4 BillboardMatrix = Mat4::IDENTITY;
@@ -257,8 +258,7 @@ void CParticleInstance::Render()
 	GLint colorUnif = glGetUniformLocation(m_theProgram, "u_color");
 	if ( colorUnif >= 0 )
 	{
-		Color4F color(m_curColor.r / 255.0f, m_curColor.g / 255.0f, m_curColor.b / 255.0f, m_fCurAlpha / 255.0f);
-		glUniform4f( colorUnif, color.r, color.g, color.b, color.a );
+		glUniform4f( colorUnif, m_CurColor.r, m_CurColor.g, m_CurColor.b, m_CurColor.a );
 	}
 
 	if ( m_pEmitter->m_iTexture >= 0 )
@@ -299,8 +299,9 @@ void CParticleInstance::Reset()
 	m_fElapsedRatio = m_pEmitter->m_fCurDuration / m_pEmitter->m_fTotalDuration;
 	m_fCurSpeed = m_pEmitter->m_fParticleStartSpeed.GetValue(m_fElapsedRatio);
 	m_fCurLifeTime = m_pEmitter->m_fParticleLifeTime.GetValue(m_fElapsedRatio);
-	m_fCurSize = m_pEmitter->m_fParticleStartSize.GetValue(m_fElapsedRatio, 1.0f);
-	m_curColor = m_pEmitter->m_particleStartColor.GetValue(m_fElapsedRatio, Color3B::WHITE);
+	m_fStartSize = m_pEmitter->m_fParticleStartSize.GetValue(m_fElapsedRatio, 1.0f);
+	m_startColor = m_pEmitter->m_particleStartColor.GetValue(m_fElapsedRatio, Color3B::WHITE);
+	m_fStartAlpha = m_pEmitter->m_fParticleStartAlpha.GetValue(m_fElapsedRatio, 255.0f);
 	m_fCurZRotation = m_pEmitter->m_fParticleStartZRotation.GetValue(m_fElapsedRatio);
 
 	m_SizeOverLifeTime.RandomPickIndex();
