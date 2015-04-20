@@ -25,6 +25,7 @@ public:
 		, m_theProgram(-1)
 		, m_colorTexUnit(0)
 		, m_fStartVertexAlpha(255)
+		, m_iCurTexSheetFrame(0)
 	{
 		SVertex leftTop;
 		leftTop.m_pos.x = -0.5f;
@@ -82,6 +83,7 @@ private:
 	float m_fCurSpeed;
 	float m_fCurLifeTime;
 	float m_fCurZRotation;
+	float m_iCurTexSheetFrame;
 	Color4F m_VertexColor;
 
 	float m_fStartSize;
@@ -239,6 +241,7 @@ private:
 	CProperty<Color3B> m_colorOverLifeTime;
 	CProperty<float> m_AlphaOverLifeTime;
 	CProperty<float> m_ZRotationOverLifeTime;
+	CProperty<int> m_TexSheetFrameOverLifeTime;
 
 	Color4F m_ShaderColor;
 
@@ -256,6 +259,7 @@ private:
 	std::vector<CParticleInstance*> m_vInactiveParticle;
 
 	GLuint m_iTexture;
+
 };
 
 class GLParticleSystem
