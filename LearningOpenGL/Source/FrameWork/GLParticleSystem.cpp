@@ -132,6 +132,21 @@ CEmitterShape& CEmitter::GetEmitterShapeRef()
 	return m_emiterShape;
 }
 
+void CEmitter::SetEmitRate( float fEmitRate )
+{
+	m_fEmissionRate = fEmitRate;
+}
+
+void CEmitter::SetTotalDuration( float fTotalDuration )
+{
+	m_fTotalDuration = fTotalDuration;
+}
+
+void CEmitter::SetMaxParticles(int iMaxParticles)
+{
+	m_iMaxParticles = iMaxParticles;
+}
+
 void CParticleInstance::Update( float dt )
 {
 	m_fCurLifeTime -= dt;
