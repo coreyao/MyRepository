@@ -132,7 +132,7 @@ CEmitterShape& CEmitter::GetEmitterShapeRef()
 	return m_emiterShape;
 }
 
-void CEmitter::SetEmitRate( float fEmitRate )
+void CEmitter::SetEmissionRate( float fEmitRate )
 {
 	m_fEmissionRate = fEmitRate;
 }

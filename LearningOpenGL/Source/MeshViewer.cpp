@@ -34,7 +34,7 @@ void init()
 	pEmitter->SetTotalDuration(5.0f);
 	pEmitter->SetTexture("ParticleCloudWhite.png");
 	pEmitter->SetEmitMode(CEmitter::EEmitMode_Free);
-	pEmitter->SetEmitRate(20.0f);
+	pEmitter->SetEmissionRate(20.0f);
 	pEmitter->GetParticleStartLifeTimeRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 3.0f, 7.0f);
 	pEmitter->GetParticleStartSpeedRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 20.0f, 40.0f);
 	pEmitter->GetParticleStartSizeRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 20.0f, 30.0f);

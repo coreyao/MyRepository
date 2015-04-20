@@ -190,7 +190,7 @@ public:
 	void Render();
 	void SetTexture(const std::string& sTexFileName);
 	void SetEmitMode(EEmitMode mode);
-	void SetEmitRate(float fEmitRate);
+	void SetEmissionRate(float fEmitRate);
 	void SetTotalDuration(float fTotalDuration);
 	void SetMaxParticles(int iMaxParticles);
 	STransform& GetTransformData();
