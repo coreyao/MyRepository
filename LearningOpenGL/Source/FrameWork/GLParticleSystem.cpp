@@ -154,7 +154,9 @@ void CParticleInstance::Update( float dt )
 	m_fCurLifeTime = max(m_fCurLifeTime, 0.0f);
 
 	float fLifeTimeRatio = ( fTotalLifeTime - m_fCurLifeTime ) / fTotalLifeTime;
-	m_fCurSize = m_sizeOverLifeTime.GetValue(fLifeTimeRatio);
+	m_fCurSize = m_sizeOverLifeTime.GetValue(fLifeTimeRatio, 1.0f);
+	m_curColor = m_colorOverLifeTime.GetValue(fLifeTimeRatio, Color3B::WHITE);
+	m_fCurAlpha = m_fAlphaOverLifeTime.GetValue(fLifeTimeRatio, 255);
 
 	m_position += m_moveDir * m_fCurSpeed * dt;
 
@@ -254,7 +256,7 @@ void CParticleInstance::Render()
 	GLint colorUnif = glGetUniformLocation(m_theProgram, "u_color");
 	if ( colorUnif >= 0 )
 	{
-		Color4F color(m_curColor.r / 255, m_curColor.g / 255, m_curColor.b / 255, m_fCurAlpha / 255);
+		Color4F color(m_curColor.r / 255.0f, m_curColor.g / 255.0f, m_curColor.b / 255.0f, m_fCurAlpha / 255.0f);
 		glUniform4f( colorUnif, color.r, color.g, color.b, color.a );
 	}
 
@@ -296,11 +298,13 @@ void CParticleInstance::Reset()
 	m_fElapsedRatio = m_pEmitter->m_fCurDuration / m_pEmitter->m_fTotalDuration;
 	m_fCurSpeed = m_pEmitter->m_fParticleStartSpeed.GetValue(m_fElapsedRatio);
 	m_fCurLifeTime = m_pEmitter->m_fParticleLifeTime.GetValue(m_fElapsedRatio);
-	m_fCurSize = m_pEmitter->m_fParticleStartSize.GetValue(m_fElapsedRatio);
-	m_curColor = m_pEmitter->m_particleStartColor.GetValue(m_fElapsedRatio);
+	m_fCurSize = m_pEmitter->m_fParticleStartSize.GetValue(m_fElapsedRatio, 1.0f);
+	m_curColor = m_pEmitter->m_particleStartColor.GetValue(m_fElapsedRatio, Color3B::WHITE);
 	m_fCurZRotation = m_pEmitter->m_fParticleStartZRotation.GetValue(m_fElapsedRatio);
 
-	m_pEmitter->m_sizeOverLifeTime.RandomPickIndex();
+	m_sizeOverLifeTime.RandomPickIndex();
+	m_colorOverLifeTime.RandomPickIndex();
+	m_fAlphaOverLifeTime.RandomPickIndex();
 }
 
 void CParticleInstance::Init( CEmitter* pParent )

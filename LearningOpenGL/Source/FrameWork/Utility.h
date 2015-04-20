@@ -195,7 +195,7 @@ public:
 	EPropertyType GetPropertyType();
 
 	void AddCtrl( CCtrlBase<T>* pCtrl );
-	T GetValue( float fRatio = 0.0f );
+	T GetValue( float fRatio = 0.0f, T defaultValue = T() );
 	void RandomPickIndex();
 
 	template < typename U >
@@ -334,8 +334,13 @@ void CProperty<T>::AddCtrl( CCtrlBase<T>* pCtrl )
 }
 
 template < typename T >
-T CProperty<T>::GetValue( float fRatio )
+T CProperty<T>::GetValue( float fRatio, T defaultValue /*= T()*/ )
 {
+	if ( m_vCtrl.empty() )
+	{
+		return defaultValue;
+	}
+
 	if ( m_eType == EPropertyType_Constant || m_eType == EPropertyType_Liner || m_eType == EPropertyType_Curve )
 	{
 		return m_vCtrl[0]->GetValue( fRatio );
@@ -345,11 +350,18 @@ T CProperty<T>::GetValue( float fRatio )
 		return m_vCtrl[m_iRandomPickIdx]->GetValue( fRatio );
 	}
 
-	return T();
+	return defaultValue;
 }
 
 template < typename T >
 void CProperty<T>::RandomPickIndex()
 {
-	m_iRandomPickIdx = rand() % m_vCtrl.size();
+	if ( m_vCtrl.size() > 0 )
+	{
+		m_iRandomPickIdx = rand() % m_vCtrl.size();
+	}
+	else
+	{
+		m_iRandomPickIdx = 0;
+	}
 }

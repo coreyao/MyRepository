@@ -37,10 +37,11 @@ void init()
 	pEmitter->GetParticleStartLifeTimeRef().Init<double>(EPropertyType_Constant, 5.0f);
 	pEmitter->GetParticleStartSizeRef().Init<double>(EPropertyType_Constant, 10.0f);
 	pEmitter->GetParticleSizeOverLifeTimeRef().Init<double>(EPropertyType_RandomBetweenCurve, 2, 4, 10.0f, 100.0f, 10.0f, 100.0f, 4, 10.0f, 200.0f, 10.0f, 200.0f);
-	//pEmitter->GetParticleSizeOverLifeTimeRef().Init<double>(EPropertyType_Curve, 4, 10.0f, 100.0f, 10.0f, 100.0f);
+	pEmitter->GetParticleColorOverLifeTimeRef().Init<Color3B>(EPropertyType_Liner, 2, SKeyNode<Color3B>(0.0f, Color3B::WHITE), SKeyNode<Color3B>(1.0f, Color3B::GREEN));
 	pEmitter->GetParticleStartSpeedRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 50.0f, 70.0f);
 	pEmitter->GetParticleStartZRotationRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 0, 60);
-	pEmitter->GetParticleStartColorRef().Init<Color3B>(EPropertyType_RandomBetweenConstant, 2, Color3B::WHITE, Color3B::GREEN);
+	pEmitter->GetParticleStartColorRef().Init<Color3B>(EPropertyType_Constant, Color3B::WHITE);
+	pEmitter->GetParticleAlphaOverLifeTimeRef().Init<double>(EPropertyType_Liner, 2, SKeyNode<float>(0.0f, 1.0f * 255), SKeyNode<float>(1.0f, 0.1f * 255));
 	pEmitter->GetEmitterShapeRef().SetShape(CEmitterShape::EShape_Cone);
 	pEmitter->GetEmitterShapeRef().SetAngle(30.0f);
 	pEmitter->GetEmitterShapeRef().SetRadius(5.0f);
