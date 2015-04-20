@@ -154,7 +154,7 @@ void CParticleInstance::Update( float dt )
 	m_fCurLifeTime = max(m_fCurLifeTime, 0.0f);
 
 	float fLifeTimeRatio = ( fTotalLifeTime - m_fCurLifeTime ) / fTotalLifeTime;
-	m_fCurSize = m_pEmitter->m_sizeOverLifeTime.GetValue(fLifeTimeRatio);
+	m_fCurSize = m_sizeOverLifeTime.GetValue(fLifeTimeRatio);
 
 	m_position += m_moveDir * m_fCurSpeed * dt;
 
@@ -299,11 +299,16 @@ void CParticleInstance::Reset()
 	m_fCurSize = m_pEmitter->m_fParticleStartSize.GetValue(m_fElapsedRatio);
 	m_curColor = m_pEmitter->m_particleStartColor.GetValue(m_fElapsedRatio);
 	m_fCurZRotation = m_pEmitter->m_fParticleStartZRotation.GetValue(m_fElapsedRatio);
+
+	m_pEmitter->m_sizeOverLifeTime.RandomPickIndex();
 }
 
 void CParticleInstance::Init( CEmitter* pParent )
 {
 	m_pEmitter = pParent;
+	m_sizeOverLifeTime = m_pEmitter->m_sizeOverLifeTime;
+	m_colorOverLifeTime = m_pEmitter->m_colorOverLifeTime;
+	m_fAlphaOverLifeTime = m_pEmitter->m_fAlphaOverLifeTime;
 
 	BuildVBOAndVAO();
 	SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("Particle") );

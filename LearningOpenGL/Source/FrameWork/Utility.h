@@ -114,11 +114,21 @@ void CLinerCtrl<T>::AddKeyNode( const SKeyNode<T>& rKeyNode )
 }
 
 template <typename T>
-class CCurveCtrl : public CLinerCtrl<T>
+class CCurveCtrl : public CCtrlBase<T>
 {
 public:
 	virtual T GetValue( float fRatio = 0.0f ) override;
+	void AddNode(T node);
+
+private:
+	std::vector<T> m_vNodeItem;
 };
+
+template <typename T>
+void CCurveCtrl<T>::AddNode( T node )
+{
+	m_vNodeItem.push_back(node);
+}
 
 template <typename T>
 T CCurveCtrl<T>::GetValue( float fRatio )
@@ -126,10 +136,10 @@ T CCurveCtrl<T>::GetValue( float fRatio )
 	if ( m_vNodeItem.size() < 4)
 		return T();
 
-	T p0 = m_vNodeItem[0].m_value;
-	T p1 = m_vNodeItem[1].m_value;
-	T p2 = m_vNodeItem[2].m_value;
-	T p3 = m_vNodeItem[3].m_value;
+	T p0 = m_vNodeItem[0];
+	T p1 = m_vNodeItem[1];
+	T p2 = m_vNodeItem[2];
+	T p3 = m_vNodeItem[3];
 
 	return p0 * ( 1 - fRatio ) * ( 1 - fRatio ) * ( 1 - fRatio ) +
 		p1 * fRatio * ( 1 - fRatio ) * ( 1 - fRatio ) * 3 +
@@ -186,6 +196,7 @@ public:
 
 	void AddCtrl( CCtrlBase<T>* pCtrl );
 	T GetValue( float fRatio = 0.0f );
+	void RandomPickIndex();
 
 	template < typename U >
 	void Init( EPropertyType eType, ... )
@@ -231,8 +242,8 @@ public:
 			int iKeyNodeCount = va_arg(params, int);
 			for (int i = 0; i < iKeyNodeCount; ++i)
 			{
-				SKeyNode<T> key = va_arg(params, SKeyNode<T>);
-				pCtrl->AddKeyNode(key);
+				T key = va_arg(params, U);
+				pCtrl->AddNode(key);
 			}
 
 			va_end(params);
@@ -242,29 +253,72 @@ public:
 			va_list params;
 			va_start(params, eType);
 
-			T lValue = va_arg(params, U);
-			T rValue = va_arg(params, U);
+			int iNodeCount = va_arg(params, int);
+			for (int i = 0; i < iNodeCount; ++i)
+			{
+				T value = va_arg(params, U);
 
-			auto pCtrl = new CConstantCtrl<T>;
-			pCtrl->SetValue(lValue);
-			AddCtrl(pCtrl);
+				auto pCtrl = new CConstantCtrl<T>;
+				pCtrl->SetValue(value);
+				AddCtrl(pCtrl);
+			}
 
-			pCtrl = new CConstantCtrl<T>;
-			pCtrl->SetValue(rValue);
-			AddCtrl(pCtrl);
+			va_end(params);
+		}
+		else if ( m_eType == EPropertyType_RandomBetweenLiner )
+		{
+			va_list params;
+			va_start(params, eType);
+
+			int iLinerCount = va_arg(params, int);
+			for (int i = 0; i < iLinerCount; ++i)
+			{
+				auto pCtrl = new CLinerCtrl<T>;
+				AddCtrl(pCtrl);
+
+				int iKeyNodeCount = va_arg(params, int);
+				for (int i = 0; i < iKeyNodeCount; ++i)
+				{
+					SKeyNode<T> key = va_arg(params, SKeyNode<T>);
+					pCtrl->AddKeyNode(key);
+				}
+			}
+
+			va_end(params);
+		}
+		else if ( m_eType == EPropertyType_RandomBetweenCurve )
+		{
+			va_list params;
+			va_start(params, eType);
+
+			int iLinerCount = va_arg(params, int);
+			for (int i = 0; i < iLinerCount; ++i)
+			{
+				auto pCtrl = new CCurveCtrl<T>;
+				AddCtrl(pCtrl);
+
+				int iKeyNodeCount = va_arg(params, int);
+				for (int i = 0; i < iKeyNodeCount; ++i)
+				{
+					T key = va_arg(params, U);
+					pCtrl->AddNode(key);
+				}
+			}
 
 			va_end(params);
 		}
 	}
 
+	CProperty()
+		: m_eType(EPropertyType_Constant)
+		, m_iRandomPickIdx(0)
+	{
+	}
+
 protected:
 	std::vector< CCtrlBase<T>* > m_vCtrl;
 	EPropertyType m_eType;
-};
-
-template < typename T >
-class CFloatProperty : public CProperty<T>
-{
+	int m_iRandomPickIdx;
 };
 
 template < typename T >
@@ -288,9 +342,14 @@ T CProperty<T>::GetValue( float fRatio )
 	}
 	else if ( m_eType == EPropertyType_RandomBetweenLiner || m_eType == EPropertyType_RandomBetweenConstant || m_eType == EPropertyType_RandomBetweenCurve )
 	{
-		int iIndex = rand() % m_vCtrl.size();
-		return m_vCtrl[iIndex]->GetValue( fRatio );
+		return m_vCtrl[m_iRandomPickIdx]->GetValue( fRatio );
 	}
 
 	return T();
+}
+
+template < typename T >
+void CProperty<T>::RandomPickIndex()
+{
+	m_iRandomPickIdx = rand() % m_vCtrl.size();
 }
