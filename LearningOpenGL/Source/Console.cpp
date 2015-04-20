@@ -29,27 +29,29 @@ void init()
 	CGLProgramManager::GetInstance()->Add("Particle", SHADER_FILE_DIR + "Particle_Vertex_Shader.vert", SHADER_FILE_DIR + "Particle_Fragment_Shader.frag");
 
 	g_particleSystem = new GLParticleSystem;
-	g_particleSystem->GetTransformData().m_rotation.x = 0;
-	//CEmitter* pEmitter = new CEmitter;
-	//pEmitter->SetTotalDuration(5.0f);
-	//pEmitter->SetTexture("ParticleCloudWhite.png");
-	//pEmitter->SetEmitMode(CEmitter::EEmitMode_Free);
-	//pEmitter->SetEmissionRate(20.0f);
-	//pEmitter->GetParticleStartLifeTimeRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 3.0f, 7.0f);
-	//pEmitter->GetParticleStartSpeedRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 20.0f, 40.0f);
-	//pEmitter->GetParticleStartSizeRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 2.0f, 3.0f);
-	//pEmitter->GetParticleStartZRotationRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, -180, 180);
-	//pEmitter->GetParticleStartColorRef().Init<Color3B>(EPropertyType_RandomBetweenConstant, 2, Color3B(2, 2, 2), Color3B(8, 8, 8));
-	//pEmitter->GetParticleStartAlphaRef().Init<double>(EPropertyType_Constant, 255.0f);
-	//pEmitter->GetParticleAlphaOverLifeTimeRef().Init<double>(EPropertyType_Liner, 4, SKeyNode<float>(0.0f, 0.0f), SKeyNode<float>(0.079f, 255.0f), SKeyNode<float>(0.435f, 255.0f), SKeyNode<float>(1.0f, 0.0f));
-	//pEmitter->GetParticleSizeOverLifeTimeRef().Init<double>(EPropertyType_Curve, 4, 1.0f, 0.6f, 4.0f, 4.0f);
-	//pEmitter->GetParticleZRotationOverLifeTimeRef().Init<double>(EPropertyType_RandomBetweenCurve, 2, 4, 180.0f, 180.0f, 30.0f, 30.0f, 4, -180.0f, -180.0f, -30.0f, -30.0f);
-	//pEmitter->GetEmitterShapeRef().SetShape(CEmitterShape::EShape_Cone);
-	//pEmitter->GetEmitterShapeRef().SetAngle(5.0f);
-	//pEmitter->GetEmitterShapeRef().SetRadius(0.1f);
-	//g_particleSystem->AddEmitter(pEmitter);
-
+	g_particleSystem->GetTransformData().m_rotation.x = -90;
 	CEmitter* pEmitter = new CEmitter;
+	pEmitter->SetTotalDuration(5.0f);
+	pEmitter->SetBlendMode(CEmitter::EBlendMode_Add);
+	pEmitter->SetTexture("ParticleCloudWhite.png");
+	pEmitter->SetEmitMode(CEmitter::EEmitMode_Free);
+	pEmitter->SetEmissionRate(20.0f);
+	pEmitter->SetShaderColor(Color4F(91.0f / 255, 91.0f / 255, 91.0f / 255, 193.0f / 255));
+	pEmitter->GetParticleStartLifeTimeRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 3.0f, 7.0f);
+	pEmitter->GetParticleStartSpeedRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 20.0f, 40.0f);
+	pEmitter->GetParticleStartSizeRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 2.0f, 3.0f);
+	pEmitter->GetParticleStartZRotationRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, -180, 180);
+	pEmitter->GetParticleStartColorRef().Init<Color3B>(EPropertyType_RandomBetweenConstant, 2, Color3B(2, 2, 2), Color3B(8, 8, 8));
+	pEmitter->GetParticleStartAlphaRef().Init<double>(EPropertyType_Constant, 255.0f);
+	pEmitter->GetParticleAlphaOverLifeTimeRef().Init<double>(EPropertyType_Liner, 4, SKeyNode<float>(0.0f, 0.0f), SKeyNode<float>(0.079f, 255.0f), SKeyNode<float>(0.435f, 255.0f), SKeyNode<float>(1.0f, 0.0f));
+	pEmitter->GetParticleSizeOverLifeTimeRef().Init<double>(EPropertyType_Curve, 4, 1.0f, 0.6f, 4.0f, 4.0f);
+	pEmitter->GetParticleZRotationOverLifeTimeRef().Init<double>(EPropertyType_RandomBetweenCurve, 2, 4, 180.0f, 180.0f, 30.0f, 30.0f, 4, -180.0f, -180.0f, -30.0f, -30.0f);
+	pEmitter->GetEmitterShapeRef().SetShape(CEmitterShape::EShape_Cone);
+	pEmitter->GetEmitterShapeRef().SetAngle(5.0f);
+	pEmitter->GetEmitterShapeRef().SetRadius(0.1f);
+	g_particleSystem->AddEmitter(pEmitter);
+
+	/*CEmitter* pEmitter = new CEmitter;
 	pEmitter->SetTotalDuration(5.0f);
 	pEmitter->SetTexture("ParticleCloudWhite.png");
 	pEmitter->SetEmitMode(CEmitter::EEmitMode_Relative);
@@ -68,12 +70,12 @@ void init()
 	pEmitter->GetEmitterShapeRef().SetShape(CEmitterShape::EShape_Cone);
 	pEmitter->GetEmitterShapeRef().SetAngle(5.0f);
 	pEmitter->GetEmitterShapeRef().SetRadius(100.0f);
-	g_particleSystem->AddEmitter(pEmitter);
+	g_particleSystem->AddEmitter(pEmitter);*/
 
 	g_planeMesh = new COGLMesh;
 	g_planeMesh->InitFromFile("plane.CSTM");
 	g_planeMesh->m_transform.m_scale.set(10, 10, -10);
-	g_planeMesh->m_transform.m_pos.set(0, -30, -100);
+	g_planeMesh->m_transform.m_pos.set(0, -100, -100);
 	for ( int i = 0; i < g_planeMesh->GetMeshData().m_vSubMesh.size(); ++i )
 		g_planeMesh->SetTexture("default.png", i);
 	g_planeMesh->m_color = Color4F(0.5f, 0.5f, 0.5f, 1.0f);

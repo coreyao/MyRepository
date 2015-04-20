@@ -129,7 +129,7 @@ STransform& CEmitter::GetTransformData()
 
 CEmitterShape& CEmitter::GetEmitterShapeRef()
 {
-	return m_emiterShape;
+	return m_EmiterShape;
 }
 
 void CEmitter::SetEmissionRate( float fEmitRate )
@@ -150,6 +150,11 @@ void CEmitter::SetMaxParticles(int iMaxParticles)
 void CEmitter::SetShaderColor( const Color4F& rColor )
 {
 	m_ShaderColor = rColor;
+}
+
+void CEmitter::SetBlendMode( EBlendMode eMode )
+{
+	m_eBlendMode = eMode;
 }
 
 void CParticleInstance::Update( float dt )
@@ -237,7 +242,14 @@ void CParticleInstance::Render()
 	glDepthMask(false);
 
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA,GL_ONE);
+	if ( m_pEmitter->m_eBlendMode == CEmitter::EBlendMode_Add )
+	{
+		glBlendFunc(GL_SRC_ALPHA,GL_ONE);
+	}
+	else if ( m_pEmitter->m_eBlendMode == CEmitter::EBlendMode_ALPHA_BLEND )
+	{
+		glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+	}
 
 	SetVertexColor();
 
@@ -293,7 +305,7 @@ void CParticleInstance::SetGLProgram( GLuint theProgram )
 
 void CParticleInstance::Reset()
 {
-	m_pEmitter->m_emiterShape.GeneratePositionAndDirection(m_position, m_moveDir);
+	m_pEmitter->m_EmiterShape.GeneratePositionAndDirection(m_position, m_moveDir);
 
 	m_parentMat = m_pEmitter->m_pParticleSystem->m_transform.GetTransformMat() * m_pEmitter->m_transform.GetTransformMat();
 	if ( m_pEmitter->m_emitMode == CEmitter::EEmitMode_Free )

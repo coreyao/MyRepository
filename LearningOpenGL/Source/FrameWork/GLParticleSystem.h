@@ -176,6 +176,12 @@ public:
 		EEmitMode_Free,
 	};
 
+	enum EBlendMode
+	{
+		EBlendMode_Add,
+		EBlendMode_ALPHA_BLEND,
+	};
+
 	CEmitter()
 		: m_fEmissionRate(1.0f)
 		, m_fCurEmissionTime(0)
@@ -185,6 +191,7 @@ public:
 		, m_iTexture(-1)
 		, m_pParticleSystem(nullptr)
 		, m_emitMode(EEmitMode_Relative)
+		, m_eBlendMode(EBlendMode_Add)
 	{
 		m_ShaderColor = Color4F(1.0f, 1.0f, 1.0f, 1.0f);
 	}
@@ -199,6 +206,7 @@ public:
 	void SetTotalDuration(float fTotalDuration);
 	void SetMaxParticles(int iMaxParticles);
 	void SetShaderColor(const Color4F& rColor);
+	void SetBlendMode(EBlendMode eMode);
 	STransform& GetTransformData();
 	CEmitterShape& GetEmitterShapeRef();
 
@@ -240,7 +248,8 @@ private:
 	float m_fEmissionRate;
 	float m_fCurEmissionTime;
 
-	CEmitterShape m_emiterShape;
+	CEmitterShape m_EmiterShape;
+	EBlendMode m_eBlendMode;
 
 	GLParticleSystem* m_pParticleSystem;
 	std::vector<CParticleInstance*> m_vActiveParticle;
