@@ -25,9 +25,6 @@
     <ClCompile Include="..\Source\FrameWork\Utility.cpp">
       <Filter>Source Files\FrameWork</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\MeshViewer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\FrameWork\Image\PNGReader.cpp">
       <Filter>Source Files\FrameWork\Image</Filter>
     </ClCompile>
@@ -66,6 +63,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\FrameWork\Camera.cpp">
       <Filter>Source Files\FrameWork</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Console.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

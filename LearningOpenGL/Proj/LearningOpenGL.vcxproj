@@ -25,7 +25,7 @@
     <ClCompile Include="..\Source\FrameWork\OpenGL\GLFrameWork.cpp" />
     <ClCompile Include="..\Source\FrameWork\OpenGL\GLProgramManager.cpp" />
     <ClCompile Include="..\Source\FrameWork\Utility.cpp" />
-    <ClCompile Include="..\Source\MeshViewer.cpp" />
+    <ClCompile Include="..\Source\Console.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\FrameWork\BaseRenderingDataStructure.h" />
