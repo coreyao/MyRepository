@@ -41,7 +41,7 @@ void init()
 	pEmitter->SetEmissionRate(3.0f);
 	pEmitter->GetParticleTexSheetFrameOverLifeTimeRef().Init<int>(EPropertyType_Liner, 2, SKeyNode<int>(0.0f, 0), SKeyNode<int>(1.0f, 32));
 	pEmitter->GetParticleStartLifeTimeRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 0.7f, 1.0f);
-	pEmitter->GetParticleStartSizeRef().Init<double>(EPropertyType_Constant, 1.2f);
+	pEmitter->GetParticleStartSizeRef().Init<double>(EPropertyType_Constant, 2.0f);
 	pEmitter->GetParticleStartZRotationRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, -12.0f, 14.0f);
 	pEmitter->GetParticleStartSpeedRef().Init<double>(EPropertyType_Constant, 0.0f);
 	pEmitter->GetParticleAlphaOverLifeTimeRef().Init<double>(EPropertyType_Liner, 4, SKeyNode<float>(0.0f, 0.0f), SKeyNode<float>(0.191f, 255.0f), SKeyNode<float>(0.818f, 69.0f), SKeyNode<float>(1.0f, 0.0f));
