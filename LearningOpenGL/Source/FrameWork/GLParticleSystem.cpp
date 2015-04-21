@@ -257,7 +257,7 @@ void CParticleInstance::Render()
 	glDepthMask(false);
 
 	glEnable(GL_BLEND);
-	if ( m_pEmitter->m_eBlendMode == CEmitter::EBlendMode_Add )
+	if ( m_pEmitter->m_eBlendMode == CEmitter::EBlendMode_ADD )
 	{
 		glBlendFunc(GL_SRC_ALPHA,GL_ONE);
 	}

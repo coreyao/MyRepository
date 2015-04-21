@@ -34,7 +34,7 @@ void init()
 	g_particleSystem->GetTransformData().m_pos.z = 80;
 	CEmitter* pEmitter = new CEmitter;
 	pEmitter->SetTotalDuration(2.0f);
-	pEmitter->SetBlendMode(CEmitter::EBlendMode_Add);
+	pEmitter->SetBlendMode(CEmitter::EBlendMode_ADD);
 	pEmitter->SetTexture("ParticleFlamesSheet.png");
 	pEmitter->SetTextureAnimationInfo(4, 8, 2);
 	pEmitter->SetEmitMode(CEmitter::EEmitMode_Free);

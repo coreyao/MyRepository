@@ -183,7 +183,7 @@ public:
 
 	enum EBlendMode
 	{
-		EBlendMode_Add,
+		EBlendMode_ADD,
 		EBlendMode_ALPHA_BLEND,
 	};
 
@@ -196,7 +196,7 @@ public:
 		, m_iTexture(-1)
 		, m_pParticleSystem(nullptr)
 		, m_emitMode(EEmitMode_Relative)
-		, m_eBlendMode(EBlendMode_Add)
+		, m_eBlendMode(EBlendMode_ADD)
 		, m_iTexAnimLoopTime(1)
 	{
 		m_ShaderColor = Color4F(1.0f, 1.0f, 1.0f, 1.0f);
