@@ -83,7 +83,7 @@ private:
 	float m_fCurSpeed;
 	float m_fCurLifeTime;
 	float m_fCurZRotation;
-	float m_iCurTexSheetFrame;
+	int m_iCurTexSheetFrame;
 	Color4F m_VertexColor;
 
 	float m_fStartSize;
@@ -94,6 +94,7 @@ private:
 	CProperty<Color3B> m_colorOverLifeTime;
 	CProperty<float> m_AlphaOverLifeTime;
 	CProperty<float> m_ZRotationOverLifeTime;
+	CProperty<int> m_TexSheetFrameOverLifeTime;
 
 	Vec3 m_position;
 	Vec3 m_moveDir;
@@ -209,6 +210,7 @@ public:
 	void SetMaxParticles(int iMaxParticles);
 	void SetShaderColor(const Color4F& rColor);
 	void SetBlendMode(EBlendMode eMode);
+	void SetTextureAnimationInfo(int iRow, int iCol);
 	STransform& GetTransformData();
 	CEmitterShape& GetEmitterShapeRef();
 
@@ -223,6 +225,7 @@ public:
 	CProperty<Color3B>& GetParticleColorOverLifeTimeRef() { return m_colorOverLifeTime; }
 	CProperty<float>& GetParticleAlphaOverLifeTimeRef() { return m_AlphaOverLifeTime; }
 	CProperty<float>& GetParticleZRotationOverLifeTimeRef() { return m_ZRotationOverLifeTime; }
+	CProperty<int>& GetParticleTexSheetFrameOverLifeTimeRef() { return m_TexSheetFrameOverLifeTime; }
 
 private:
 	int m_iMaxParticles;
@@ -250,6 +253,8 @@ private:
 
 	float m_fEmissionRate;
 	float m_fCurEmissionTime;
+
+	Vec4 m_texAnimInfo;
 
 	CEmitterShape m_EmiterShape;
 	EBlendMode m_eBlendMode;

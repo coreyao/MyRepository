@@ -16,6 +16,7 @@ GLParticleSystem* g_particleSystem = nullptr;
 timeval g_fLastTime = {0, 0};
 float g_fDeltaTime = 0.0f;
 float g_fElapsedTime = 0.0f;
+int g_iStepLength = 1;
 
 Vec2 g_lastMousePos;
 bool g_bMouseRightButtonClicked = false;
@@ -30,22 +31,20 @@ void init()
 
 	g_particleSystem = new GLParticleSystem;
 	g_particleSystem->GetTransformData().m_rotation.x = -90;
+	g_particleSystem->GetTransformData().m_pos.z = 80;
 	CEmitter* pEmitter = new CEmitter;
-	pEmitter->SetTotalDuration(5.0f);
+	pEmitter->SetTotalDuration(2.0f);
 	pEmitter->SetBlendMode(CEmitter::EBlendMode_Add);
-	pEmitter->SetTexture("ParticleCloudWhite.png");
+	pEmitter->SetTexture("ParticleFlamesSheet.png");
+	pEmitter->SetTextureAnimationInfo(4, 8);
 	pEmitter->SetEmitMode(CEmitter::EEmitMode_Free);
-	pEmitter->SetEmissionRate(20.0f);
-	pEmitter->SetShaderColor(Color4F(91.0f / 255, 91.0f / 255, 91.0f / 255, 193.0f / 255));
-	pEmitter->GetParticleStartLifeTimeRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 3.0f, 7.0f);
-	pEmitter->GetParticleStartSpeedRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 20.0f, 40.0f);
-	pEmitter->GetParticleStartSizeRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 2.0f, 3.0f);
-	pEmitter->GetParticleStartZRotationRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, -180, 180);
-	pEmitter->GetParticleStartColorRef().Init<Color3B>(EPropertyType_RandomBetweenConstant, 2, Color3B(2, 2, 2), Color3B(8, 8, 8));
-	pEmitter->GetParticleStartAlphaRef().Init<double>(EPropertyType_Constant, 255.0f);
-	pEmitter->GetParticleAlphaOverLifeTimeRef().Init<double>(EPropertyType_Liner, 4, SKeyNode<float>(0.0f, 0.0f), SKeyNode<float>(0.079f, 255.0f), SKeyNode<float>(0.435f, 255.0f), SKeyNode<float>(1.0f, 0.0f));
-	pEmitter->GetParticleSizeOverLifeTimeRef().Init<double>(EPropertyType_Curve, 4, 1.0f, 0.6f, 4.0f, 4.0f);
-	pEmitter->GetParticleZRotationOverLifeTimeRef().Init<double>(EPropertyType_RandomBetweenCurve, 2, 4, 180.0f, 180.0f, 30.0f, 30.0f, 4, -180.0f, -180.0f, -30.0f, -30.0f);
+	pEmitter->SetEmissionRate(3.0f);
+	pEmitter->GetParticleTexSheetFrameOverLifeTimeRef().Init<int>(EPropertyType_Liner, 2, SKeyNode<int>(0.0f, 0), SKeyNode<int>(1.0f, 32));
+	pEmitter->GetParticleStartLifeTimeRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 0.7f, 1.0f);
+	pEmitter->GetParticleStartSizeRef().Init<double>(EPropertyType_Constant, 1.2f);
+	pEmitter->GetParticleStartZRotationRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, -12.0f, 14.0f);
+	pEmitter->GetParticleStartSpeedRef().Init<double>(EPropertyType_Constant, 0.0f);
+	pEmitter->GetParticleAlphaOverLifeTimeRef().Init<double>(EPropertyType_Liner, 4, SKeyNode<float>(0.0f, 0.0f), SKeyNode<float>(0.191f, 255.0f), SKeyNode<float>(0.818f, 69.0f), SKeyNode<float>(1.0f, 0.0f));
 	pEmitter->GetEmitterShapeRef().SetShape(CEmitterShape::EShape_Cone);
 	pEmitter->GetEmitterShapeRef().SetAngle(5.0f);
 	pEmitter->GetEmitterShapeRef().SetRadius(0.1f);
@@ -75,7 +74,7 @@ void init()
 	g_planeMesh = new COGLMesh;
 	g_planeMesh->InitFromFile("plane.CSTM");
 	g_planeMesh->m_transform.m_scale.set(10, 10, -10);
-	g_planeMesh->m_transform.m_pos.set(0, -100, -100);
+	g_planeMesh->m_transform.m_pos.set(0, -30, -100);
 	for ( int i = 0; i < g_planeMesh->GetMeshData().m_vSubMesh.size(); ++i )
 		g_planeMesh->SetTexture("default.png", i);
 	g_planeMesh->m_color = Color4F(0.5f, 0.5f, 0.5f, 1.0f);
@@ -156,10 +155,10 @@ void keyboard(unsigned char key, int x, int y)
 	case 27:
 		glutLeaveMainLoop();
 		return;
-	case 'a': iMoveLeftRight = -10; break;
-	case 'd': iMoveLeftRight = 10; break;
-	case 'w': iMoveForwardBack = 10; break;
-	case 's': iMoveForwardBack = -10; break;
+	case 'a': iMoveLeftRight = -g_iStepLength; break;
+	case 'd': iMoveLeftRight = g_iStepLength; break;
+	case 'w': iMoveForwardBack = g_iStepLength; break;
+	case 's': iMoveForwardBack = -g_iStepLength; break;
 	}
 
 	CDirector::GetInstance()->GetCurCamera()->Move(iMoveLeftRight, 0, iMoveForwardBack);

@@ -23,7 +23,7 @@ CDirector::~CDirector()
 
 void CDirector::Init()
 {
-	m_pCamera = new CCamera(Vec3(0, 100, 100), Vec3(0, 0, -1), Vec3(0, 1, 0));
+	m_pCamera = new CCamera(Vec3(0, 0, 100), Vec3(0, 0, -1), Vec3(0, 1, 0));
 }
 
 CCamera* CDirector::GetCurCamera()

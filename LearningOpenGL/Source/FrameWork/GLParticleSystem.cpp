@@ -157,6 +157,12 @@ void CEmitter::SetBlendMode( EBlendMode eMode )
 	m_eBlendMode = eMode;
 }
 
+void CEmitter::SetTextureAnimationInfo( int iRow, int iCol )
+{
+	m_texAnimInfo.z = iRow;
+	m_texAnimInfo.w = iCol;
+}
+
 void CParticleInstance::Update( float dt )
 {
 	m_fCurLifeTime -= dt;
@@ -165,10 +171,17 @@ void CParticleInstance::Update( float dt )
 	float fLifeTimeRatio = ( fTotalLifeTime - m_fCurLifeTime ) / fTotalLifeTime;
 
 	float fFinalSize = m_SizeOverLifeTime.GetValue(fLifeTimeRatio, 1.0f) * m_fStartSize;
+
 	Color4F finalVertexColor = Color4F(m_startVertexColor, 1.0f) * Color4F(m_colorOverLifeTime.GetValue(fLifeTimeRatio, Color3B::WHITE), 1.0f);
 	float fFinalAlpha = ( m_fStartVertexAlpha / 255.0f ) * ( m_AlphaOverLifeTime.GetValue(fLifeTimeRatio, 255) / 255.0f );
 	m_VertexColor = Color4F( finalVertexColor.r, finalVertexColor.g, finalVertexColor.b, fFinalAlpha );
+
 	m_fCurZRotation = m_ZRotationOverLifeTime.GetValue(fLifeTimeRatio, 0.0f);
+
+	if ( m_pEmitter->m_texAnimInfo.z > 0 && m_pEmitter->m_texAnimInfo.w > 0 )
+	{
+		m_iCurTexSheetFrame = m_pEmitter->m_TexSheetFrameOverLifeTime.GetValue(fLifeTimeRatio);
+	}
 
 	m_position += m_moveDir * m_fCurSpeed * dt;
 
@@ -185,7 +198,7 @@ void CParticleInstance::Update( float dt )
 		forward = m_parentMat.Inverse() * CDirector::GetInstance()->GetCurCamera()->GetLookAtDir() * (-1);
 	forward.normalize();
 	Vec3 up(0, 1, 0);
-	Vec3 right = forward.Cross(up);
+	Vec3 right = up.Cross(forward);
 	right.normalize();
 	up = forward.Cross(right);
 	up.normalize();
@@ -287,6 +300,18 @@ void CParticleInstance::Render()
 		glBindSampler(m_colorTexUnit, m_Sampler);
 	}
 
+	GLint UVAnimUnif = glGetUniformLocation(m_theProgram, "u_UVAnim");
+	if ( UVAnimUnif >= 0 )
+	{
+		if ( m_pEmitter->m_texAnimInfo.z > 0 && m_pEmitter->m_texAnimInfo.w > 0 )
+		{
+			m_pEmitter->m_texAnimInfo.x = m_iCurTexSheetFrame / (int)m_pEmitter->m_texAnimInfo.w;
+			m_pEmitter->m_texAnimInfo.y = m_iCurTexSheetFrame % (int)m_pEmitter->m_texAnimInfo.z;
+		}
+
+		glUniform4f( UVAnimUnif, m_pEmitter->m_texAnimInfo.x, m_pEmitter->m_texAnimInfo.y, m_pEmitter->m_texAnimInfo.z, m_pEmitter->m_texAnimInfo.w );
+	}
+
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_vbo);
 	glDrawElements(GL_TRIANGLES, m_vVertexIndex.size(), GL_UNSIGNED_SHORT, 0);
 
@@ -336,6 +361,7 @@ void CParticleInstance::Init( CEmitter* pParent )
 	m_colorOverLifeTime = m_pEmitter->m_colorOverLifeTime;
 	m_AlphaOverLifeTime = m_pEmitter->m_AlphaOverLifeTime;
 	m_ZRotationOverLifeTime = m_pEmitter->m_ZRotationOverLifeTime;
+	m_TexSheetFrameOverLifeTime = m_pEmitter->m_TexSheetFrameOverLifeTime;
 
 	BuildVBOAndVAO();
 	SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("Particle") );
