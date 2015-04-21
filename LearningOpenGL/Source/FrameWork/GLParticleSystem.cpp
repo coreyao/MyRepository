@@ -394,6 +394,13 @@ void CParticleInstance::SetVertexColor()
 
 void CEmitterShape::GeneratePositionAndDirection( Vec3& outPos, Vec3& outDir )
 {
+	if ( m_eShapeType == EShape_None )
+	{
+		outPos = Vec3(0, 0, 0);
+		outDir = Vec3(0, 0, 1);
+		return;
+	}
+
 	if ( m_eEmitFromType == EEmitFrom_Base )
 	{
 		if ( m_eShapeType == EShape_Cone )

@@ -119,12 +119,14 @@ class CEmitterShape
 public:
 	enum EShape
 	{
+		EShape_None,
 		EShape_Cone,
 		EShape_Box,
 	};
 
 	enum EEmitFrom
 	{
+		EEmitFrom_None,
 		EEmitFrom_Base,
 		EEmitFrom_Base_Shell,
 		EEmitFrom_Volume,
@@ -132,8 +134,8 @@ public:
 	};
 
 	CEmitterShape()
-		: m_eShapeType(EShape_Cone)
-		, m_eEmitFromType(EEmitFrom_Base)
+		: m_eShapeType(EShape_None)
+		, m_eEmitFromType(EEmitFrom_None)
 		, m_fAngle(60.0f)
 		, m_fRadius(50.0f)
 		, m_bRandomDirection(false)

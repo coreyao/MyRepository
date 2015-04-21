@@ -45,9 +45,6 @@ void init()
 	pEmitter->GetParticleStartZRotationRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, -12.0f, 14.0f);
 	pEmitter->GetParticleStartSpeedRef().Init<double>(EPropertyType_Constant, 0.0f);
 	pEmitter->GetParticleAlphaOverLifeTimeRef().Init<double>(EPropertyType_Liner, 4, SKeyNode<float>(0.0f, 0.0f), SKeyNode<float>(0.191f, 255.0f), SKeyNode<float>(0.818f, 69.0f), SKeyNode<float>(1.0f, 0.0f));
-	pEmitter->GetEmitterShapeRef().SetShape(CEmitterShape::EShape_Cone);
-	pEmitter->GetEmitterShapeRef().SetAngle(5.0f);
-	pEmitter->GetEmitterShapeRef().SetRadius(0.1f);
 	g_particleSystem->AddEmitter(pEmitter);
 
 	/*CEmitter* pEmitter = new CEmitter;
