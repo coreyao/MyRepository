@@ -217,7 +217,7 @@ void CParticleInstance::Update( float dt )
 
 	if (m_pEmitter->m_eRenderMode == CEmitter::ERenderMode_HorizontalBillboard)
 	{
-		//BillboardMatrix = BillboardMatrix * Mat4::CreateFromRotationX(-90);
+		BillboardMatrix = m_parentMat.Inverse() * BillboardMatrix * Mat4::CreateFromRotationX(-90);
 	}
 
 	if ( m_pEmitter->m_emitMode == CEmitter::EEmitMode_Free )
