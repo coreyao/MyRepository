@@ -30,7 +30,7 @@ void init()
 	CGLProgramManager::GetInstance()->Add("Particle", SHADER_FILE_DIR + "Particle_Vertex_Shader.vert", SHADER_FILE_DIR + "Particle_Fragment_Shader.frag");
 
 	g_particleSystem = new GLParticleSystem;
-	//g_particleSystem->GetTransformData().m_rotation.x = -90;
+	g_particleSystem->GetTransformData().m_rotation.x = -90;
 	//g_particleSystem->GetTransformData().m_pos.z = 80;
 	//CEmitter* pEmitter = new CEmitter;
 	//pEmitter->SetTotalDuration(2.0f);
@@ -53,6 +53,7 @@ void init()
 	pEmitter->SetEmitMode(CEmitter::EEmitMode_Relative);
 	pEmitter->SetEmissionRate(100.0f);
 	pEmitter->SetMaxParticles(1000);
+	pEmitter->SetRenderMode(CEmitter::ERenderMode_HorizontalBillboard);
 	pEmitter->SetShaderColor(Color4F(204.0f / 255, 190.0f / 255, 174.0f / 255, 18.0f / 255));
 	pEmitter->GetParticleStartLifeTimeRef().Init<double>(EPropertyType_Constant, 5.0f);
 	pEmitter->GetParticleStartSpeedRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 20.0f, 40.0f);

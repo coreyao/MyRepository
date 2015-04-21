@@ -27,45 +27,6 @@ public:
 		, m_fStartVertexAlpha(255)
 		, m_iCurTexSheetFrame(0)
 	{
-		SVertex leftTop;
-		leftTop.m_pos.x = -0.5f;
-		leftTop.m_pos.y = 0.5f;
-		leftTop.m_UV.x = 0;
-		leftTop.m_UV.y = 0;
-		leftTop.m_color = Color4F::WHITE;
-		m_vVertex.push_back(leftTop);
-
-		SVertex rightTop;
-		rightTop.m_pos.x = 0.5f;
-		rightTop.m_pos.y = 0.5f;
-		rightTop.m_UV.x = 1;
-		rightTop.m_UV.y = 0;
-		rightTop.m_color = Color4F::WHITE;
-		m_vVertex.push_back(rightTop);
-
-		SVertex rightBottom;
-		rightBottom.m_pos.x = 0.5f;
-		rightBottom.m_pos.y = -0.5f;
-		rightBottom.m_UV.x = 1;
-		rightBottom.m_UV.y = 1;
-		rightBottom.m_color = Color4F::WHITE;
-		m_vVertex.push_back(rightBottom);
-
-		SVertex leftBottom;
-		leftBottom.m_pos.x = -0.5f;
-		leftBottom.m_pos.y = -0.5f;
-		leftBottom.m_UV.x = 0;
-		leftBottom.m_UV.y = 1;
-		leftBottom.m_color = Color4F::WHITE;
-		m_vVertex.push_back(leftBottom);
-
-		m_vVertexIndex.push_back(0);
-		m_vVertexIndex.push_back(1);
-		m_vVertexIndex.push_back(3);
-
-		m_vVertexIndex.push_back(1);
-		m_vVertexIndex.push_back(2);
-		m_vVertexIndex.push_back(3);
 	}
 
 	void Init(CEmitter* pParent);
@@ -190,6 +151,13 @@ public:
 		EBlendMode_ALPHA_BLEND,
 	};
 
+	enum ERenderMode
+	{
+		ERenderMode_Billboard,
+		ERenderMode_HorizontalBillboard,
+		ERenderMode_VerticalBillboard,
+	};
+
 	CEmitter()
 		: m_fEmissionRate(1.0f)
 		, m_fCurEmissionTime(0)
@@ -200,6 +168,7 @@ public:
 		, m_pParticleSystem(nullptr)
 		, m_emitMode(EEmitMode_Relative)
 		, m_eBlendMode(EBlendMode_ADD)
+		, m_eRenderMode(ERenderMode_Billboard)
 		, m_iTexAnimLoopTime(1)
 	{
 		m_ShaderColor = Color4F(1.0f, 1.0f, 1.0f, 1.0f);
@@ -217,6 +186,7 @@ public:
 	void SetShaderColor(const Color4F& rColor);
 	void SetBlendMode(EBlendMode eMode);
 	void SetTextureAnimationInfo(int iRow, int iCol, int iLoopTime);
+	void SetRenderMode(ERenderMode eRenderMode);
 	STransform& GetTransformData();
 	CEmitterShape& GetEmitterShapeRef();
 
@@ -266,6 +236,7 @@ private:
 
 	CEmitterShape m_EmiterShape;
 	EBlendMode m_eBlendMode;
+	ERenderMode m_eRenderMode;
 
 	GLParticleSystem* m_pParticleSystem;
 	std::vector<CParticleInstance*> m_vActiveParticle;

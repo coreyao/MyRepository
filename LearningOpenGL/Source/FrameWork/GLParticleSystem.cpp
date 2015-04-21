@@ -164,6 +164,11 @@ void CEmitter::SetTextureAnimationInfo( int iRow, int iCol, int iLoopTime )
 	m_iTexAnimLoopTime = iLoopTime;
 }
 
+void CEmitter::SetRenderMode( ERenderMode eRenderMode )
+{
+	m_eRenderMode = eRenderMode;
+}
+
 void CParticleInstance::Update( float dt )
 {
 	m_fCurLifeTime -= dt;
@@ -198,6 +203,8 @@ void CParticleInstance::Update( float dt )
 		forward = CDirector::GetInstance()->GetCurCamera()->GetLookAtDir() * (-1);
 	else if ( m_pEmitter->m_emitMode == CEmitter::EEmitMode_Relative )
 		forward = m_parentMat.Inverse() * CDirector::GetInstance()->GetCurCamera()->GetLookAtDir() * (-1);
+	if ( m_pEmitter->m_eRenderMode == CEmitter::ERenderMode_VerticalBillboard || m_pEmitter->m_eRenderMode == CEmitter::ERenderMode_HorizontalBillboard )
+		forward.y = 0;
 	forward.normalize();
 	Vec3 up(0, 1, 0);
 	Vec3 right = up.Cross(forward);
@@ -207,6 +214,11 @@ void CParticleInstance::Update( float dt )
 	BillboardMatrix.SetRight(right.x, right.y, right.z);
 	BillboardMatrix.SetForward(forward.x, forward.y, forward.z);
 	BillboardMatrix.SetUp(up.x, up.y, up.z);
+
+	if (m_pEmitter->m_eRenderMode == CEmitter::ERenderMode_HorizontalBillboard)
+	{
+		//BillboardMatrix = BillboardMatrix * Mat4::CreateFromRotationX(-90);
+	}
 
 	if ( m_pEmitter->m_emitMode == CEmitter::EEmitMode_Free )
 	{
@@ -221,6 +233,46 @@ void CParticleInstance::Update( float dt )
 
 void CParticleInstance::BuildVBOAndVAO()
 {
+	SVertex leftTop;
+	leftTop.m_pos.x = -0.5f;
+	leftTop.m_pos.y = 0.5f;
+	leftTop.m_UV.x = 0;
+	leftTop.m_UV.y = 0;
+	leftTop.m_color = Color4F::WHITE;
+	m_vVertex.push_back(leftTop);
+
+	SVertex rightTop;
+	rightTop.m_pos.x = 0.5f;
+	rightTop.m_pos.y = 0.5f;
+	rightTop.m_UV.x = 1;
+	rightTop.m_UV.y = 0;
+	rightTop.m_color = Color4F::WHITE;
+	m_vVertex.push_back(rightTop);
+
+	SVertex rightBottom;
+	rightBottom.m_pos.x = 0.5f;
+	rightBottom.m_pos.y = -0.5f;
+	rightBottom.m_UV.x = 1;
+	rightBottom.m_UV.y = 1;
+	rightBottom.m_color = Color4F::WHITE;
+	m_vVertex.push_back(rightBottom);
+
+	SVertex leftBottom;
+	leftBottom.m_pos.x = -0.5f;
+	leftBottom.m_pos.y = -0.5f;
+	leftBottom.m_UV.x = 0;
+	leftBottom.m_UV.y = 1;
+	leftBottom.m_color = Color4F::WHITE;
+	m_vVertex.push_back(leftBottom);
+
+	m_vVertexIndex.push_back(0);
+	m_vVertexIndex.push_back(1);
+	m_vVertexIndex.push_back(3);
+
+	m_vVertexIndex.push_back(1);
+	m_vVertexIndex.push_back(2);
+	m_vVertexIndex.push_back(3);
+
 	glGenBuffers(1, &m_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 	glBufferData(GL_ARRAY_BUFFER, m_vVertex.size() * sizeof(CParticleInstance::SVertex), &m_vVertex.front(), GL_DYNAMIC_DRAW);
@@ -248,10 +300,10 @@ void CParticleInstance::Render()
 
 	glBindVertexArray(m_vao);
 
-	glEnable(GL_CULL_FACE);
+	/*glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
-	glFrontFace(GL_CW);
-	//glDisable(GL_CULL_FACE);
+	glFrontFace(GL_CW);*/
+	glDisable(GL_CULL_FACE);
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(false);
