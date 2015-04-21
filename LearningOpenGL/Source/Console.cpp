@@ -30,24 +30,24 @@ void init()
 	CGLProgramManager::GetInstance()->Add("Particle", SHADER_FILE_DIR + "Particle_Vertex_Shader.vert", SHADER_FILE_DIR + "Particle_Fragment_Shader.frag");
 
 	g_particleSystem = new GLParticleSystem;
-	g_particleSystem->GetTransformData().m_rotation.x = -90;
-	g_particleSystem->GetTransformData().m_pos.z = 80;
-	CEmitter* pEmitter = new CEmitter;
-	pEmitter->SetTotalDuration(2.0f);
-	pEmitter->SetBlendMode(CEmitter::EBlendMode_ADD);
-	pEmitter->SetTexture("ParticleFlamesSheet.png");
-	pEmitter->SetTextureAnimationInfo(4, 8, 2);
-	pEmitter->SetEmitMode(CEmitter::EEmitMode_Free);
-	pEmitter->SetEmissionRate(3.0f);
-	pEmitter->GetParticleTexSheetFrameOverLifeTimeRef().Init<int>(EPropertyType_Liner, 2, SKeyNode<int>(0.0f, 0), SKeyNode<int>(1.0f, 32));
-	pEmitter->GetParticleStartLifeTimeRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 0.7f, 1.0f);
-	pEmitter->GetParticleStartSizeRef().Init<double>(EPropertyType_Constant, 2.0f);
-	pEmitter->GetParticleStartZRotationRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, -12.0f, 14.0f);
-	pEmitter->GetParticleStartSpeedRef().Init<double>(EPropertyType_Constant, 0.0f);
-	pEmitter->GetParticleAlphaOverLifeTimeRef().Init<double>(EPropertyType_Liner, 4, SKeyNode<float>(0.0f, 0.0f), SKeyNode<float>(0.191f, 255.0f), SKeyNode<float>(0.818f, 69.0f), SKeyNode<float>(1.0f, 0.0f));
-	g_particleSystem->AddEmitter(pEmitter);
+	//g_particleSystem->GetTransformData().m_rotation.x = -90;
+	//g_particleSystem->GetTransformData().m_pos.z = 80;
+	//CEmitter* pEmitter = new CEmitter;
+	//pEmitter->SetTotalDuration(2.0f);
+	//pEmitter->SetBlendMode(CEmitter::EBlendMode_ADD);
+	//pEmitter->SetTexture("ParticleFlamesSheet.png");
+	//pEmitter->SetTextureAnimationInfo(4, 8, 2);
+	//pEmitter->SetEmitMode(CEmitter::EEmitMode_Free);
+	//pEmitter->SetEmissionRate(3.0f);
+	//pEmitter->GetParticleTexSheetFrameOverLifeTimeRef().Init<int>(EPropertyType_Liner, 2, SKeyNode<int>(0.0f, 0), SKeyNode<int>(1.0f, 32));
+	//pEmitter->GetParticleStartLifeTimeRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 0.7f, 1.0f);
+	//pEmitter->GetParticleStartSizeRef().Init<double>(EPropertyType_Constant, 2.0f);
+	//pEmitter->GetParticleStartZRotationRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, -12.0f, 14.0f);
+	//pEmitter->GetParticleStartSpeedRef().Init<double>(EPropertyType_Constant, 0.0f);
+	//pEmitter->GetParticleAlphaOverLifeTimeRef().Init<double>(EPropertyType_Liner, 4, SKeyNode<float>(0.0f, 0.0f), SKeyNode<float>(0.191f, 255.0f), SKeyNode<float>(0.818f, 69.0f), SKeyNode<float>(1.0f, 0.0f));
+	//g_particleSystem->AddEmitter(pEmitter);
 
-	/*CEmitter* pEmitter = new CEmitter;
+	CEmitter* pEmitter = new CEmitter;
 	pEmitter->SetTotalDuration(5.0f);
 	pEmitter->SetTexture("ParticleCloudWhite.png");
 	pEmitter->SetEmitMode(CEmitter::EEmitMode_Relative);
@@ -63,10 +63,9 @@ void init()
 	pEmitter->GetParticleAlphaOverLifeTimeRef().Init<double>(EPropertyType_Liner, 4, SKeyNode<float>(0.0f, 0.0f), SKeyNode<float>(0.211f, 255.0f), SKeyNode<float>(0.67f, 255.0f), SKeyNode<float>(1.0f, 0.0f));
 	pEmitter->GetParticleSizeOverLifeTimeRef().Init<double>(EPropertyType_Constant, 1.0f);
 	pEmitter->GetParticleZRotationOverLifeTimeRef().Init<double>(EPropertyType_RandomBetweenCurve, 2, 4, 180.0f, 180.0f, 30.0f, 30.0f, 4, -180.0f, -180.0f, -30.0f, -30.0f);
-	pEmitter->GetEmitterShapeRef().SetShape(CEmitterShape::EShape_Cone);
-	pEmitter->GetEmitterShapeRef().SetAngle(5.0f);
-	pEmitter->GetEmitterShapeRef().SetRadius(100.0f);
-	g_particleSystem->AddEmitter(pEmitter);*/
+	pEmitter->GetEmitterShapeRef().SetShape(CEmitterShape::EShape_Box);
+	pEmitter->GetEmitterShapeRef().SetExtent(Vec3(100, 0, 100));
+	g_particleSystem->AddEmitter(pEmitter);
 
 	g_planeMesh = new COGLMesh;
 	g_planeMesh->InitFromFile("plane.CSTM");

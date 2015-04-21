@@ -397,26 +397,30 @@ void CEmitterShape::GeneratePositionAndDirection( Vec3& outPos, Vec3& outDir )
 	if ( m_eShapeType == EShape_None )
 	{
 		outPos = Vec3(0, 0, 0);
-		outDir = Vec3(0, 0, 1);
-		return;
 	}
-
-	if ( m_eEmitFromType == EEmitFrom_Base )
+	else if ( m_eShapeType == EShape_Box )
 	{
-		if ( m_eShapeType == EShape_Cone )
+		outPos = Vec3( RANDOM_MINUS1_1(), RANDOM_MINUS1_1(), RANDOM_MINUS1_1() ) * m_extent;
+	}
+	else
+	{
+		if ( m_eEmitFromType == EEmitFrom_Base )
 		{
-			float fRandomRadius = RANDOM_MINUS1_1() * m_fRadius;
-			float fRandomAngle = RANDOM_0_1() * DEGREES_TO_RADIANS(360.0f);
+			if ( m_eShapeType == EShape_Cone )
+			{
+				float fRandomRadius = RANDOM_MINUS1_1() * m_fRadius;
+				float fRandomAngle = RANDOM_0_1() * DEGREES_TO_RADIANS(360.0f);
 
-			outPos = Vec3( cosf(fRandomAngle), sinf(fRandomAngle), 0 ) * fRandomRadius;
+				outPos = Vec3( cosf(fRandomAngle), sinf(fRandomAngle), 0 ) * fRandomRadius;
+			}
 		}
-	}
-	else if ( m_eEmitFromType == EEmitFrom_Base_Shell )
-	{
-		if ( m_eShapeType == EShape_Cone )
+		else if ( m_eEmitFromType == EEmitFrom_Base_Shell )
 		{
-			float fRandomAngle = RANDOM_0_1() * DEGREES_TO_RADIANS(360.0f);
-			outPos = Vec3( cosf(fRandomAngle), sinf(fRandomAngle), 0 ) * m_fRadius;
+			if ( m_eShapeType == EShape_Cone )
+			{
+				float fRandomAngle = RANDOM_0_1() * DEGREES_TO_RADIANS(360.0f);
+				outPos = Vec3( cosf(fRandomAngle), sinf(fRandomAngle), 0 ) * m_fRadius;
+			}
 		}
 	}
 

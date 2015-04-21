@@ -154,6 +154,8 @@ public:
 	float GetRadius() { return m_fRadius; }
 	void SetRadius(float fRadius) { m_fRadius = fRadius; }
 
+	void SetExtent(const Vec3& extent) { m_extent = extent; };
+
 	bool IsRandomDirection() { return m_bRandomDirection; }
 	void SetRandomDirection(bool bRandom) { m_bRandomDirection = bRandom; }
 
@@ -165,6 +167,7 @@ private:
 
 	float m_fAngle;
 	float m_fRadius;
+	Vec3 m_extent;
 
 	bool m_bRandomDirection;
 };

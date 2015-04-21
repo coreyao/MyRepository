@@ -68,6 +68,11 @@ Vec3 Vec3::operator*( float fScalar ) const
 	return Vec3( x * fScalar, y * fScalar, z * fScalar );
 }
 
+Vec3 Vec3::operator*( const Vec3& rh ) const
+{
+	return Vec3( x * rh.x, y * rh.y, z * rh.z );
+}
+
 void Vec3::set( float xx, float yy, float zz )
 {
 	x = xx; y = yy; z = zz;
