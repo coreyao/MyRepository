@@ -36,7 +36,7 @@ void init()
 	pEmitter->SetTotalDuration(2.0f);
 	pEmitter->SetBlendMode(CEmitter::EBlendMode_Add);
 	pEmitter->SetTexture("ParticleFlamesSheet.png");
-	pEmitter->SetTextureAnimationInfo(4, 8);
+	pEmitter->SetTextureAnimationInfo(4, 8, 2);
 	pEmitter->SetEmitMode(CEmitter::EEmitMode_Free);
 	pEmitter->SetEmissionRate(3.0f);
 	pEmitter->GetParticleTexSheetFrameOverLifeTimeRef().Init<int>(EPropertyType_Liner, 2, SKeyNode<int>(0.0f, 0), SKeyNode<int>(1.0f, 32));

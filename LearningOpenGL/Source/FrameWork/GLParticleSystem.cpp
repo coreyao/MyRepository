@@ -157,10 +157,11 @@ void CEmitter::SetBlendMode( EBlendMode eMode )
 	m_eBlendMode = eMode;
 }
 
-void CEmitter::SetTextureAnimationInfo( int iRow, int iCol )
+void CEmitter::SetTextureAnimationInfo( int iRow, int iCol, int iLoopTime )
 {
 	m_texAnimInfo.z = iRow;
 	m_texAnimInfo.w = iCol;
+	m_iTexAnimLoopTime = iLoopTime;
 }
 
 void CParticleInstance::Update( float dt )
@@ -180,7 +181,8 @@ void CParticleInstance::Update( float dt )
 
 	if ( m_pEmitter->m_texAnimInfo.z > 0 && m_pEmitter->m_texAnimInfo.w > 0 )
 	{
-		m_iCurTexSheetFrame = m_pEmitter->m_TexSheetFrameOverLifeTime.GetValue(fLifeTimeRatio);
+		float fModifiedRatio = m_pEmitter->m_iTexAnimLoopTime * fLifeTimeRatio - (int)(m_pEmitter->m_iTexAnimLoopTime * fLifeTimeRatio);
+		m_iCurTexSheetFrame = m_pEmitter->m_TexSheetFrameOverLifeTime.GetValue(fModifiedRatio);
 	}
 
 	m_position += m_moveDir * m_fCurSpeed * dt;

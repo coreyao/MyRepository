@@ -195,6 +195,7 @@ public:
 		, m_pParticleSystem(nullptr)
 		, m_emitMode(EEmitMode_Relative)
 		, m_eBlendMode(EBlendMode_Add)
+		, m_iTexAnimLoopTime(1)
 	{
 		m_ShaderColor = Color4F(1.0f, 1.0f, 1.0f, 1.0f);
 	}
@@ -210,7 +211,7 @@ public:
 	void SetMaxParticles(int iMaxParticles);
 	void SetShaderColor(const Color4F& rColor);
 	void SetBlendMode(EBlendMode eMode);
-	void SetTextureAnimationInfo(int iRow, int iCol);
+	void SetTextureAnimationInfo(int iRow, int iCol, int iLoopTime);
 	STransform& GetTransformData();
 	CEmitterShape& GetEmitterShapeRef();
 
@@ -244,7 +245,9 @@ private:
 	CProperty<Color3B> m_colorOverLifeTime;
 	CProperty<float> m_AlphaOverLifeTime;
 	CProperty<float> m_ZRotationOverLifeTime;
+
 	CProperty<int> m_TexSheetFrameOverLifeTime;
+	int m_iTexAnimLoopTime;
 
 	Color4F m_ShaderColor;
 
