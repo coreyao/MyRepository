@@ -29,8 +29,8 @@ void init()
 	CGLProgramManager::GetInstance()->Add("NormalMesh", SHADER_FILE_DIR + "Mesh_Vertex_Shader.vert", SHADER_FILE_DIR + "Mesh_Fragment_Shader.frag");
 	CGLProgramManager::GetInstance()->Add("Particle", SHADER_FILE_DIR + "Particle_Vertex_Shader.vert", SHADER_FILE_DIR + "Particle_Fragment_Shader.frag");
 
-	g_particleSystem = new GLParticleSystem;
-	g_particleSystem->GetTransformData().m_rotation.x = -90;
+	//g_particleSystem = new GLParticleSystem;
+	//g_particleSystem->GetTransformData().m_rotation.x = -90;
 	//g_particleSystem->GetTransformData().m_pos.z = 80;
 	//CEmitter* pEmitter = new CEmitter;
 	//pEmitter->SetTotalDuration(2.0f);
@@ -47,7 +47,7 @@ void init()
 	//pEmitter->GetParticleAlphaOverLifeTimeRef().Init<double>(EPropertyType_Liner, 4, SKeyNode<float>(0.0f, 0.0f), SKeyNode<float>(0.191f, 255.0f), SKeyNode<float>(0.818f, 69.0f), SKeyNode<float>(1.0f, 0.0f));
 	//g_particleSystem->AddEmitter(pEmitter);
 
-	CEmitter* pEmitter = new CEmitter;
+	/*CEmitter* pEmitter = new CEmitter;
 	pEmitter->SetTotalDuration(5.0f);
 	pEmitter->SetTexture("ParticleCloudWhite.png");
 	pEmitter->SetEmitMode(CEmitter::EEmitMode_Relative);
@@ -66,7 +66,7 @@ void init()
 	pEmitter->GetParticleZRotationOverLifeTimeRef().Init<double>(EPropertyType_RandomBetweenCurve, 2, 4, 180.0f, 180.0f, 30.0f, 30.0f, 4, -180.0f, -180.0f, -30.0f, -30.0f);
 	pEmitter->GetEmitterShapeRef().SetShape(CEmitterShape::EShape_Box);
 	pEmitter->GetEmitterShapeRef().SetExtent(Vec3(100, 0, 100));
-	g_particleSystem->AddEmitter(pEmitter);
+	g_particleSystem->AddEmitter(pEmitter);*/
 
 	g_planeMesh = new COGLMesh;
 	g_planeMesh->InitFromFile("plane.CSTM");
@@ -121,16 +121,16 @@ void display()
 	{
 		g_planeMesh->Update(g_fDeltaTime);
 		g_planeMesh->Render();
-		/*for (int i = 0; i < g_vMesh.size(); ++i)
+		for (int i = 0; i < g_vMesh.size(); ++i)
 		{
-		g_vMesh[i]->Update(g_fDeltaTime);
-		g_vMesh[i]->Render();
-		}*/
+			g_vMesh[i]->Update(g_fDeltaTime);
+			g_vMesh[i]->Render();
+		}
 	}
 
 	//g_particleSystem->GetTransformData().m_pos.x = 50 * sin(10 * g_fElapsedTime);
-	g_particleSystem->Update(g_fDeltaTime);
-	g_particleSystem->Render();
+	//g_particleSystem->Update(g_fDeltaTime);
+	//g_particleSystem->Render();
 	
 	glutSwapBuffers();
 	glutPostRedisplay();
