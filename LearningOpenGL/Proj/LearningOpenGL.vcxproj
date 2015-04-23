@@ -15,6 +15,7 @@
     <ClCompile Include="..\Source\FrameWork\DataTypes.cpp" />
     <ClCompile Include="..\Source\FrameWork\Director.cpp" />
     <ClCompile Include="..\Source\FrameWork\Camera.cpp" />
+    <ClCompile Include="..\Source\FrameWork\GLLabel.cpp" />
     <ClCompile Include="..\Source\FrameWork\GLMesh.cpp" />
     <ClCompile Include="..\Source\FrameWork\GLParticleSystem.cpp" />
     <ClCompile Include="..\Source\FrameWork\Image\ImageReader.cpp" />
@@ -32,6 +33,7 @@
     <ClInclude Include="..\Source\FrameWork\DataTypes.h" />
     <ClInclude Include="..\Source\FrameWork\Director.h" />
     <ClInclude Include="..\Source\FrameWork\Camera.h" />
+    <ClInclude Include="..\Source\FrameWork\GLLabel.h" />
     <ClInclude Include="..\Source\FrameWork\GLMesh.h" />
     <ClInclude Include="..\Source\FrameWork\GLParticleSystem.h" />
     <ClInclude Include="..\Source\FrameWork\Image\ImageReader.h" />
@@ -86,14 +88,14 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\Extern\lpng1616;..\Extern\freeglut-2.8.1\include;..\Extern\glew-1.12.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Extern\lpng1616;..\Extern\freeglut-2.8.1\include;..\Extern\glew-1.12.0\include;..\Extern\freetype-2.5.5\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>..\Extern\freeglut-2.8.1\lib\x86;..\Extern\lpng1616\projects\vstudio\Release Library;..\Extern\glew-1.12.0\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freeglut.lib;glew32.lib;libpng16.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\Extern\freeglut-2.8.1\lib\x86;..\Extern\lpng1616\projects\vstudio\Release Library;..\Extern\glew-1.12.0\lib\Release\Win32;..\Extern\freetype-2.5.5\objs\vc2010\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>freeglut.lib;glew32.lib;libpng16.lib;zlib.lib;freetype255ST.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -102,6 +104,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
