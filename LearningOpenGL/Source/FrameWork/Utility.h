@@ -32,6 +32,7 @@ struct timezone
 };
 
 extern int gettimeofday(struct timeval *, struct timezone *);
+extern void InitFreeType();
 
 template <typename T>
 struct SKeyNode

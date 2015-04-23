@@ -16,7 +16,7 @@ GLParticleSystem* g_particleSystem = nullptr;
 timeval g_fLastTime = {0, 0};
 float g_fDeltaTime = 0.0f;
 float g_fElapsedTime = 0.0f;
-int g_iStepLength = 1;
+int g_iStepLength = 3;
 
 Vec2 g_lastMousePos;
 bool g_bMouseRightButtonClicked = false;
@@ -25,6 +25,8 @@ bool bDrawMesh = true;
 
 void init()
 {
+	InitFreeType();
+
 	CGLProgramManager::GetInstance()->Add("SkinMesh", SHADER_FILE_DIR + "SkinMesh_Vertex_Shader.vert", SHADER_FILE_DIR + "Mesh_Fragment_Shader.frag");
 	CGLProgramManager::GetInstance()->Add("NormalMesh", SHADER_FILE_DIR + "Mesh_Vertex_Shader.vert", SHADER_FILE_DIR + "Mesh_Fragment_Shader.frag");
 	CGLProgramManager::GetInstance()->Add("Particle", SHADER_FILE_DIR + "Particle_Vertex_Shader.vert", SHADER_FILE_DIR + "Particle_Fragment_Shader.frag");
