@@ -33,6 +33,24 @@ void CGLLabel::SetString( const std::string& sContent )
 
 void CGLLabel::Draw()
 {
+	for (int i = 0; i < m_sContent.size(); ++i)
+	{
+		int iLetter = m_sContent[i];
 
+	}
+}
+
+void CGLLabel::InitVBOAndVAO()
+{
+	glGenBuffers(1, &m_vertexDataObj);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glGenBuffers(1, &m_vertexIndexObj);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	glGenVertexArrays(1, &m_vertexAttributeObj);
+	glBindVertexArray(0);
+
+	glGenTextures(1, &m_iTexture);
 }
 

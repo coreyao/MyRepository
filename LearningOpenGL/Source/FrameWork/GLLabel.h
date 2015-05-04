@@ -14,17 +14,32 @@ public:
 
 private:
 	void Draw();
+	void InitVBOAndVAO();
 
-
-
+	struct SLetterDefinition
+	{
+		int U;
+		int V;
+		int UL;
+		int VL;
+	};
 
 private:
-	FT_Face           m_fontFace;
 	static FT_Library s_library;
 
+	FT_Face	m_fontFace;
 	std::string m_sContent;
+	std::map<int, SLetterDefinition> m_mLetter;
 
-	GLuint m_iTexture;
+	STransform m_transform;
+
 	int m_colorTexUnit;
 	GLuint m_Sampler;
+	GLuint m_iTexture;
+
+	GLuint m_vertexDataObj;
+	GLuint m_vertexIndexObj;
+	GLuint m_vertexAttributeObj;
+
+	GLuint m_theProgram;
 };
