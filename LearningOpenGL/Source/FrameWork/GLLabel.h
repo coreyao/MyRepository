@@ -16,12 +16,17 @@ private:
 	void Draw();
 	void InitVBOAndVAO();
 
-	struct SLetterDefinition
+	struct SVertex
 	{
-		int U;
-		int V;
-		int UL;
-		int VL;
+		Vec3 m_pos;
+		Color4F m_color;
+		Vec2 m_UV;
+	};
+
+	struct SLetter
+	{
+		SVertex m_vVertex[4];
+		unsigned short m_vVertexIndex[4];
 	};
 
 private:
@@ -29,7 +34,6 @@ private:
 
 	FT_Face	m_fontFace;
 	std::string m_sContent;
-	std::map<int, SLetterDefinition> m_mLetter;
 
 	STransform m_transform;
 

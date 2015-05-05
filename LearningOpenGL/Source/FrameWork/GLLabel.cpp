@@ -33,10 +33,40 @@ void CGLLabel::SetString( const std::string& sContent )
 
 void CGLLabel::Draw()
 {
+	int iX = 0;
+	int iY = 0;
+
 	for (int i = 0; i < m_sContent.size(); ++i)
 	{
 		int iLetter = m_sContent[i];
+		auto glyphIndex = FT_Get_Char_Index(m_fontFace, iLetter);
+		if(glyphIndex)
+		{
+			 if (FT_Load_Glyph(m_fontFace, glyphIndex, FT_LOAD_RENDER))
+			 {
+				 unsigned char* pBitmap = m_fontFace->glyph->bitmap.buffer;
+				 long bitmapHeight = m_fontFace->glyph->bitmap.rows;
+				 long bitmapWidth = m_fontFace->glyph->bitmap.width;
+				 char* dest = new char[bitmapHeight * bitmapWidth]();
+				 for (long y = 0; y < bitmapHeight; ++y)
+				 {
+					 long bitmap_y = y * bitmapWidth;
 
+					 for (int x = 0; x < bitmapWidth; ++x)
+					 {
+						 unsigned char cTemp = pBitmap[bitmap_y + x];
+
+						 // the final pixel
+						 dest[(iX + ( iY * 512 ) )] = cTemp;
+
+						 iX += 1;
+					 }
+
+					 iX = 0;
+					 iY += 1;
+				 }
+			 }
+		}
 	}
 }
 
