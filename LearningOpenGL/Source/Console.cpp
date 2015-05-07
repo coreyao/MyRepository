@@ -23,7 +23,7 @@ int g_iStepLength = 3;
 Vec2 g_lastMousePos;
 bool g_bMouseRightButtonClicked = false;
 
-bool bDrawMesh = false;
+bool bDrawMesh = true;
 
 void init()
 {
@@ -32,10 +32,8 @@ void init()
 	CGLProgramManager::GetInstance()->Add("Particle", SHADER_FILE_DIR + "Particle_Vertex_Shader.vert", SHADER_FILE_DIR + "Particle_Fragment_Shader.frag");
 	CGLProgramManager::GetInstance()->Add("Label", SHADER_FILE_DIR + "Label_Vertex_Shader.vert", SHADER_FILE_DIR + "Label_Fragment_Shader.frag");
 
-	g_pLabel = new CGLLabel(FONT_FILE_DIR + "font1.ttf", 32);
-	g_pLabel->SetString("123456789a");
-	//g_pLabel->m_transform.m_scale.set(10, 10, 10);
-	g_pLabel->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("Label") );
+	g_pLabel = new CGLLabel(FONT_FILE_DIR + "simyou.ttf", 20);
+	g_pLabel->SetString("3");
 
 	//g_particleSystem = new GLParticleSystem;
 	//g_particleSystem->GetTransformData().m_rotation.x = -90;
@@ -133,7 +131,9 @@ void display()
 			g_vMesh[i]->Render();
 		}
 	}
-
+	
+	/*char buf[50] = {0};
+	sprintf(buf, "Frame:%f", g_fDeltaTime);*/
 	g_pLabel->Render();
 
 	//g_particleSystem->GetTransformData().m_pos.x = 50 * sin(10 * g_fElapsedTime);
@@ -167,7 +167,7 @@ void keyboard(unsigned char key, int x, int y)
 	}
 
 	CDirector::GetInstance()->GetPerspectiveCamera()->Move(iMoveLeftRight, 0, iMoveForwardBack);
-	CDirector::GetInstance()->GetOrthographicCamera()->Move(iMoveLeftRight, 0, iMoveForwardBack);
+	//CDirector::GetInstance()->GetOrthographicCamera()->Move(iMoveLeftRight, 0, iMoveForwardBack);
 }
 
 void mouse_down( int button, int state, int x, int y )
@@ -191,7 +191,7 @@ void mouse_move(int x,int y)
 		float fYawDelta = (g_lastMousePos.x - x) * 0.1f;
 
 		CDirector::GetInstance()->GetPerspectiveCamera()->Rotate(fPitchDelta, fYawDelta);
-		CDirector::GetInstance()->GetOrthographicCamera()->Rotate(fPitchDelta, fYawDelta);
+		//CDirector::GetInstance()->GetOrthographicCamera()->Rotate(fPitchDelta, fYawDelta);
 		g_lastMousePos = Vec2(x, y);
 	}
 }

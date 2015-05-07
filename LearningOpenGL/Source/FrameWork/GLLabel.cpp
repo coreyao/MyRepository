@@ -1,6 +1,6 @@
 #include "GLLabel.h"
 #include "Director.h"
-#include "Image/PNGReader.h"
+#include "OpenGL/GLProgramManager.h"
 
 FT_Library CGLLabel::s_library = nullptr;
 
@@ -33,7 +33,7 @@ CGLLabel::CGLLabel(const std::string& fontName, int iFontSize)
 		return;
 
 	m_pTexData = new char[(int)conTexWidth * (int)conTexHeight];
-	memset(m_pTexData, 128, conTexWidth * conTexHeight);
+	memset(m_pTexData, 255, conTexWidth * conTexHeight);
 
 	InitVBOAndVAO();
 }
@@ -53,6 +53,10 @@ void CGLLabel::Render()
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);
 
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA,GL_ONE);
+
+	int iXAdvance = 0;
 	int iLastX = 0;
 	int iLastY = 0;
 	std::vector<SLetter> vLetter;
@@ -69,6 +73,7 @@ void CGLLabel::Render()
 				unsigned char* pBitmap = m_fontFace->glyph->bitmap.buffer;
 				long bitmapHeight = m_fontFace->glyph->bitmap.rows;
 				long bitmapWidth = m_fontFace->glyph->bitmap.width;
+				long xAdvance = (static_cast<int>(m_fontFace->glyph->metrics.horiAdvance >> 6));
 				for (long y = 0; y < bitmapHeight; ++y)
 				{
 					long bitmap_y = y * bitmapWidth;
@@ -84,26 +89,26 @@ void CGLLabel::Render()
 				}
 
 				SLetter letter;
-				letter.m_vVertex[0].m_pos.x = -0.5f + i;
-				letter.m_vVertex[0].m_pos.y = 0.5f;
+				letter.m_vVertex[0].m_pos.x = -bitmapWidth / 2.0f + iXAdvance;
+				letter.m_vVertex[0].m_pos.y = bitmapHeight / 2.0f;
 				letter.m_vVertex[0].m_UV.x = iLastX / conTexWidth;
 				letter.m_vVertex[0].m_UV.y = iLastY / conTexHeight;
 				letter.m_vVertex[0].m_color = Color4F::WHITE;
 
-				letter.m_vVertex[1].m_pos.x = 0.5f + i;
-				letter.m_vVertex[1].m_pos.y = 0.5f;
+				letter.m_vVertex[1].m_pos.x = bitmapWidth / 2.0f + iXAdvance;
+				letter.m_vVertex[1].m_pos.y = bitmapHeight / 2.0f;
 				letter.m_vVertex[1].m_UV.x = ( iLastX + bitmapWidth ) / conTexWidth;
 				letter.m_vVertex[1].m_UV.y = iLastY / conTexHeight;
 				letter.m_vVertex[1].m_color = Color4F::WHITE;
 
-				letter.m_vVertex[2].m_pos.x = 0.5f + i;
-				letter.m_vVertex[2].m_pos.y = -0.5f;
+				letter.m_vVertex[2].m_pos.x = bitmapWidth / 2.0f + iXAdvance;
+				letter.m_vVertex[2].m_pos.y = -bitmapHeight / 2.0f;
 				letter.m_vVertex[2].m_UV.x = ( iLastX + bitmapWidth ) / conTexWidth;
 				letter.m_vVertex[2].m_UV.y = (iLastY + bitmapHeight) / conTexHeight;
 				letter.m_vVertex[2].m_color = Color4F::WHITE;
 
-				letter.m_vVertex[3].m_pos.x = -0.5f + i;
-				letter.m_vVertex[3].m_pos.y = -0.5f;
+				letter.m_vVertex[3].m_pos.x = -bitmapWidth / 2.0f + iXAdvance;
+				letter.m_vVertex[3].m_pos.y = -bitmapHeight / 2.0f;
 				letter.m_vVertex[3].m_UV.x = iLastX / conTexWidth;
 				letter.m_vVertex[3].m_UV.y = (iLastY + bitmapHeight) / conTexHeight;
 				letter.m_vVertex[3].m_color = Color4F::WHITE;
@@ -120,6 +125,7 @@ void CGLLabel::Render()
 
 				iLastX += bitmapWidth;
 				iLastY = 0;
+				iXAdvance += xAdvance;
 			}
 		}
 	}
@@ -135,45 +141,48 @@ void CGLLabel::Render()
 			vVertexIndex.push_back(vertexIndex);
 	}
 
-	glUseProgram(m_theProgram);
-
-	glBindTexture(GL_TEXTURE_2D, m_iTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, conTexWidth, conTexHeight, 0,
-		GL_LUMINANCE, GL_UNSIGNED_BYTE, m_pTexData);
-
-	glBindBuffer(GL_ARRAY_BUFFER, m_vertexDataObj);
-	glBufferData(GL_ARRAY_BUFFER, vVertex.size() * sizeof(SVertex), &vVertex.front(), GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vertexIndexObj);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, vVertexIndex.size() * sizeof(unsigned short), &vVertexIndex.front(), GL_STATIC_DRAW);
-
-	glBindVertexArray(m_vertexAttributeObj);
-	glBindBuffer(GL_ARRAY_BUFFER, m_vertexDataObj);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(SVertex, m_pos));
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(SVertex, m_color));
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(SVertex, m_UV));
-
-	glActiveTexture(GL_TEXTURE0 + m_colorTexUnit);
-	glBindTexture(GL_TEXTURE_2D, m_iTexture);
-	glBindSampler(m_colorTexUnit, m_Sampler);
-
-	GLint modelViewMatrixUnif = glGetUniformLocation(m_theProgram, "modelViewMatrix");
-	if ( modelViewMatrixUnif >= 0 )
+	if ( !vVertexIndex.empty() && !vVertex.empty() )
 	{
-		Mat4 viewMatrix = CDirector::GetInstance()->GetPerspectiveCamera()->GetViewMat();
-		glUniformMatrix4fv(modelViewMatrixUnif, 1, GL_FALSE, (viewMatrix * m_transform.GetTransformMat()).m);
-	}
+		glUseProgram(m_theProgram);
 
-	GLint colorUnif = glGetUniformLocation(m_theProgram, "u_color");
-	if ( colorUnif >= 0 )
-	{
-		glUniform4f( colorUnif, 1.0, 1.0, 1.0, 1.0);
-	}
+		glBindTexture(GL_TEXTURE_2D, m_iTexture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, conTexWidth, conTexHeight, 0,
+			GL_LUMINANCE, GL_UNSIGNED_BYTE, m_pTexData);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vertexIndexObj);
-	glDrawElements(GL_TRIANGLES, vVertexIndex.size(), GL_UNSIGNED_SHORT, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, m_vertexDataObj);
+		glBufferData(GL_ARRAY_BUFFER, vVertex.size() * sizeof(SVertex), &vVertex.front(), GL_STATIC_DRAW);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vertexIndexObj);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, vVertexIndex.size() * sizeof(unsigned short), &vVertexIndex.front(), GL_STATIC_DRAW);
+
+		glBindVertexArray(m_vertexAttributeObj);
+		glBindBuffer(GL_ARRAY_BUFFER, m_vertexDataObj);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(SVertex, m_pos));
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(SVertex, m_color));
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(SVertex, m_UV));
+
+		glActiveTexture(GL_TEXTURE0 + m_colorTexUnit);
+		glBindTexture(GL_TEXTURE_2D, m_iTexture);
+		glBindSampler(m_colorTexUnit, m_Sampler);
+
+		GLint modelViewMatrixUnif = glGetUniformLocation(m_theProgram, "modelViewMatrix");
+		if ( modelViewMatrixUnif >= 0 )
+		{
+			Mat4 viewMatrix = CDirector::GetInstance()->GetOrthographicCamera()->GetViewMat();
+			glUniformMatrix4fv(modelViewMatrixUnif, 1, GL_FALSE, (viewMatrix * m_transform.GetTransformMat()).m);
+		}
+
+		GLint colorUnif = glGetUniformLocation(m_theProgram, "u_color");
+		if ( colorUnif >= 0 )
+		{
+			glUniform4f( colorUnif, 1.0, 1.0, 1.0, 1.0);
+		}
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vertexIndexObj);
+		glDrawElements(GL_TRIANGLES, vVertexIndex.size(), GL_UNSIGNED_SHORT, 0);
+	}
 
 	glUseProgram(0);
 	glBindSampler(m_colorTexUnit, 0);
@@ -199,6 +208,8 @@ void CGLLabel::InitVBOAndVAO()
 	glSamplerParameteri(m_Sampler, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glSamplerParameteri(m_Sampler, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glSamplerParameteri(m_Sampler, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+	SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("Label") );
 }
 
 void CGLLabel::SetGLProgram( GLuint theProgram )
@@ -220,7 +231,7 @@ void CGLLabel::InitUniform()
 	GLint perspectiveMatrixUnif = glGetUniformLocation(m_theProgram, "perspectiveMatrix");
 	if ( perspectiveMatrixUnif >= 0 )
 	{
-		const Mat4& projMat = CDirector::GetInstance()->GetPerspectiveCamera()->GetProjMat();
+		const Mat4& projMat = CDirector::GetInstance()->GetOrthographicCamera()->GetProjMat();
 		glUniformMatrix4fv(perspectiveMatrixUnif, 1, GL_FALSE, projMat.m);
 	}
 
