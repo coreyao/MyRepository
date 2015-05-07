@@ -4,8 +4,8 @@
 
 FT_Library CGLLabel::s_library = nullptr;
 
-const float conTexWidth = 512.0f;
-const float conTexHeight = 512.0f;
+const float conTexWidth = 2048.0f;
+const float conTexHeight = 64.0f;
 
 CGLLabel::CGLLabel(const std::string& fontName, int iFontSize)
 	: m_colorTexUnit(0)
@@ -33,7 +33,7 @@ CGLLabel::CGLLabel(const std::string& fontName, int iFontSize)
 		return;
 
 	m_pTexData = new char[(int)conTexWidth * (int)conTexHeight];
-	memset(m_pTexData, 255, conTexWidth * conTexHeight);
+	memset(m_pTexData, 128, conTexWidth * conTexHeight);
 
 	InitVBOAndVAO();
 }
@@ -53,8 +53,8 @@ void CGLLabel::Render()
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);
 
-	int iX = 0;
-	int iY = 0;
+	int iLastX = 0;
+	int iLastY = 0;
 	std::vector<SLetter> vLetter;
 	for ( int i = 0; i < m_sContent.size(); ++i )
 	{
@@ -64,68 +64,62 @@ void CGLLabel::Render()
 		{
 			if (!FT_Load_Glyph(m_fontFace, glyphIndex, FT_LOAD_RENDER))
 			{
+				int iX = iLastX;
+				int iY = iLastY;
 				unsigned char* pBitmap = m_fontFace->glyph->bitmap.buffer;
 				long bitmapHeight = m_fontFace->glyph->bitmap.rows;
 				long bitmapWidth = m_fontFace->glyph->bitmap.width;
 				for (long y = 0; y < bitmapHeight; ++y)
 				{
 					long bitmap_y = y * bitmapWidth;
-
 					for (int x = 0; x < bitmapWidth; ++x)
 					{
 						unsigned char cTemp = pBitmap[bitmap_y + x];
-
-						// the final pixel
 						m_pTexData[iY * (int)conTexWidth + iX] = cTemp;
 						++iX;
 					}
 
-					iX = 0;
+					iX = iLastX;
 					++iY;
 				}
 
-				glBindTexture(GL_TEXTURE_2D, m_iTexture);
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, conTexWidth, conTexHeight, 0,
-					GL_LUMINANCE, GL_UNSIGNED_BYTE, m_pTexData);
-
 				SLetter letter;
-				letter.m_vVertex[0].m_pos.x = -0.5f;
+				letter.m_vVertex[0].m_pos.x = -0.5f + i;
 				letter.m_vVertex[0].m_pos.y = 0.5f;
-				letter.m_vVertex[0].m_UV.x = 0;
-				letter.m_vVertex[0].m_UV.y = 0;
+				letter.m_vVertex[0].m_UV.x = iLastX / conTexWidth;
+				letter.m_vVertex[0].m_UV.y = iLastY / conTexHeight;
 				letter.m_vVertex[0].m_color = Color4F::WHITE;
 
-				letter.m_vVertex[1].m_pos.x = 0.5f;
+				letter.m_vVertex[1].m_pos.x = 0.5f + i;
 				letter.m_vVertex[1].m_pos.y = 0.5f;
-				letter.m_vVertex[1].m_UV.x = bitmapWidth / conTexWidth;
-				//letter.m_vVertex[1].m_UV.x = 1;
-				letter.m_vVertex[1].m_UV.y = 0;
+				letter.m_vVertex[1].m_UV.x = ( iLastX + bitmapWidth ) / conTexWidth;
+				letter.m_vVertex[1].m_UV.y = iLastY / conTexHeight;
 				letter.m_vVertex[1].m_color = Color4F::WHITE;
 
-				letter.m_vVertex[2].m_pos.x = 0.5f;
+				letter.m_vVertex[2].m_pos.x = 0.5f + i;
 				letter.m_vVertex[2].m_pos.y = -0.5f;
-				letter.m_vVertex[2].m_UV.x = bitmapWidth / conTexWidth;
-				letter.m_vVertex[2].m_UV.y = bitmapHeight / conTexHeight;
-				//letter.m_vVertex[2].m_UV.x = 1;
-				//letter.m_vVertex[2].m_UV.y = 1;
+				letter.m_vVertex[2].m_UV.x = ( iLastX + bitmapWidth ) / conTexWidth;
+				letter.m_vVertex[2].m_UV.y = (iLastY + bitmapHeight) / conTexHeight;
 				letter.m_vVertex[2].m_color = Color4F::WHITE;
 
-				letter.m_vVertex[3].m_pos.x = -0.5f;
+				letter.m_vVertex[3].m_pos.x = -0.5f + i;
 				letter.m_vVertex[3].m_pos.y = -0.5f;
-				letter.m_vVertex[3].m_UV.x = 0;
-				letter.m_vVertex[3].m_UV.y = bitmapHeight / conTexHeight;
-				//letter.m_vVertex[3].m_UV.y = 1;
+				letter.m_vVertex[3].m_UV.x = iLastX / conTexWidth;
+				letter.m_vVertex[3].m_UV.y = (iLastY + bitmapHeight) / conTexHeight;
 				letter.m_vVertex[3].m_color = Color4F::WHITE;
 
-				letter.m_vVertexIndex[0] = i * 6 + 0;
-				letter.m_vVertexIndex[1] = i * 6 + 1;
-				letter.m_vVertexIndex[2] = i * 6 + 3;
+				letter.m_vVertexIndex[0] = i * 4 + 0;
+				letter.m_vVertexIndex[1] = i * 4 + 1;
+				letter.m_vVertexIndex[2] = i * 4 + 3;
 
-				letter.m_vVertexIndex[3] = i * 6 + 1;
-				letter.m_vVertexIndex[4] = i * 6 + 2;
-				letter.m_vVertexIndex[5] = i * 6 + 3;
+				letter.m_vVertexIndex[3] = i * 4 + 1;
+				letter.m_vVertexIndex[4] = i * 4 + 2;
+				letter.m_vVertexIndex[5] = i * 4 + 3;
 
 				vLetter.push_back(letter);
+
+				iLastX += bitmapWidth;
+				iLastY = 0;
 			}
 		}
 	}
@@ -142,6 +136,10 @@ void CGLLabel::Render()
 	}
 
 	glUseProgram(m_theProgram);
+
+	glBindTexture(GL_TEXTURE_2D, m_iTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, conTexWidth, conTexHeight, 0,
+		GL_LUMINANCE, GL_UNSIGNED_BYTE, m_pTexData);
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_vertexDataObj);
 	glBufferData(GL_ARRAY_BUFFER, vVertex.size() * sizeof(SVertex), &vVertex.front(), GL_STATIC_DRAW);
@@ -164,7 +162,7 @@ void CGLLabel::Render()
 	GLint modelViewMatrixUnif = glGetUniformLocation(m_theProgram, "modelViewMatrix");
 	if ( modelViewMatrixUnif >= 0 )
 	{
-		Mat4 viewMatrix = CDirector::GetInstance()->GetCurCamera()->GetViewMat();
+		Mat4 viewMatrix = CDirector::GetInstance()->GetPerspectiveCamera()->GetViewMat();
 		glUniformMatrix4fv(modelViewMatrixUnif, 1, GL_FALSE, (viewMatrix * m_transform.GetTransformMat()).m);
 	}
 
@@ -199,8 +197,8 @@ void CGLLabel::InitVBOAndVAO()
 	glGenSamplers(1, &m_Sampler);
 	glSamplerParameteri(m_Sampler, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glSamplerParameteri(m_Sampler, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glSamplerParameteri(m_Sampler, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glSamplerParameteri(m_Sampler, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glSamplerParameteri(m_Sampler, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glSamplerParameteri(m_Sampler, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 }
 
 void CGLLabel::SetGLProgram( GLuint theProgram )
@@ -222,7 +220,7 @@ void CGLLabel::InitUniform()
 	GLint perspectiveMatrixUnif = glGetUniformLocation(m_theProgram, "perspectiveMatrix");
 	if ( perspectiveMatrixUnif >= 0 )
 	{
-		const Mat4& projMat = CDirector::GetInstance()->GetCurCamera()->GetProjMat();
+		const Mat4& projMat = CDirector::GetInstance()->GetPerspectiveCamera()->GetProjMat();
 		glUniformMatrix4fv(perspectiveMatrixUnif, 1, GL_FALSE, projMat.m);
 	}
 

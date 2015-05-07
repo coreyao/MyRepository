@@ -192,7 +192,7 @@ void CParticleInstance::Update( float dt )
 
 	m_position += m_moveDir * m_fCurSpeed * dt;
 
-	Mat4 viewMatrix = CDirector::GetInstance()->GetCurCamera()->GetViewMat();
+	Mat4 viewMatrix = CDirector::GetInstance()->GetPerspectiveCamera()->GetViewMat();
 	Mat4 TranslationMatrix = Mat4::CreateFromTranslation(m_position.x,m_position.y, m_position.z);
 	Mat4 ScaleMatrix = Mat4::CreateFromScale(fFinalSize, fFinalSize, fFinalSize);
 	Mat4 ZRotationMatrix = Mat4::CreateFromRotationZ(m_fCurZRotation);
@@ -200,9 +200,9 @@ void CParticleInstance::Update( float dt )
 	Mat4 BillboardMatrix = Mat4::IDENTITY;
 	Vec3 forward;
 	if ( m_pEmitter->m_emitMode == CEmitter::EEmitMode_Free )
-		forward = CDirector::GetInstance()->GetCurCamera()->GetLookAtDir() * (-1);
+		forward = CDirector::GetInstance()->GetPerspectiveCamera()->GetLookAtDir() * (-1);
 	else if ( m_pEmitter->m_emitMode == CEmitter::EEmitMode_Relative )
-		forward = m_parentMat.Inverse() * CDirector::GetInstance()->GetCurCamera()->GetLookAtDir() * (-1);
+		forward = m_parentMat.Inverse() * CDirector::GetInstance()->GetPerspectiveCamera()->GetLookAtDir() * (-1);
 	if ( m_pEmitter->m_eRenderMode == CEmitter::ERenderMode_VerticalBillboard || m_pEmitter->m_eRenderMode == CEmitter::ERenderMode_HorizontalBillboard )
 		forward.y = 0;
 	forward.normalize();
@@ -337,7 +337,7 @@ void CParticleInstance::Render()
 	GLint perspectiveMatrixUnif = glGetUniformLocation(m_theProgram, "perspectiveMatrix");
 	if ( perspectiveMatrixUnif >= 0 )
 	{
-		const Mat4& projMat = CDirector::GetInstance()->GetCurCamera()->GetProjMat();
+		const Mat4& projMat = CDirector::GetInstance()->GetPerspectiveCamera()->GetProjMat();
 		glUniformMatrix4fv(perspectiveMatrixUnif, 1, GL_FALSE, projMat.m);
 	}
 

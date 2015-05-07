@@ -5,7 +5,13 @@
 class CCamera
 {
 public:
-	CCamera(Vec3 eyePos, Vec3 lookAtDir, Vec3 upDir);
+	enum EProjectionMode
+	{
+		EProjectionMode_Perspective,
+		EProjectionMode_Orthographic,
+	};
+
+	CCamera(Vec3 eyePos, Vec3 lookAtDir, Vec3 upDir, EProjectionMode eMode = EProjectionMode_Perspective);
 
 	void Move(float leftAndRight, float upAndDown, float forwardAndBackward);
 	void Rotate(float fPitch, float fYaw);
@@ -28,4 +34,6 @@ private:
 
 	Mat4 m_viewMat;
 	Mat4 m_ProjMat;
+
+	EProjectionMode m_eMode;
 };

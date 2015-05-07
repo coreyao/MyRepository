@@ -12,7 +12,8 @@ CDirector* CDirector::GetInstance()
 }
 
 CDirector::CDirector()
-	: m_pCamera(nullptr)
+	: m_pCameraPerspective(nullptr)
+	, m_pCameraOrthographic(nullptr)
 {
 	Init();
 }
@@ -23,12 +24,18 @@ CDirector::~CDirector()
 
 void CDirector::Init()
 {
-	m_pCamera = new CCamera(Vec3(0, 0, 100), Vec3(0, 0, -1), Vec3(0, 1, 0));
+	m_pCameraPerspective = new CCamera(Vec3(0, 0, 100), Vec3(0, 0, -1), Vec3(0, 1, 0), CCamera::EProjectionMode_Perspective);
+	m_pCameraOrthographic = new CCamera(Vec3(0, 0, 100), Vec3(0, 0, -1), Vec3(0, 1, 0), CCamera::EProjectionMode_Orthographic);
 }
 
-CCamera* CDirector::GetCurCamera()
+CCamera* CDirector::GetPerspectiveCamera()
 {
-	return m_pCamera;
+	return m_pCameraPerspective;
+}
+
+CCamera* CDirector::GetOrthographicCamera()
+{
+	return m_pCameraOrthographic;
 }
 
 CDirector* CDirector::s_pInstance = nullptr;

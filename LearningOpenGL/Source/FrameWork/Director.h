@@ -9,11 +9,13 @@ public:
 	static CDirector* GetInstance();
 
 	void Init();
-	CCamera* GetCurCamera();
+	CCamera* GetPerspectiveCamera();
+	CCamera* GetOrthographicCamera();
 private:
 	CDirector();
 	~CDirector();
-	CCamera* m_pCamera;
+	CCamera* m_pCameraPerspective;
+	CCamera* m_pCameraOrthographic;
 
 	static CDirector* s_pInstance;
 };

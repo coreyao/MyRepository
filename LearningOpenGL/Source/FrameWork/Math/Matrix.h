@@ -36,6 +36,9 @@ public:
 	Vec3 TransformVector(const Vec3& vec);
 
 	static Matrix4X4 createPerspective(float fieldOfView, float aspectRatio, float zNearPlane, float zFarPlane);
+	static Matrix4X4 createOrthographic(float width, float height, float zNearPlane, float zFarPlane);
+	static void createOrthographicOffCenter(float left, float right, float bottom, float top,
+		float zNearPlane, float zFarPlane, Matrix4X4* dst);
 	static Matrix4X4 createLookAt(const Vec3& eyePos, const Vec3& lookAtDir, Vec3 up);
 	static Matrix4X4 CreateFromTranslation(float x, float y, float z);
 	static Matrix4X4 CreateFromRotation(const Quaternion& quat);

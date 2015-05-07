@@ -1,14 +1,23 @@
 #include "Camera.h"
 #include "OpenGL/GLFrameWork.h"
 
-CCamera::CCamera(Vec3 eyePos, Vec3 lookAtDir, Vec3 upDir)
+CCamera::CCamera(Vec3 eyePos, Vec3 lookAtDir, Vec3 upDir, EProjectionMode eMode)
 	: m_fPitch(0)
 	, m_fYaw(90)
+	, m_eMode(eMode)
 {
 	m_eyePos = eyePos;
 	m_lookAtDir = lookAtDir;
 	m_UpDir = upDir;
-	m_ProjMat = Mat4::createPerspective(90.0f, (float)RESOLUTION_WIDTH / (float)RESOLUTION_HEIGHT, 1.0f, 1000.0f);
+
+	if ( m_eMode == EProjectionMode_Perspective)
+	{
+		m_ProjMat = Mat4::createPerspective(90.0f, (float)RESOLUTION_WIDTH / (float)RESOLUTION_HEIGHT, 1.0f, 1000.0f);
+	}
+	else if ( m_eMode == EProjectionMode_Orthographic )
+	{
+		m_ProjMat = Mat4::createOrthographic(RESOLUTION_WIDTH, RESOLUTION_HEIGHT, 1.0f, 1000.0f);
+	}
 
 	UpdateProjectionViewMat();
 }

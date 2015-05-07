@@ -93,7 +93,7 @@ void COGLMesh::Update(float dt)
 {
 	m_animator.Update(dt);
 
-	Mat4 viewMatrix = CDirector::GetInstance()->GetCurCamera()->GetViewMat();
+	Mat4 viewMatrix = CDirector::GetInstance()->GetPerspectiveCamera()->GetViewMat();
 	for ( int i = 0; i < m_data.m_vSubMesh.size(); ++i )
 	{
 		m_MV[i] = viewMatrix * m_transform.GetTransformMat() * m_data.m_vSubMesh[i].m_MeshMatrix;
@@ -194,7 +194,7 @@ void COGLMesh::InitUniform()
 	GLint perspectiveMatrixUnif = glGetUniformLocation(m_theProgram, "perspectiveMatrix");
 	if ( perspectiveMatrixUnif >= 0 )
 	{
-		const Mat4& projMat = CDirector::GetInstance()->GetCurCamera()->GetProjMat();
+		const Mat4& projMat = CDirector::GetInstance()->GetPerspectiveCamera()->GetProjMat();
 		glUniformMatrix4fv(perspectiveMatrixUnif, 1, GL_FALSE, projMat.m);
 	}
 

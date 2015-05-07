@@ -300,6 +300,29 @@ Matrix4X4 Matrix4X4::createPerspective( float fieldOfView, float aspectRatio, fl
 	return ret;
 }
 
+Matrix4X4 Matrix4X4::createOrthographic( float width, float height, float zNearPlane, float zFarPlane )
+{
+	Matrix4X4 dst;
+	float halfWidth = width / 2.0f;
+	float halfHeight = height / 2.0f;
+	createOrthographicOffCenter(-halfWidth, halfWidth, -halfHeight, halfHeight, zNearPlane, zFarPlane, &dst);
+
+	return dst;
+}
+
+void Matrix4X4::createOrthographicOffCenter( float left, float right, float bottom, float top, float zNearPlane, float zFarPlane, Matrix4X4* dst )
+{
+	memset(dst, 0,  sizeof(float) * 16);
+	dst->m[0] = 2 / (right - left);
+	dst->m[5] = 2 / (top - bottom);
+	dst->m[10] = 2 / (zNearPlane - zFarPlane);
+
+	dst->m[12] = (left + right) / (left - right);
+	dst->m[13] = (top + bottom) / (bottom - top);
+	dst->m[14] = (zNearPlane + zFarPlane) / (zNearPlane - zFarPlane);
+	dst->m[15] = 1;
+}
+
 Matrix4X4 Matrix4X4::createLookAt( const Vec3& eyePos, const Vec3& lookAtDir, Vec3 up )
 {
 	Matrix4X4 ret = ZERO;

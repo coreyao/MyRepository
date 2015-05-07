@@ -33,8 +33,8 @@ void init()
 	CGLProgramManager::GetInstance()->Add("Label", SHADER_FILE_DIR + "Label_Vertex_Shader.vert", SHADER_FILE_DIR + "Label_Fragment_Shader.frag");
 
 	g_pLabel = new CGLLabel(FONT_FILE_DIR + "font1.ttf", 32);
-	g_pLabel->SetString("a");
-	g_pLabel->m_transform.m_scale.set(10, 10, 10);
+	g_pLabel->SetString("123456789a");
+	//g_pLabel->m_transform.m_scale.set(10, 10, 10);
 	g_pLabel->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("Label") );
 
 	//g_particleSystem = new GLParticleSystem;
@@ -166,7 +166,8 @@ void keyboard(unsigned char key, int x, int y)
 	case 's': iMoveForwardBack = -g_iStepLength; break;
 	}
 
-	CDirector::GetInstance()->GetCurCamera()->Move(iMoveLeftRight, 0, iMoveForwardBack);
+	CDirector::GetInstance()->GetPerspectiveCamera()->Move(iMoveLeftRight, 0, iMoveForwardBack);
+	CDirector::GetInstance()->GetOrthographicCamera()->Move(iMoveLeftRight, 0, iMoveForwardBack);
 }
 
 void mouse_down( int button, int state, int x, int y )
@@ -189,7 +190,8 @@ void mouse_move(int x,int y)
 		float fPitchDelta = (g_lastMousePos.y - y) * 0.1f;
 		float fYawDelta = (g_lastMousePos.x - x) * 0.1f;
 
-		CDirector::GetInstance()->GetCurCamera()->Rotate(fPitchDelta, fYawDelta);
+		CDirector::GetInstance()->GetPerspectiveCamera()->Rotate(fPitchDelta, fYawDelta);
+		CDirector::GetInstance()->GetOrthographicCamera()->Rotate(fPitchDelta, fYawDelta);
 		g_lastMousePos = Vec2(x, y);
 	}
 }
