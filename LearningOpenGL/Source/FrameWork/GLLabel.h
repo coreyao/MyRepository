@@ -10,6 +10,8 @@ class CGLLabel
 {
 public:
 	CGLLabel(const std::string& fontName, int iFontSize);
+	~CGLLabel();
+
 	void SetString(const std::string& sContent);
 	void Render();
 	void SetGLProgram(GLuint theProgram);
@@ -36,7 +38,6 @@ private:
 	static FT_Library s_library;
 
 	FT_Face	m_fontFace;
-
 
 	int m_colorTexUnit;
 	GLuint m_Sampler;
