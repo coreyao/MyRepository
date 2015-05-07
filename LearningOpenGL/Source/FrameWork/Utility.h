@@ -16,6 +16,10 @@
 #define MESH_FILE_DIR std::string("../Resource/Mesh/")
 #endif
 
+#ifndef FONT_FILE_DIR
+#define FONT_FILE_DIR std::string("../Resource/Font/")
+#endif
+
 #ifdef  _WIN64
 #define offsetof(s,m)   (size_t)( (ptrdiff_t)&reinterpret_cast<const volatile char&>((((s *)0)->m)) )
 #else

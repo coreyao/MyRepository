@@ -9,12 +9,15 @@
 class CGLLabel
 {
 public:
-	CGLLabel(const char* fontName, int iFontSize);
+	CGLLabel(const std::string& fontName, int iFontSize);
 	void SetString(const std::string& sContent);
+	void Render();
+	void SetGLProgram(GLuint theProgram);
+	STransform m_transform;
 
 private:
-	void Draw();
 	void InitVBOAndVAO();
+	void InitUniform();
 
 	struct SVertex
 	{
@@ -26,16 +29,14 @@ private:
 	struct SLetter
 	{
 		SVertex m_vVertex[4];
-		unsigned short m_vVertexIndex[4];
+		unsigned short m_vVertexIndex[6];
 	};
 
 private:
 	static FT_Library s_library;
 
 	FT_Face	m_fontFace;
-	std::string m_sContent;
 
-	STransform m_transform;
 
 	int m_colorTexUnit;
 	GLuint m_Sampler;
@@ -46,4 +47,7 @@ private:
 	GLuint m_vertexAttributeObj;
 
 	GLuint m_theProgram;
+
+	std::string m_sContent;
+	char* m_pTexData;
 };

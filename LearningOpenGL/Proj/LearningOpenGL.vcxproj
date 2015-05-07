@@ -46,6 +46,8 @@
     <ClInclude Include="..\Source\FrameWork\Utility.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Resource\Shaders\Label_Fragment_Shader.frag" />
+    <None Include="..\Resource\Shaders\Label_Vertex_Shader.vert" />
     <None Include="..\Resource\Shaders\Mesh_Fragment_Shader.frag" />
     <None Include="..\Resource\Shaders\Mesh_Vertex_Shader.vert" />
     <None Include="..\Resource\Shaders\Particle_Fragment_Shader.frag" />

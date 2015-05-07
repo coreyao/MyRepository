@@ -6,12 +6,14 @@
 #include "FrameWork/GLMesh.h"
 #include "FrameWork/Director.h"
 #include "FrameWork/GLParticleSystem.h"
+#include "FrameWork/GLLabel.h"
 
 COGLMesh* g_planeMesh = nullptr;
 std::vector<COGLMesh*> g_vMesh;
 std::vector<GLuint> g_vGLProgram;
 
 GLParticleSystem* g_particleSystem = nullptr;
+CGLLabel* g_pLabel = nullptr;
 
 timeval g_fLastTime = {0, 0};
 float g_fDeltaTime = 0.0f;
@@ -21,15 +23,19 @@ int g_iStepLength = 3;
 Vec2 g_lastMousePos;
 bool g_bMouseRightButtonClicked = false;
 
-bool bDrawMesh = true;
+bool bDrawMesh = false;
 
 void init()
 {
-	InitFreeType();
-
 	CGLProgramManager::GetInstance()->Add("SkinMesh", SHADER_FILE_DIR + "SkinMesh_Vertex_Shader.vert", SHADER_FILE_DIR + "Mesh_Fragment_Shader.frag");
-	CGLProgramManager::GetInstance()->Add("NormalMesh", SHADER_FILE_DIR + "Mesh_Vertex_Shader.vert", SHADER_FILE_DIR + "Mesh_Fragment_Shader.frag");
+	CGLProgramManager::GetInstance()->Add("StaticMesh", SHADER_FILE_DIR + "Mesh_Vertex_Shader.vert", SHADER_FILE_DIR + "Mesh_Fragment_Shader.frag");
 	CGLProgramManager::GetInstance()->Add("Particle", SHADER_FILE_DIR + "Particle_Vertex_Shader.vert", SHADER_FILE_DIR + "Particle_Fragment_Shader.frag");
+	CGLProgramManager::GetInstance()->Add("Label", SHADER_FILE_DIR + "Label_Vertex_Shader.vert", SHADER_FILE_DIR + "Label_Fragment_Shader.frag");
+
+	g_pLabel = new CGLLabel(FONT_FILE_DIR + "font1.ttf", 32);
+	g_pLabel->SetString("a");
+	g_pLabel->m_transform.m_scale.set(10, 10, 10);
+	g_pLabel->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("Label") );
 
 	//g_particleSystem = new GLParticleSystem;
 	//g_particleSystem->GetTransformData().m_rotation.x = -90;
@@ -78,7 +84,7 @@ void init()
 		g_planeMesh->SetTexture("default.png", i);
 	g_planeMesh->m_color = Color4F(0.5f, 0.5f, 0.5f, 1.0f);
 	g_planeMesh->m_bEnableCullFace = false;
-	g_planeMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("NormalMesh") );
+	g_planeMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh") );
 
 	COGLMesh* pSkinMesh = new COGLMesh;
 	pSkinMesh->InitFromFile("test.CSTM");
@@ -91,8 +97,6 @@ void init()
 	pSkinMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("SkinMesh") );
 	//pSkinMesh->SetVisible(false, "Box01");
 	g_vMesh.push_back(pSkinMesh);
-
-	//bDrawMesh = false;
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
@@ -129,6 +133,8 @@ void display()
 			g_vMesh[i]->Render();
 		}
 	}
+
+	g_pLabel->Render();
 
 	//g_particleSystem->GetTransformData().m_pos.x = 50 * sin(10 * g_fElapsedTime);
 	//g_particleSystem->Update(g_fDeltaTime);
