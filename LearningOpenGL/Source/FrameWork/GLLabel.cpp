@@ -1,11 +1,12 @@
 #include "GLLabel.h"
 #include "Director.h"
 #include "OpenGL/GLProgramManager.h"
+#include "Image/PNGReader.h"
 
 FT_Library CGLLabel::s_library = nullptr;
 
 const float conTexWidth = 2048.0f;
-const float conTexHeight = 64.0f;
+const float conTexHeight = 512.0f;
 
 CGLLabel::CGLLabel(const std::string& fontName, int iFontSize)
 	: m_colorTexUnit(0)
@@ -73,6 +74,8 @@ void CGLLabel::Render()
 				unsigned char* pBitmap = m_fontFace->glyph->bitmap.buffer;
 				long bitmapHeight = m_fontFace->glyph->bitmap.rows;
 				long bitmapWidth = m_fontFace->glyph->bitmap.width;
+				long originX = m_fontFace->glyph->metrics.horiBearingX >> 6;
+				long originY = m_fontFace->glyph->metrics.horiBearingY >> 6;
 				long xAdvance = (static_cast<int>(m_fontFace->glyph->metrics.horiAdvance >> 6));
 				for (long y = 0; y < bitmapHeight; ++y)
 				{
@@ -89,26 +92,26 @@ void CGLLabel::Render()
 				}
 
 				SLetter letter;
-				letter.m_vVertex[0].m_pos.x = -bitmapWidth / 2.0f + iXAdvance;
-				letter.m_vVertex[0].m_pos.y = bitmapHeight / 2.0f;
+				letter.m_vVertex[0].m_pos.x = originX + iXAdvance;
+				letter.m_vVertex[0].m_pos.y = originY;
 				letter.m_vVertex[0].m_UV.x = iLastX / conTexWidth;
 				letter.m_vVertex[0].m_UV.y = iLastY / conTexHeight;
 				letter.m_vVertex[0].m_color = Color4F::WHITE;
 
-				letter.m_vVertex[1].m_pos.x = bitmapWidth / 2.0f + iXAdvance;
-				letter.m_vVertex[1].m_pos.y = bitmapHeight / 2.0f;
+				letter.m_vVertex[1].m_pos.x = originX + bitmapWidth + iXAdvance;
+				letter.m_vVertex[1].m_pos.y = originY;
 				letter.m_vVertex[1].m_UV.x = ( iLastX + bitmapWidth ) / conTexWidth;
 				letter.m_vVertex[1].m_UV.y = iLastY / conTexHeight;
 				letter.m_vVertex[1].m_color = Color4F::WHITE;
 
-				letter.m_vVertex[2].m_pos.x = bitmapWidth / 2.0f + iXAdvance;
-				letter.m_vVertex[2].m_pos.y = -bitmapHeight / 2.0f;
+				letter.m_vVertex[2].m_pos.x = originX + bitmapWidth + iXAdvance;
+				letter.m_vVertex[2].m_pos.y = originY - bitmapHeight;
 				letter.m_vVertex[2].m_UV.x = ( iLastX + bitmapWidth ) / conTexWidth;
 				letter.m_vVertex[2].m_UV.y = (iLastY + bitmapHeight) / conTexHeight;
 				letter.m_vVertex[2].m_color = Color4F::WHITE;
 
-				letter.m_vVertex[3].m_pos.x = -bitmapWidth / 2.0f + iXAdvance;
-				letter.m_vVertex[3].m_pos.y = -bitmapHeight / 2.0f;
+				letter.m_vVertex[3].m_pos.x = originX + iXAdvance;
+				letter.m_vVertex[3].m_pos.y = originY - bitmapHeight;
 				letter.m_vVertex[3].m_UV.x = iLastX / conTexWidth;
 				letter.m_vVertex[3].m_UV.y = (iLastY + bitmapHeight) / conTexHeight;
 				letter.m_vVertex[3].m_color = Color4F::WHITE;
@@ -145,9 +148,17 @@ void CGLLabel::Render()
 	{
 		glUseProgram(m_theProgram);
 
+		/*CPNGReader pngReader("HelloWorld.png");
+		if ( pngReader.GetData() )
+		{
+		glBindTexture(GL_TEXTURE_2D, m_iTexture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pngReader.GetWidth(), pngReader.GetHeight(), 0,
+		GL_RGBA, GL_UNSIGNED_BYTE, pngReader.GetData());
+		}*/
+
 		glBindTexture(GL_TEXTURE_2D, m_iTexture);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, conTexWidth, conTexHeight, 0,
-			GL_LUMINANCE, GL_UNSIGNED_BYTE, m_pTexData);
+		GL_LUMINANCE, GL_UNSIGNED_BYTE, m_pTexData);
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_vertexDataObj);
 		glBufferData(GL_ARRAY_BUFFER, vVertex.size() * sizeof(SVertex), &vVertex.front(), GL_STATIC_DRAW);
