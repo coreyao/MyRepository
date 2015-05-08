@@ -113,6 +113,11 @@ void COGLMesh::Render()
 		glDisable(GL_CULL_FACE);
 	}
 
+	if ( m_bDrawPolygon )
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
 	glDepthFunc(GL_LEQUAL);
@@ -161,6 +166,8 @@ void COGLMesh::Render()
 		glBindSampler(m_colorTexUnit, 0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glBindVertexArray(0);
+		if ( m_bDrawPolygon )
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 	
 	glUseProgram(0);

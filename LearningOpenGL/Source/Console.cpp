@@ -119,8 +119,6 @@ void init()
 	pSkinMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("SkinMesh") );
 	//pSkinMesh->SetVisible(false, "Box01");
 	g_vMesh.push_back(pSkinMesh);
-
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 void display()
@@ -149,6 +147,7 @@ void display()
 	{
 		g_planeMesh->Update(g_fDeltaTime);
 		g_planeMesh->Render();
+
 		for (int i = 0; i < g_vMesh.size(); ++i)
 		{
 			g_vMesh[i]->Update(g_fDeltaTime);

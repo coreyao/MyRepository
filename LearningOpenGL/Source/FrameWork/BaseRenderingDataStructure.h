@@ -64,6 +64,7 @@ public:
 
 	std::vector<bool> m_vSubMeshVisibility;
 	bool m_bEnableCullFace;
+	bool m_bDrawPolygon;
 	SMeshData m_data;
 
 protected:

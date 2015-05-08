@@ -292,7 +292,7 @@ void CParticleInstance::BuildVBOAndVAO()
 	glSamplerParameteri(m_Sampler, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 }
 
-extern COGLMesh* g_planeMesh;
+extern COGLMesh* g_planePolygonMesh;
 
 void CParticleInstance::Render()
 {
