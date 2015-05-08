@@ -36,6 +36,7 @@ struct timezone
 };
 
 extern int gettimeofday(struct timeval *, struct timezone *);
+extern char* GB2312ToUTF8(const char* gb2312);
 
 template <typename T>
 struct SKeyNode

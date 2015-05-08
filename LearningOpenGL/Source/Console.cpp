@@ -13,17 +13,21 @@ std::vector<COGLMesh*> g_vMesh;
 std::vector<GLuint> g_vGLProgram;
 
 GLParticleSystem* g_particleSystem = nullptr;
-CGLLabel* g_pLabel = nullptr;
+CGLLabel* g_pDeltaTimeLabel = nullptr;
+CGLLabel* g_pFPSLabel = nullptr;
 
 timeval g_fLastTime = {0, 0};
 float g_fDeltaTime = 0.0f;
 float g_fElapsedTime = 0.0f;
 int g_iStepLength = 3;
 
+int g_iFrame = 0;
+float g_fAccumulatedTime = 0;
+
 Vec2 g_lastMousePos;
 bool g_bMouseRightButtonClicked = false;
 
-bool bDrawMesh = false;
+bool bDrawMesh = true;
 
 void init()
 {
@@ -32,8 +36,16 @@ void init()
 	CGLProgramManager::GetInstance()->Add("Particle", SHADER_FILE_DIR + "Particle_Vertex_Shader.vert", SHADER_FILE_DIR + "Particle_Fragment_Shader.frag");
 	CGLProgramManager::GetInstance()->Add("Label", SHADER_FILE_DIR + "Label_Vertex_Shader.vert", SHADER_FILE_DIR + "Label_Fragment_Shader.frag");
 
-	g_pLabel = new CGLLabel(FONT_FILE_DIR + "simyou.ttf", 20);
-	g_pLabel->SetString("Frame");
+	g_pDeltaTimeLabel = new CGLLabel(FONT_FILE_DIR + "simyou.ttf", 20);
+	g_pDeltaTimeLabel->m_transform.m_pos.x = -RESOLUTION_WIDTH / 2 + 10;
+	g_pDeltaTimeLabel->m_transform.m_pos.y = RESOLUTION_HEIGHT / 2 - 20;
+	g_pDeltaTimeLabel->m_color = Color4F(0.0f, 1.0f, 0.0f, 1.0f);
+
+	g_pFPSLabel = new CGLLabel(FONT_FILE_DIR + "simyou.ttf", 20);
+	g_pFPSLabel->SetString("FPS:0");
+	g_pFPSLabel->m_transform.m_pos.x = g_pDeltaTimeLabel->m_transform.m_pos.x;
+	g_pFPSLabel->m_transform.m_pos.y = g_pDeltaTimeLabel->m_transform.m_pos.y - 20;
+	g_pFPSLabel->m_color = Color4F(0.0f, 1.0f, 0.0f, 1.0f);
 
 	//g_particleSystem = new GLParticleSystem;
 	//g_particleSystem->GetTransformData().m_rotation.x = -90;
@@ -132,9 +144,33 @@ void display()
 		}
 	}
 	
-	/*char buf[50] = {0};
-	sprintf(buf, "Frame:%f", g_fDeltaTime);*/
-	g_pLabel->Render();
+	char buf[50] = {0};
+	sprintf(buf, "DeltaTime:%f", g_fDeltaTime);
+	g_pDeltaTimeLabel->SetString(buf);
+	g_pDeltaTimeLabel->Render();
+	if ( g_fDeltaTime >= 0.5f )
+		g_pDeltaTimeLabel->m_color = Color4F(1.0f, 0.0f, 0.0f, 1.0f);
+	else
+		g_pDeltaTimeLabel->m_color = Color4F(0.0f, 1.0f, 0.0f, 1.0f);
+
+	g_fAccumulatedTime += g_fDeltaTime;
+	++g_iFrame;
+	if ( g_fAccumulatedTime >= 1.0f )
+	{
+		char buf[50] = {0};
+		sprintf(buf, "FPS:%d", g_iFrame);
+		g_pFPSLabel->SetString(buf);
+
+		if ( g_iFrame <= 30 )
+			g_pFPSLabel->m_color = Color4F(1.0f, 0.0f, 0.0f, 1.0f);
+		else
+			g_pFPSLabel->m_color = Color4F(0.0f, 1.0f, 0.0f, 1.0f);
+
+		g_iFrame = 0;
+		g_fAccumulatedTime = 0;
+	}
+
+	g_pFPSLabel->Render();
 
 	//g_particleSystem->GetTransformData().m_pos.x = 50 * sin(10 * g_fElapsedTime);
 	//g_particleSystem->Update(g_fDeltaTime);
@@ -167,7 +203,7 @@ void keyboard(unsigned char key, int x, int y)
 	}
 
 	CDirector::GetInstance()->GetPerspectiveCamera()->Move(iMoveLeftRight, 0, iMoveForwardBack);
-	CDirector::GetInstance()->GetOrthographicCamera()->Move(iMoveLeftRight, 0, iMoveForwardBack);
+	//CDirector::GetInstance()->GetOrthographicCamera()->Move(iMoveLeftRight, 0, iMoveForwardBack);
 }
 
 void mouse_down( int button, int state, int x, int y )
@@ -191,7 +227,7 @@ void mouse_move(int x,int y)
 		float fYawDelta = (g_lastMousePos.x - x) * 0.1f;
 
 		CDirector::GetInstance()->GetPerspectiveCamera()->Rotate(fPitchDelta, fYawDelta);
-		CDirector::GetInstance()->GetOrthographicCamera()->Rotate(fPitchDelta, fYawDelta);
+		//CDirector::GetInstance()->GetOrthographicCamera()->Rotate(fPitchDelta, fYawDelta);
 		g_lastMousePos = Vec2(x, y);
 	}
 }

@@ -15,7 +15,9 @@ public:
 	void SetString(const std::string& sContent);
 	void Render();
 	void SetGLProgram(GLuint theProgram);
+
 	STransform m_transform;
+	Color4F m_color;
 
 private:
 	void InitVBOAndVAO();
@@ -48,6 +50,7 @@ private:
 	GLuint m_vertexAttributeObj;
 
 	GLuint m_theProgram;
+
 
 	std::string m_sContent;
 	char* m_pTexData;
