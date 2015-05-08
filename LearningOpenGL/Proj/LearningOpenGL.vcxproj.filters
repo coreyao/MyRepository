@@ -70,6 +70,9 @@
     <ClCompile Include="..\Source\FrameWork\GLLabel.cpp">
       <Filter>Source Files\FrameWork</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\GLPrimitive.cpp">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\FrameWork\Utility.h">
@@ -115,6 +118,9 @@
       <Filter>Source Files\FrameWork</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\FrameWork\GLLabel.h">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\GLPrimitive.h">
       <Filter>Source Files\FrameWork</Filter>
     </ClInclude>
   </ItemGroup>
