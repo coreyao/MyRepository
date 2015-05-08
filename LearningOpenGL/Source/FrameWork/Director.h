@@ -9,6 +9,7 @@ public:
 	static CDirector* GetInstance();
 
 	void Init();
+
 	CCamera* GetPerspectiveCamera();
 	CCamera* GetOrthographicCamera();
 private:

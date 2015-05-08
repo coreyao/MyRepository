@@ -8,13 +8,6 @@ class CParticleInstance
 private:
 	friend class CEmitter;
 
-	struct SVertex
-	{
-		Vec3 m_pos;
-		Color4F m_color;
-		Vec2 m_UV;
-	};
-
 public:
 	CParticleInstance()
 		: m_fCurLifeTime(0.0f)
@@ -64,7 +57,7 @@ private:
 
 	CEmitter* m_pEmitter;
 
-	std::vector<SVertex> m_vVertex;
+	std::vector<SCommonVertex> m_vVertex;
 	std::vector<unsigned short> m_vVertexIndex;
 	GLuint m_vao;
 	GLuint m_vbo;

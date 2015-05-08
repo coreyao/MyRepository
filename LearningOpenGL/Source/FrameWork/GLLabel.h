@@ -23,16 +23,9 @@ private:
 	void InitVBOAndVAO();
 	void InitUniform();
 
-	struct SVertex
-	{
-		Vec3 m_pos;
-		Color4F m_color;
-		Vec2 m_UV;
-	};
-
 	struct SLetter
 	{
-		SVertex m_vVertex[4];
+		SCommonVertex m_vVertex[4];
 		unsigned short m_vVertexIndex[6];
 	};
 

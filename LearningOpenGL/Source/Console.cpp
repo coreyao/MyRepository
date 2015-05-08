@@ -7,6 +7,7 @@
 #include "FrameWork/Director.h"
 #include "FrameWork/GLParticleSystem.h"
 #include "FrameWork/GLLabel.h"
+#include "FrameWork/GLPrimitive.h"
 
 COGLMesh* g_planeMesh = nullptr;
 std::vector<COGLMesh*> g_vMesh;
@@ -15,6 +16,9 @@ std::vector<GLuint> g_vGLProgram;
 GLParticleSystem* g_particleSystem = nullptr;
 CGLLabel* g_pDeltaTimeLabel = nullptr;
 CGLLabel* g_pFPSLabel = nullptr;
+
+CGLPrimitive* g_pLineDrawer = nullptr;
+CGLPrimitive* g_pPointDrawer = nullptr;
 
 timeval g_fLastTime = {0, 0};
 float g_fDeltaTime = 0.0f;
@@ -35,6 +39,7 @@ void init()
 	CGLProgramManager::GetInstance()->Add("StaticMesh", SHADER_FILE_DIR + "Mesh_Vertex_Shader.vert", SHADER_FILE_DIR + "Mesh_Fragment_Shader.frag");
 	CGLProgramManager::GetInstance()->Add("Particle", SHADER_FILE_DIR + "Particle_Vertex_Shader.vert", SHADER_FILE_DIR + "Particle_Fragment_Shader.frag");
 	CGLProgramManager::GetInstance()->Add("Label", SHADER_FILE_DIR + "Label_Vertex_Shader.vert", SHADER_FILE_DIR + "Label_Fragment_Shader.frag");
+	CGLProgramManager::GetInstance()->Add("Primitive", SHADER_FILE_DIR + "Primitive_Vertex_Shader.vert", SHADER_FILE_DIR + "Primitive_Fragment_Shader.frag");
 
 	g_pDeltaTimeLabel = new CGLLabel(FONT_FILE_DIR + "simyou.ttf", 20);
 	g_pDeltaTimeLabel->m_transform.m_pos.x = -RESOLUTION_WIDTH / 2 + 10;
@@ -47,7 +52,14 @@ void init()
 	g_pFPSLabel->m_transform.m_pos.y = g_pDeltaTimeLabel->m_transform.m_pos.y - 20;
 	g_pFPSLabel->m_color = Color4F(0.0f, 1.0f, 0.0f, 1.0f);
 
-	//g_particleSystem = new GLParticleSystem;
+	g_pLineDrawer = new CGLPrimitive(CGLPrimitive::EPrimitiveType_Line);
+	g_pLineDrawer->DrawLine(Vec3(0, 0, 0), Vec3(100, 100, 0));
+	g_pLineDrawer->DrawLine(Vec3(100, 100, 0), Vec3(200, 100, 0));
+
+	g_pPointDrawer = new CGLPrimitive(CGLPrimitive::EPrimitiveType_Point);
+	g_pPointDrawer->DrawPoint(Vec3(-100, -100, 0), 5);
+
+	g_particleSystem = new GLParticleSystem;
 	//g_particleSystem->GetTransformData().m_rotation.x = -90;
 	//g_particleSystem->GetTransformData().m_pos.z = 80;
 	//CEmitter* pEmitter = new CEmitter;
@@ -65,7 +77,7 @@ void init()
 	//pEmitter->GetParticleAlphaOverLifeTimeRef().Init<double>(EPropertyType_Liner, 4, SKeyNode<float>(0.0f, 0.0f), SKeyNode<float>(0.191f, 255.0f), SKeyNode<float>(0.818f, 69.0f), SKeyNode<float>(1.0f, 0.0f));
 	//g_particleSystem->AddEmitter(pEmitter);
 
-	/*CEmitter* pEmitter = new CEmitter;
+	CEmitter* pEmitter = new CEmitter;
 	pEmitter->SetTotalDuration(5.0f);
 	pEmitter->SetTexture("ParticleCloudWhite.png");
 	pEmitter->SetEmitMode(CEmitter::EEmitMode_Relative);
@@ -84,7 +96,7 @@ void init()
 	pEmitter->GetParticleZRotationOverLifeTimeRef().Init<double>(EPropertyType_RandomBetweenCurve, 2, 4, 180.0f, 180.0f, 30.0f, 30.0f, 4, -180.0f, -180.0f, -30.0f, -30.0f);
 	pEmitter->GetEmitterShapeRef().SetShape(CEmitterShape::EShape_Box);
 	pEmitter->GetEmitterShapeRef().SetExtent(Vec3(100, 0, 100));
-	g_particleSystem->AddEmitter(pEmitter);*/
+	g_particleSystem->AddEmitter(pEmitter);
 
 	g_planeMesh = new COGLMesh;
 	g_planeMesh->InitFromFile("plane.CSTM");
@@ -170,11 +182,13 @@ void display()
 		g_fAccumulatedTime = 0;
 	}
 
+	g_pPointDrawer->Render();
 	g_pFPSLabel->Render();
+	g_pLineDrawer->Render();
 
 	//g_particleSystem->GetTransformData().m_pos.x = 50 * sin(10 * g_fElapsedTime);
-	//g_particleSystem->Update(g_fDeltaTime);
-	//g_particleSystem->Render();
+	g_particleSystem->Update(g_fDeltaTime);
+	g_particleSystem->Render();
 	
 	glutSwapBuffers();
 	glutPostRedisplay();

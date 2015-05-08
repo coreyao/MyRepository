@@ -23,7 +23,7 @@ void SSubMeshData::WriteToFile(FILE* hFile)
 
 	if(iVertexCount > 0)  
 	{  
-		fwrite(&m_vVectex.front(), sizeof(SVertex), m_vVectex.size(), hFile);  
+		fwrite(&m_vVectex.front(), sizeof(SSkinMeshVertex), m_vVectex.size(), hFile);  
 	}  
 
 	if(iIndexCount > 0 )  
@@ -66,7 +66,7 @@ void SSubMeshData::ReadFromFile( FILE* hFile )
 	if(iVertexCount > 0)  
 	{  
 		m_vVectex.resize(iVertexCount);
-		fread(&m_vVectex.front(), sizeof(SVertex), iVertexCount, hFile);
+		fread(&m_vVectex.front(), sizeof(SSkinMeshVertex), iVertexCount, hFile);
 	}
 
 	if(iIndexCount > 0)  

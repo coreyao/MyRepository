@@ -233,7 +233,7 @@ void CParticleInstance::Update( float dt )
 
 void CParticleInstance::BuildVBOAndVAO()
 {
-	SVertex leftTop;
+	SCommonVertex leftTop;
 	leftTop.m_pos.x = -0.5f;
 	leftTop.m_pos.y = 0.5f;
 	leftTop.m_UV.x = 0;
@@ -241,7 +241,7 @@ void CParticleInstance::BuildVBOAndVAO()
 	leftTop.m_color = Color4F::WHITE;
 	m_vVertex.push_back(leftTop);
 
-	SVertex rightTop;
+	SCommonVertex rightTop;
 	rightTop.m_pos.x = 0.5f;
 	rightTop.m_pos.y = 0.5f;
 	rightTop.m_UV.x = 1;
@@ -249,7 +249,7 @@ void CParticleInstance::BuildVBOAndVAO()
 	rightTop.m_color = Color4F::WHITE;
 	m_vVertex.push_back(rightTop);
 
-	SVertex rightBottom;
+	SCommonVertex rightBottom;
 	rightBottom.m_pos.x = 0.5f;
 	rightBottom.m_pos.y = -0.5f;
 	rightBottom.m_UV.x = 1;
@@ -257,7 +257,7 @@ void CParticleInstance::BuildVBOAndVAO()
 	rightBottom.m_color = Color4F::WHITE;
 	m_vVertex.push_back(rightBottom);
 
-	SVertex leftBottom;
+	SCommonVertex leftBottom;
 	leftBottom.m_pos.x = -0.5f;
 	leftBottom.m_pos.y = -0.5f;
 	leftBottom.m_UV.x = 0;
@@ -275,7 +275,7 @@ void CParticleInstance::BuildVBOAndVAO()
 
 	glGenBuffers(1, &m_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-	glBufferData(GL_ARRAY_BUFFER, m_vVertex.size() * sizeof(CParticleInstance::SVertex), &m_vVertex.front(), GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_vVertex.size() * sizeof(SCommonVertex), &m_vVertex.front(), GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glGenBuffers(1, &m_index_vbo);
@@ -322,11 +322,11 @@ void CParticleInstance::Render()
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(CParticleInstance::SVertex, m_pos));
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(SCommonVertex), (GLvoid*) offsetof(SCommonVertex, m_pos));
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(CParticleInstance::SVertex, m_color));
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(SCommonVertex), (GLvoid*) offsetof(SCommonVertex, m_color));
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(CParticleInstance::SVertex, m_UV));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(SCommonVertex), (GLvoid*) offsetof(SCommonVertex, m_UV));
 
 	GLint modelViewMatrixUnif = glGetUniformLocation(m_theProgram, "modelViewMatrix");	
 	if ( modelViewMatrixUnif >= 0 )
@@ -440,7 +440,7 @@ void CParticleInstance::SetVertexColor()
 	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-	glBufferData(GL_ARRAY_BUFFER, m_vVertex.size() * sizeof(CParticleInstance::SVertex), &m_vVertex.front(), GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_vVertex.size() * sizeof(SCommonVertex), &m_vVertex.front(), GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 

@@ -234,7 +234,7 @@ void COGLMesh::InitVBOAndVAO()
 	{
 		glGenBuffers(1, &m_vertexDataObj[i]);
 		glBindBuffer(GL_ARRAY_BUFFER, m_vertexDataObj[i]);
-		glBufferData(GL_ARRAY_BUFFER, m_data.m_vSubMesh[i].m_vVectex.size() * sizeof(SVertex), &m_data.m_vSubMesh[i].m_vVectex.front(), GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, m_data.m_vSubMesh[i].m_vVectex.size() * sizeof(SSkinMeshVertex), &m_data.m_vSubMesh[i].m_vVectex.front(), GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		glGenBuffers(1, &m_vertexIndexObj[i]);
@@ -247,13 +247,13 @@ void COGLMesh::InitVBOAndVAO()
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_vertexDataObj[i]);
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(SVertex, m_position));
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(SSkinMeshVertex), (GLvoid*) offsetof(SSkinMeshVertex, m_position));
 		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(SVertex, m_texCoord));
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(SSkinMeshVertex), (GLvoid*) offsetof(SSkinMeshVertex, m_texCoord));
 		glEnableVertexAttribArray(2);
-		glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(SVertex, m_boneIndex));
+		glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(SSkinMeshVertex), (GLvoid*) offsetof(SSkinMeshVertex, m_boneIndex));
 		glEnableVertexAttribArray(3);
-		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(SVertex, m_blendWeight));
+		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(SSkinMeshVertex), (GLvoid*) offsetof(SSkinMeshVertex, m_blendWeight));
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);

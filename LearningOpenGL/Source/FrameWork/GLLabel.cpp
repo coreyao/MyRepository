@@ -133,7 +133,7 @@ void CGLLabel::Render()
 		}
 	}
 
-	std::vector< SVertex > vVertex;
+	std::vector< SCommonVertex > vVertex;
 	std::vector< unsigned short > vVertexIndex;
 	for ( auto& letter : vLetter )
 	{
@@ -153,18 +153,18 @@ void CGLLabel::Render()
 		GL_LUMINANCE, GL_UNSIGNED_BYTE, m_pTexData);
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_vertexDataObj);
-		glBufferData(GL_ARRAY_BUFFER, vVertex.size() * sizeof(SVertex), &vVertex.front(), GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, vVertex.size() * sizeof(SCommonVertex), &vVertex.front(), GL_STATIC_DRAW);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vertexIndexObj);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, vVertexIndex.size() * sizeof(unsigned short), &vVertexIndex.front(), GL_STATIC_DRAW);
 
 		glBindVertexArray(m_vertexAttributeObj);
 		glBindBuffer(GL_ARRAY_BUFFER, m_vertexDataObj);
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(SVertex, m_pos));
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(SCommonVertex), (GLvoid*) offsetof(SCommonVertex, m_pos));
 		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(SVertex, m_color));
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(SCommonVertex), (GLvoid*) offsetof(SCommonVertex, m_color));
 		glEnableVertexAttribArray(2);
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(SVertex), (GLvoid*) offsetof(SVertex, m_UV));
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(SCommonVertex), (GLvoid*) offsetof(SCommonVertex, m_UV));
 
 		glActiveTexture(GL_TEXTURE0 + m_colorTexUnit);
 		glBindTexture(GL_TEXTURE_2D, m_iTexture);

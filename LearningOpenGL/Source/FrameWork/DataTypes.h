@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <queue>
 
 #include "Math/Vector.h"
 #include "Math/Quaternion.h"
@@ -87,9 +88,9 @@ struct SFace
 	int m_VertexIndex3;
 };
 
-struct SVertex
+struct SSkinMeshVertex
 {
-	SVertex()
+	SSkinMeshVertex()
 	{
 	}
 
@@ -99,6 +100,13 @@ struct SVertex
 	Color4F m_color;
 	Vec4 m_boneIndex;
 	Vec4 m_blendWeight;
+};
+
+struct SCommonVertex
+{
+	Vec3 m_pos;
+	Color4F m_color;
+	Vec2 m_UV;
 };
 
 struct STextureData
@@ -176,7 +184,7 @@ struct SSubMeshData
 	std::string				m_MeshName;
 	Mat4					m_MeshMatrix;
 	std::vector<SFace>		m_vFace;
-	std::vector<SVertex>	m_vVectex;
+	std::vector<SSkinMeshVertex>	m_vVectex;
 	SMaterialData			m_cMaterial;
 };
 
