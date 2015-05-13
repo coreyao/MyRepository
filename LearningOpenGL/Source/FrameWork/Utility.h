@@ -3,6 +3,7 @@
 #include <winsock.h>
 #include <functional>
 #include <cassert>
+#include <ctime>
 #include "DataTypes.h"
 
 #ifndef SHADER_FILE_DIR

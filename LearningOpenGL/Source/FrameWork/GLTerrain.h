@@ -6,6 +6,8 @@
 class CGLTerrain
 {
 public:
+	static const int conMaxLOD = 4;
+
 	CGLTerrain(const std::string& sHeightMapFile);
 
 	void Update(float deltaTime);
@@ -24,11 +26,17 @@ private:
 
 	struct SChunk
 	{
+		SChunk()
+			: m_iCurLOD(0)
+		{
+		}
+
+		int m_iCurLOD;
 		GLuint m_vertexIndexObj;
-		SChunkLOD m_vLOD[4];
+		SChunkLOD m_vLOD[conMaxLOD];
 	};
 
-	int m_vLODThreshold[4];
+	int m_vLODThreshold[conMaxLOD];
 	SChunk*** m_vChunk;
 
 	int m_iChunkCountX;

@@ -53,29 +53,34 @@ void CGLTerrain::InitTerrain(const unsigned char* pHeightMapData, int iWidth, in
 		{
 			SChunk* pNewChunk = new SChunk;
 			m_vChunk[i][j] = pNewChunk;
+			pNewChunk->m_iCurLOD = RANDOM_0_1() * conMaxLOD;
+			glGenBuffers(1, &pNewChunk->m_vertexIndexObj);
 
 			int iBase = i * conChunkSize * iWidth + j * conChunkSize;
-			int iSizeHorizental = conChunkSize;
-			int iSizeVerticle = conChunkSize;
-
-			SChunkLOD& rLOD = pNewChunk->m_vLOD[0];
-			for (int m = 0; m < iSizeVerticle; m += 1)
+			for ( int iLOD = 0; iLOD < conMaxLOD; ++iLOD )
 			{
-				for (int n = 0; n < iSizeHorizental; n += 1)
+				int iStep = pow(2, iLOD);
+				SChunkLOD& rLOD = pNewChunk->m_vLOD[iLOD];
+				for (int m = 0; m < conChunkSize; m += iStep)
 				{
-					rLOD.m_vIndex.push_back(iBase + m * iWidth + n);
-					assert(iBase + m * iWidth + n < m_vGlobalVertex.size());
-					rLOD.m_vIndex.push_back(iBase + m * iWidth + n + 1);
-					assert(iBase + m * iWidth + n + 1 < m_vGlobalVertex.size());
-					rLOD.m_vIndex.push_back(iBase + (m + 1) * iWidth + n);
-					assert(iBase + (m + 1) * iWidth + n < m_vGlobalVertex.size());
+					for (int n = 0; n < conChunkSize; n += iStep)
+					{
+						assert(iBase + m * iWidth + n < m_vGlobalVertex.size());
+						assert(iBase + m * iWidth + n + iStep < m_vGlobalVertex.size());
+						assert(iBase + (m + iStep) * iWidth + n < m_vGlobalVertex.size());
 
-					rLOD.m_vIndex.push_back(iBase + m * iWidth + n + 1);
-					assert(iBase + m * iWidth + n + 1 < m_vGlobalVertex.size());
-					rLOD.m_vIndex.push_back(iBase + (m + 1) * iWidth + n + 1);
-					assert(iBase + (m + 1) * iWidth + n + 1 < m_vGlobalVertex.size());
-					rLOD.m_vIndex.push_back(iBase + (m + 1) * iWidth + n);
-					assert(iBase + (m + 1) * iWidth + n < m_vGlobalVertex.size());
+						assert(iBase + m * iWidth + n + iStep < m_vGlobalVertex.size());
+						assert(iBase + (m + iStep) * iWidth + n + iStep < m_vGlobalVertex.size());
+						assert(iBase + (m + iStep) * iWidth + n < m_vGlobalVertex.size());
+
+						rLOD.m_vIndex.push_back(iBase + m * iWidth + n);
+						rLOD.m_vIndex.push_back(iBase + m * iWidth + n + iStep);
+						rLOD.m_vIndex.push_back(iBase + (m + iStep) * iWidth + n);
+
+						rLOD.m_vIndex.push_back(iBase + m * iWidth + n + iStep);
+						rLOD.m_vIndex.push_back(iBase + (m + iStep) * iWidth + n + iStep);
+						rLOD.m_vIndex.push_back(iBase + (m + iStep) * iWidth + n);
+					}
 				}
 			}
 
@@ -85,11 +90,6 @@ void CGLTerrain::InitTerrain(const unsigned char* pHeightMapData, int iWidth, in
 				unsigned int iIndex = pNewChunk->m_vLOD[0].m_vIndex[i];
 				m_vGlobalVertex[iIndex].m_color = randomColor;
 			}
-
-			glGenBuffers(1, &pNewChunk->m_vertexIndexObj);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pNewChunk->m_vertexIndexObj);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, rLOD.m_vIndex.size() * sizeof(rLOD.m_vIndex[0]), &rLOD.m_vIndex.front(), GL_STATIC_DRAW);
-			glGenBuffers(GL_ELEMENT_ARRAY_BUFFER, 0);
 		}
 	}
 
@@ -159,7 +159,10 @@ void CGLTerrain::Render()
 			SChunk* pChunk = m_vChunk[i][j];
 
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pChunk->m_vertexIndexObj);
-			glDrawElements(GL_TRIANGLES, pChunk->m_vLOD[0].m_vIndex.size(), GL_UNSIGNED_INT, 0);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, pChunk->m_vLOD[pChunk->m_iCurLOD].m_vIndex.size() * sizeof(pChunk->m_vLOD[pChunk->m_iCurLOD].m_vIndex[0]), &pChunk->m_vLOD[pChunk->m_iCurLOD].m_vIndex.front(), GL_STATIC_DRAW);
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pChunk->m_vertexIndexObj);
+			glDrawElements(GL_TRIANGLES, pChunk->m_vLOD[pChunk->m_iCurLOD].m_vIndex.size(), GL_UNSIGNED_INT, 0);
 		}
 	}
 
