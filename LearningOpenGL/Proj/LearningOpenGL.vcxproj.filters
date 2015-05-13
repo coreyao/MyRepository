@@ -73,6 +73,9 @@
     <ClCompile Include="..\Source\FrameWork\GLPrimitive.cpp">
       <Filter>Source Files\FrameWork</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\GLTerrain.cpp">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\FrameWork\Utility.h">
@@ -123,6 +126,9 @@
     <ClInclude Include="..\Source\FrameWork\GLPrimitive.h">
       <Filter>Source Files\FrameWork</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\GLTerrain.h">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Resource\Shaders\Mesh_Fragment_Shader.frag">
@@ -150,6 +156,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Resource\Shaders\Primitive_Vertex_Shader.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Resource\Shaders\Terrain_Fragment_Shader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Resource\Shaders\Terrain_Vertex_Shader.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

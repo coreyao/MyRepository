@@ -19,6 +19,7 @@
     <ClCompile Include="..\Source\FrameWork\GLMesh.cpp" />
     <ClCompile Include="..\Source\FrameWork\GLParticleSystem.cpp" />
     <ClCompile Include="..\Source\FrameWork\GLPrimitive.cpp" />
+    <ClCompile Include="..\Source\FrameWork\GLTerrain.cpp" />
     <ClCompile Include="..\Source\FrameWork\Image\ImageReader.cpp" />
     <ClCompile Include="..\Source\FrameWork\Image\PNGReader.cpp" />
     <ClCompile Include="..\Source\FrameWork\Math\Matrix.cpp" />
@@ -38,6 +39,7 @@
     <ClInclude Include="..\Source\FrameWork\GLMesh.h" />
     <ClInclude Include="..\Source\FrameWork\GLParticleSystem.h" />
     <ClInclude Include="..\Source\FrameWork\GLPrimitive.h" />
+    <ClInclude Include="..\Source\FrameWork\GLTerrain.h" />
     <ClInclude Include="..\Source\FrameWork\Image\ImageReader.h" />
     <ClInclude Include="..\Source\FrameWork\Image\PNGReader.h" />
     <ClInclude Include="..\Source\FrameWork\Math\Matrix.h" />
@@ -57,6 +59,8 @@
     <None Include="..\Resource\Shaders\Primitive_Fragment_Shader.frag" />
     <None Include="..\Resource\Shaders\Primitive_Vertex_Shader.vert" />
     <None Include="..\Resource\Shaders\SkinMesh_Vertex_Shader.vert" />
+    <None Include="..\Resource\Shaders\Terrain_Fragment_Shader.frag" />
+    <None Include="..\Resource\Shaders\Terrain_Vertex_Shader.vert" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{5A2DB272-BBFB-456E-8F56-E0CE3791347B}</ProjectGuid>

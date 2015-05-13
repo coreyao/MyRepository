@@ -38,6 +38,9 @@ void CPNGReader::ReadData(const std::string& sFileName)
 	int pos = 0;
 	png_bytep* row_pointers = png_get_rows(png_ptr, info_ptr);
 
+	if ( color_type != 6 )
+		m_eType = CImageReader::EImageType_RGB888;
+
 	int block_size = color_type == 6 ? 4 : 3;
 	m_pData = new unsigned char[size];
 	for(int i = 0; i < m_fHeight; i++)

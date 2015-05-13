@@ -138,6 +138,6 @@ void CSkeletonAnimator::Reset()
 
 CBaseMesh::CBaseMesh()
 	: m_bEnableCullFace(true)
-	, m_bDrawPolygon(false)
+	, m_bDrawWireFrame(false)
 {
 }

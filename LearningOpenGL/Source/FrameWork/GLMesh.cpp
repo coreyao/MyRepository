@@ -113,7 +113,7 @@ void COGLMesh::Render()
 		glDisable(GL_CULL_FACE);
 	}
 
-	if ( m_bDrawPolygon )
+	if ( m_bDrawWireFrame )
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
@@ -166,7 +166,7 @@ void COGLMesh::Render()
 		glBindSampler(m_colorTexUnit, 0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glBindVertexArray(0);
-		if ( m_bDrawPolygon )
+		if ( m_bDrawWireFrame )
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 	

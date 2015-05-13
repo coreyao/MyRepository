@@ -2,6 +2,7 @@
 
 #include <winsock.h>
 #include <functional>
+#include <cassert>
 #include "DataTypes.h"
 
 #ifndef SHADER_FILE_DIR

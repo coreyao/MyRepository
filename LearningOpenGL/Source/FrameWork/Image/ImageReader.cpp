@@ -4,6 +4,7 @@ CImageReader::CImageReader()
 	: m_pData(nullptr)
 	, m_fWidth(0)
 	, m_fHeight(0)
+	, m_eType(EImageType_RGB8888)
 {
 }
 
@@ -31,4 +32,9 @@ float CImageReader::GetWidth()
 float CImageReader::GetHeight()
 {
 	return m_fHeight;
+}
+
+CImageReader::EImageType CImageReader::GetImageType()
+{
+	return m_eType;
 }

@@ -8,6 +8,7 @@
 #include "FrameWork/GLParticleSystem.h"
 #include "FrameWork/GLLabel.h"
 #include "FrameWork/GLPrimitive.h"
+#include "FrameWork/GLTerrain.h"
 
 COGLMesh* g_planeMesh = nullptr;
 std::vector<COGLMesh*> g_vMesh;
@@ -20,10 +21,12 @@ CGLLabel* g_pFPSLabel = nullptr;
 CGLPrimitive* g_pLineDrawer = nullptr;
 CGLPrimitive* g_pPointDrawer = nullptr;
 
+CGLTerrain* g_pTerrain = nullptr;
+
 timeval g_fLastTime = {0, 0};
 float g_fDeltaTime = 0.0f;
 float g_fElapsedTime = 0.0f;
-int g_iStepLength = 3;
+int g_iStepLength = 30;
 
 int g_iFrame = 0;
 float g_fAccumulatedTime = 0;
@@ -31,7 +34,7 @@ float g_fAccumulatedTime = 0;
 Vec2 g_lastMousePos;
 bool g_bMouseRightButtonClicked = false;
 
-bool bDrawMesh = true;
+bool bDrawMesh = false;
 
 void init()
 {
@@ -40,6 +43,7 @@ void init()
 	CGLProgramManager::GetInstance()->Add("Particle", SHADER_FILE_DIR + "Particle_Vertex_Shader.vert", SHADER_FILE_DIR + "Particle_Fragment_Shader.frag");
 	CGLProgramManager::GetInstance()->Add("Label", SHADER_FILE_DIR + "Label_Vertex_Shader.vert", SHADER_FILE_DIR + "Label_Fragment_Shader.frag");
 	CGLProgramManager::GetInstance()->Add("Primitive", SHADER_FILE_DIR + "Primitive_Vertex_Shader.vert", SHADER_FILE_DIR + "Primitive_Fragment_Shader.frag");
+	CGLProgramManager::GetInstance()->Add("Terrain", SHADER_FILE_DIR + "Terrain_Vertex_Shader.vert", SHADER_FILE_DIR + "Terrain_Fragment_Shader.frag");
 
 	g_pDeltaTimeLabel = new CGLLabel(FONT_FILE_DIR + "simyou.ttf", 20);
 	g_pDeltaTimeLabel->m_transform.m_pos.x = -RESOLUTION_WIDTH / 2 + 10;
@@ -83,7 +87,7 @@ void init()
 	pEmitter->SetEmitMode(CEmitter::EEmitMode_Relative);
 	pEmitter->SetEmissionRate(100.0f);
 	pEmitter->SetMaxParticles(1000);
-	pEmitter->SetRenderMode(CEmitter::ERenderMode_HorizontalBillboard);
+	pEmitter->SetRenderMode(CEmitter::ERenderMode_VerticalBillboard);
 	pEmitter->SetShaderColor(Color4F(204.0f / 255, 190.0f / 255, 174.0f / 255, 18.0f / 255));
 	pEmitter->GetParticleStartLifeTimeRef().Init<double>(EPropertyType_Constant, 5.0f);
 	pEmitter->GetParticleStartSpeedRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 20.0f, 40.0f);
@@ -119,6 +123,11 @@ void init()
 	pSkinMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("SkinMesh") );
 	//pSkinMesh->SetVisible(false, "Box01");
 	g_vMesh.push_back(pSkinMesh);
+
+	g_pTerrain = new CGLTerrain("heightmap16.png");
+	g_pTerrain->m_transform.m_pos.y -= 400;
+	g_pTerrain->m_transform.m_scale.x = 10;
+	g_pTerrain->m_transform.m_scale.z = 10;
 }
 
 void display()
@@ -158,7 +167,6 @@ void display()
 	char buf[50] = {0};
 	sprintf(buf, "DeltaTime:%f", g_fDeltaTime);
 	g_pDeltaTimeLabel->SetString(buf);
-	g_pDeltaTimeLabel->Render();
 	if ( g_fDeltaTime >= 0.5f )
 		g_pDeltaTimeLabel->m_color = Color4F(1.0f, 0.0f, 0.0f, 1.0f);
 	else
@@ -181,13 +189,16 @@ void display()
 		g_fAccumulatedTime = 0;
 	}
 
-	g_pPointDrawer->Render();
+	//g_pPointDrawer->Render();
+	g_pDeltaTimeLabel->Render();
 	g_pFPSLabel->Render();
-	g_pLineDrawer->Render();
+	//g_pLineDrawer->Render();
 
 	//g_particleSystem->GetTransformData().m_pos.x = 50 * sin(10 * g_fElapsedTime);
-	g_particleSystem->Update(g_fDeltaTime);
-	g_particleSystem->Render();
+	//g_particleSystem->Update(g_fDeltaTime);
+	//g_particleSystem->Render();
+
+	g_pTerrain->Render();
 	
 	glutSwapBuffers();
 	glutPostRedisplay();
