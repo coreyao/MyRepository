@@ -34,6 +34,7 @@ private:
 	int m_iChunkCountX;
 	int m_iChunkCountY;
 
+	std::vector<SCommonVertex> m_vGlobalVertex;
 	bool m_bDrawWireFrame;
 
 	GLuint m_theProgram;

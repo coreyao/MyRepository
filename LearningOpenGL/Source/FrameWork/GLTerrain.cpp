@@ -29,7 +29,6 @@ CGLTerrain::CGLTerrain( const std::string& sHeightMapFile )
 
 void CGLTerrain::InitTerrain(const unsigned char* pHeightMapData, int iWidth, int iHeight)
 {
-	std::vector<SCommonVertex> vGlobalVertex;
 	for (int i = 0; i < iHeight; ++i)
 	{
 		for (int j = 0; j < iWidth; ++j)
@@ -39,7 +38,7 @@ void CGLTerrain::InitTerrain(const unsigned char* pHeightMapData, int iWidth, in
 			newVertex.m_pos = Vec3( j, fHeight, i);
 			newVertex.m_color = Color4F::WHITE;
 		
-			vGlobalVertex.push_back(newVertex);
+			m_vGlobalVertex.push_back(newVertex);
 		}
 	}
 
@@ -65,19 +64,26 @@ void CGLTerrain::InitTerrain(const unsigned char* pHeightMapData, int iWidth, in
 				for (int n = 0; n < iSizeHorizental; n += 1)
 				{
 					rLOD.m_vIndex.push_back(iBase + m * iWidth + n);
-					assert(iBase + m * iWidth + n < vGlobalVertex.size());
+					assert(iBase + m * iWidth + n < m_vGlobalVertex.size());
 					rLOD.m_vIndex.push_back(iBase + m * iWidth + n + 1);
-					assert(iBase + m * iWidth + n + 1 < vGlobalVertex.size());
+					assert(iBase + m * iWidth + n + 1 < m_vGlobalVertex.size());
 					rLOD.m_vIndex.push_back(iBase + (m + 1) * iWidth + n);
-					assert(iBase + (m + 1) * iWidth + n < vGlobalVertex.size());
+					assert(iBase + (m + 1) * iWidth + n < m_vGlobalVertex.size());
 
 					rLOD.m_vIndex.push_back(iBase + m * iWidth + n + 1);
-					assert(iBase + m * iWidth + n + 1 < vGlobalVertex.size());
+					assert(iBase + m * iWidth + n + 1 < m_vGlobalVertex.size());
 					rLOD.m_vIndex.push_back(iBase + (m + 1) * iWidth + n + 1);
-					assert(iBase + (m + 1) * iWidth + n + 1 < vGlobalVertex.size());
+					assert(iBase + (m + 1) * iWidth + n + 1 < m_vGlobalVertex.size());
 					rLOD.m_vIndex.push_back(iBase + (m + 1) * iWidth + n);
-					assert(iBase + (m + 1) * iWidth + n < vGlobalVertex.size());
+					assert(iBase + (m + 1) * iWidth + n < m_vGlobalVertex.size());
 				}
+			}
+
+			Color4F randomColor = Color4F( RANDOM_0_1(), RANDOM_0_1(), RANDOM_0_1(), 1.0f );
+			for ( int i = 0; i < pNewChunk->m_vLOD[0].m_vIndex.size(); ++i )
+			{
+				unsigned int iIndex = pNewChunk->m_vLOD[0].m_vIndex[i];
+				m_vGlobalVertex[iIndex].m_color = randomColor;
 			}
 
 			glGenBuffers(1, &pNewChunk->m_vertexIndexObj);
@@ -89,7 +95,7 @@ void CGLTerrain::InitTerrain(const unsigned char* pHeightMapData, int iWidth, in
 
 	glGenBuffers(1, &m_vertexDataObj);
 	glBindBuffer(GL_ARRAY_BUFFER, m_vertexDataObj);
-	glBufferData(GL_ARRAY_BUFFER, vGlobalVertex.size() * sizeof(SCommonVertex), &vGlobalVertex.front(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_vGlobalVertex.size() * sizeof(SCommonVertex), &m_vGlobalVertex.front(), GL_STATIC_DRAW);
 	glGenBuffers(GL_ARRAY_BUFFER, 0);
 }
 
@@ -105,17 +111,24 @@ void CGLTerrain::Update( float deltaTime )
 
 void CGLTerrain::Render()
 {
-	glDisable(GL_CULL_FACE);
-	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CW);
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	glDepthFunc(GL_LEQUAL);
+	glDepthRange(0.0f, 1.0f);
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glUseProgram(m_theProgram);
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_vertexDataObj);
+	glBufferData(GL_ARRAY_BUFFER, m_vGlobalVertex.size() * sizeof(SCommonVertex), &m_vGlobalVertex.front(), GL_DYNAMIC_DRAW);
 
 	glBindVertexArray(m_vertexAttributeObj);
 	glEnableVertexAttribArray(0);
