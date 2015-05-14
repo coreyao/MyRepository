@@ -36,6 +36,8 @@ bool g_bMouseRightButtonClicked = false;
 
 bool bDrawMesh = false;
 
+bool bDrawWireFrame = false;
+
 void init()
 {
 	srand(time(nullptr));
@@ -128,10 +130,12 @@ void init()
 
 	g_pTerrain = new CGLTerrain("heightmap16.png");
 	g_pTerrain->SetDetailTexture("sand.png");
+	g_pTerrain->SetDrawWireFrame(false);
 	g_pTerrain->m_transform.m_pos.x -= 1000;
 	g_pTerrain->m_transform.m_pos.y -= 400;
 	g_pTerrain->m_transform.m_pos.z -= 1000;
 	g_pTerrain->m_transform.m_scale.x = 10;
+	g_pTerrain->m_transform.m_scale.y = 3;
 	g_pTerrain->m_transform.m_scale.z = 10;
 }
 
@@ -230,7 +234,10 @@ void keyboard(unsigned char key, int x, int y)
 	case 'd': iMoveLeftRight = g_iStepLength; break;
 	case 'w': iMoveForwardBack = g_iStepLength; break;
 	case 's': iMoveForwardBack = -g_iStepLength; break;
+	case 'b': bDrawWireFrame = !bDrawWireFrame; break;
 	}
+
+	g_pTerrain->SetDrawWireFrame(bDrawWireFrame);
 
 	CDirector::GetInstance()->GetPerspectiveCamera()->Move(iMoveLeftRight, 0, iMoveForwardBack);
 	//CDirector::GetInstance()->GetOrthographicCamera()->Move(iMoveLeftRight, 0, iMoveForwardBack);
