@@ -127,6 +127,7 @@ void init()
 	g_vMesh.push_back(pSkinMesh);
 
 	g_pTerrain = new CGLTerrain("heightmap16.png");
+	g_pTerrain->SetDetailTexture("sand.png");
 	g_pTerrain->m_transform.m_pos.x -= 1000;
 	g_pTerrain->m_transform.m_pos.y -= 400;
 	g_pTerrain->m_transform.m_pos.z -= 1000;
@@ -202,6 +203,7 @@ void display()
 	//g_particleSystem->Update(g_fDeltaTime);
 	//g_particleSystem->Render();
 
+	g_pTerrain->Update(g_fDeltaTime);
 	g_pTerrain->Render();
 	
 	glutSwapBuffers();

@@ -84,6 +84,15 @@ Vec3 Vec3::operator+=( const Vec3& rh )
 	return *this;
 }
 
+float Vec3::Distance( const Vec3& rh )
+{
+	float dx = rh.x - this->x;
+	float dy = rh.y - this->y;
+	float dz = rh.z - this->z;
+
+	return sqrt( dx * dx + dy * dy + dz * dz );
+}
+
 void Vec4::set( float xx, float yy, float zz, float ww )
 {
 	x = xx; y = yy; z = zz; w = ww;

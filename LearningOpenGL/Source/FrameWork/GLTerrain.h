@@ -13,11 +13,15 @@ public:
 	void Update(float deltaTime);
 	void Render();
 	void SetGLProgram(GLint theProgram);
+	void SetLODThreshold( float LOD_1, float LOD_2, float LOD_3 );
+	void SetDetailTexture( const std::string& sTex1, const std::string& sTex2 = "");
 
 	STransform m_transform;
 
 private:
 	void InitTerrain(const unsigned char* pHeightMapData, int iWidth, int iHeight);
+	void InitUniform();
+	void UpdateChunkLOD(const Vec3& cameraPos);
 
 	struct SChunkLOD
 	{
@@ -36,7 +40,7 @@ private:
 		SChunkLOD m_vLOD[conMaxLOD];
 	};
 
-	int m_vLODThreshold[conMaxLOD];
+	int m_vLODThreshold[conMaxLOD - 1];
 	SChunk*** m_vChunk;
 
 	int m_iChunkCountX;
@@ -48,4 +52,9 @@ private:
 	GLuint m_theProgram;
 	GLuint m_vertexAttributeObj;
 	GLuint m_vertexDataObj;
+
+	std::vector<std::string> m_vDetailTex;
+	std::vector<GLuint> m_vTexture;
+	std::vector<GLuint> m_vSampler;
+	int m_colorTexUnit;
 };

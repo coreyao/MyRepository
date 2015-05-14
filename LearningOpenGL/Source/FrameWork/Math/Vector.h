@@ -39,6 +39,7 @@ public:
 	float Dot(const Vec3& rh);
 	Vec3 Cross(const Vec3& rh) const;
 	void set(float xx, float yy, float zz);
+	float Distance( const Vec3& rh );
 
 	void normalize();
 
