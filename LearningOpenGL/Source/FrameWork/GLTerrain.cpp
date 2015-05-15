@@ -6,9 +6,8 @@
 
 const int conChunkSize = 32;
 
-CGLTerrain::CGLTerrain( const std::string& sHeightMapFile )
+CGLSimpleTerrain::CGLSimpleTerrain( const std::string& sHeightMapFile )
 	: m_bDrawWireFrame(false)
-	, m_colorTexUnit(0)
 	, m_iHeightMapWidth(0)
 	, m_iHeightMapHeight(0)
 {
@@ -30,7 +29,7 @@ CGLTerrain::CGLTerrain( const std::string& sHeightMapFile )
 	}
 }
 
-void CGLTerrain::InitTerrain(const unsigned char* pHeightMapData, int iWidth, int iHeight)
+void CGLSimpleTerrain::InitTerrain(const unsigned char* pHeightMapData, int iWidth, int iHeight)
 {
 	m_iHeightMapWidth = iWidth;
 	m_iHeightMapHeight = iHeight;
@@ -68,8 +67,6 @@ void CGLTerrain::InitTerrain(const unsigned char* pHeightMapData, int iWidth, in
 				int iStep = pow(2, iLOD);
 				SChunkLOD& rLOD = pNewChunk->m_vLOD[iLOD];
 				rLOD.m_vIndex.clear();
-				/*SChunkLOD& rFixCrackLOD = pNewChunk->m_vFixCrack[iLOD];
-				rFixCrackLOD.m_vIndex.clear();*/
 				for (int m = 0; m < conChunkSize; m += iStep)
 				{
 					for (int n = 0; n < conChunkSize; n += iStep)
@@ -81,34 +78,6 @@ void CGLTerrain::InitTerrain(const unsigned char* pHeightMapData, int iWidth, in
 						rLOD.m_vIndex.push_back(iBase + (m + iStep) * m_iHeightMapWidth + n);
 						rLOD.m_vIndex.push_back(iBase + m * m_iHeightMapWidth + n + iStep);
 						rLOD.m_vIndex.push_back(iBase + (m + iStep) * m_iHeightMapWidth + n + iStep);
-
-						/*if ( m == 0 || m == conChunkSize - 1 )
-						{
-							int iIndex_1 = iBase + m * m_iHeightMapWidth + n; 
-							int iIndex_2 = iBase + m * m_iHeightMapWidth + n + iStep; 
-							int iIndex_3 = iBase + m * m_iHeightMapWidth + n + iStep + iStep; 
-
-							if ( iIndex_2 / m_iHeightMapWidth == iIndex_3 / m_iHeightMapWidth )
-							{
-								rFixCrackLOD.m_vIndex.push_back(iIndex_1);
-								rFixCrackLOD.m_vIndex.push_back(iIndex_2);
-								rFixCrackLOD.m_vIndex.push_back(iIndex_3);
-							}
-						}
-
-						if ( n == 0 || n == conChunkSize - 1 )
-						{
-							int iIndex_1 = iBase + m * m_iHeightMapWidth + n; 
-							int iIndex_2 = iBase + (m + iStep) * m_iHeightMapWidth + n; 
-							int iIndex_3 = iBase +(m + iStep + iStep) * m_iHeightMapWidth + n; 
-
-							if ( iIndex_1 < m_vGlobalVertex.size() && iIndex_2 < m_vGlobalVertex.size() && iIndex_3 < m_vGlobalVertex.size() )
-							{
-								rFixCrackLOD.m_vIndex.push_back(iIndex_1);
-								rFixCrackLOD.m_vIndex.push_back(iIndex_2);
-								rFixCrackLOD.m_vIndex.push_back(iIndex_3);
-							}
-						}*/
 					}
 				}
 			}
@@ -146,19 +115,19 @@ void CGLTerrain::InitTerrain(const unsigned char* pHeightMapData, int iWidth, in
 	SetLODThreshold(500, 1000, 1500);
 }
 
-void CGLTerrain::SetGLProgram( GLint theProgram )
+void CGLSimpleTerrain::SetGLProgram( GLint theProgram )
 {
 	m_theProgram = theProgram;
 }
 
-void CGLTerrain::Update( float deltaTime )
+void CGLSimpleTerrain::Update( float deltaTime )
 {
 	Vec3 cameraPos = CDirector::GetInstance()->GetPerspectiveCamera()->GetEyePos();
 	UpdateChunkLOD( cameraPos );
 	UpdateCrackFix();
 }
 
-void CGLTerrain::Render()
+void CGLSimpleTerrain::Render()
 {
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
@@ -190,9 +159,18 @@ void CGLTerrain::Render()
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(SCommonVertex), (GLvoid*) offsetof(SCommonVertex, m_UV));
 
-	glActiveTexture(GL_TEXTURE0 + m_colorTexUnit);
-	glBindTexture(GL_TEXTURE_2D, m_vTexture[0]);
-	glBindSampler(m_colorTexUnit, m_vSampler[0]);
+	UpdateUniform();
+
+	for (int i = 0; i < m_vDetailTexture.size(); ++i)
+	{
+		glActiveTexture(GL_TEXTURE0 + i);
+		glBindTexture(GL_TEXTURE_2D, m_vDetailTexture[i]);
+		glBindSampler(i, m_detailTexSampler);
+	}
+
+	glActiveTexture(GL_TEXTURE0 + m_vDetailTexture.size());
+	glBindTexture(GL_TEXTURE_2D, m_iAlphaTexture);
+	glBindSampler(m_vDetailTexture.size(), m_iAlphaSampler);
 
 	GLint modelViewMatrixUnif = glGetUniformLocation(m_theProgram, "modelViewMatrix");
 	if ( modelViewMatrixUnif >= 0 )
@@ -217,7 +195,6 @@ void CGLTerrain::Render()
 			std::vector<unsigned int> vIndex = pChunk->m_vLOD[pChunk->m_iCurLOD].m_vIndex;
 			std::copy(pChunk->m_vFixCrack.m_vIndex.begin(), pChunk->m_vFixCrack.m_vIndex.end(), std::back_inserter(vIndex));
 
-			//std::vector<unsigned int> vIndex = pChunk->m_vFixCrack.m_vIndex;
 			if ( !vIndex.empty() )
 			{
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pChunk->m_vertexIndexObj);
@@ -236,7 +213,7 @@ void CGLTerrain::Render()
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
-void CGLTerrain::UpdateChunkLOD( const Vec3& cameraPos )
+void CGLSimpleTerrain::UpdateChunkLOD( const Vec3& cameraPos )
 {
 	for (int i = 0; i < m_iChunkCountY; ++i)
 	{
@@ -249,15 +226,6 @@ void CGLTerrain::UpdateChunkLOD( const Vec3& cameraPos )
 
 			Vec3 centerPos( (FirstVertex.m_pos.x + LastVertex.m_pos.x - FirstVertex.m_pos.x) / 2, 0.0f, LastVertex.m_pos.z + (LastVertex.m_pos.z - FirstVertex.m_pos.z) / 2 );
 			centerPos = m_transform.GetTransformMat().TransformPoint(centerPos);
-
-			/*	if ( i == 1 && j == 1 )
-			{
-			pChunk->m_iCurLOD = 1;
-			}
-			else
-			{
-			pChunk->m_iCurLOD = 2;
-			}*/
 
 			float dist = centerPos.Distance(cameraPos);
 			pChunk->m_iCurLOD = conMaxLOD - 1;
@@ -273,60 +241,116 @@ void CGLTerrain::UpdateChunkLOD( const Vec3& cameraPos )
 	}
 }
 
-void CGLTerrain::SetLODThreshold( float LOD_1, float LOD_2, float LOD_3 )
+void CGLSimpleTerrain::SetLODThreshold( float LOD_1, float LOD_2, float LOD_3 )
 {
 	m_vLODThreshold[0] = LOD_1;
 	m_vLODThreshold[1] = LOD_2;
 	m_vLODThreshold[2] = LOD_3;
 }
 
-void CGLTerrain::SetDetailTexture( const std::string& sTex1, const std::string& sTex2 /*= ""*/ )
+void CGLSimpleTerrain::SetDetailTexture( const std::string& sTex1, const std::string& sTex2, const std::string& sTex3, const std::string& sTex4 )
 {
+	std::vector<std::string> vDetailTex;
 	if ( !sTex1.empty() )
-		m_vDetailTex.push_back(sTex1);
+		vDetailTex.push_back(sTex1);
 	if ( !sTex2.empty() )
-		m_vDetailTex.push_back(sTex2);
+		vDetailTex.push_back(sTex2);
+	if ( !sTex3.empty() )
+		vDetailTex.push_back(sTex3);
+	if ( !sTex4.empty() )
+		vDetailTex.push_back(sTex4);
 
-	m_vTexture.resize( m_vDetailTex.size() );
-	m_vSampler.resize( m_vDetailTex.size() );
+	m_vDetailTexture.resize( vDetailTex.size() );
 
-	for (int i = 0; i < m_vDetailTex.size(); ++i)
+	for (int i = 0; i < vDetailTex.size(); ++i)
 	{
-		CPNGReader pngReader(m_vDetailTex[i]);
+		CPNGReader pngReader(vDetailTex[i]);
 		if ( pngReader.GetData() )
 		{
-			glGenTextures(1, &m_vTexture[i]);
-			glBindTexture(GL_TEXTURE_2D, m_vTexture[i]);
+			glGenTextures(1, &m_vDetailTexture[i]);
+			glBindTexture(GL_TEXTURE_2D, m_vDetailTexture[i]);
 
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pngReader.GetWidth(), pngReader.GetHeight(), 0,
 				GL_RGBA, GL_UNSIGNED_BYTE, pngReader.GetData());
 
 			glBindTexture(GL_TEXTURE_2D, 0);
-
-			glGenSamplers(1, &m_vSampler[i]);
-			glSamplerParameteri(m_vSampler[i], GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glSamplerParameteri(m_vSampler[i], GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glSamplerParameteri(m_vSampler[i], GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glSamplerParameteri(m_vSampler[i], GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		}
 	}
+
+	glGenSamplers(1, &m_detailTexSampler);
+	glSamplerParameteri(m_detailTexSampler, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glSamplerParameteri(m_detailTexSampler, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glSamplerParameteri(m_detailTexSampler, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glSamplerParameteri(m_detailTexSampler, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 }
 
-void CGLTerrain::InitUniform()
+void CGLSimpleTerrain::SetDetailTextureSize( int iTex1Size, int iTex2Size /*= 20*/, int iTex3Size /*= 20*/, int iTex4Size /*= 20*/ )
 {
-	GLint colorTextureUnif = glGetUniformLocation(m_theProgram, "u_colorTexture");
-	if ( colorTextureUnif >= 0 )
+	m_vDetailTexSize.push_back(iTex1Size);
+	m_vDetailTexSize.push_back(iTex2Size);
+	m_vDetailTexSize.push_back(iTex3Size);
+	m_vDetailTexSize.push_back(iTex4Size);
+}
+
+void CGLSimpleTerrain::SetAlphaTexture( const std::string& sAlphaMap )
+{
+	if ( sAlphaMap.empty() )
+		return;
+
+	CPNGReader pngReader(sAlphaMap);
+	if ( pngReader.GetData() )
 	{
-		glUniform1i(colorTextureUnif, m_colorTexUnit);
+		glGenTextures(1, &m_iAlphaTexture);
+		glBindTexture(GL_TEXTURE_2D, m_iAlphaTexture);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pngReader.GetWidth(), pngReader.GetHeight(), 0,
+			GL_RGBA, GL_UNSIGNED_BYTE, pngReader.GetData());
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		glGenSamplers(1, &m_iAlphaSampler);
+		glSamplerParameteri(m_iAlphaSampler, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glSamplerParameteri(m_iAlphaSampler, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glSamplerParameteri(m_iAlphaSampler, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glSamplerParameteri(m_iAlphaSampler, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	}
 }
 
-void CGLTerrain::SetDrawWireFrame( bool bDraw )
+void CGLSimpleTerrain::UpdateUniform()
+{
+	for (int i = 0; i < m_vDetailTexture.size(); ++i)
+	{
+		std::ostringstream oss;
+		oss << "u_DetailTex" << i;
+
+		GLint colorTextureUnif = glGetUniformLocation(m_theProgram, oss.str().c_str());
+		if ( colorTextureUnif >= 0 )
+		{
+			glUniform1i(colorTextureUnif, i);
+		}
+
+		oss.str("");
+		oss << "u_detailSize[" << i <<"]";
+		GLint colorTextureSizeUnif = glGetUniformLocation(m_theProgram, oss.str().c_str());
+		if ( colorTextureSizeUnif >= 0 )
+		{
+			glUniform1f(colorTextureSizeUnif, m_vDetailTexSize[i]);
+		}
+	}
+
+	GLint colorTextureUnif = glGetUniformLocation(m_theProgram, "u_AlphaTex");
+	if ( colorTextureUnif >= 0 )
+	{
+		glUniform1i(colorTextureUnif, m_vDetailTexture.size());
+	}
+}
+
+void CGLSimpleTerrain::SetDrawWireFrame( bool bDraw )
 {
 	m_bDrawWireFrame = bDraw;
 }
 
-void CGLTerrain::UpdateCrackFix()
+void CGLSimpleTerrain::UpdateCrackFix()
 {
 	for (int i = 0; i < m_iChunkCountY; ++i)
 	{
@@ -348,7 +372,7 @@ void CGLTerrain::UpdateCrackFix()
 					EChunkNeighbor eNeighbor = (EChunkNeighbor)n;
 					switch (eNeighbor)
 					{
-					case CGLTerrain::EChunkNeighbor_Left:
+					case CGLSimpleTerrain::EChunkNeighbor_Left:
 						{
 							for (int m = 0; m < conChunkSize; m += iNeighborStep)
 							{
@@ -371,7 +395,7 @@ void CGLTerrain::UpdateCrackFix()
 							}
 						}
 						break;
-					case CGLTerrain::EChunkNeighbor_Right:
+					case CGLSimpleTerrain::EChunkNeighbor_Right:
 						{
 							for (int m = 0; m < conChunkSize; m += iNeighborStep)
 							{
@@ -394,7 +418,7 @@ void CGLTerrain::UpdateCrackFix()
 							}
 						}
 						break;
-					case CGLTerrain::EChunkNeighbor_Up:
+					case CGLSimpleTerrain::EChunkNeighbor_Up:
 						{
 							for (int m = 0; m < conChunkSize; m += iNeighborStep)
 							{
@@ -417,7 +441,7 @@ void CGLTerrain::UpdateCrackFix()
 							}
 						}
 						break;
-					case CGLTerrain::EChunkNeighbor_Bottom:
+					case CGLSimpleTerrain::EChunkNeighbor_Bottom:
 						{
 							for (int m = 0; m < conChunkSize; m += iNeighborStep)
 							{
@@ -448,4 +472,3 @@ void CGLTerrain::UpdateCrackFix()
 		}
 	}
 }
-
