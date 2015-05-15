@@ -79,6 +79,12 @@
     <ClCompile Include="..\Source\FrameWork\GLFrustrum.cpp">
       <Filter>Source Files\FrameWork</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\GLCollision.cpp">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\GLSkyBox.cpp">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\FrameWork\Utility.h">
@@ -133,6 +139,12 @@
       <Filter>Source Files\FrameWork</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\FrameWork\GLFrustrum.h">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\GLCollision.h">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\GLSkyBox.h">
       <Filter>Source Files\FrameWork</Filter>
     </ClInclude>
   </ItemGroup>
