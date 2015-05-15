@@ -3,7 +3,7 @@
 #include "Utility.h"
 #include "OpenGL/GLFrameWork.h"
 
-class CGLSimpleTerrain
+class CGLTerrain
 {
 public:
 	static const int conMaxLOD = 4;
@@ -16,7 +16,7 @@ public:
 		EChunkNeighbor_Bottom,
 	};
 
-	CGLSimpleTerrain(const std::string& sHeightMapFile);
+	CGLTerrain(const std::string& sHeightMapFile);
 
 	void Update(float deltaTime);
 	void Render();
@@ -76,9 +76,4 @@ private:
 	std::vector<GLuint> m_vDetailTexture;
 	std::vector<int> m_vDetailTexSize;
 	GLuint m_detailTexSampler;
-};
-
-class CGLTerrain
-{
-
 };

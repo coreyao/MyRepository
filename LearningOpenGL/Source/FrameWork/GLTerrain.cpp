@@ -6,7 +6,7 @@
 
 const int conChunkSize = 32;
 
-CGLSimpleTerrain::CGLSimpleTerrain( const std::string& sHeightMapFile )
+CGLTerrain::CGLTerrain( const std::string& sHeightMapFile )
 	: m_bDrawWireFrame(false)
 	, m_iHeightMapWidth(0)
 	, m_iHeightMapHeight(0)
@@ -29,7 +29,7 @@ CGLSimpleTerrain::CGLSimpleTerrain( const std::string& sHeightMapFile )
 	}
 }
 
-void CGLSimpleTerrain::InitTerrain(const unsigned char* pHeightMapData, int iWidth, int iHeight)
+void CGLTerrain::InitTerrain(const unsigned char* pHeightMapData, int iWidth, int iHeight)
 {
 	m_iHeightMapWidth = iWidth;
 	m_iHeightMapHeight = iHeight;
@@ -115,19 +115,19 @@ void CGLSimpleTerrain::InitTerrain(const unsigned char* pHeightMapData, int iWid
 	SetLODThreshold(500, 1000, 1500);
 }
 
-void CGLSimpleTerrain::SetGLProgram( GLint theProgram )
+void CGLTerrain::SetGLProgram( GLint theProgram )
 {
 	m_theProgram = theProgram;
 }
 
-void CGLSimpleTerrain::Update( float deltaTime )
+void CGLTerrain::Update( float deltaTime )
 {
 	Vec3 cameraPos = CDirector::GetInstance()->GetPerspectiveCamera()->GetEyePos();
 	UpdateChunkLOD( cameraPos );
 	UpdateCrackFix();
 }
 
-void CGLSimpleTerrain::Render()
+void CGLTerrain::Render()
 {
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
@@ -213,7 +213,7 @@ void CGLSimpleTerrain::Render()
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
-void CGLSimpleTerrain::UpdateChunkLOD( const Vec3& cameraPos )
+void CGLTerrain::UpdateChunkLOD( const Vec3& cameraPos )
 {
 	for (int i = 0; i < m_iChunkCountY; ++i)
 	{
@@ -241,14 +241,14 @@ void CGLSimpleTerrain::UpdateChunkLOD( const Vec3& cameraPos )
 	}
 }
 
-void CGLSimpleTerrain::SetLODThreshold( float LOD_1, float LOD_2, float LOD_3 )
+void CGLTerrain::SetLODThreshold( float LOD_1, float LOD_2, float LOD_3 )
 {
 	m_vLODThreshold[0] = LOD_1;
 	m_vLODThreshold[1] = LOD_2;
 	m_vLODThreshold[2] = LOD_3;
 }
 
-void CGLSimpleTerrain::SetDetailTexture( const std::string& sTex1, const std::string& sTex2, const std::string& sTex3, const std::string& sTex4 )
+void CGLTerrain::SetDetailTexture( const std::string& sTex1, const std::string& sTex2, const std::string& sTex3, const std::string& sTex4 )
 {
 	std::vector<std::string> vDetailTex;
 	if ( !sTex1.empty() )
@@ -284,7 +284,7 @@ void CGLSimpleTerrain::SetDetailTexture( const std::string& sTex1, const std::st
 	glSamplerParameteri(m_detailTexSampler, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 }
 
-void CGLSimpleTerrain::SetDetailTextureSize( int iTex1Size, int iTex2Size /*= 20*/, int iTex3Size /*= 20*/, int iTex4Size /*= 20*/ )
+void CGLTerrain::SetDetailTextureSize( int iTex1Size, int iTex2Size /*= 20*/, int iTex3Size /*= 20*/, int iTex4Size /*= 20*/ )
 {
 	m_vDetailTexSize.push_back(iTex1Size);
 	m_vDetailTexSize.push_back(iTex2Size);
@@ -292,7 +292,7 @@ void CGLSimpleTerrain::SetDetailTextureSize( int iTex1Size, int iTex2Size /*= 20
 	m_vDetailTexSize.push_back(iTex4Size);
 }
 
-void CGLSimpleTerrain::SetAlphaTexture( const std::string& sAlphaMap )
+void CGLTerrain::SetAlphaTexture( const std::string& sAlphaMap )
 {
 	if ( sAlphaMap.empty() )
 		return;
@@ -316,7 +316,7 @@ void CGLSimpleTerrain::SetAlphaTexture( const std::string& sAlphaMap )
 	}
 }
 
-void CGLSimpleTerrain::UpdateUniform()
+void CGLTerrain::UpdateUniform()
 {
 	for (int i = 0; i < m_vDetailTexture.size(); ++i)
 	{
@@ -345,12 +345,12 @@ void CGLSimpleTerrain::UpdateUniform()
 	}
 }
 
-void CGLSimpleTerrain::SetDrawWireFrame( bool bDraw )
+void CGLTerrain::SetDrawWireFrame( bool bDraw )
 {
 	m_bDrawWireFrame = bDraw;
 }
 
-void CGLSimpleTerrain::UpdateCrackFix()
+void CGLTerrain::UpdateCrackFix()
 {
 	for (int i = 0; i < m_iChunkCountY; ++i)
 	{
@@ -372,7 +372,7 @@ void CGLSimpleTerrain::UpdateCrackFix()
 					EChunkNeighbor eNeighbor = (EChunkNeighbor)n;
 					switch (eNeighbor)
 					{
-					case CGLSimpleTerrain::EChunkNeighbor_Left:
+					case CGLTerrain::EChunkNeighbor_Left:
 						{
 							for (int m = 0; m < conChunkSize; m += iNeighborStep)
 							{
@@ -395,7 +395,7 @@ void CGLSimpleTerrain::UpdateCrackFix()
 							}
 						}
 						break;
-					case CGLSimpleTerrain::EChunkNeighbor_Right:
+					case CGLTerrain::EChunkNeighbor_Right:
 						{
 							for (int m = 0; m < conChunkSize; m += iNeighborStep)
 							{
@@ -418,7 +418,7 @@ void CGLSimpleTerrain::UpdateCrackFix()
 							}
 						}
 						break;
-					case CGLSimpleTerrain::EChunkNeighbor_Up:
+					case CGLTerrain::EChunkNeighbor_Up:
 						{
 							for (int m = 0; m < conChunkSize; m += iNeighborStep)
 							{
@@ -441,7 +441,7 @@ void CGLSimpleTerrain::UpdateCrackFix()
 							}
 						}
 						break;
-					case CGLSimpleTerrain::EChunkNeighbor_Bottom:
+					case CGLTerrain::EChunkNeighbor_Bottom:
 						{
 							for (int m = 0; m < conChunkSize; m += iNeighborStep)
 							{

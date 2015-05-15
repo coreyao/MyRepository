@@ -21,7 +21,7 @@ CGLLabel* g_pFPSLabel = nullptr;
 CGLPrimitive* g_pLineDrawer = nullptr;
 CGLPrimitive* g_pPointDrawer = nullptr;
 
-CGLSimpleTerrain* g_pTerrain = nullptr;
+CGLTerrain* g_pTerrain = nullptr;
 
 timeval g_fLastTime = {0, 0};
 float g_fDeltaTime = 0.0f;
@@ -128,7 +128,7 @@ void init()
 	//pSkinMesh->SetVisible(false, "Box01");
 	g_vMesh.push_back(pSkinMesh);
 
-	g_pTerrain = new CGLSimpleTerrain("heightmap16.png");
+	g_pTerrain = new CGLTerrain("heightmap16.png");
 	g_pTerrain->SetDetailTexture("dirt.png", "Grass2.png", "road.png", "GreenSkin.png");
 	g_pTerrain->SetDetailTextureSize(20, 20, 20, 20);
 	g_pTerrain->SetAlphaTexture("alphamap.png");
