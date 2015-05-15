@@ -134,9 +134,9 @@ void init()
 	g_pTerrain->m_transform.m_pos.x -= 1000;
 	g_pTerrain->m_transform.m_pos.y -= 400;
 	g_pTerrain->m_transform.m_pos.z -= 1000;
-	g_pTerrain->m_transform.m_scale.x = 10;
-	g_pTerrain->m_transform.m_scale.y = 3;
-	g_pTerrain->m_transform.m_scale.z = 10;
+	g_pTerrain->m_transform.m_scale.x = 20;
+	g_pTerrain->m_transform.m_scale.y = 2;
+	g_pTerrain->m_transform.m_scale.z = 20;
 }
 
 void display()
