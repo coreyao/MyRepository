@@ -21,7 +21,7 @@ CGLLabel* g_pFPSLabel = nullptr;
 CGLPrimitive* g_pLineDrawer = nullptr;
 CGLPrimitive* g_pPointDrawer = nullptr;
 
-CGLTerrain* g_pTerrain = nullptr;
+CGLSimpleTerrain* g_pTerrain = nullptr;
 
 timeval g_fLastTime = {0, 0};
 float g_fDeltaTime = 0.0f;
@@ -128,9 +128,12 @@ void init()
 	//pSkinMesh->SetVisible(false, "Box01");
 	g_vMesh.push_back(pSkinMesh);
 
-	g_pTerrain = new CGLTerrain("heightmap16.png");
-	g_pTerrain->SetDetailTexture("sand.png");
+	g_pTerrain = new CGLSimpleTerrain("heightmap16.png");
+	g_pTerrain->SetDetailTexture("dirt.png", "Grass2.png", "road.png", "GreenSkin.png");
+	g_pTerrain->SetDetailTextureSize(20, 20, 20, 20);
+	g_pTerrain->SetAlphaTexture("alphamap.png");
 	g_pTerrain->SetDrawWireFrame(false);
+
 	g_pTerrain->m_transform.m_pos.x -= 1000;
 	g_pTerrain->m_transform.m_pos.y -= 400;
 	g_pTerrain->m_transform.m_pos.z -= 1000;
@@ -203,9 +206,8 @@ void display()
 	g_pFPSLabel->Render();
 	//g_pLineDrawer->Render();
 
-	//g_particleSystem->GetTransformData().m_pos.x = 50 * sin(10 * g_fElapsedTime);
-	//g_particleSystem->Update(g_fDeltaTime);
-	//g_particleSystem->Render();
+	g_particleSystem->Update(g_fDeltaTime);
+	g_particleSystem->Render();
 
 	g_pTerrain->Update(g_fDeltaTime);
 	g_pTerrain->Render();

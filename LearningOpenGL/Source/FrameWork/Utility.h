@@ -4,6 +4,7 @@
 #include <functional>
 #include <cassert>
 #include <ctime>
+#include <sstream>
 #include "DataTypes.h"
 
 #ifndef SHADER_FILE_DIR

@@ -3,7 +3,7 @@
 #include "Utility.h"
 #include "OpenGL/GLFrameWork.h"
 
-class CGLTerrain
+class CGLSimpleTerrain
 {
 public:
 	static const int conMaxLOD = 4;
@@ -16,20 +16,22 @@ public:
 		EChunkNeighbor_Bottom,
 	};
 
-	CGLTerrain(const std::string& sHeightMapFile);
+	CGLSimpleTerrain(const std::string& sHeightMapFile);
 
 	void Update(float deltaTime);
 	void Render();
 	void SetGLProgram(GLint theProgram);
 	void SetLODThreshold( float LOD_1, float LOD_2, float LOD_3 );
-	void SetDetailTexture( const std::string& sTex1, const std::string& sTex2 = "");
+	void SetAlphaTexture( const std::string& sAlphaMap);
+	void SetDetailTexture( const std::string& sTex1, const std::string& sTex2 = "", const std::string& sTex3 = "", const std::string& sTex4 = "");
+	void SetDetailTextureSize( int iTex1Size, int iTex2Size = 20, int iTex3Size = 20, int iTex4Size = 20);
 	void SetDrawWireFrame(bool bDraw);
 
 	STransform m_transform;
 
 private:
 	void InitTerrain(const unsigned char* pHeightMapData, int iWidth, int iHeight);
-	void InitUniform();
+	void UpdateUniform();
 	void UpdateChunkLOD(const Vec3& cameraPos);
 	void UpdateCrackFix();
 
@@ -69,8 +71,9 @@ private:
 	GLuint m_vertexAttributeObj;
 	GLuint m_vertexDataObj;
 
-	std::vector<std::string> m_vDetailTex;
-	std::vector<GLuint> m_vTexture;
-	std::vector<GLuint> m_vSampler;
-	int m_colorTexUnit;
+	GLuint m_iAlphaTexture;
+	GLuint m_iAlphaSampler;
+	std::vector<GLuint> m_vDetailTexture;
+	std::vector<int> m_vDetailTexSize;
+	GLuint m_detailTexSampler;
 };
