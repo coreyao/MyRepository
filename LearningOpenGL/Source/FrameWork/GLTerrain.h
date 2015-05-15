@@ -49,7 +49,7 @@ private:
 		int m_iCurLOD;
 		GLuint m_vertexIndexObj;
 		SChunkLOD m_vLOD[conMaxLOD];
-		SChunkLOD m_vFixCrack[conMaxLOD];
+		SChunkLOD m_vFixCrack;
 
 		SChunk* m_vNeighbor[4];
 	};
