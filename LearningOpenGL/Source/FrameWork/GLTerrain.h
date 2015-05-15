@@ -77,3 +77,8 @@ private:
 	std::vector<int> m_vDetailTexSize;
 	GLuint m_detailTexSampler;
 };
+
+class CGLTerrain
+{
+
+};
