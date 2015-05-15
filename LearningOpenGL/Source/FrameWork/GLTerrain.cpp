@@ -68,8 +68,8 @@ void CGLTerrain::InitTerrain(const unsigned char* pHeightMapData, int iWidth, in
 				int iStep = pow(2, iLOD);
 				SChunkLOD& rLOD = pNewChunk->m_vLOD[iLOD];
 				rLOD.m_vIndex.clear();
-				SChunkLOD& rFixCrackLOD = pNewChunk->m_vFixCrack[iLOD];
-				rFixCrackLOD.m_vIndex.clear();
+				/*SChunkLOD& rFixCrackLOD = pNewChunk->m_vFixCrack[iLOD];
+				rFixCrackLOD.m_vIndex.clear();*/
 				for (int m = 0; m < conChunkSize; m += iStep)
 				{
 					for (int n = 0; n < conChunkSize; n += iStep)
@@ -82,7 +82,7 @@ void CGLTerrain::InitTerrain(const unsigned char* pHeightMapData, int iWidth, in
 						rLOD.m_vIndex.push_back(iBase + m * m_iHeightMapWidth + n + iStep);
 						rLOD.m_vIndex.push_back(iBase + (m + iStep) * m_iHeightMapWidth + n + iStep);
 
-						if ( m == 0 || m == conChunkSize - 1 )
+						/*if ( m == 0 || m == conChunkSize - 1 )
 						{
 							int iIndex_1 = iBase + m * m_iHeightMapWidth + n; 
 							int iIndex_2 = iBase + m * m_iHeightMapWidth + n + iStep; 
@@ -93,11 +93,6 @@ void CGLTerrain::InitTerrain(const unsigned char* pHeightMapData, int iWidth, in
 								rFixCrackLOD.m_vIndex.push_back(iIndex_1);
 								rFixCrackLOD.m_vIndex.push_back(iIndex_2);
 								rFixCrackLOD.m_vIndex.push_back(iIndex_3);
-
-								/*Color4F randomColor = Color4F( 0.0, 0.0f, 1.0f, 1.0f );
-								m_vGlobalVertex[iIndex_1].m_color = randomColor;
-								m_vGlobalVertex[iIndex_2].m_color = randomColor;
-								m_vGlobalVertex[iIndex_3].m_color = randomColor;*/
 							}
 						}
 
@@ -112,13 +107,8 @@ void CGLTerrain::InitTerrain(const unsigned char* pHeightMapData, int iWidth, in
 								rFixCrackLOD.m_vIndex.push_back(iIndex_1);
 								rFixCrackLOD.m_vIndex.push_back(iIndex_2);
 								rFixCrackLOD.m_vIndex.push_back(iIndex_3);
-
-								/*Color4F randomColor = Color4F( 0.0, 0.0f, 1.0f, 1.0f );
-								m_vGlobalVertex[iIndex_1].m_color = randomColor;
-								m_vGlobalVertex[iIndex_2].m_color = randomColor;
-								m_vGlobalVertex[iIndex_3].m_color = randomColor;*/
 							}
-						}
+						}*/
 					}
 				}
 			}
@@ -165,15 +155,16 @@ void CGLTerrain::Update( float deltaTime )
 {
 	Vec3 cameraPos = CDirector::GetInstance()->GetPerspectiveCamera()->GetEyePos();
 	UpdateChunkLOD( cameraPos );
+	UpdateCrackFix();
 }
 
 void CGLTerrain::Render()
 {
-	/*glEnable(GL_CULL_FACE);
+	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
-	glFrontFace(GL_CW);*/
+	glFrontFace(GL_CW);
 
-	glDisable(GL_CULL_FACE);
+	//glDisable(GL_CULL_FACE);
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
@@ -224,13 +215,17 @@ void CGLTerrain::Render()
 			SChunk* pChunk = m_vChunk[i][j];
 
 			std::vector<unsigned int> vIndex = pChunk->m_vLOD[pChunk->m_iCurLOD].m_vIndex;
-			//std::copy(pChunk->m_vFixCrack[pChunk->m_iCurLOD].m_vIndex.begin(), pChunk->m_vFixCrack[pChunk->m_iCurLOD].m_vIndex.end(), std::back_inserter(vIndex));
+			std::copy(pChunk->m_vFixCrack.m_vIndex.begin(), pChunk->m_vFixCrack.m_vIndex.end(), std::back_inserter(vIndex));
 
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pChunk->m_vertexIndexObj);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, vIndex.size() * sizeof(vIndex[0]), &vIndex.front(), GL_STATIC_DRAW);
+			//std::vector<unsigned int> vIndex = pChunk->m_vFixCrack.m_vIndex;
+			if ( !vIndex.empty() )
+			{
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pChunk->m_vertexIndexObj);
+				glBufferData(GL_ELEMENT_ARRAY_BUFFER, vIndex.size() * sizeof(vIndex[0]), &vIndex.front(), GL_STATIC_DRAW);
 
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pChunk->m_vertexIndexObj);
-			glDrawElements(GL_TRIANGLES, vIndex.size(), GL_UNSIGNED_INT, 0);
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pChunk->m_vertexIndexObj);
+				glDrawElements(GL_TRIANGLES, vIndex.size(), GL_UNSIGNED_INT, 0);
+			}
 		}
 	}
 
@@ -254,6 +249,15 @@ void CGLTerrain::UpdateChunkLOD( const Vec3& cameraPos )
 
 			Vec3 centerPos( (FirstVertex.m_pos.x + LastVertex.m_pos.x - FirstVertex.m_pos.x) / 2, 0.0f, LastVertex.m_pos.z + (LastVertex.m_pos.z - FirstVertex.m_pos.z) / 2 );
 			centerPos = m_transform.GetTransformMat().TransformPoint(centerPos);
+
+			/*	if ( i == 1 && j == 1 )
+			{
+			pChunk->m_iCurLOD = 1;
+			}
+			else
+			{
+			pChunk->m_iCurLOD = 2;
+			}*/
 
 			float dist = centerPos.Distance(cameraPos);
 			pChunk->m_iCurLOD = conMaxLOD - 1;
@@ -328,7 +332,119 @@ void CGLTerrain::UpdateCrackFix()
 	{
 		for (int j = 0; j < m_iChunkCountX; ++j)
 		{
-			SChunk* pChunk = m_vChunk[i][j];
+			SChunk* pCurChunk = m_vChunk[i][j];
+			int iCurStep = pow(2, pCurChunk->m_iCurLOD);
+
+			SChunkLOD& rFixCrackLOD = pCurChunk->m_vFixCrack;
+			rFixCrackLOD.m_vIndex.clear();
+
+			for (int n = 0; n < 4; ++n)
+			{
+				SChunk* pNeighbor = pCurChunk->m_vNeighbor[n];
+				if ( pNeighbor && pCurChunk->m_iCurLOD < pNeighbor->m_iCurLOD )
+				{
+					int iNeighborStep = pow(2, pNeighbor->m_iCurLOD);
+					int iBase = i * conChunkSize * m_iHeightMapWidth + j * conChunkSize;
+					EChunkNeighbor eNeighbor = (EChunkNeighbor)n;
+					switch (eNeighbor)
+					{
+					case CGLTerrain::EChunkNeighbor_Left:
+						{
+							for (int m = 0; m < conChunkSize; m += iNeighborStep)
+							{
+								int iIndex_1 = iBase + m * m_iHeightMapWidth; 
+								int iIndex_2 = iBase + (m + iCurStep) * m_iHeightMapWidth; 
+								int iIndex_3 = iBase +(m + iCurStep + iCurStep) * m_iHeightMapWidth;
+								int iIndex_4 = iIndex_3 - iNeighborStep;
+
+								rFixCrackLOD.m_vIndex.push_back(iIndex_1);
+								rFixCrackLOD.m_vIndex.push_back(iIndex_3);
+								rFixCrackLOD.m_vIndex.push_back(iIndex_2);
+
+								rFixCrackLOD.m_vIndex.push_back(iIndex_1);
+								rFixCrackLOD.m_vIndex.push_back(iIndex_2);
+								rFixCrackLOD.m_vIndex.push_back(iIndex_4);
+
+								rFixCrackLOD.m_vIndex.push_back(iIndex_2);
+								rFixCrackLOD.m_vIndex.push_back(iIndex_3);
+								rFixCrackLOD.m_vIndex.push_back(iIndex_4);
+							}
+						}
+						break;
+					case CGLTerrain::EChunkNeighbor_Right:
+						{
+							for (int m = 0; m < conChunkSize; m += iNeighborStep)
+							{
+								int iIndex_1 = iBase + m * m_iHeightMapWidth + conChunkSize; 
+								int iIndex_2 = iBase + (m + iCurStep) * m_iHeightMapWidth + conChunkSize; 
+								int iIndex_3 = iBase +(m + iCurStep + iCurStep) * m_iHeightMapWidth + conChunkSize;
+								int iIndex_4 = iIndex_1 + iNeighborStep;
+
+								rFixCrackLOD.m_vIndex.push_back(iIndex_1);
+								rFixCrackLOD.m_vIndex.push_back(iIndex_2);
+								rFixCrackLOD.m_vIndex.push_back(iIndex_3);
+
+								rFixCrackLOD.m_vIndex.push_back(iIndex_1);
+								rFixCrackLOD.m_vIndex.push_back(iIndex_4);
+								rFixCrackLOD.m_vIndex.push_back(iIndex_2);
+
+								rFixCrackLOD.m_vIndex.push_back(iIndex_2);
+								rFixCrackLOD.m_vIndex.push_back(iIndex_4);
+								rFixCrackLOD.m_vIndex.push_back(iIndex_3);
+							}
+						}
+						break;
+					case CGLTerrain::EChunkNeighbor_Up:
+						{
+							for (int m = 0; m < conChunkSize; m += iNeighborStep)
+							{
+								int iIndex_1 = iBase + m; 
+								int iIndex_2 = iBase + m + iCurStep; 
+								int iIndex_3 = iBase + m + iCurStep + iCurStep; 
+								int iIndex_4 = iIndex_3 - iNeighborStep * m_iHeightMapWidth;
+
+								rFixCrackLOD.m_vIndex.push_back(iIndex_1);
+								rFixCrackLOD.m_vIndex.push_back(iIndex_2);
+								rFixCrackLOD.m_vIndex.push_back(iIndex_3);
+
+								rFixCrackLOD.m_vIndex.push_back(iIndex_1);
+								rFixCrackLOD.m_vIndex.push_back(iIndex_4);
+								rFixCrackLOD.m_vIndex.push_back(iIndex_2);
+
+								rFixCrackLOD.m_vIndex.push_back(iIndex_2);
+								rFixCrackLOD.m_vIndex.push_back(iIndex_4);
+								rFixCrackLOD.m_vIndex.push_back(iIndex_3);
+							}
+						}
+						break;
+					case CGLTerrain::EChunkNeighbor_Bottom:
+						{
+							for (int m = 0; m < conChunkSize; m += iNeighborStep)
+							{
+								int iIndex_1 = iBase + conChunkSize * m_iHeightMapWidth + m; 
+								int iIndex_2 = iBase + conChunkSize * m_iHeightMapWidth + m + iCurStep; 
+								int iIndex_3 = iBase + conChunkSize * m_iHeightMapWidth + m + iCurStep + iCurStep; 
+								int iIndex_4 = iIndex_1 + iNeighborStep * m_iHeightMapWidth;
+
+								rFixCrackLOD.m_vIndex.push_back(iIndex_1);
+								rFixCrackLOD.m_vIndex.push_back(iIndex_3);
+								rFixCrackLOD.m_vIndex.push_back(iIndex_2);
+
+								rFixCrackLOD.m_vIndex.push_back(iIndex_1);
+								rFixCrackLOD.m_vIndex.push_back(iIndex_2);
+								rFixCrackLOD.m_vIndex.push_back(iIndex_4);
+
+								rFixCrackLOD.m_vIndex.push_back(iIndex_2);
+								rFixCrackLOD.m_vIndex.push_back(iIndex_3);
+								rFixCrackLOD.m_vIndex.push_back(iIndex_4);
+							}
+						}
+						break;
+					default:
+						break;
+					}
+				}
+			}
 		}
 	}
 }
