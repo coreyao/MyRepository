@@ -32,3 +32,12 @@ bool CAABB::ContainsPoint( const Vec3& point )
 
 	return false;
 }
+
+Vec3 CAABB::GetCenter()
+{
+	float x = m_minPoint.x + (m_maxPoint.x - m_minPoint.x) / 2;
+	float y = m_minPoint.y + (m_maxPoint.y - m_minPoint.y) / 2;
+	float z = m_minPoint.z + (m_maxPoint.z - m_minPoint.z) / 2;
+
+	return Vec3( x, y, z );
+}

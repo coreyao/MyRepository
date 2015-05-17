@@ -425,11 +425,7 @@ void CGLTerrain::VisitQuadTree( SQuadNode* pNode, const std::function< void(SChu
 void CGLTerrain::UpdateChunkLODInternal( SChunk* pChunk )
 {
 	Vec3 cameraPos = CDirector::GetInstance()->GetPerspectiveCamera()->GetEyePos();
-
-	SCommonVertex FirstVertex =  m_vGlobalVertex[ pChunk->m_vLOD[0].m_vIndex.front() ];
-	SCommonVertex LastVertex =  m_vGlobalVertex[ pChunk->m_vLOD[0].m_vIndex.back() ];
-
-	Vec3 centerPos( (FirstVertex.m_pos.x + LastVertex.m_pos.x - FirstVertex.m_pos.x) / 2, 0.0f, LastVertex.m_pos.z + (LastVertex.m_pos.z - FirstVertex.m_pos.z) / 2 );
+	Vec3 centerPos = pChunk->m_boundingBox.GetCenter();
 	centerPos = m_transform.GetTransformMat().TransformPoint(centerPos);
 
 	float dist = centerPos.Distance(cameraPos);
@@ -470,6 +466,13 @@ void CGLTerrain::GenerateChunk( SChunk* pNewChunk, int j, int i )
 			}
 		}
 	}
+
+	SCommonVertex FirstVertex =  m_vGlobalVertex[ pNewChunk->m_vLOD[0].m_vIndex.front() ];
+	SCommonVertex LastVertex =  m_vGlobalVertex[ pNewChunk->m_vLOD[0].m_vIndex.back() ];
+
+	Vec3 minPoint = FirstVertex.m_pos;
+	Vec3 maxPoint = LastVertex.m_pos;
+	pNewChunk->m_boundingBox.SetData(minPoint, maxPoint);
 }
 
 void CGLTerrain::GenerateNeighbor()
