@@ -2,6 +2,7 @@
 
 #include "Utility.h"
 #include "OpenGL/GLFrameWork.h"
+#include "GLCollision.h"
 
 class CGLTerrain
 {
@@ -39,15 +40,20 @@ private:
 	{
 		SChunk()
 			: m_iCurLOD(0)
+			, m_x(0)
+			, m_y(0)
 		{
 			memset( m_vNeighbor, 0, sizeof(m_vNeighbor) );
 		}
 
 		int m_iCurLOD;
+		int m_x;
+		int m_y;
 		GLuint m_vertexIndexObj;
 		SChunkLOD m_vLOD[conMaxLOD];
 		SChunkLOD m_vFixCrack;
 		SChunk* m_vNeighbor[4];
+		CAABB m_boundingBox;
 	};
 
 	struct SQuadNode
@@ -55,8 +61,6 @@ private:
 		SQuadNode()
 			: m_pRelatedChunk(nullptr)
 			, m_pParent(nullptr)
-			, m_x(0)
-			, m_y(0)
 			, m_bDraw(true)
 		{
 		}
@@ -65,8 +69,7 @@ private:
 
 		SChunk* m_pRelatedChunk;
 		bool m_bDraw;
-		int m_x;
-		int m_y;
+		
 		SQuadNode* m_pParent;
 		std::vector<SQuadNode*> m_vChildren;
 	};
@@ -96,9 +99,18 @@ private:
 
 private:
 	void InitTerrain(const unsigned char* pHeightMapData, int iWidth, int iHeight);
+
+	void LoadVertex( const unsigned char* pHeightMapData, int iWidth, int iHeight );
+
+	void GenerateNeighbor();
+
+	void GenerateChunk( SChunk* pNewChunk, int j, int i );
+
 	void UpdateUniform();
-	void UpdateChunkLOD(const Vec3& cameraPos);
+	void UpdateChunkLOD();
+	void UpdateChunkLODInternal( SChunk* pChunk );
 	void UpdateCrackFix();
+	void UpdateCrackFixInternal( SChunk* pCurChunk);
 	void VisitQuadTree(SQuadNode* pNode, const std::function< void(SChunk*) >& pCallBack);
 	void RenderChunk(const SChunk* pChunk);
 };

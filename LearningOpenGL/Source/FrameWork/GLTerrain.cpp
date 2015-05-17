@@ -26,6 +26,7 @@ CGLTerrain::CGLTerrain( const std::string& sHeightMapFile )
 
 		InitTerrain(pData, pngReader.GetWidth(), pngReader.GetHeight());
 		SetGLProgram(CGLProgramManager::GetInstance()->CreateProgramByName("Terrain"));
+		SetLODThreshold(500, 1000, 1500);
 	}
 }
 
@@ -34,19 +35,7 @@ void CGLTerrain::InitTerrain(const unsigned char* pHeightMapData, int iWidth, in
 	m_iHeightMapWidth = iWidth;
 	m_iHeightMapHeight = iHeight;
 
-	for (int i = 0; i < m_iHeightMapHeight; ++i)
-	{
-		for (int j = 0; j < m_iHeightMapWidth; ++j)
-		{
-			SCommonVertex newVertex;
-			float fHeight = pHeightMapData[ i * iWidth + j ];
-			newVertex.m_pos = Vec3( j, fHeight, i);
-			newVertex.m_color = Color4F::WHITE;
-			newVertex.m_UV = Vec2( j * 1.0f / iWidth, i * 1.0f / iHeight );
-		
-			m_vGlobalVertex.push_back(newVertex);
-		}
-	}
+	LoadVertex(pHeightMapData, iWidth, iHeight);
 
 	m_iChunkCountX = iWidth / conChunkSize;
 	m_iChunkCountY = iHeight / conChunkSize;
@@ -59,60 +48,11 @@ void CGLTerrain::InitTerrain(const unsigned char* pHeightMapData, int iWidth, in
 		{
 			SChunk* pNewChunk = new SChunk;
 			m_vChunk[i][j] = pNewChunk;
-			glGenBuffers(1, &pNewChunk->m_vertexIndexObj);
-
-			int iBase = i * conChunkSize * m_iHeightMapWidth + j * conChunkSize;
-			for ( int iLOD = 0; iLOD < conMaxLOD; ++iLOD )
-			{
-				int iStep = pow(2, iLOD);
-				SChunkLOD& rLOD = pNewChunk->m_vLOD[iLOD];
-				rLOD.m_vIndex.clear();
-				for (int m = 0; m < conChunkSize; m += iStep)
-				{
-					for (int n = 0; n < conChunkSize; n += iStep)
-					{
-						rLOD.m_vIndex.push_back(iBase + m * m_iHeightMapWidth + n);
-						rLOD.m_vIndex.push_back(iBase + m * m_iHeightMapWidth + n + iStep);
-						rLOD.m_vIndex.push_back(iBase + (m + iStep) * m_iHeightMapWidth + n);
-
-						rLOD.m_vIndex.push_back(iBase + (m + iStep) * m_iHeightMapWidth + n);
-						rLOD.m_vIndex.push_back(iBase + m * m_iHeightMapWidth + n + iStep);
-						rLOD.m_vIndex.push_back(iBase + (m + iStep) * m_iHeightMapWidth + n + iStep);
-					}
-				}
-			}
-
-			/*Color4F randomColor = Color4F( RANDOM_0_1(), RANDOM_0_1(), RANDOM_0_1(), 1.0f );
-			for ( int i = 0; i < pNewChunk->m_vLOD[0].m_vIndex.size(); ++i )
-			{
-				unsigned int iIndex = pNewChunk->m_vLOD[0].m_vIndex[i];
-				m_vGlobalVertex[iIndex].m_color = randomColor;
-			}*/
+			GenerateChunk(pNewChunk, j, i);
 		}
 	}
-
-	for (int i = 0; i < m_iChunkCountY; ++i)
-	{
-		for (int j = 0; j < m_iChunkCountX; ++j)
-		{
-			SChunk* pChunk = m_vChunk[i][j];
-
-			if ( j - 1 >= 0 )
-				pChunk->m_vNeighbor[ EChunkNeighbor_Left ] = m_vChunk[i][j - 1];
-			if ( j + 1 < m_iChunkCountX )
-				pChunk->m_vNeighbor[ EChunkNeighbor_Right ] = m_vChunk[i][j + 1];
-			if ( i - 1 >= 0 )
-				pChunk->m_vNeighbor[ EChunkNeighbor_Up ] = m_vChunk[i - 1][j];
-			if ( i + 1 < m_iChunkCountY )
-				pChunk->m_vNeighbor[ EChunkNeighbor_Bottom ] = m_vChunk[i + 1][j];
-		}
-	}
-
-	glGenBuffers(1, &m_vertexDataObj);
-	glBindBuffer(GL_ARRAY_BUFFER, m_vertexDataObj);
-	glBufferData(GL_ARRAY_BUFFER, m_vGlobalVertex.size() * sizeof(SCommonVertex), &m_vGlobalVertex.front(), GL_STATIC_DRAW);
-
-	SetLODThreshold(500, 1000, 1500);
+	GenerateNeighbor();
+	m_pRoot = new SQuadNode(0, 0, m_iHeightMapWidth, m_iHeightMapHeight, nullptr, this);
 }
 
 void CGLTerrain::SetGLProgram( GLint theProgram )
@@ -122,8 +62,7 @@ void CGLTerrain::SetGLProgram( GLint theProgram )
 
 void CGLTerrain::Update( float deltaTime )
 {
-	Vec3 cameraPos = CDirector::GetInstance()->GetPerspectiveCamera()->GetEyePos();
-	UpdateChunkLOD( cameraPos );
+	UpdateChunkLOD();
 	UpdateCrackFix();
 }
 
@@ -186,25 +125,27 @@ void CGLTerrain::Render()
 		glUniformMatrix4fv(perspectiveMatrixUnif, 1, GL_FALSE, projMat.m);
 	}
 
-	for (int i = 0; i < m_iChunkCountY; ++i)
+	VisitQuadTree(m_pRoot, std::bind(&CGLTerrain::RenderChunk, this, std::placeholders::_1));
+
+	/*for (int i = 0; i < m_iChunkCountY; ++i)
 	{
-		for (int j = 0; j < m_iChunkCountX; ++j)
-		{
-			SChunk* pChunk = m_vChunk[i][j];
+	for (int j = 0; j < m_iChunkCountX; ++j)
+	{
+	SChunk* pChunk = m_vChunk[i][j];
 
-			std::vector<unsigned int> vIndex = pChunk->m_vLOD[pChunk->m_iCurLOD].m_vIndex;
-			std::copy(pChunk->m_vFixCrack.m_vIndex.begin(), pChunk->m_vFixCrack.m_vIndex.end(), std::back_inserter(vIndex));
+	std::vector<unsigned int> vIndex = pChunk->m_vLOD[pChunk->m_iCurLOD].m_vIndex;
+	std::copy(pChunk->m_vFixCrack.m_vIndex.begin(), pChunk->m_vFixCrack.m_vIndex.end(), std::back_inserter(vIndex));
 
-			if ( !vIndex.empty() )
-			{
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pChunk->m_vertexIndexObj);
-				glBufferData(GL_ELEMENT_ARRAY_BUFFER, vIndex.size() * sizeof(vIndex[0]), &vIndex.front(), GL_STATIC_DRAW);
+	if ( !vIndex.empty() )
+	{
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pChunk->m_vertexIndexObj);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, vIndex.size() * sizeof(vIndex[0]), &vIndex.front(), GL_STATIC_DRAW);
 
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pChunk->m_vertexIndexObj);
-				glDrawElements(GL_TRIANGLES, vIndex.size(), GL_UNSIGNED_INT, 0);
-			}
-		}
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pChunk->m_vertexIndexObj);
+	glDrawElements(GL_TRIANGLES, vIndex.size(), GL_UNSIGNED_INT, 0);
 	}
+	}
+	}*/
 
 	glUseProgram(0);
 	glBindVertexArray(0);
@@ -213,34 +154,141 @@ void CGLTerrain::Render()
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
-void CGLTerrain::UpdateChunkLOD( const Vec3& cameraPos )
+void CGLTerrain::RenderChunk( const SChunk* pChunk )
 {
-	for (int i = 0; i < m_iChunkCountY; ++i)
+	std::vector<unsigned int> vIndex = pChunk->m_vLOD[pChunk->m_iCurLOD].m_vIndex;
+	std::copy(pChunk->m_vFixCrack.m_vIndex.begin(), pChunk->m_vFixCrack.m_vIndex.end(), std::back_inserter(vIndex));
+
+	if ( !vIndex.empty() )
 	{
-		for (int j = 0; j < m_iChunkCountX; ++j)
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pChunk->m_vertexIndexObj);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, vIndex.size() * sizeof(vIndex[0]), &vIndex.front(), GL_STATIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pChunk->m_vertexIndexObj);
+		glDrawElements(GL_TRIANGLES, vIndex.size(), GL_UNSIGNED_INT, 0);
+	}
+}
+
+void CGLTerrain::UpdateChunkLOD()
+{
+	VisitQuadTree(m_pRoot, std::bind(&CGLTerrain::UpdateChunkLODInternal, this, std::placeholders::_1));
+}
+
+void CGLTerrain::UpdateCrackFixInternal( SChunk* pCurChunk )
+{
+	int iCurStep = pow(2, pCurChunk->m_iCurLOD);
+
+	SChunkLOD& rFixCrackLOD = pCurChunk->m_vFixCrack;
+	rFixCrackLOD.m_vIndex.clear();
+
+	for (int n = 0; n < 4; ++n)
+	{
+		SChunk* pNeighbor = pCurChunk->m_vNeighbor[n];
+		if ( pNeighbor && pCurChunk->m_iCurLOD < pNeighbor->m_iCurLOD )
 		{
-			SChunk* pChunk = m_vChunk[i][j];
-
-			SCommonVertex FirstVertex =  m_vGlobalVertex[ pChunk->m_vLOD[0].m_vIndex.front() ];
-			SCommonVertex LastVertex =  m_vGlobalVertex[ pChunk->m_vLOD[0].m_vIndex.back() ];
-
-			Vec3 centerPos( (FirstVertex.m_pos.x + LastVertex.m_pos.x - FirstVertex.m_pos.x) / 2, 0.0f, LastVertex.m_pos.z + (LastVertex.m_pos.z - FirstVertex.m_pos.z) / 2 );
-			centerPos = m_transform.GetTransformMat().TransformPoint(centerPos);
-
-			float dist = centerPos.Distance(cameraPos);
-			pChunk->m_iCurLOD = conMaxLOD - 1;
-			for (int i = 0; i < conMaxLOD - 1; ++i)
+			int iNeighborStep = pow(2, pNeighbor->m_iCurLOD);
+			int iBase = pCurChunk->m_y * conChunkSize * m_iHeightMapWidth + pCurChunk->m_x * conChunkSize;
+			EChunkNeighbor eNeighbor = (EChunkNeighbor)n;
+			switch (eNeighbor)
 			{
-				if ( dist <= m_vLODThreshold[i] )
+			case CGLTerrain::EChunkNeighbor_Left:
 				{
-					pChunk->m_iCurLOD = i;
-					break;
+					for (int m = 0; m < conChunkSize; m += iNeighborStep)
+					{
+						int iIndex_1 = iBase + m * m_iHeightMapWidth; 
+						int iIndex_2 = iBase + (m + iCurStep) * m_iHeightMapWidth; 
+						int iIndex_3 = iBase +(m + iCurStep + iCurStep) * m_iHeightMapWidth;
+						int iIndex_4 = iIndex_3 - iNeighborStep;
+
+						rFixCrackLOD.m_vIndex.push_back(iIndex_1);
+						rFixCrackLOD.m_vIndex.push_back(iIndex_3);
+						rFixCrackLOD.m_vIndex.push_back(iIndex_2);
+
+						rFixCrackLOD.m_vIndex.push_back(iIndex_1);
+						rFixCrackLOD.m_vIndex.push_back(iIndex_2);
+						rFixCrackLOD.m_vIndex.push_back(iIndex_4);
+
+						rFixCrackLOD.m_vIndex.push_back(iIndex_2);
+						rFixCrackLOD.m_vIndex.push_back(iIndex_3);
+						rFixCrackLOD.m_vIndex.push_back(iIndex_4);
+					}
 				}
+				break;
+			case CGLTerrain::EChunkNeighbor_Right:
+				{
+					for (int m = 0; m < conChunkSize; m += iNeighborStep)
+					{
+						int iIndex_1 = iBase + m * m_iHeightMapWidth + conChunkSize; 
+						int iIndex_2 = iBase + (m + iCurStep) * m_iHeightMapWidth + conChunkSize; 
+						int iIndex_3 = iBase +(m + iCurStep + iCurStep) * m_iHeightMapWidth + conChunkSize;
+						int iIndex_4 = iIndex_1 + iNeighborStep;
+
+						rFixCrackLOD.m_vIndex.push_back(iIndex_1);
+						rFixCrackLOD.m_vIndex.push_back(iIndex_2);
+						rFixCrackLOD.m_vIndex.push_back(iIndex_3);
+
+						rFixCrackLOD.m_vIndex.push_back(iIndex_1);
+						rFixCrackLOD.m_vIndex.push_back(iIndex_4);
+						rFixCrackLOD.m_vIndex.push_back(iIndex_2);
+
+						rFixCrackLOD.m_vIndex.push_back(iIndex_2);
+						rFixCrackLOD.m_vIndex.push_back(iIndex_4);
+						rFixCrackLOD.m_vIndex.push_back(iIndex_3);
+					}
+				}
+				break;
+			case CGLTerrain::EChunkNeighbor_Up:
+				{
+					for (int m = 0; m < conChunkSize; m += iNeighborStep)
+					{
+						int iIndex_1 = iBase + m; 
+						int iIndex_2 = iBase + m + iCurStep; 
+						int iIndex_3 = iBase + m + iCurStep + iCurStep; 
+						int iIndex_4 = iIndex_3 - iNeighborStep * m_iHeightMapWidth;
+
+						rFixCrackLOD.m_vIndex.push_back(iIndex_1);
+						rFixCrackLOD.m_vIndex.push_back(iIndex_2);
+						rFixCrackLOD.m_vIndex.push_back(iIndex_3);
+
+						rFixCrackLOD.m_vIndex.push_back(iIndex_1);
+						rFixCrackLOD.m_vIndex.push_back(iIndex_4);
+						rFixCrackLOD.m_vIndex.push_back(iIndex_2);
+
+						rFixCrackLOD.m_vIndex.push_back(iIndex_2);
+						rFixCrackLOD.m_vIndex.push_back(iIndex_4);
+						rFixCrackLOD.m_vIndex.push_back(iIndex_3);
+					}
+				}
+				break;
+			case CGLTerrain::EChunkNeighbor_Bottom:
+				{
+					for (int m = 0; m < conChunkSize; m += iNeighborStep)
+					{
+						int iIndex_1 = iBase + conChunkSize * m_iHeightMapWidth + m; 
+						int iIndex_2 = iBase + conChunkSize * m_iHeightMapWidth + m + iCurStep; 
+						int iIndex_3 = iBase + conChunkSize * m_iHeightMapWidth + m + iCurStep + iCurStep; 
+						int iIndex_4 = iIndex_1 + iNeighborStep * m_iHeightMapWidth;
+
+						rFixCrackLOD.m_vIndex.push_back(iIndex_1);
+						rFixCrackLOD.m_vIndex.push_back(iIndex_3);
+						rFixCrackLOD.m_vIndex.push_back(iIndex_2);
+
+						rFixCrackLOD.m_vIndex.push_back(iIndex_1);
+						rFixCrackLOD.m_vIndex.push_back(iIndex_2);
+						rFixCrackLOD.m_vIndex.push_back(iIndex_4);
+
+						rFixCrackLOD.m_vIndex.push_back(iIndex_2);
+						rFixCrackLOD.m_vIndex.push_back(iIndex_3);
+						rFixCrackLOD.m_vIndex.push_back(iIndex_4);
+					}
+				}
+				break;
+			default:
+				break;
 			}
 		}
 	}
 }
-
 void CGLTerrain::SetLODThreshold( float LOD_1, float LOD_2, float LOD_3 )
 {
 	m_vLODThreshold[0] = LOD_1;
@@ -352,123 +400,146 @@ void CGLTerrain::SetDrawWireFrame( bool bDraw )
 
 void CGLTerrain::UpdateCrackFix()
 {
+	VisitQuadTree(m_pRoot, std::bind(&CGLTerrain::UpdateCrackFixInternal, this, std::placeholders::_1));
+}
+
+void CGLTerrain::VisitQuadTree( SQuadNode* pNode, const std::function< void(SChunk*) >& pCallBack )
+{
+	if ( !pNode )
+		return;
+
+	if ( pNode->m_vChildren.empty() )
+	{
+		if ( pCallBack )
+			pCallBack(pNode->m_pRelatedChunk);
+
+		return;
+	}
+
+	for (int i = 0; i < pNode->m_vChildren.size(); ++i)
+	{
+		VisitQuadTree(pNode->m_vChildren[i], pCallBack);
+	}
+}
+
+void CGLTerrain::UpdateChunkLODInternal( SChunk* pChunk )
+{
+	Vec3 cameraPos = CDirector::GetInstance()->GetPerspectiveCamera()->GetEyePos();
+
+	SCommonVertex FirstVertex =  m_vGlobalVertex[ pChunk->m_vLOD[0].m_vIndex.front() ];
+	SCommonVertex LastVertex =  m_vGlobalVertex[ pChunk->m_vLOD[0].m_vIndex.back() ];
+
+	Vec3 centerPos( (FirstVertex.m_pos.x + LastVertex.m_pos.x - FirstVertex.m_pos.x) / 2, 0.0f, LastVertex.m_pos.z + (LastVertex.m_pos.z - FirstVertex.m_pos.z) / 2 );
+	centerPos = m_transform.GetTransformMat().TransformPoint(centerPos);
+
+	float dist = centerPos.Distance(cameraPos);
+	pChunk->m_iCurLOD = conMaxLOD - 1;
+	for (int i = 0; i < conMaxLOD - 1; ++i)
+	{
+		if ( dist <= m_vLODThreshold[i] )
+		{
+			pChunk->m_iCurLOD = i;
+			break;
+		}
+	}
+}
+
+void CGLTerrain::GenerateChunk( SChunk* pNewChunk, int j, int i )
+{
+	pNewChunk->m_x = j;
+	pNewChunk->m_y = i;
+	glGenBuffers(1, &pNewChunk->m_vertexIndexObj);
+
+	int iBase = i * conChunkSize * m_iHeightMapWidth + j * conChunkSize;
+	for ( int iLOD = 0; iLOD < conMaxLOD; ++iLOD )
+	{
+		int iStep = pow(2, iLOD);
+		SChunkLOD& rLOD = pNewChunk->m_vLOD[iLOD];
+		rLOD.m_vIndex.clear();
+		for (int m = 0; m < conChunkSize; m += iStep)
+		{
+			for (int n = 0; n < conChunkSize; n += iStep)
+			{
+				rLOD.m_vIndex.push_back(iBase + m * m_iHeightMapWidth + n);
+				rLOD.m_vIndex.push_back(iBase + m * m_iHeightMapWidth + n + iStep);
+				rLOD.m_vIndex.push_back(iBase + (m + iStep) * m_iHeightMapWidth + n);
+
+				rLOD.m_vIndex.push_back(iBase + (m + iStep) * m_iHeightMapWidth + n);
+				rLOD.m_vIndex.push_back(iBase + m * m_iHeightMapWidth + n + iStep);
+				rLOD.m_vIndex.push_back(iBase + (m + iStep) * m_iHeightMapWidth + n + iStep);
+			}
+		}
+	}
+}
+
+void CGLTerrain::GenerateNeighbor()
+{
 	for (int i = 0; i < m_iChunkCountY; ++i)
 	{
 		for (int j = 0; j < m_iChunkCountX; ++j)
 		{
-			SChunk* pCurChunk = m_vChunk[i][j];
-			int iCurStep = pow(2, pCurChunk->m_iCurLOD);
+			SChunk* pChunk = m_vChunk[i][j];
 
-			SChunkLOD& rFixCrackLOD = pCurChunk->m_vFixCrack;
-			rFixCrackLOD.m_vIndex.clear();
-
-			for (int n = 0; n < 4; ++n)
-			{
-				SChunk* pNeighbor = pCurChunk->m_vNeighbor[n];
-				if ( pNeighbor && pCurChunk->m_iCurLOD < pNeighbor->m_iCurLOD )
-				{
-					int iNeighborStep = pow(2, pNeighbor->m_iCurLOD);
-					int iBase = i * conChunkSize * m_iHeightMapWidth + j * conChunkSize;
-					EChunkNeighbor eNeighbor = (EChunkNeighbor)n;
-					switch (eNeighbor)
-					{
-					case CGLTerrain::EChunkNeighbor_Left:
-						{
-							for (int m = 0; m < conChunkSize; m += iNeighborStep)
-							{
-								int iIndex_1 = iBase + m * m_iHeightMapWidth; 
-								int iIndex_2 = iBase + (m + iCurStep) * m_iHeightMapWidth; 
-								int iIndex_3 = iBase +(m + iCurStep + iCurStep) * m_iHeightMapWidth;
-								int iIndex_4 = iIndex_3 - iNeighborStep;
-
-								rFixCrackLOD.m_vIndex.push_back(iIndex_1);
-								rFixCrackLOD.m_vIndex.push_back(iIndex_3);
-								rFixCrackLOD.m_vIndex.push_back(iIndex_2);
-
-								rFixCrackLOD.m_vIndex.push_back(iIndex_1);
-								rFixCrackLOD.m_vIndex.push_back(iIndex_2);
-								rFixCrackLOD.m_vIndex.push_back(iIndex_4);
-
-								rFixCrackLOD.m_vIndex.push_back(iIndex_2);
-								rFixCrackLOD.m_vIndex.push_back(iIndex_3);
-								rFixCrackLOD.m_vIndex.push_back(iIndex_4);
-							}
-						}
-						break;
-					case CGLTerrain::EChunkNeighbor_Right:
-						{
-							for (int m = 0; m < conChunkSize; m += iNeighborStep)
-							{
-								int iIndex_1 = iBase + m * m_iHeightMapWidth + conChunkSize; 
-								int iIndex_2 = iBase + (m + iCurStep) * m_iHeightMapWidth + conChunkSize; 
-								int iIndex_3 = iBase +(m + iCurStep + iCurStep) * m_iHeightMapWidth + conChunkSize;
-								int iIndex_4 = iIndex_1 + iNeighborStep;
-
-								rFixCrackLOD.m_vIndex.push_back(iIndex_1);
-								rFixCrackLOD.m_vIndex.push_back(iIndex_2);
-								rFixCrackLOD.m_vIndex.push_back(iIndex_3);
-
-								rFixCrackLOD.m_vIndex.push_back(iIndex_1);
-								rFixCrackLOD.m_vIndex.push_back(iIndex_4);
-								rFixCrackLOD.m_vIndex.push_back(iIndex_2);
-
-								rFixCrackLOD.m_vIndex.push_back(iIndex_2);
-								rFixCrackLOD.m_vIndex.push_back(iIndex_4);
-								rFixCrackLOD.m_vIndex.push_back(iIndex_3);
-							}
-						}
-						break;
-					case CGLTerrain::EChunkNeighbor_Up:
-						{
-							for (int m = 0; m < conChunkSize; m += iNeighborStep)
-							{
-								int iIndex_1 = iBase + m; 
-								int iIndex_2 = iBase + m + iCurStep; 
-								int iIndex_3 = iBase + m + iCurStep + iCurStep; 
-								int iIndex_4 = iIndex_3 - iNeighborStep * m_iHeightMapWidth;
-
-								rFixCrackLOD.m_vIndex.push_back(iIndex_1);
-								rFixCrackLOD.m_vIndex.push_back(iIndex_2);
-								rFixCrackLOD.m_vIndex.push_back(iIndex_3);
-
-								rFixCrackLOD.m_vIndex.push_back(iIndex_1);
-								rFixCrackLOD.m_vIndex.push_back(iIndex_4);
-								rFixCrackLOD.m_vIndex.push_back(iIndex_2);
-
-								rFixCrackLOD.m_vIndex.push_back(iIndex_2);
-								rFixCrackLOD.m_vIndex.push_back(iIndex_4);
-								rFixCrackLOD.m_vIndex.push_back(iIndex_3);
-							}
-						}
-						break;
-					case CGLTerrain::EChunkNeighbor_Bottom:
-						{
-							for (int m = 0; m < conChunkSize; m += iNeighborStep)
-							{
-								int iIndex_1 = iBase + conChunkSize * m_iHeightMapWidth + m; 
-								int iIndex_2 = iBase + conChunkSize * m_iHeightMapWidth + m + iCurStep; 
-								int iIndex_3 = iBase + conChunkSize * m_iHeightMapWidth + m + iCurStep + iCurStep; 
-								int iIndex_4 = iIndex_1 + iNeighborStep * m_iHeightMapWidth;
-
-								rFixCrackLOD.m_vIndex.push_back(iIndex_1);
-								rFixCrackLOD.m_vIndex.push_back(iIndex_3);
-								rFixCrackLOD.m_vIndex.push_back(iIndex_2);
-
-								rFixCrackLOD.m_vIndex.push_back(iIndex_1);
-								rFixCrackLOD.m_vIndex.push_back(iIndex_2);
-								rFixCrackLOD.m_vIndex.push_back(iIndex_4);
-
-								rFixCrackLOD.m_vIndex.push_back(iIndex_2);
-								rFixCrackLOD.m_vIndex.push_back(iIndex_3);
-								rFixCrackLOD.m_vIndex.push_back(iIndex_4);
-							}
-						}
-						break;
-					default:
-						break;
-					}
-				}
-			}
+			if ( j - 1 >= 0 )
+				pChunk->m_vNeighbor[ EChunkNeighbor_Left ] = m_vChunk[i][j - 1];
+			if ( j + 1 < m_iChunkCountX )
+				pChunk->m_vNeighbor[ EChunkNeighbor_Right ] = m_vChunk[i][j + 1];
+			if ( i - 1 >= 0 )
+				pChunk->m_vNeighbor[ EChunkNeighbor_Up ] = m_vChunk[i - 1][j];
+			if ( i + 1 < m_iChunkCountY )
+				pChunk->m_vNeighbor[ EChunkNeighbor_Bottom ] = m_vChunk[i + 1][j];
 		}
+	}
+}
+
+void CGLTerrain::LoadVertex( const unsigned char* pHeightMapData, int iWidth, int iHeight )
+{
+	for (int i = 0; i < m_iHeightMapHeight; ++i)
+	{
+		for (int j = 0; j < m_iHeightMapWidth; ++j)
+		{
+			SCommonVertex newVertex;
+			float fHeight = pHeightMapData[ i * iWidth + j ];
+			newVertex.m_pos = Vec3( j, fHeight, i);
+			newVertex.m_color = Color4F::WHITE;
+			newVertex.m_UV = Vec2( j * 1.0f / iWidth, i * 1.0f / iHeight );
+
+			m_vGlobalVertex.push_back(newVertex);
+		}
+	}
+
+	glGenBuffers(1, &m_vertexDataObj);
+	glBindBuffer(GL_ARRAY_BUFFER, m_vertexDataObj);
+	glBufferData(GL_ARRAY_BUFFER, m_vGlobalVertex.size() * sizeof(SCommonVertex), &m_vGlobalVertex.front(), GL_STATIC_DRAW);
+}
+
+CGLTerrain::SQuadNode::SQuadNode( int x, int y, int iWidth, int iHeight, SQuadNode* pParent, CGLTerrain* pTerrain )
+	: m_pRelatedChunk(nullptr)
+	, m_pParent(nullptr)
+	, m_bDraw(true)
+{
+	m_pParent = pParent;
+
+	if ( (iWidth / 2) / conChunkSize > 0 && (iHeight / 2) / conChunkSize > 0  )
+	{
+		// - left top
+		auto pLTChild = new SQuadNode(x, y, iWidth / 2, iHeight / 2, this, pTerrain);
+		m_vChildren.push_back(pLTChild);
+
+		// - right top
+		auto pRTChild = new SQuadNode(x + iWidth / 2, y, iWidth / 2, iHeight / 2, this, pTerrain);
+		m_vChildren.push_back(pRTChild);
+
+		// - left bottom
+		auto pLBChild = new SQuadNode(x, y + iHeight / 2, iWidth / 2, iHeight / 2, this, pTerrain);
+		m_vChildren.push_back(pLBChild);
+
+		// - right bottom
+		auto pRBChild = new SQuadNode(x + iWidth / 2, y + iHeight / 2, iWidth / 2, iHeight / 2, this, pTerrain);
+		m_vChildren.push_back(pRBChild);
+	}
+	else
+	{
+		m_pRelatedChunk = pTerrain->m_vChunk[ x / conChunkSize ][ y / conChunkSize ];
 	}
 }

@@ -206,8 +206,8 @@ void display()
 	g_pFPSLabel->Render();
 	//g_pLineDrawer->Render();
 
-	g_particleSystem->Update(g_fDeltaTime);
-	g_particleSystem->Render();
+	//g_particleSystem->Update(g_fDeltaTime);
+	//g_particleSystem->Render();
 
 	g_pTerrain->Update(g_fDeltaTime);
 	g_pTerrain->Render();
