@@ -85,6 +85,9 @@
     <ClCompile Include="..\Source\FrameWork\GLSkyBox.cpp">
       <Filter>Source Files\FrameWork</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\Math\Plane.cpp">
+      <Filter>Source Files\FrameWork\Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\FrameWork\Utility.h">
@@ -146,6 +149,9 @@
     </ClInclude>
     <ClInclude Include="..\Source\FrameWork\GLSkyBox.h">
       <Filter>Source Files\FrameWork</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\Math\Plane.h">
+      <Filter>Source Files\FrameWork\Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

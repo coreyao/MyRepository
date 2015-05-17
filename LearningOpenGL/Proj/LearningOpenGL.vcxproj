@@ -26,6 +26,7 @@
     <ClCompile Include="..\Source\FrameWork\Image\ImageReader.cpp" />
     <ClCompile Include="..\Source\FrameWork\Image\PNGReader.cpp" />
     <ClCompile Include="..\Source\FrameWork\Math\Matrix.cpp" />
+    <ClCompile Include="..\Source\FrameWork\Math\Plane.cpp" />
     <ClCompile Include="..\Source\FrameWork\Math\Quaternion.cpp" />
     <ClCompile Include="..\Source\FrameWork\Math\Vector.cpp" />
     <ClCompile Include="..\Source\FrameWork\OpenGL\GLFrameWork.cpp" />
@@ -49,6 +50,7 @@
     <ClInclude Include="..\Source\FrameWork\Image\ImageReader.h" />
     <ClInclude Include="..\Source\FrameWork\Image\PNGReader.h" />
     <ClInclude Include="..\Source\FrameWork\Math\Matrix.h" />
+    <ClInclude Include="..\Source\FrameWork\Math\Plane.h" />
     <ClInclude Include="..\Source\FrameWork\Math\Quaternion.h" />
     <ClInclude Include="..\Source\FrameWork\Math\Vector.h" />
     <ClInclude Include="..\Source\FrameWork\OpenGL\GLFrameWork.h" />
