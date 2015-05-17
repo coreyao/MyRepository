@@ -88,6 +88,9 @@
     <ClCompile Include="..\Source\FrameWork\Math\Plane.cpp">
       <Filter>Source Files\FrameWork\Math</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\Math\Ray.cpp">
+      <Filter>Source Files\FrameWork\Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\FrameWork\Utility.h">
@@ -151,6 +154,9 @@
       <Filter>Source Files\FrameWork</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\FrameWork\Math\Plane.h">
+      <Filter>Source Files\FrameWork\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\Math\Ray.h">
       <Filter>Source Files\FrameWork\Math</Filter>
     </ClInclude>
   </ItemGroup>
