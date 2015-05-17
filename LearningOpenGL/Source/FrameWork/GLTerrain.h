@@ -30,11 +30,6 @@ public:
 	STransform m_transform;
 
 private:
-	void InitTerrain(const unsigned char* pHeightMapData, int iWidth, int iHeight);
-	void UpdateUniform();
-	void UpdateChunkLOD(const Vec3& cameraPos);
-	void UpdateCrackFix();
-
 	struct SChunkLOD
 	{
 		std::vector<unsigned int> m_vIndex;
@@ -52,9 +47,31 @@ private:
 		GLuint m_vertexIndexObj;
 		SChunkLOD m_vLOD[conMaxLOD];
 		SChunkLOD m_vFixCrack;
-
 		SChunk* m_vNeighbor[4];
 	};
+
+	struct SQuadNode
+	{
+		SQuadNode()
+			: m_pRelatedChunk(nullptr)
+			, m_pParent(nullptr)
+			, m_x(0)
+			, m_y(0)
+			, m_bDraw(true)
+		{
+		}
+
+		SQuadNode(int x, int y, int iWidth, int iHeight, SQuadNode* pParent, CGLTerrain* pTerrain);
+
+		SChunk* m_pRelatedChunk;
+		bool m_bDraw;
+		int m_x;
+		int m_y;
+		SQuadNode* m_pParent;
+		std::vector<SQuadNode*> m_vChildren;
+	};
+
+	SQuadNode* m_pRoot;
 
 	int m_vLODThreshold[conMaxLOD - 1];
 	SChunk*** m_vChunk;
@@ -76,4 +93,12 @@ private:
 	std::vector<GLuint> m_vDetailTexture;
 	std::vector<int> m_vDetailTexSize;
 	GLuint m_detailTexSampler;
+
+private:
+	void InitTerrain(const unsigned char* pHeightMapData, int iWidth, int iHeight);
+	void UpdateUniform();
+	void UpdateChunkLOD(const Vec3& cameraPos);
+	void UpdateCrackFix();
+	void VisitQuadTree(SQuadNode* pNode, const std::function< void(SChunk*) >& pCallBack);
+	void RenderChunk(const SChunk* pChunk);
 };
