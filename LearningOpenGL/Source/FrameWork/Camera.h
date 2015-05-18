@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Utility.h"
+#include "GLFrustrum.h"
 
 class CCamera
 {
@@ -16,14 +17,18 @@ public:
 	void Move(float leftAndRight, float upAndDown, float forwardAndBackward);
 	void Rotate(float fPitch, float fYaw);
 
-	Mat4 GetViewMat();
-	Mat4 GetProjMat();
+	Mat4 GetViewMat() const;
+	Mat4 GetProjMat() const;
 
-	Vec3 GetEyePos();
-	Vec3 GetLookAtDir();
+	Vec3 GetEyePos() const;
+	Vec3 GetLookAtDir() const;
+
+	const CGLFrustrum& GetFrustrum() const;
+	bool IsInFrustrum(const CAABB& worldRect) const;
 
 private:
 	void UpdateProjectionViewMat();
+	void UpdateFrustrum();
 
 	Vec3 m_eyePos;
 	Vec3 m_lookAtDir;
@@ -36,4 +41,6 @@ private:
 	Mat4 m_ProjMat;
 
 	EProjectionMode m_eMode;
+
+	CGLFrustrum m_frustrum;
 };

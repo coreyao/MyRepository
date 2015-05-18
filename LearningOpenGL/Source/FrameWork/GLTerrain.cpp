@@ -6,28 +6,11 @@
 
 const int conChunkSize = 32;
 
-CGLTerrain::CGLTerrain( const std::string& sHeightMapFile )
+CGLTerrain::CGLTerrain()
 	: m_bDrawWireFrame(false)
 	, m_iHeightMapWidth(0)
 	, m_iHeightMapHeight(0)
 {
-	CPNGReader pngReader(sHeightMapFile);
-	if ( pngReader.GetData() )
-	{
-		unsigned char* pData = new unsigned char[ int(pngReader.GetWidth()) * int(pngReader.GetHeight()) ];
-		int iBlockSize = 4;
-		if ( pngReader.GetImageType() == CImageReader::EImageType_RGB888 )
-			iBlockSize = 3;
-
-		for ( int i = 0; i < int(pngReader.GetWidth()) * int(pngReader.GetHeight()); ++i )
-		{
-			pData[i] = pngReader.GetData()[i * iBlockSize];
-		}
-
-		InitTerrain(pData, pngReader.GetWidth(), pngReader.GetHeight());
-		SetGLProgram(CGLProgramManager::GetInstance()->CreateProgramByName("Terrain"));
-		SetLODThreshold(500, 1000, 1500);
-	}
 }
 
 void CGLTerrain::InitTerrain(const unsigned char* pHeightMapData, int iWidth, int iHeight)
@@ -51,7 +34,7 @@ void CGLTerrain::InitTerrain(const unsigned char* pHeightMapData, int iWidth, in
 			GenerateChunk(pNewChunk, j, i);
 		}
 	}
-	GenerateNeighbor();
+	InitNeighbor();
 	m_pRoot = new SQuadNode(0, 0, m_iHeightMapWidth, m_iHeightMapHeight, nullptr, this);
 }
 
@@ -125,7 +108,7 @@ void CGLTerrain::Render()
 		glUniformMatrix4fv(perspectiveMatrixUnif, 1, GL_FALSE, projMat.m);
 	}
 
-	VisitQuadTree(m_pRoot, std::bind(&CGLTerrain::RenderChunk, this, std::placeholders::_1));
+	VisitQuadTree(m_pRoot, std::bind(&CGLTerrain::IsInFrustrum, this, std::placeholders::_1), std::bind(&CGLTerrain::RenderChunk, this, std::placeholders::_1));
 
 	/*for (int i = 0; i < m_iChunkCountY; ++i)
 	{
@@ -422,10 +405,29 @@ void CGLTerrain::VisitQuadTree( SQuadNode* pNode, const std::function< void(SChu
 	}
 }
 
+void CGLTerrain::VisitQuadTree( SQuadNode* pNode, const std::function< bool(SQuadNode*) >& pCondition, const std::function< void(SChunk*) >& pCallBack )
+{
+	if ( !pNode || !pCondition(pNode) )
+		return;
+
+	if ( pNode->m_vChildren.empty() )
+	{
+		if ( pCallBack )
+			pCallBack(pNode->m_pRelatedChunk);
+
+		return;
+	}
+
+	for (int i = 0; i < pNode->m_vChildren.size(); ++i)
+	{
+		VisitQuadTree(pNode->m_vChildren[i], pCondition, pCallBack);
+	}
+}
+
 void CGLTerrain::UpdateChunkLODInternal( SChunk* pChunk )
 {
 	Vec3 cameraPos = CDirector::GetInstance()->GetPerspectiveCamera()->GetEyePos();
-	Vec3 centerPos = pChunk->m_boundingBox.GetCenter();
+	Vec3 centerPos = pChunk->m_pParent->m_boundingBoxLocal.GetCenter();
 	centerPos = m_transform.GetTransformMat().TransformPoint(centerPos);
 
 	float dist = centerPos.Distance(cameraPos);
@@ -466,16 +468,9 @@ void CGLTerrain::GenerateChunk( SChunk* pNewChunk, int j, int i )
 			}
 		}
 	}
-
-	SCommonVertex FirstVertex =  m_vGlobalVertex[ pNewChunk->m_vLOD[0].m_vIndex.front() ];
-	SCommonVertex LastVertex =  m_vGlobalVertex[ pNewChunk->m_vLOD[0].m_vIndex.back() ];
-
-	Vec3 minPoint = FirstVertex.m_pos;
-	Vec3 maxPoint = LastVertex.m_pos;
-	pNewChunk->m_boundingBox.SetData(minPoint, maxPoint);
 }
 
-void CGLTerrain::GenerateNeighbor()
+void CGLTerrain::InitNeighbor()
 {
 	for (int i = 0; i < m_iChunkCountY; ++i)
 	{
@@ -516,10 +511,36 @@ void CGLTerrain::LoadVertex( const unsigned char* pHeightMapData, int iWidth, in
 	glBufferData(GL_ARRAY_BUFFER, m_vGlobalVertex.size() * sizeof(SCommonVertex), &m_vGlobalVertex.front(), GL_STATIC_DRAW);
 }
 
+bool CGLTerrain::IsInFrustrum( const SQuadNode* pNode )
+{
+	return CDirector::GetInstance()->GetPerspectiveCamera()->IsInFrustrum( pNode->m_boundingBoxLocal.Transform( m_transform.GetTransformMat() ) );
+	//return true;
+}
+
+void CGLTerrain::Init(const std::string& sHeightMapFile)
+{
+	CPNGReader pngReader(sHeightMapFile);
+	if ( pngReader.GetData() )
+	{
+		unsigned char* pData = new unsigned char[ int(pngReader.GetWidth()) * int(pngReader.GetHeight()) ];
+		int iBlockSize = 4;
+		if ( pngReader.GetImageType() == CImageReader::EImageType_RGB888 )
+			iBlockSize = 3;
+
+		for ( int i = 0; i < int(pngReader.GetWidth()) * int(pngReader.GetHeight()); ++i )
+		{
+			pData[i] = pngReader.GetData()[i * iBlockSize];
+		}
+
+		InitTerrain(pData, pngReader.GetWidth(), pngReader.GetHeight());
+		SetGLProgram(CGLProgramManager::GetInstance()->CreateProgramByName("Terrain"));
+		SetLODThreshold(500, 1000, 1500);
+	}
+}
+
 CGLTerrain::SQuadNode::SQuadNode( int x, int y, int iWidth, int iHeight, SQuadNode* pParent, CGLTerrain* pTerrain )
 	: m_pRelatedChunk(nullptr)
 	, m_pParent(nullptr)
-	, m_bDraw(true)
 {
 	m_pParent = pParent;
 
@@ -528,21 +549,34 @@ CGLTerrain::SQuadNode::SQuadNode( int x, int y, int iWidth, int iHeight, SQuadNo
 		// - left top
 		auto pLTChild = new SQuadNode(x, y, iWidth / 2, iHeight / 2, this, pTerrain);
 		m_vChildren.push_back(pLTChild);
+		m_boundingBoxLocal.Merge(pLTChild->m_boundingBoxLocal);
 
 		// - right top
 		auto pRTChild = new SQuadNode(x + iWidth / 2, y, iWidth / 2, iHeight / 2, this, pTerrain);
 		m_vChildren.push_back(pRTChild);
+		m_boundingBoxLocal.Merge(pRTChild->m_boundingBoxLocal);
 
 		// - left bottom
 		auto pLBChild = new SQuadNode(x, y + iHeight / 2, iWidth / 2, iHeight / 2, this, pTerrain);
 		m_vChildren.push_back(pLBChild);
+		m_boundingBoxLocal.Merge(pLBChild->m_boundingBoxLocal);
 
 		// - right bottom
 		auto pRBChild = new SQuadNode(x + iWidth / 2, y + iHeight / 2, iWidth / 2, iHeight / 2, this, pTerrain);
 		m_vChildren.push_back(pRBChild);
+		m_boundingBoxLocal.Merge(pRBChild->m_boundingBoxLocal);
 	}
 	else
 	{
 		m_pRelatedChunk = pTerrain->m_vChunk[ x / conChunkSize ][ y / conChunkSize ];
+		m_pRelatedChunk->m_pParent = this;
+
+		std::vector<Vec3> vPos;
+		for (int i = 0; i < m_pRelatedChunk->m_vLOD[0].m_vIndex.size(); ++i)
+		{
+			int iVertexIndex = m_pRelatedChunk->m_vLOD[0].m_vIndex[i];
+			vPos.push_back( pTerrain->m_vGlobalVertex[ iVertexIndex ].m_pos );
+		}
+		m_boundingBoxLocal.Init(vPos);
 	}
 }

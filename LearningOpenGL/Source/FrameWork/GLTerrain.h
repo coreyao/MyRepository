@@ -17,8 +17,9 @@ public:
 		EChunkNeighbor_Bottom,
 	};
 
-	CGLTerrain(const std::string& sHeightMapFile);
+	CGLTerrain();
 
+	void Init(const std::string& sHeightMapFile);
 	void Update(float deltaTime);
 	void Render();
 	void SetGLProgram(GLint theProgram);
@@ -36,12 +37,15 @@ private:
 		std::vector<unsigned int> m_vIndex;
 	};
 
+	struct SQuadNode;
 	struct SChunk
 	{
 		SChunk()
 			: m_iCurLOD(0)
 			, m_x(0)
 			, m_y(0)
+			, m_bDraw(true)
+			, m_pParent(nullptr)
 		{
 			memset( m_vNeighbor, 0, sizeof(m_vNeighbor) );
 		}
@@ -53,7 +57,9 @@ private:
 		SChunkLOD m_vLOD[conMaxLOD];
 		SChunkLOD m_vFixCrack;
 		SChunk* m_vNeighbor[4];
-		CAABB m_boundingBox;
+		bool m_bDraw;
+
+		SQuadNode* m_pParent;
 	};
 
 	struct SQuadNode
@@ -61,17 +67,16 @@ private:
 		SQuadNode()
 			: m_pRelatedChunk(nullptr)
 			, m_pParent(nullptr)
-			, m_bDraw(true)
 		{
 		}
 
 		SQuadNode(int x, int y, int iWidth, int iHeight, SQuadNode* pParent, CGLTerrain* pTerrain);
 
 		SChunk* m_pRelatedChunk;
-		bool m_bDraw;
 		
 		SQuadNode* m_pParent;
 		std::vector<SQuadNode*> m_vChildren;
+		CAABB m_boundingBoxLocal;
 	};
 
 	SQuadNode* m_pRoot;
@@ -99,18 +104,16 @@ private:
 
 private:
 	void InitTerrain(const unsigned char* pHeightMapData, int iWidth, int iHeight);
-
 	void LoadVertex( const unsigned char* pHeightMapData, int iWidth, int iHeight );
-
-	void GenerateNeighbor();
-
+	void InitNeighbor();
 	void GenerateChunk( SChunk* pNewChunk, int j, int i );
-
 	void UpdateUniform();
 	void UpdateChunkLOD();
 	void UpdateChunkLODInternal( SChunk* pChunk );
 	void UpdateCrackFix();
 	void UpdateCrackFixInternal( SChunk* pCurChunk);
 	void VisitQuadTree(SQuadNode* pNode, const std::function< void(SChunk*) >& pCallBack);
+	void VisitQuadTree(SQuadNode* pNode, const std::function< bool(SQuadNode*) >& pCondition, const std::function< void(SChunk*) >& pCallBack);
 	void RenderChunk(const SChunk* pChunk);
+	bool IsInFrustrum(const SQuadNode* pNode);
 };

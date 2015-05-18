@@ -128,18 +128,18 @@ void init()
 	//pSkinMesh->SetVisible(false, "Box01");
 	g_vMesh.push_back(pSkinMesh);
 
-	g_pTerrain = new CGLTerrain("heightmap16.png");
+	g_pTerrain = new CGLTerrain();
 	g_pTerrain->SetDetailTexture("dirt.png", "Grass2.png", "road.png", "GreenSkin.png");
 	g_pTerrain->SetDetailTextureSize(20, 20, 20, 20);
 	g_pTerrain->SetAlphaTexture("alphamap.png");
 	g_pTerrain->SetDrawWireFrame(false);
-
 	g_pTerrain->m_transform.m_pos.x -= 1000;
 	g_pTerrain->m_transform.m_pos.y -= 400;
 	g_pTerrain->m_transform.m_pos.z -= 1000;
 	g_pTerrain->m_transform.m_scale.x = 20;
 	g_pTerrain->m_transform.m_scale.y = 2;
 	g_pTerrain->m_transform.m_scale.z = 20;
+	g_pTerrain->Init("heightmap16.png");
 }
 
 void display()
@@ -201,6 +201,9 @@ void display()
 		g_fAccumulatedTime = 0;
 	}
 
+	g_pTerrain->Update(g_fDeltaTime);
+	g_pTerrain->Render();
+
 	//g_pPointDrawer->Render();
 	g_pDeltaTimeLabel->Render();
 	g_pFPSLabel->Render();
@@ -208,9 +211,6 @@ void display()
 
 	//g_particleSystem->Update(g_fDeltaTime);
 	//g_particleSystem->Render();
-
-	g_pTerrain->Update(g_fDeltaTime);
-	g_pTerrain->Render();
 	
 	glutSwapBuffers();
 	glutPostRedisplay();

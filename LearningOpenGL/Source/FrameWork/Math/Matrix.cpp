@@ -135,7 +135,7 @@ Matrix4X4 Matrix4X4::operator*( float scalar )
 	return ret;
 }
 
-Vec4 Matrix4X4::operator*( const Vec4& vec )
+Vec4 Matrix4X4::operator*( const Vec4& vec ) const
 {
 	Vec4 ret;
 	ret.x = m[0] * vec.x + m[4] * vec.y + m[8] * vec.z + m[12] * vec.w;
@@ -146,7 +146,7 @@ Vec4 Matrix4X4::operator*( const Vec4& vec )
 	return ret;
 }
 
-Vec3 Matrix4X4::operator*( const Vec3& vec )
+Vec3 Matrix4X4::operator*( const Vec3& vec ) const
 {
 	Vec3 ret;
 	ret.x = m[0] * vec.x + m[4] * vec.y + m[8] * vec.z;
@@ -397,14 +397,14 @@ Vec3 Matrix4X4::GetForward()
 	return Vec3( m[8], m[9], m[10] );
 }
 
-Vec3 Matrix4X4::TransformPoint( const Vec3& point )
+Vec3 Matrix4X4::TransformPoint( const Vec3& point ) const
 {
 	Vec4 pp(point.x, point.y, point.z, 1.0f);
 	pp = *this * pp;
 	return Vec3(pp.x, pp.y, pp.z);
 }
 
-Vec3 Matrix4X4::TransformVector( const Vec3& vec )
+Vec3 Matrix4X4::TransformVector( const Vec3& vec ) const
 {
 	return *this * vec;
 }

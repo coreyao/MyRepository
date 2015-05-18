@@ -50,12 +50,12 @@ void CCamera::Rotate( float fPitch, float fYaw )
 	UpdateProjectionViewMat();
 }
 
-Mat4 CCamera::GetViewMat()
+Mat4 CCamera::GetViewMat() const
 {
 	return m_viewMat;
 }
 
-Mat4 CCamera::GetProjMat()
+Mat4 CCamera::GetProjMat() const
 {
 	return m_ProjMat;
 }
@@ -64,14 +64,30 @@ void CCamera::UpdateProjectionViewMat()
 {
 	m_lookAtDir.normalize();
 	m_viewMat = Mat4::createLookAt(m_eyePos, m_lookAtDir, m_UpDir);
+	UpdateFrustrum();
 }
 
-Vec3 CCamera::GetEyePos()
+Vec3 CCamera::GetEyePos() const
 {
 	return m_eyePos;
 }
 
-Vec3 CCamera::GetLookAtDir()
+Vec3 CCamera::GetLookAtDir() const
 {
 	return m_lookAtDir;
+}
+
+const CGLFrustrum& CCamera::GetFrustrum() const
+{
+	return m_frustrum;
+}
+
+void CCamera::UpdateFrustrum()
+{
+	m_frustrum.Init(*this);
+}
+
+bool CCamera::IsInFrustrum( const CAABB& worldRect ) const
+{
+	return m_frustrum.IsInFrustrum(worldRect);
 }

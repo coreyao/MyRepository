@@ -29,11 +29,11 @@ public:
 	Matrix4X4 operator*(float fScalar);
 	Matrix4X4 operator+(const Matrix4X4& rh);
 
-	Vec4 operator*(const Vec4& vec);
-	Vec3 operator*(const Vec3& vec);
+	Vec4 operator*(const Vec4& vec) const;
+	Vec3 operator*(const Vec3& vec) const;
 
-	Vec3 TransformPoint(const Vec3& point);
-	Vec3 TransformVector(const Vec3& vec);
+	Vec3 TransformPoint(const Vec3& point) const;
+	Vec3 TransformVector(const Vec3& vec) const;
 
 	static Matrix4X4 createPerspective(float fieldOfView, float aspectRatio, float zNearPlane, float zFarPlane);
 	static Matrix4X4 createOrthographic(float width, float height, float zNearPlane, float zFarPlane);

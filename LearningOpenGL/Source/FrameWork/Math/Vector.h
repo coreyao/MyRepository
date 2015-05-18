@@ -33,15 +33,18 @@ public:
 	Vec3 operator+(const Vec3& rh) const;
 	Vec3 operator-(const Vec3& rh) const;
 	Vec3 operator*(float fScalar) const;
+	Vec3 operator/(float fScalar) const;
 	Vec3 operator*(const Vec3& rh) const;
 	Vec3 operator+=(const Vec3& rh);
+	const Vec3 operator-() const;
 
-	float Dot(const Vec3& rh);
+	float Dot(const Vec3& rh) const;
 	Vec3 Cross(const Vec3& rh) const;
 	void set(float xx, float yy, float zz);
 	float Distance( const Vec3& rh );
 
 	void normalize();
+	float length() const;
 
 	float x, y, z;
 };

@@ -31,7 +31,7 @@ Vec3 Vec3::operator-( const Vec3& rh ) const
 	return Vec3( x - rh.x, y - rh.y, z - rh.z );
 }
 
-float Vec3::Dot( const Vec3& rh )
+float Vec3::Dot( const Vec3& rh ) const
 {
 	return x * rh.x + y * rh.y + z * rh.z;
 }
@@ -68,6 +68,11 @@ Vec3 Vec3::operator*( float fScalar ) const
 	return Vec3( x * fScalar, y * fScalar, z * fScalar );
 }
 
+Vec3 Vec3::operator/( float fScalar ) const
+{
+	return Vec3( x / fScalar, y / fScalar, z / fScalar );
+}
+
 Vec3 Vec3::operator*( const Vec3& rh ) const
 {
 	return Vec3( x * rh.x, y * rh.y, z * rh.z );
@@ -91,6 +96,16 @@ float Vec3::Distance( const Vec3& rh )
 	float dz = rh.z - this->z;
 
 	return sqrt( dx * dx + dy * dy + dz * dz );
+}
+
+const Vec3 Vec3::operator-() const
+{
+	return Vec3(-x, -y, -z);
+}
+
+float Vec3::length() const
+{
+	return sqrt(x * x + y * y + z * z);
 }
 
 void Vec4::set( float xx, float yy, float zz, float ww )
