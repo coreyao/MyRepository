@@ -140,6 +140,9 @@ void init()
 	g_pTerrain->m_transform.m_scale.y = 2;
 	g_pTerrain->m_transform.m_scale.z = 20;
 	g_pTerrain->Init("heightmap16.png");
+
+	Vec3 dd = g_pTerrain->m_transform.GetTransformMat().TransformPoint(Vec3(0, 0, 0));
+	g_pTerrain->GetHeight( Vec2(dd.x, dd.z) );
 }
 
 void display()

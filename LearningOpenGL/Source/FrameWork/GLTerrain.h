@@ -28,6 +28,7 @@ public:
 	void SetDetailTexture( const std::string& sTex1, const std::string& sTex2 = "", const std::string& sTex3 = "", const std::string& sTex4 = "");
 	void SetDetailTextureSize( int iTex1Size, int iTex2Size = 20, int iTex3Size = 20, int iTex4Size = 20);
 	void SetDrawWireFrame(bool bDraw);
+	float GetHeight( const Vec2& worldPos );
 
 	STransform m_transform;
 

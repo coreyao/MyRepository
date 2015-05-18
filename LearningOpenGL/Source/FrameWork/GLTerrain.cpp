@@ -514,7 +514,6 @@ void CGLTerrain::LoadVertex( const unsigned char* pHeightMapData, int iWidth, in
 bool CGLTerrain::IsInFrustrum( const SQuadNode* pNode )
 {
 	return CDirector::GetInstance()->GetPerspectiveCamera()->IsInFrustrum( pNode->m_boundingBoxLocal.Transform( m_transform.GetTransformMat() ) );
-	//return true;
 }
 
 void CGLTerrain::Init(const std::string& sHeightMapFile)
@@ -536,6 +535,29 @@ void CGLTerrain::Init(const std::string& sHeightMapFile)
 		SetGLProgram(CGLProgramManager::GetInstance()->CreateProgramByName("Terrain"));
 		SetLODThreshold(500, 1000, 1500);
 	}
+}
+
+float CGLTerrain::GetHeight( const Vec2& worldPos )
+{
+	Vec3 p( worldPos.x, 0, worldPos.y );
+	Vec3 localPos = m_transform.GetTransformMat().Inverse().TransformPoint(p);
+
+	int i = (int)localPos.x;
+	int j = (int)localPos.z;
+	float u = localPos.x - i;
+	float v = localPos.z - j;
+	if ( i < 0 || i >= m_iHeightMapWidth - 1 || j < 0 || j >= m_iHeightMapHeight - 1  )
+		return 0;
+
+	float lt = m_vGlobalVertex[ j * m_iHeightMapWidth + i ].m_pos.y;
+	float rt = m_vGlobalVertex[ j * m_iHeightMapWidth + i + 1].m_pos.y;
+	float lb = m_vGlobalVertex[ (j + 1) * m_iHeightMapWidth + i].m_pos.y;
+	float rb = m_vGlobalVertex[ (j + 1) * m_iHeightMapWidth + i + 1].m_pos.y;
+
+	float m = lt * (1.0f - u) + rt * u;
+	float n = lb * (1.0f - u) + rb * u;
+
+	return m * (1.0f - v) + n * v;
 }
 
 CGLTerrain::SQuadNode::SQuadNode( int x, int y, int iWidth, int iHeight, SQuadNode* pParent, CGLTerrain* pTerrain )
