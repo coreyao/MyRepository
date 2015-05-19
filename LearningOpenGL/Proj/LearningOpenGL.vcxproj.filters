@@ -91,6 +91,9 @@
     <ClCompile Include="..\Source\FrameWork\Math\Ray.cpp">
       <Filter>Source Files\FrameWork\Math</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\GLCubeMap.cpp">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\FrameWork\Utility.h">
@@ -159,6 +162,9 @@
     <ClInclude Include="..\Source\FrameWork\Math\Ray.h">
       <Filter>Source Files\FrameWork\Math</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\GLCubeMap.h">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Resource\Shaders\Mesh_Fragment_Shader.frag">
@@ -192,6 +198,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Resource\Shaders\Terrain_Vertex_Shader.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Resource\Shaders\SkyBox_Fragment_Shader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Resource\Shaders\SkyBox_Vertex_Shader.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

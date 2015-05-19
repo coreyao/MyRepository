@@ -16,6 +16,7 @@
     <ClCompile Include="..\Source\FrameWork\Director.cpp" />
     <ClCompile Include="..\Source\FrameWork\Camera.cpp" />
     <ClCompile Include="..\Source\FrameWork\GLCollision.cpp" />
+    <ClCompile Include="..\Source\FrameWork\GLCubeMap.cpp" />
     <ClCompile Include="..\Source\FrameWork\GLFrustrum.cpp" />
     <ClCompile Include="..\Source\FrameWork\GLLabel.cpp" />
     <ClCompile Include="..\Source\FrameWork\GLMesh.cpp" />
@@ -41,6 +42,7 @@
     <ClInclude Include="..\Source\FrameWork\Director.h" />
     <ClInclude Include="..\Source\FrameWork\Camera.h" />
     <ClInclude Include="..\Source\FrameWork\GLCollision.h" />
+    <ClInclude Include="..\Source\FrameWork\GLCubeMap.h" />
     <ClInclude Include="..\Source\FrameWork\GLFrustrum.h" />
     <ClInclude Include="..\Source\FrameWork\GLLabel.h" />
     <ClInclude Include="..\Source\FrameWork\GLMesh.h" />
@@ -69,6 +71,8 @@
     <None Include="..\Resource\Shaders\Primitive_Fragment_Shader.frag" />
     <None Include="..\Resource\Shaders\Primitive_Vertex_Shader.vert" />
     <None Include="..\Resource\Shaders\SkinMesh_Vertex_Shader.vert" />
+    <None Include="..\Resource\Shaders\SkyBox_Fragment_Shader.frag" />
+    <None Include="..\Resource\Shaders\SkyBox_Vertex_Shader.vert" />
     <None Include="..\Resource\Shaders\Terrain_Fragment_Shader.frag" />
     <None Include="..\Resource\Shaders\Terrain_Vertex_Shader.vert" />
   </ItemGroup>

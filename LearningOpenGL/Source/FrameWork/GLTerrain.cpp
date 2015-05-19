@@ -509,6 +509,8 @@ void CGLTerrain::LoadVertex( const unsigned char* pHeightMapData, int iWidth, in
 	glGenBuffers(1, &m_vertexDataObj);
 	glBindBuffer(GL_ARRAY_BUFFER, m_vertexDataObj);
 	glBufferData(GL_ARRAY_BUFFER, m_vGlobalVertex.size() * sizeof(SCommonVertex), &m_vGlobalVertex.front(), GL_STATIC_DRAW);
+
+	glGenVertexArrays(1, &m_vertexAttributeObj);
 }
 
 bool CGLTerrain::IsInFrustrum( const SQuadNode* pNode )

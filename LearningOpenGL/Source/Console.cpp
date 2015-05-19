@@ -9,6 +9,7 @@
 #include "FrameWork/GLLabel.h"
 #include "FrameWork/GLPrimitive.h"
 #include "FrameWork/GLTerrain.h"
+#include "FrameWork/GLSkyBox.h"
 
 COGLMesh* g_planeMesh = nullptr;
 std::vector<COGLMesh*> g_vMesh;
@@ -22,6 +23,7 @@ CGLPrimitive* g_pLineDrawer = nullptr;
 CGLPrimitive* g_pPointDrawer = nullptr;
 
 CGLTerrain* g_pTerrain = nullptr;
+CGLSkyBox* g_pSkyBox = nullptr;
 
 timeval g_fLastTime = {0, 0};
 float g_fDeltaTime = 0.0f;
@@ -48,6 +50,7 @@ void init()
 	CGLProgramManager::GetInstance()->Add("Label", SHADER_FILE_DIR + "Label_Vertex_Shader.vert", SHADER_FILE_DIR + "Label_Fragment_Shader.frag");
 	CGLProgramManager::GetInstance()->Add("Primitive", SHADER_FILE_DIR + "Primitive_Vertex_Shader.vert", SHADER_FILE_DIR + "Primitive_Fragment_Shader.frag");
 	CGLProgramManager::GetInstance()->Add("Terrain", SHADER_FILE_DIR + "Terrain_Vertex_Shader.vert", SHADER_FILE_DIR + "Terrain_Fragment_Shader.frag");
+	CGLProgramManager::GetInstance()->Add("SkyBox", SHADER_FILE_DIR + "SkyBox_Vertex_Shader.vert", SHADER_FILE_DIR + "SkyBox_Fragment_Shader.frag");
 
 	g_pDeltaTimeLabel = new CGLLabel(FONT_FILE_DIR + "simyou.ttf", 20);
 	g_pDeltaTimeLabel->m_transform.m_pos.x = -RESOLUTION_WIDTH / 2 + 10;
@@ -143,6 +146,13 @@ void init()
 
 	Vec3 dd = g_pTerrain->m_transform.GetTransformMat().TransformPoint(Vec3(0, 0, 0));
 	g_pTerrain->GetHeight( Vec2(dd.x, dd.z) );
+
+	g_pSkyBox = new CGLSkyBox;
+	g_pSkyBox->m_transform.m_scale.set(20, 20, 20);
+	g_pSkyBox->Init("cubemap_hills/hills_positive_x.png", "cubemap_hills/hills_negative_x.png",
+		"cubemap_hills/hills_positive_y.png", "cubemap_hills/hills_negative_y.png",
+		"cubemap_hills/hills_positive_z.png", "cubemap_hills/hills_negative_z.png"
+		);
 }
 
 void display()
@@ -166,6 +176,9 @@ void display()
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClearDepth(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	g_pSkyBox->Update(g_fDeltaTime);
+	g_pSkyBox->Render();
 
 	if ( bDrawMesh )
 	{
@@ -204,8 +217,8 @@ void display()
 		g_fAccumulatedTime = 0;
 	}
 
-	g_pTerrain->Update(g_fDeltaTime);
-	g_pTerrain->Render();
+	//g_pTerrain->Update(g_fDeltaTime);
+	//g_pTerrain->Render();
 
 	//g_pPointDrawer->Render();
 	g_pDeltaTimeLabel->Render();
