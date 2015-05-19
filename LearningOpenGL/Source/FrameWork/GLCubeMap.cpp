@@ -26,9 +26,9 @@ void CGLCubeMap::Init( const std::string& sPositiveX, const std::string& sNegati
 	}
 
 	glGenSamplers(1, &m_cubeSampler);
-	glSamplerParameteri(m_cubeSampler, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glSamplerParameteri(m_cubeSampler, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glSamplerParameteri(m_cubeSampler, GL_TEXTURE_WRAP_R, GL_REPEAT);
+	glSamplerParameteri(m_cubeSampler, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glSamplerParameteri(m_cubeSampler, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glSamplerParameteri(m_cubeSampler, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
 	glSamplerParameteri(m_cubeSampler, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glSamplerParameteri(m_cubeSampler, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

@@ -9,6 +9,6 @@ out vec3 colorCoord;
 
 void main()
 {
-	colorCoord = normalize(normalMatrix * position.xyz);
+	colorCoord = position.xyz;
 	gl_Position = perspectiveMatrix * modelViewMatrix * position;
 }
