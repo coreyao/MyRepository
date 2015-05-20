@@ -9,6 +9,7 @@ public:
 	static CDirector* GetInstance();
 
 	void Init();
+	Vec3 Unproject(const Vec2& screenPos);
 
 	CCamera* GetPerspectiveCamera();
 	CCamera* GetOrthographicCamera();

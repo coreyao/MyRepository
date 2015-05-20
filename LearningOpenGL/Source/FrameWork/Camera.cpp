@@ -5,6 +5,8 @@ CCamera::CCamera(Vec3 eyePos, Vec3 lookAtDir, Vec3 upDir, EProjectionMode eMode)
 	: m_fPitch(0)
 	, m_fYaw(90)
 	, m_fFOV(90)
+	, m_fNearZ(1.0f)
+	, m_fFarZ(100000.0f)
 	, m_eMode(eMode)
 {
 	m_eyePos = eyePos;
@@ -13,7 +15,7 @@ CCamera::CCamera(Vec3 eyePos, Vec3 lookAtDir, Vec3 upDir, EProjectionMode eMode)
 
 	if ( m_eMode == EProjectionMode_Perspective)
 	{
-		m_ProjMat = Mat4::createPerspective(m_fFOV, (float)RESOLUTION_WIDTH / (float)RESOLUTION_HEIGHT, 1.0f, 100000.0f);
+		m_ProjMat = Mat4::createPerspective(m_fFOV, (float)RESOLUTION_WIDTH / (float)RESOLUTION_HEIGHT, m_fNearZ, m_fFarZ);
 	}
 	else if ( m_eMode == EProjectionMode_Orthographic )
 	{
@@ -106,5 +108,10 @@ void CCamera::Zoom( float fDegOffset )
 		m_fFOV += fDegOffset;
 		m_ProjMat = Mat4::createPerspective(m_fFOV, (float)RESOLUTION_WIDTH / (float)RESOLUTION_HEIGHT, 1.0f, 100000.0f);
 	}
+}
+
+float CCamera::GetFarZ() const
+{
+	return m_fFarZ;
 }
 

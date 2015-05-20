@@ -40,7 +40,6 @@ struct timezone
 
 extern int gettimeofday(struct timeval *, struct timezone *);
 extern char* GB2312ToUTF8(const char* gb2312);
-extern Vec3 Unproject(const Vec2& screenPos);
 
 template <typename T>
 struct SKeyNode

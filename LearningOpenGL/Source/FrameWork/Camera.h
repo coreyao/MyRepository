@@ -25,6 +25,8 @@ public:
 	Vec3 GetCameraPos() const;
 	Vec3 GetLookAtDir() const;
 
+	float GetFarZ() const;
+
 	const CGLFrustrum& GetFrustrum() const;
 	bool IsInFrustrum(const CAABB& worldRect) const;
 
@@ -35,6 +37,9 @@ private:
 	Vec3 m_eyePos;
 	Vec3 m_lookAtDir;
 	Vec3 m_UpDir;
+
+	float m_fNearZ;
+	float m_fFarZ;
 
 	float m_fPitch;
 	float m_fYaw;
