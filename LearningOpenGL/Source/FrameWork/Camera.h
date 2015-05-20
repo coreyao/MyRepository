@@ -15,12 +15,13 @@ public:
 	CCamera(Vec3 eyePos, Vec3 lookAtDir, Vec3 upDir, EProjectionMode eMode = EProjectionMode_Perspective);
 
 	void Move(float leftAndRight, float upAndDown, float forwardAndBackward);
+	void SetCameraPos(const Vec3& dst);
 	void Rotate(float fPitch, float fYaw);
 
 	Mat4 GetViewMat() const;
 	Mat4 GetProjMat() const;
 
-	Vec3 GetEyePos() const;
+	Vec3 GetCameraPos() const;
 	Vec3 GetLookAtDir() const;
 
 	const CGLFrustrum& GetFrustrum() const;

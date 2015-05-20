@@ -424,7 +424,7 @@ void CGLTerrain::VisitQuadTree( SQuadNode* pNode, const std::function< bool(SQua
 
 void CGLTerrain::UpdateChunkLODInternal( SChunk* pChunk )
 {
-	Vec3 cameraPos = CDirector::GetInstance()->GetPerspectiveCamera()->GetEyePos();
+	Vec3 cameraPos = CDirector::GetInstance()->GetPerspectiveCamera()->GetCameraPos();
 	Vec3 centerPos = pChunk->m_pParent->m_boundingBoxLocal.GetCenter();
 	centerPos = m_transform.GetTransformMat().TransformPoint(centerPos);
 

@@ -67,7 +67,7 @@ void CCamera::UpdateProjectionViewMat()
 	UpdateFrustrum();
 }
 
-Vec3 CCamera::GetEyePos() const
+Vec3 CCamera::GetCameraPos() const
 {
 	return m_eyePos;
 }
@@ -91,3 +91,10 @@ bool CCamera::IsInFrustrum( const CAABB& worldRect ) const
 {
 	return m_frustrum.IsInFrustrum(worldRect);
 }
+
+void CCamera::SetCameraPos( const Vec3& dst )
+{
+	m_eyePos = dst;
+	UpdateProjectionViewMat();
+}
+

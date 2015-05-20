@@ -12,7 +12,6 @@
 #include "FrameWork/GLSkyBox.h"
 
 COGLMesh* g_pCharactor = nullptr;
-Vec3 g_CurCharactorWorldPos;
 std::vector<COGLMesh*> g_vMesh;
 std::vector<GLuint> g_vGLProgram;
 
@@ -40,6 +39,19 @@ bool g_bMouseRightButtonClicked = false;
 bool bDrawMesh = true;
 
 bool bDrawWireFrame = false;
+
+void UpdatePos()
+{
+	Vec3 lookAt = CDirector::GetInstance()->GetPerspectiveCamera()->GetLookAtDir();
+	Vec3 cameraPos = CDirector::GetInstance()->GetPerspectiveCamera()->GetCameraPos();
+	Vec3 charactorPos = cameraPos + lookAt * 250;
+
+	charactorPos.y = g_pTerrain->GetHeight( Vec2(charactorPos.x, charactorPos.z) );
+	g_pCharactor->m_transform.m_pos = charactorPos;
+
+	cameraPos.y = g_pTerrain->GetHeight( Vec2(cameraPos.x, cameraPos.z) ) + 250;
+	CDirector::GetInstance()->GetPerspectiveCamera()->SetCameraPos(cameraPos);
+}
 
 void init()
 {
@@ -144,6 +156,8 @@ void init()
 		"skybox/top.png", "skybox/bottom.png",
 		"skybox/back.png", "skybox/front.png"
 		);
+
+	UpdatePos();
 }
 
 void display()
@@ -167,10 +181,6 @@ void display()
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClearDepth(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	Vec3 worldPos = g_CurCharactorWorldPos;
-	worldPos.y = g_pTerrain->GetHeight( Vec2(g_CurCharactorWorldPos.x, g_CurCharactorWorldPos.z) );
-	g_pCharactor->m_transform.m_pos = worldPos;
 
 	if ( bDrawMesh )
 	{
@@ -251,7 +261,8 @@ void keyboard(unsigned char key, int x, int y)
 	g_pTerrain->SetDrawWireFrame(bDrawWireFrame);
 
 	CDirector::GetInstance()->GetPerspectiveCamera()->Move(iMoveLeftRight, 0, iMoveForwardBack);
-	//CDirector::GetInstance()->GetOrthographicCamera()->Move(iMoveLeftRight, 0, iMoveForwardBack);
+
+	UpdatePos();
 }
 
 void mouse_down( int button, int state, int x, int y )
@@ -275,7 +286,9 @@ void mouse_move(int x,int y)
 		float fYawDelta = (g_lastMousePos.x - x) * 0.1f;
 
 		CDirector::GetInstance()->GetPerspectiveCamera()->Rotate(fPitchDelta, fYawDelta);
-		//CDirector::GetInstance()->GetOrthographicCamera()->Rotate(fPitchDelta, fYawDelta);
+		UpdatePos();
+
 		g_lastMousePos = Vec2(x, y);
 	}
 }
+

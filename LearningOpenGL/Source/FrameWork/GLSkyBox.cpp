@@ -13,7 +13,7 @@ void CGLSkyBox::Init( const std::string& sPositiveX, const std::string& sNegativ
 
 void CGLSkyBox::Update( float dt )
 {
-	m_transform.m_pos = CDirector::GetInstance()->GetPerspectiveCamera()->GetEyePos();
+	m_transform.m_pos = CDirector::GetInstance()->GetPerspectiveCamera()->GetCameraPos();
 }
 
 void CGLSkyBox::Render()
