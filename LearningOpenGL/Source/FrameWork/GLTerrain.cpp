@@ -496,7 +496,7 @@ void CGLTerrain::LoadVertex( const unsigned char* pHeightMapData, int iWidth, in
 		{
 			SCommonVertex newVertex;
 			float fHeight = pHeightMapData[ i * iWidth + j ];
-			newVertex.m_pos = Vec3( j, fHeight, i);
+			newVertex.m_pos = Vec3( j - iWidth / 2, fHeight, i - iHeight / 2);
 			newVertex.m_color = Color4F::WHITE;
 			newVertex.m_UV = Vec2( j * 1.0f / iWidth, i * 1.0f / iHeight );
 
@@ -540,7 +540,9 @@ void CGLTerrain::Init(const std::string& sHeightMapFile)
 float CGLTerrain::GetHeight( const Vec2& worldPos )
 {
 	Vec3 p( worldPos.x, 0, worldPos.y );
-	Vec3 localPos = m_transform.GetTransformMat().Inverse().TransformPoint(p);
+
+	Mat4 dd = Mat4::CreateFromTranslation(m_iHeightMapWidth / 2, 0, m_iHeightMapHeight / 2);
+	Vec3 localPos = (dd * m_transform.GetTransformMat().Inverse()).TransformPoint(p);
 
 	int i = (int)localPos.x;
 	int j = (int)localPos.z;
@@ -556,8 +558,12 @@ float CGLTerrain::GetHeight( const Vec2& worldPos )
 
 	float m = lt * (1.0f - u) + rt * u;
 	float n = lb * (1.0f - u) + rb * u;
+	float fLocalHeight = m * (1.0f - v) + n * v;
 
-	return m * (1.0f - v) + n * v;
+	localPos.y = fLocalHeight;
+	p = (m_transform.GetTransformMat() * dd.Inverse()).TransformPoint(localPos);
+
+	return p.y;
 }
 
 CGLTerrain::SQuadNode::SQuadNode( int x, int y, int iWidth, int iHeight, SQuadNode* pParent, CGLTerrain* pTerrain )

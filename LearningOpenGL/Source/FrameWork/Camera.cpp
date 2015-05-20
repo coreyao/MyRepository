@@ -12,7 +12,7 @@ CCamera::CCamera(Vec3 eyePos, Vec3 lookAtDir, Vec3 upDir, EProjectionMode eMode)
 
 	if ( m_eMode == EProjectionMode_Perspective)
 	{
-		m_ProjMat = Mat4::createPerspective(90.0f, (float)RESOLUTION_WIDTH / (float)RESOLUTION_HEIGHT, 1.0f, 10000.0f);
+		m_ProjMat = Mat4::createPerspective(90.0f, (float)RESOLUTION_WIDTH / (float)RESOLUTION_HEIGHT, 1.0f, 100000.0f);
 	}
 	else if ( m_eMode == EProjectionMode_Orthographic )
 	{

@@ -48,20 +48,6 @@ void CGLSkyBox::Render()
 		glUniformMatrix4fv(perspectiveMatrixUnif, 1, GL_FALSE, projMat.m);
 	}
 
-	GLint normalMatrixUnif = glGetUniformLocation(m_theProgram, "normalMatrix");
-	if ( normalMatrixUnif >= 0 )
-	{
-		Mat4 mvInverse = m_transform.GetTransformMat();
-		mvInverse.m[12] = mvInverse.m[13] = mvInverse.m[14] = 0.0f;
-		mvInverse.Inverse();
-		mvInverse.Transpose();
-		GLfloat normalMat[9];
-		normalMat[0] = mvInverse.m[0];normalMat[1] = mvInverse.m[1];normalMat[2] = mvInverse.m[2];
-		normalMat[3] = mvInverse.m[4];normalMat[4] = mvInverse.m[5];normalMat[5] = mvInverse.m[6];
-		normalMat[6] = mvInverse.m[8];normalMat[7] = mvInverse.m[9];normalMat[8] = mvInverse.m[10];
-		glUniformMatrix3fv(normalMatrixUnif, 1, GL_FALSE, normalMat);
-	}
-
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vertexIndexObj);
 	glDrawElements(GL_TRIANGLES, (GLsizei)36, GL_UNSIGNED_BYTE, nullptr);
 

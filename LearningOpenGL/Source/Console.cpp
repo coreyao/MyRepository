@@ -11,7 +11,8 @@
 #include "FrameWork/GLTerrain.h"
 #include "FrameWork/GLSkyBox.h"
 
-COGLMesh* g_planeMesh = nullptr;
+COGLMesh* g_pCharactor = nullptr;
+Vec3 g_CurCharactorWorldPos;
 std::vector<COGLMesh*> g_vMesh;
 std::vector<GLuint> g_vGLProgram;
 
@@ -28,7 +29,7 @@ CGLSkyBox* g_pSkyBox = nullptr;
 timeval g_fLastTime = {0, 0};
 float g_fDeltaTime = 0.0f;
 float g_fElapsedTime = 0.0f;
-int g_iStepLength = 30;
+int g_iStepLength = 100;
 
 int g_iFrame = 0;
 float g_fAccumulatedTime = 0;
@@ -109,46 +110,36 @@ void init()
 	pEmitter->GetEmitterShapeRef().SetExtent(Vec3(100, 0, 100));
 	g_particleSystem->AddEmitter(pEmitter);
 
-	g_planeMesh = new COGLMesh;
-	g_planeMesh->InitFromFile("plane.CSTM");
-	g_planeMesh->m_transform.m_scale.set(10, 10, -10);
-	g_planeMesh->m_transform.m_pos.set(0, -30, -100);
-	for ( int i = 0; i < g_planeMesh->GetMeshData().m_vSubMesh.size(); ++i )
-		g_planeMesh->SetTexture("default.png", i);
-	g_planeMesh->m_color = Color4F(0.5f, 0.5f, 0.5f, 1.0f);
-	g_planeMesh->m_bEnableCullFace = false;
-	g_planeMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh") );
+	COGLMesh* planeMesh = new COGLMesh;
+	planeMesh->InitFromFile("plane.CSTM");
+	planeMesh->m_transform.m_scale.set(10, 10, -10);
+	planeMesh->m_transform.m_pos.set(0, -30, -100);
+	for ( int i = 0; i < planeMesh->GetMeshData().m_vSubMesh.size(); ++i )
+		planeMesh->SetTexture("default.png", i);
+	planeMesh->m_color = Color4F(0.5f, 0.5f, 0.5f, 1.0f);
+	planeMesh->m_bEnableCullFace = false;
+	planeMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh") );
+	//g_vMesh.push_back(planeMesh);
 
-	COGLMesh* pSkinMesh = new COGLMesh;
-	pSkinMesh->InitFromFile("test.CSTM");
-	for ( int i = 0; i < pSkinMesh->GetMeshData().m_vSubMesh.size(); ++i )
-	{
-		pSkinMesh->SetTexture("cubemap_hills/hills_negative_x.png", i);
-	}
-	pSkinMesh->m_transform.m_pos.set(g_planeMesh->m_transform.m_pos.x, g_planeMesh->m_transform.m_pos.y + 30, g_planeMesh->m_transform.m_pos.z);
-	pSkinMesh->m_transform.m_scale.set(1, 1, -1);
-	pSkinMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("SkinMesh") );
-	//pSkinMesh->SetVisible(false, "Box01");
-	g_vMesh.push_back(pSkinMesh);
+	g_pCharactor = new COGLMesh;
+	g_pCharactor->InitFromFile("test.CSTM");
+	for ( int i = 0; i < g_pCharactor->GetMeshData().m_vSubMesh.size(); ++i )
+		g_pCharactor->SetTexture("cubemap_hills/hills_negative_x.png", i);
+	g_pCharactor->m_transform.m_scale.set(1, 1, -1);
+	g_pCharactor->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("SkinMesh") );
+	g_vMesh.push_back(g_pCharactor);
 
 	g_pTerrain = new CGLTerrain();
 	g_pTerrain->SetDetailTexture("dirt.png", "Grass2.png", "road.png", "GreenSkin.png");
 	g_pTerrain->SetDetailTextureSize(20, 20, 20, 20);
 	g_pTerrain->SetAlphaTexture("alphamap.png");
 	g_pTerrain->SetDrawWireFrame(false);
-	g_pTerrain->m_transform.m_pos.x -= 1000;
-	g_pTerrain->m_transform.m_pos.y -= 400;
-	g_pTerrain->m_transform.m_pos.z -= 1000;
-	g_pTerrain->m_transform.m_scale.x = 20;
-	g_pTerrain->m_transform.m_scale.y = 2;
-	g_pTerrain->m_transform.m_scale.z = 20;
+	g_pTerrain->m_transform.m_scale.x = 100;
+	g_pTerrain->m_transform.m_scale.y = 10;
+	g_pTerrain->m_transform.m_scale.z = 100;
 	g_pTerrain->Init("heightmap16.png");
 
-	Vec3 dd = g_pTerrain->m_transform.GetTransformMat().TransformPoint(Vec3(0, 0, 0));
-	g_pTerrain->GetHeight( Vec2(dd.x, dd.z) );
-
 	g_pSkyBox = new CGLSkyBox;
-	//g_pSkyBox->m_transform.m_scale.set(20, 20, 20);
 	g_pSkyBox->Init("skybox/right.png", "skybox/left.png",
 		"skybox/top.png", "skybox/bottom.png",
 		"skybox/back.png", "skybox/front.png"
@@ -177,11 +168,12 @@ void display()
 	glClearDepth(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	Vec3 worldPos = g_CurCharactorWorldPos;
+	worldPos.y = g_pTerrain->GetHeight( Vec2(g_CurCharactorWorldPos.x, g_CurCharactorWorldPos.z) );
+	g_pCharactor->m_transform.m_pos = worldPos;
+
 	if ( bDrawMesh )
 	{
-		/*g_planeMesh->Update(g_fDeltaTime);
-		g_planeMesh->Render();*/
-
 		for (int i = 0; i < g_vMesh.size(); ++i)
 		{
 			g_vMesh[i]->Update(g_fDeltaTime);
@@ -218,7 +210,6 @@ void display()
 	g_pTerrain->Render();
 
 	//g_pPointDrawer->Render();
-	
 	//g_pLineDrawer->Render();
 
 	g_particleSystem->Update(g_fDeltaTime);
