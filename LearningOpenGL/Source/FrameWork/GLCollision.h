@@ -24,3 +24,8 @@ private:
 	Vec3 m_minPoint;
 	Vec3 m_maxPoint;
 };
+
+class COBB
+{
+
+};

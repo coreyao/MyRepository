@@ -36,7 +36,7 @@ float g_fAccumulatedTime = 0;
 Vec2 g_lastMousePos;
 bool g_bMouseRightButtonClicked = false;
 
-bool bDrawMesh = false;
+bool bDrawMesh = true;
 
 bool bDrawWireFrame = false;
 
@@ -179,8 +179,8 @@ void display()
 
 	if ( bDrawMesh )
 	{
-		g_planeMesh->Update(g_fDeltaTime);
-		g_planeMesh->Render();
+		/*g_planeMesh->Update(g_fDeltaTime);
+		g_planeMesh->Render();*/
 
 		for (int i = 0; i < g_vMesh.size(); ++i)
 		{
@@ -218,15 +218,17 @@ void display()
 	g_pTerrain->Render();
 
 	//g_pPointDrawer->Render();
-	g_pDeltaTimeLabel->Render();
-	g_pFPSLabel->Render();
+	
 	//g_pLineDrawer->Render();
 
-	//g_particleSystem->Update(g_fDeltaTime);
-	//g_particleSystem->Render();
+	g_particleSystem->Update(g_fDeltaTime);
+	g_particleSystem->Render();
 
 	g_pSkyBox->Update(g_fDeltaTime);
 	g_pSkyBox->Render();
+
+	g_pDeltaTimeLabel->Render();
+	g_pFPSLabel->Render();
 	
 	glutSwapBuffers();
 	glutPostRedisplay();
