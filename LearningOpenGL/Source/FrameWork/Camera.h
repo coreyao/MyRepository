@@ -17,6 +17,7 @@ public:
 	void Move(float leftAndRight, float upAndDown, float forwardAndBackward);
 	void SetCameraPos(const Vec3& dst);
 	void Rotate(float fPitch, float fYaw);
+	void Zoom(float fDegOffset);
 
 	Mat4 GetViewMat() const;
 	Mat4 GetProjMat() const;
@@ -37,6 +38,7 @@ private:
 
 	float m_fPitch;
 	float m_fYaw;
+	float m_fFOV;
 
 	Mat4 m_viewMat;
 	Mat4 m_ProjMat;

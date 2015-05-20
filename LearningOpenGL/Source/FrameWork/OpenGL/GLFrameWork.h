@@ -17,6 +17,7 @@ void reshape(int w, int h);
 void keyboard(unsigned char key, int x, int y);
 void mouse_down( int button, int state, int x, int y );
 void mouse_move( int x,int y );
+void mouse_scroll( int x,int y );
 
 namespace OpenGLFramework
 {

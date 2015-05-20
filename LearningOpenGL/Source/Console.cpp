@@ -230,7 +230,7 @@ void display()
 
 	g_pDeltaTimeLabel->Render();
 	g_pFPSLabel->Render();
-	
+
 	glutSwapBuffers();
 	glutPostRedisplay();
 
@@ -275,6 +275,14 @@ void mouse_down( int button, int state, int x, int y )
 			g_bMouseRightButtonClicked = false;
 
 		g_lastMousePos = Vec2(x, y);
+	}
+	else if ( button == 3 )   
+	{
+		CDirector::GetInstance()->GetPerspectiveCamera()->Zoom(-1.0f);
+	}
+	else if ( button == 4 )
+	{
+		CDirector::GetInstance()->GetPerspectiveCamera()->Zoom(1.0f);
 	}
 }
 
