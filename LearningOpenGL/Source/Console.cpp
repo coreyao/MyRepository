@@ -148,10 +148,10 @@ void init()
 	g_pTerrain->GetHeight( Vec2(dd.x, dd.z) );
 
 	g_pSkyBox = new CGLSkyBox;
-	g_pSkyBox->m_transform.m_scale.set(20, 20, 20);
-	g_pSkyBox->Init("cubemap_hills/hills_positive_x.png", "cubemap_hills/hills_negative_x.png",
-		"cubemap_hills/hills_positive_y.png", "cubemap_hills/hills_negative_y.png",
-		"cubemap_hills/hills_positive_z.png", "cubemap_hills/hills_negative_z.png"
+	//g_pSkyBox->m_transform.m_scale.set(20, 20, 20);
+	g_pSkyBox->Init("skybox/right.png", "skybox/left.png",
+		"skybox/top.png", "skybox/bottom.png",
+		"skybox/back.png", "skybox/front.png"
 		);
 }
 
@@ -176,9 +176,6 @@ void display()
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClearDepth(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	g_pSkyBox->Update(g_fDeltaTime);
-	g_pSkyBox->Render();
 
 	if ( bDrawMesh )
 	{
@@ -217,8 +214,8 @@ void display()
 		g_fAccumulatedTime = 0;
 	}
 
-	//g_pTerrain->Update(g_fDeltaTime);
-	//g_pTerrain->Render();
+	g_pTerrain->Update(g_fDeltaTime);
+	g_pTerrain->Render();
 
 	//g_pPointDrawer->Render();
 	g_pDeltaTimeLabel->Render();
@@ -227,6 +224,9 @@ void display()
 
 	//g_particleSystem->Update(g_fDeltaTime);
 	//g_particleSystem->Render();
+
+	g_pSkyBox->Update(g_fDeltaTime);
+	g_pSkyBox->Render();
 	
 	glutSwapBuffers();
 	glutPostRedisplay();

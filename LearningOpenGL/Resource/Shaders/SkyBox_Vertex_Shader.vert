@@ -10,5 +10,5 @@ out vec3 colorCoord;
 void main()
 {
 	colorCoord = position.xyz;
-	gl_Position = perspectiveMatrix * modelViewMatrix * position;
+	gl_Position = (perspectiveMatrix * modelViewMatrix * position).xyww;
 }

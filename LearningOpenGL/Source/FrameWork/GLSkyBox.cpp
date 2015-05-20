@@ -18,8 +18,14 @@ void CGLSkyBox::Update( float dt )
 
 void CGLSkyBox::Render()
 {
-	glDisable(GL_CULL_FACE);
-	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_FRONT);
+	glFrontFace(GL_CW);
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	glDepthFunc(GL_LEQUAL);
+	glDepthRange(0.0f, 1.0f);
 
 	glUseProgram(m_theProgram);
 	glBindVertexArray(m_vertexAttributeObj);
