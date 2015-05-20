@@ -123,7 +123,7 @@ void init()
 	pSkinMesh->InitFromFile("test.CSTM");
 	for ( int i = 0; i < pSkinMesh->GetMeshData().m_vSubMesh.size(); ++i )
 	{
-		pSkinMesh->SetTexture("BatArmor.png", i);
+		pSkinMesh->SetTexture("cubemap_hills/hills_negative_x.png", i);
 	}
 	pSkinMesh->m_transform.m_pos.set(g_planeMesh->m_transform.m_pos.x, g_planeMesh->m_transform.m_pos.y + 30, g_planeMesh->m_transform.m_pos.z);
 	pSkinMesh->m_transform.m_scale.set(1, 1, -1);

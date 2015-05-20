@@ -89,6 +89,7 @@ void CGLSkyBox::InitVBOAndVAO()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vertexIndexObj);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxBuf), idxBuf, GL_STATIC_DRAW);
 
+	glGenVertexArrays(1, &m_vertexAttributeObj);
 	glBindVertexArray(m_vertexAttributeObj);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vec3), 0);
