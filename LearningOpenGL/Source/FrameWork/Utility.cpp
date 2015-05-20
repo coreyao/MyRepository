@@ -26,3 +26,8 @@ extern char* GB2312ToUTF8( const char* gb2312 )
 	if(wstr) delete[] wstr;  
 	return str;  
 }
+
+extern Vec3 Unproject( const Vec2& screenPos )
+{
+	return Vec3();
+}

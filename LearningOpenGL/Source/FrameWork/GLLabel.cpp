@@ -55,7 +55,9 @@ void CGLLabel::Render()
 	glDisable(GL_DEPTH_TEST);
 
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA,GL_ONE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	memset(m_pTexData, 255, conTexWidth * conTexHeight);
 
 	int iXAdvance = 0;
 	int iLastX = 0;
