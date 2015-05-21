@@ -566,6 +566,31 @@ float CGLTerrain::GetHeight( const Vec2& worldPos )
 	return p.y;
 }
 
+Vec3 CGLTerrain::GetIntersectionPoint( const CRay& worldRay )
+{
+	Vec3 startPos = worldRay.m_origin;
+	Vec3 lastPos = startPos;
+	float fHeight = GetHeight( Vec2( startPos.x, startPos.z ) );
+	while (startPos.y > fHeight )
+	{
+		lastPos = startPos;
+		startPos += worldRay.m_direction * 8;
+		fHeight = GetHeight( Vec2( startPos.x, startPos.z ) );
+	}
+
+	for (int i = 0; i < 32; ++i)
+	{
+		Vec3 middlePos = (startPos + lastPos) / 2;
+		if ( middlePos.y < fHeight )
+			startPos = middlePos;
+		else
+			lastPos = middlePos;
+	}
+
+	return (startPos + lastPos) / 2;
+	return startPos;
+}
+
 CGLTerrain::SQuadNode::SQuadNode( int x, int y, int iWidth, int iHeight, SQuadNode* pParent, CGLTerrain* pTerrain )
 	: m_pRelatedChunk(nullptr)
 	, m_pParent(nullptr)

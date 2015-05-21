@@ -98,6 +98,8 @@ void CGLPrimitive::DrawLine( const Vec3& startLoc, const Vec3& endLoc )
 
 	m_eType = EPrimitiveType_Line;
 
+	m_vVertex.clear();
+
 	SCommonVertex StartVertex;
 	StartVertex.m_pos = startLoc;
 	m_vVertex.push_back(StartVertex);

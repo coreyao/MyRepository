@@ -77,8 +77,6 @@ void init()
 	g_pFPSLabel->m_color = Color4F(0.0f, 1.0f, 0.0f, 1.0f);
 
 	g_pLineDrawer = new CGLPrimitive(CGLPrimitive::EPrimitiveType_Line);
-	g_pLineDrawer->DrawLine(Vec3(0, 0, 0), Vec3(100, 100, 0));
-	g_pLineDrawer->DrawLine(Vec3(100, 100, 0), Vec3(200, 100, 0));
 
 	g_pPointDrawer = new CGLPrimitive(CGLPrimitive::EPrimitiveType_Point);
 	g_pPointDrawer->DrawPoint(Vec3(-100, -100, 0), 5);
@@ -220,7 +218,6 @@ void display()
 	g_pTerrain->Render();
 
 	//g_pPointDrawer->Render();
-	//g_pLineDrawer->Render();
 
 	g_particleSystem->Update(g_fDeltaTime);
 	g_particleSystem->Render();
@@ -230,6 +227,8 @@ void display()
 
 	g_pDeltaTimeLabel->Render();
 	g_pFPSLabel->Render();
+
+	g_pLineDrawer->Render();
 
 	glutSwapBuffers();
 	glutPostRedisplay();
@@ -262,12 +261,29 @@ void keyboard(unsigned char key, int x, int y)
 
 	CDirector::GetInstance()->GetPerspectiveCamera()->Move(iMoveLeftRight, 0, iMoveForwardBack);
 
-	UpdatePos();
+	//UpdatePos();
 }
 
 void mouse_down( int button, int state, int x, int y )
 {
 	if ( button == GLUT_LEFT_BUTTON )
+	{
+		if ( !g_bMouseRightButtonClicked )
+		{
+			Vec3 pos = CDirector::GetInstance()->Unproject(Vec2(x, y));
+			CRay ray(Vec3(0, 0, 0), pos);
+			ray.Transform( CDirector::GetInstance()->GetPerspectiveCamera()->GetViewMat().Inverse() );
+			if ( ray.m_direction.Dot(Vec3(0, 1, 0)) < 0 )
+			{
+				Vec3 intersectionPos = g_pTerrain->GetIntersectionPoint(ray);
+				g_pCharactor->m_transform.m_pos = intersectionPos;
+			}
+			//g_pLineDrawer->DrawLine(ray.m_origin, ray.m_origin + ray.m_direction * 10000);
+		}
+
+		g_lastMousePos = Vec2(x, y);
+	}
+	else if ( button == GLUT_RIGHT_BUTTON)
 	{
 		if ( state == GLUT_DOWN )
 			g_bMouseRightButtonClicked = true;
@@ -294,7 +310,7 @@ void mouse_move(int x,int y)
 		float fYawDelta = (g_lastMousePos.x - x) * 0.1f;
 
 		CDirector::GetInstance()->GetPerspectiveCamera()->Rotate(fPitchDelta, fYawDelta);
-		UpdatePos();
+		//UpdatePos();
 
 		g_lastMousePos = Vec2(x, y);
 	}

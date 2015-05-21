@@ -3,6 +3,7 @@
 #include "Utility.h"
 #include "OpenGL/GLFrameWork.h"
 #include "GLCollision.h"
+#include "Math/Ray.h"
 
 class CGLTerrain
 {
@@ -29,6 +30,7 @@ public:
 	void SetDetailTextureSize( int iTex1Size, int iTex2Size = 20, int iTex3Size = 20, int iTex4Size = 20);
 	void SetDrawWireFrame(bool bDraw);
 	float GetHeight( const Vec2& worldPos );
+	Vec3 GetIntersectionPoint( const CRay& ray );
 
 	STransform m_transform;
 
