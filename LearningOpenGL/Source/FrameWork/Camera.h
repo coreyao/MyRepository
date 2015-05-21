@@ -15,7 +15,6 @@ public:
 	CCamera(Vec3 eyePos, Vec3 lookAtDir, Vec3 upDir, EProjectionMode eMode = EProjectionMode_Perspective);
 
 	void Move(float leftAndRight, float upAndDown, float forwardAndBackward);
-	void SetCameraPos(const Vec3& dst);
 	void Rotate(float fPitch, float fYaw);
 	void Zoom(float fDegOffset);
 
@@ -23,7 +22,10 @@ public:
 	Mat4 GetProjMat() const;
 
 	Vec3 GetCameraPos() const;
+	void SetCameraPos(const Vec3& pos);
+
 	Vec3 GetLookAtDir() const;
+	void SetLookAtDir(const Vec3& dir);
 
 	float GetFarZ() const;
 

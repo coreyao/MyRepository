@@ -10,6 +10,7 @@
 #include "FrameWork/Primitive.h"
 #include "FrameWork/Terrain.h"
 #include "FrameWork/SkyBox.h"
+#include "FrameWork/ThirdPersonController.h"
 
 CMesh* g_pCharactor = nullptr;
 std::vector<CMesh*> g_vMesh;
@@ -24,6 +25,8 @@ CPrimitive* g_pPointDrawer = nullptr;
 
 CTerrain* g_pTerrain = nullptr;
 CSkyBox* g_pSkyBox = nullptr;
+
+CThirdPersonController* g_pController = nullptr;
 
 timeval g_fLastTime = {0, 0};
 float g_fDeltaTime = 0.0f;
@@ -135,7 +138,7 @@ void init()
 	g_pCharactor->InitFromFile("test.CSTM");
 	for ( int i = 0; i < g_pCharactor->GetMeshData().m_vSubMesh.size(); ++i )
 		g_pCharactor->SetTexture("cubemap_hills/hills_negative_x.png", i);
-	g_pCharactor->m_transform.m_scale.set(1, 1, -1);
+	g_pCharactor->m_transform.m_scale.set(1, 1, 1);
 	g_pCharactor->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("SkinMesh") );
 	g_vMesh.push_back(g_pCharactor);
 
@@ -155,7 +158,11 @@ void init()
 		"skybox/back.png", "skybox/front.png"
 		);
 
-	UpdatePos();
+	//UpdatePos();
+
+	g_pController = new CThirdPersonController;
+	g_pController->m_transform.m_pos.y = g_pTerrain->GetHeight( Vec2(g_pController->m_transform.m_pos.x, g_pController->m_transform.m_pos.z) );
+	g_pController->SetCharactor(g_pCharactor);
 }
 
 void display()
@@ -259,7 +266,9 @@ void keyboard(unsigned char key, int x, int y)
 
 	g_pTerrain->SetDrawWireFrame(bDrawWireFrame);
 
-	CDirector::GetInstance()->GetPerspectiveCamera()->Move(iMoveLeftRight, 0, iMoveForwardBack);
+	//CDirector::GetInstance()->GetPerspectiveCamera()->Move(iMoveLeftRight, 0, iMoveForwardBack);
+	g_pController->m_transform.m_pos.y = g_pTerrain->GetHeight( Vec2(g_pController->m_transform.m_pos.x, g_pController->m_transform.m_pos.z) );
+	g_pController->Move(iMoveLeftRight, 0, iMoveForwardBack);
 
 	//UpdatePos();
 }
@@ -268,18 +277,18 @@ void mouse_down( int button, int state, int x, int y )
 {
 	if ( button == GLUT_LEFT_BUTTON )
 	{
-		if ( !g_bMouseRightButtonClicked )
-		{
-			Vec3 pos = CDirector::GetInstance()->Unproject(Vec2(x, y));
-			CRay ray(Vec3(0, 0, 0), pos);
-			ray.Transform( CDirector::GetInstance()->GetPerspectiveCamera()->GetViewMat().Inverse() );
-			if ( ray.m_direction.Dot(Vec3(0, 1, 0)) < 0 )
-			{
-				Vec3 intersectionPos = g_pTerrain->GetIntersectionPoint(ray);
-				g_pCharactor->m_transform.m_pos = intersectionPos;
-			}
-			//g_pLineDrawer->DrawLine(ray.m_origin, ray.m_origin + ray.m_direction * 10000);
-		}
+		//if ( !g_bMouseRightButtonClicked )
+		//{
+		//	Vec3 pos = CDirector::GetInstance()->Unproject(Vec2(x, y));
+		//	CRay ray(Vec3(0, 0, 0), pos);
+		//	ray.Transform( CDirector::GetInstance()->GetPerspectiveCamera()->GetViewMat().Inverse() );
+		//	if ( ray.m_direction.Dot(Vec3(0, 1, 0)) < 0 )
+		//	{
+		//		Vec3 intersectionPos = g_pTerrain->GetIntersectionPoint(ray);
+		//		g_pCharactor->m_transform.m_pos = intersectionPos;
+		//	}
+		//	//g_pLineDrawer->DrawLine(ray.m_origin, ray.m_origin + ray.m_direction * 10000);
+		//}
 
 		g_lastMousePos = Vec2(x, y);
 	}
@@ -309,9 +318,10 @@ void mouse_move(int x,int y)
 		float fPitchDelta = (g_lastMousePos.y - y) * 0.1f;
 		float fYawDelta = (g_lastMousePos.x - x) * 0.1f;
 
-		CDirector::GetInstance()->GetPerspectiveCamera()->Rotate(fPitchDelta, fYawDelta);
+		//CDirector::GetInstance()->GetPerspectiveCamera()->Rotate(fPitchDelta, fYawDelta);
 		//UpdatePos();
 
+		g_pController->Rotate(fPitchDelta, fYawDelta);
 		g_lastMousePos = Vec2(x, y);
 	}
 }

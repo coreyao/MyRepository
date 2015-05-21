@@ -28,7 +28,6 @@ CCamera::CCamera(Vec3 eyePos, Vec3 lookAtDir, Vec3 upDir, EProjectionMode eMode)
 void CCamera::Move( float leftAndRight, float upAndDown, float forwardAndBackward )
 {
 	Vec3 forwardAndBackwardOffset = m_lookAtDir * forwardAndBackward;
-	//forwardAndBackwardOffset.y = 0;
 	m_eyePos += forwardAndBackwardOffset;
 
 	m_eyePos.y += upAndDown;
@@ -75,9 +74,21 @@ Vec3 CCamera::GetCameraPos() const
 	return m_eyePos;
 }
 
+void CCamera::SetCameraPos( const Vec3& dst )
+{
+	m_eyePos = dst;
+	UpdateProjectionViewMat();
+}
+
 Vec3 CCamera::GetLookAtDir() const
 {
 	return m_lookAtDir;
+}
+
+void CCamera::SetLookAtDir( const Vec3& dir )
+{
+	m_lookAtDir = dir;
+	UpdateProjectionViewMat();
 }
 
 const CFrustrum& CCamera::GetFrustrum() const
@@ -93,12 +104,6 @@ void CCamera::UpdateFrustrum()
 bool CCamera::IsInFrustrum( const CAABB& worldRect ) const
 {
 	return m_frustrum.IsInFrustrum(worldRect);
-}
-
-void CCamera::SetCameraPos( const Vec3& dst )
-{
-	m_eyePos = dst;
-	UpdateProjectionViewMat();
 }
 
 void CCamera::Zoom( float fDegOffset )
