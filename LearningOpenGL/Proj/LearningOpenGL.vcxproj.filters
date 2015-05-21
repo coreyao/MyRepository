@@ -52,12 +52,6 @@
     <ClCompile Include="..\Source\FrameWork\OpenGL\GLProgramManager.cpp">
       <Filter>Source Files\FrameWork\OpenGL</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\FrameWork\GLMesh.cpp">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\FrameWork\GLParticleSystem.cpp">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\FrameWork\Director.cpp">
       <Filter>Source Files\FrameWork</Filter>
     </ClCompile>
@@ -67,31 +61,40 @@
     <ClCompile Include="..\Source\Console.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\FrameWork\GLLabel.cpp">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\FrameWork\GLPrimitive.cpp">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\FrameWork\GLTerrain.cpp">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\FrameWork\GLFrustrum.cpp">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\FrameWork\GLCollision.cpp">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\FrameWork\GLSkyBox.cpp">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\FrameWork\Math\Plane.cpp">
       <Filter>Source Files\FrameWork\Math</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\FrameWork\Math\Ray.cpp">
       <Filter>Source Files\FrameWork\Math</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\FrameWork\GLCubeMap.cpp">
+    <ClCompile Include="..\Source\FrameWork\ThirdPersonController.cpp">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\Terrain.cpp">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\SkyBox.cpp">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\Primitive.cpp">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\ParticleSystem.cpp">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\Mesh.cpp">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\Label.cpp">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\Frustrum.cpp">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\CubeMap.cpp">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\Collision.cpp">
       <Filter>Source Files\FrameWork</Filter>
     </ClCompile>
   </ItemGroup>
@@ -126,34 +129,10 @@
     <ClInclude Include="..\Source\FrameWork\OpenGL\GLProgramManager.h">
       <Filter>Source Files\FrameWork\OpenGL</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\FrameWork\GLMesh.h">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\FrameWork\GLParticleSystem.h">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\FrameWork\Director.h">
       <Filter>Source Files\FrameWork</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\FrameWork\Camera.h">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\FrameWork\GLLabel.h">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\FrameWork\GLPrimitive.h">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\FrameWork\GLTerrain.h">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\FrameWork\GLFrustrum.h">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\FrameWork\GLCollision.h">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\FrameWork\GLSkyBox.h">
       <Filter>Source Files\FrameWork</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\FrameWork\Math\Plane.h">
@@ -162,7 +141,34 @@
     <ClInclude Include="..\Source\FrameWork\Math\Ray.h">
       <Filter>Source Files\FrameWork\Math</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\FrameWork\GLCubeMap.h">
+    <ClInclude Include="..\Source\FrameWork\ThirdPersonController.h">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\Terrain.h">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\SkyBox.h">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\Primitive.h">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\ParticleSystem.h">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\Mesh.h">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\Label.h">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\Frustrum.h">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\CubeMap.h">
+      <Filter>Source Files\FrameWork</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\Collision.h">
       <Filter>Source Files\FrameWork</Filter>
     </ClInclude>
   </ItemGroup>

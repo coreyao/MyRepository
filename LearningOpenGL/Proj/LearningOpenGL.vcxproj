@@ -15,15 +15,15 @@
     <ClCompile Include="..\Source\FrameWork\DataTypes.cpp" />
     <ClCompile Include="..\Source\FrameWork\Director.cpp" />
     <ClCompile Include="..\Source\FrameWork\Camera.cpp" />
-    <ClCompile Include="..\Source\FrameWork\GLCollision.cpp" />
-    <ClCompile Include="..\Source\FrameWork\GLCubeMap.cpp" />
-    <ClCompile Include="..\Source\FrameWork\GLFrustrum.cpp" />
-    <ClCompile Include="..\Source\FrameWork\GLLabel.cpp" />
-    <ClCompile Include="..\Source\FrameWork\GLMesh.cpp" />
-    <ClCompile Include="..\Source\FrameWork\GLParticleSystem.cpp" />
-    <ClCompile Include="..\Source\FrameWork\GLPrimitive.cpp" />
-    <ClCompile Include="..\Source\FrameWork\GLSkyBox.cpp" />
-    <ClCompile Include="..\Source\FrameWork\GLTerrain.cpp" />
+    <ClCompile Include="..\Source\FrameWork\Collision.cpp" />
+    <ClCompile Include="..\Source\FrameWork\CubeMap.cpp" />
+    <ClCompile Include="..\Source\FrameWork\Frustrum.cpp" />
+    <ClCompile Include="..\Source\FrameWork\Label.cpp" />
+    <ClCompile Include="..\Source\FrameWork\Mesh.cpp" />
+    <ClCompile Include="..\Source\FrameWork\ParticleSystem.cpp" />
+    <ClCompile Include="..\Source\FrameWork\Primitive.cpp" />
+    <ClCompile Include="..\Source\FrameWork\SkyBox.cpp" />
+    <ClCompile Include="..\Source\FrameWork\Terrain.cpp" />
     <ClCompile Include="..\Source\FrameWork\Image\ImageReader.cpp" />
     <ClCompile Include="..\Source\FrameWork\Image\PNGReader.cpp" />
     <ClCompile Include="..\Source\FrameWork\Math\Matrix.cpp" />
@@ -33,6 +33,7 @@
     <ClCompile Include="..\Source\FrameWork\Math\Vector.cpp" />
     <ClCompile Include="..\Source\FrameWork\OpenGL\GLFrameWork.cpp" />
     <ClCompile Include="..\Source\FrameWork\OpenGL\GLProgramManager.cpp" />
+    <ClCompile Include="..\Source\FrameWork\ThirdPersonController.cpp" />
     <ClCompile Include="..\Source\FrameWork\Utility.cpp" />
     <ClCompile Include="..\Source\Console.cpp" />
   </ItemGroup>
@@ -41,15 +42,15 @@
     <ClInclude Include="..\Source\FrameWork\DataTypes.h" />
     <ClInclude Include="..\Source\FrameWork\Director.h" />
     <ClInclude Include="..\Source\FrameWork\Camera.h" />
-    <ClInclude Include="..\Source\FrameWork\GLCollision.h" />
-    <ClInclude Include="..\Source\FrameWork\GLCubeMap.h" />
-    <ClInclude Include="..\Source\FrameWork\GLFrustrum.h" />
-    <ClInclude Include="..\Source\FrameWork\GLLabel.h" />
-    <ClInclude Include="..\Source\FrameWork\GLMesh.h" />
-    <ClInclude Include="..\Source\FrameWork\GLParticleSystem.h" />
-    <ClInclude Include="..\Source\FrameWork\GLPrimitive.h" />
-    <ClInclude Include="..\Source\FrameWork\GLSkyBox.h" />
-    <ClInclude Include="..\Source\FrameWork\GLTerrain.h" />
+    <ClInclude Include="..\Source\FrameWork\Collision.h" />
+    <ClInclude Include="..\Source\FrameWork\CubeMap.h" />
+    <ClInclude Include="..\Source\FrameWork\Frustrum.h" />
+    <ClInclude Include="..\Source\FrameWork\Label.h" />
+    <ClInclude Include="..\Source\FrameWork\Mesh.h" />
+    <ClInclude Include="..\Source\FrameWork\ParticleSystem.h" />
+    <ClInclude Include="..\Source\FrameWork\Primitive.h" />
+    <ClInclude Include="..\Source\FrameWork\SkyBox.h" />
+    <ClInclude Include="..\Source\FrameWork\Terrain.h" />
     <ClInclude Include="..\Source\FrameWork\Image\ImageReader.h" />
     <ClInclude Include="..\Source\FrameWork\Image\PNGReader.h" />
     <ClInclude Include="..\Source\FrameWork\Math\Matrix.h" />
@@ -59,6 +60,7 @@
     <ClInclude Include="..\Source\FrameWork\Math\Vector.h" />
     <ClInclude Include="..\Source\FrameWork\OpenGL\GLFrameWork.h" />
     <ClInclude Include="..\Source\FrameWork\OpenGL\GLProgramManager.h" />
+    <ClInclude Include="..\Source\FrameWork\ThirdPersonController.h" />
     <ClInclude Include="..\Source\FrameWork\Utility.h" />
   </ItemGroup>
   <ItemGroup>

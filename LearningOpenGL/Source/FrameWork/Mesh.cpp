@@ -1,4 +1,4 @@
-#include "GLMesh.h"
+#include "Mesh.h"
 #include "Utility.h"
 #include "Image/PNGReader.h"
 #include "Camera.h"
@@ -8,18 +8,18 @@
 
 using namespace std;
 
-COGLMesh::COGLMesh()
+CMesh::CMesh()
 	: m_Sampler(0)
 	, m_theProgram(0)
 	, m_colorTexUnit(0)
 {
 }
 
-COGLMesh::~COGLMesh()
+CMesh::~CMesh()
 {
 }
 
-void COGLMesh::InitFromFile( const char* pMeshFileName )
+void CMesh::InitFromFile( const char* pMeshFileName )
 {
 	FILE* pMeshFile = fopen((MESH_FILE_DIR + pMeshFileName).c_str(), "rb");
 	if ( !pMeshFile )
@@ -35,7 +35,7 @@ void COGLMesh::InitFromFile( const char* pMeshFileName )
 	InitSkeleton();
 }
 
-void COGLMesh::InitSkeleton()
+void CMesh::InitSkeleton()
 {
 	auto FindCBoneByIndex = [this](int iIndex)
 	{
@@ -89,7 +89,7 @@ void COGLMesh::InitSkeleton()
 	}
 }
 
-void COGLMesh::Update(float dt)
+void CMesh::Update(float dt)
 {
 	m_animator.Update(dt);
 
@@ -100,7 +100,7 @@ void COGLMesh::Update(float dt)
 	}
 }
 
-void COGLMesh::Render()
+void CMesh::Render()
 {
 	if ( m_bEnableCullFace )
 	{
@@ -173,7 +173,7 @@ void COGLMesh::Render()
 	glUseProgram(0);
 }
 
-void COGLMesh::SetTexture( const char* pTextureFileName, int iIndex )
+void CMesh::SetTexture( const char* pTextureFileName, int iIndex )
 {
 	CPNGReader pngReader(pTextureFileName);
 	if ( pngReader.GetData() )
@@ -188,7 +188,7 @@ void COGLMesh::SetTexture( const char* pTextureFileName, int iIndex )
 	}
 }
 
-void COGLMesh::InitUniform()
+void CMesh::InitUniform()
 {
 	glUseProgram(m_theProgram);
 
@@ -208,7 +208,7 @@ void COGLMesh::InitUniform()
 	glUseProgram(0);
 }
 
-void COGLMesh::InitMaterial()
+void CMesh::InitMaterial()
 {
 	int iSubMeshCount = m_data.m_vSubMesh.size();
 	m_vTexture.resize(iSubMeshCount);
@@ -230,7 +230,7 @@ void COGLMesh::InitMaterial()
 	glSamplerParameteri(m_Sampler, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 }
 
-void COGLMesh::InitVBOAndVAO()
+void CMesh::InitVBOAndVAO()
 {
 	int iSubMeshCount = m_data.m_vSubMesh.size();
 	m_vertexDataObj.resize(iSubMeshCount);
@@ -267,13 +267,13 @@ void COGLMesh::InitVBOAndVAO()
 	}
 }
 
-void COGLMesh::SetGLProgram( GLuint theProgram )
+void CMesh::SetGLProgram( GLuint theProgram )
 {
 	m_theProgram = theProgram;
 	InitUniform();
 }
 
-void COGLMesh::SetVisible(bool bVisible, const std::string& sSubMeshName)
+void CMesh::SetVisible(bool bVisible, const std::string& sSubMeshName)
 {
 	int iIndex = -1;
 	for (int i = 0; i < m_data.m_vSubMesh.size(); ++i)

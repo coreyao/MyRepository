@@ -1,8 +1,8 @@
 #pragma once
 
-#include "GLCubeMap.h"
+#include "CubeMap.h"
 
-class CGLSkyBox
+class CSkyBox
 {
 public:
 	void Init(const std::string& sPositiveX, const std::string& sNegativeX, const std::string& sPositiveY, const std::string& sNegativeY
@@ -19,7 +19,7 @@ private:
 	void InitUniform();
 
 private:
-	CGLCubeMap m_CubeMap;
+	CCubeMap m_CubeMap;
 
 	GLuint m_theProgram;
 	GLuint m_vertexAttributeObj;

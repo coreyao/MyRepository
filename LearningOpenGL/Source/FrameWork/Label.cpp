@@ -1,14 +1,14 @@
-#include "GLLabel.h"
+#include "Label.h"
 #include "Director.h"
 #include "OpenGL/GLProgramManager.h"
 #include "Image/PNGReader.h"
 
-FT_Library CGLLabel::s_library = nullptr;
+FT_Library CLabel::s_library = nullptr;
 
 const float conTexWidth = 2048.0f;
 const float conTexHeight = 512.0f;
 
-CGLLabel::CGLLabel(const std::string& fontName, int iFontSize)
+CLabel::CLabel(const std::string& fontName, int iFontSize)
 	: m_colorTexUnit(0)
 	, m_pTexData(nullptr)
 {
@@ -39,17 +39,17 @@ CGLLabel::CGLLabel(const std::string& fontName, int iFontSize)
 	InitVBOAndVAO();
 }
 
-CGLLabel::~CGLLabel()
+CLabel::~CLabel()
 {
 	delete [] m_pTexData;
 }
 
-void CGLLabel::SetString( const std::string& sContent )
+void CLabel::SetString( const std::string& sContent )
 {
 	m_sContent = sContent;
 }
 
-void CGLLabel::Render()
+void CLabel::Render()
 {
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);
@@ -195,7 +195,7 @@ void CGLLabel::Render()
 	glBindVertexArray(0);
 }
 
-void CGLLabel::InitVBOAndVAO()
+void CLabel::InitVBOAndVAO()
 {
 	glGenBuffers(1, &m_vertexDataObj);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -217,13 +217,13 @@ void CGLLabel::InitVBOAndVAO()
 	SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("Label") );
 }
 
-void CGLLabel::SetGLProgram( GLuint theProgram )
+void CLabel::SetGLProgram( GLuint theProgram )
 {
 	m_theProgram = theProgram;
 	InitUniform();
 }
 
-void CGLLabel::InitUniform()
+void CLabel::InitUniform()
 {
 	glUseProgram(m_theProgram);
 

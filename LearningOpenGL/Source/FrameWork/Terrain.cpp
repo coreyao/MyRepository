@@ -1,4 +1,4 @@
-#include "GLTerrain.h"
+#include "Terrain.h"
 
 #include "Image/PNGReader.h"
 #include "OpenGL/GLProgramManager.h"
@@ -6,14 +6,14 @@
 
 const int conChunkSize = 32;
 
-CGLTerrain::CGLTerrain()
+CTerrain::CTerrain()
 	: m_bDrawWireFrame(false)
 	, m_iHeightMapWidth(0)
 	, m_iHeightMapHeight(0)
 {
 }
 
-void CGLTerrain::InitTerrain(const unsigned char* pHeightMapData, int iWidth, int iHeight)
+void CTerrain::InitTerrain(const unsigned char* pHeightMapData, int iWidth, int iHeight)
 {
 	m_iHeightMapWidth = iWidth;
 	m_iHeightMapHeight = iHeight;
@@ -38,18 +38,18 @@ void CGLTerrain::InitTerrain(const unsigned char* pHeightMapData, int iWidth, in
 	m_pRoot = new SQuadNode(0, 0, m_iHeightMapWidth, m_iHeightMapHeight, nullptr, this);
 }
 
-void CGLTerrain::SetGLProgram( GLint theProgram )
+void CTerrain::SetGLProgram( GLint theProgram )
 {
 	m_theProgram = theProgram;
 }
 
-void CGLTerrain::Update( float deltaTime )
+void CTerrain::Update( float deltaTime )
 {
 	UpdateChunkLOD();
 	UpdateCrackFix();
 }
 
-void CGLTerrain::Render()
+void CTerrain::Render()
 {
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
@@ -106,7 +106,7 @@ void CGLTerrain::Render()
 		glUniformMatrix4fv(perspectiveMatrixUnif, 1, GL_FALSE, projMat.m);
 	}
 
-	VisitQuadTree(m_pRoot, std::bind(&CGLTerrain::IsInFrustrum, this, std::placeholders::_1), std::bind(&CGLTerrain::RenderChunk, this, std::placeholders::_1));
+	VisitQuadTree(m_pRoot, std::bind(&CTerrain::IsInFrustrum, this, std::placeholders::_1), std::bind(&CTerrain::RenderChunk, this, std::placeholders::_1));
 
 	/*for (int i = 0; i < m_iChunkCountY; ++i)
 	{
@@ -135,7 +135,7 @@ void CGLTerrain::Render()
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
-void CGLTerrain::RenderChunk( const SChunk* pChunk )
+void CTerrain::RenderChunk( const SChunk* pChunk )
 {
 	std::vector<unsigned int> vIndex = pChunk->m_vLOD[pChunk->m_iCurLOD].m_vIndex;
 	std::copy(pChunk->m_vFixCrack.m_vIndex.begin(), pChunk->m_vFixCrack.m_vIndex.end(), std::back_inserter(vIndex));
@@ -150,12 +150,12 @@ void CGLTerrain::RenderChunk( const SChunk* pChunk )
 	}
 }
 
-void CGLTerrain::UpdateChunkLOD()
+void CTerrain::UpdateChunkLOD()
 {
-	VisitQuadTree(m_pRoot, std::bind(&CGLTerrain::UpdateChunkLODInternal, this, std::placeholders::_1));
+	VisitQuadTree(m_pRoot, std::bind(&CTerrain::UpdateChunkLODInternal, this, std::placeholders::_1));
 }
 
-void CGLTerrain::UpdateCrackFixInternal( SChunk* pCurChunk )
+void CTerrain::UpdateCrackFixInternal( SChunk* pCurChunk )
 {
 	int iCurStep = pow(2, pCurChunk->m_iCurLOD);
 
@@ -172,7 +172,7 @@ void CGLTerrain::UpdateCrackFixInternal( SChunk* pCurChunk )
 			EChunkNeighbor eNeighbor = (EChunkNeighbor)n;
 			switch (eNeighbor)
 			{
-			case CGLTerrain::EChunkNeighbor_Left:
+			case CTerrain::EChunkNeighbor_Left:
 				{
 					for (int m = 0; m < conChunkSize; m += iNeighborStep)
 					{
@@ -195,7 +195,7 @@ void CGLTerrain::UpdateCrackFixInternal( SChunk* pCurChunk )
 					}
 				}
 				break;
-			case CGLTerrain::EChunkNeighbor_Right:
+			case CTerrain::EChunkNeighbor_Right:
 				{
 					for (int m = 0; m < conChunkSize; m += iNeighborStep)
 					{
@@ -218,7 +218,7 @@ void CGLTerrain::UpdateCrackFixInternal( SChunk* pCurChunk )
 					}
 				}
 				break;
-			case CGLTerrain::EChunkNeighbor_Up:
+			case CTerrain::EChunkNeighbor_Up:
 				{
 					for (int m = 0; m < conChunkSize; m += iNeighborStep)
 					{
@@ -241,7 +241,7 @@ void CGLTerrain::UpdateCrackFixInternal( SChunk* pCurChunk )
 					}
 				}
 				break;
-			case CGLTerrain::EChunkNeighbor_Bottom:
+			case CTerrain::EChunkNeighbor_Bottom:
 				{
 					for (int m = 0; m < conChunkSize; m += iNeighborStep)
 					{
@@ -270,14 +270,14 @@ void CGLTerrain::UpdateCrackFixInternal( SChunk* pCurChunk )
 		}
 	}
 }
-void CGLTerrain::SetLODThreshold( float LOD_1, float LOD_2, float LOD_3 )
+void CTerrain::SetLODThreshold( float LOD_1, float LOD_2, float LOD_3 )
 {
 	m_vLODThreshold[0] = LOD_1;
 	m_vLODThreshold[1] = LOD_2;
 	m_vLODThreshold[2] = LOD_3;
 }
 
-void CGLTerrain::SetDetailTexture( const std::string& sTex1, const std::string& sTex2, const std::string& sTex3, const std::string& sTex4 )
+void CTerrain::SetDetailTexture( const std::string& sTex1, const std::string& sTex2, const std::string& sTex3, const std::string& sTex4 )
 {
 	std::vector<std::string> vDetailTex;
 	if ( !sTex1.empty() )
@@ -313,7 +313,7 @@ void CGLTerrain::SetDetailTexture( const std::string& sTex1, const std::string& 
 	glSamplerParameteri(m_detailTexSampler, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 }
 
-void CGLTerrain::SetDetailTextureSize( int iTex1Size, int iTex2Size /*= 20*/, int iTex3Size /*= 20*/, int iTex4Size /*= 20*/ )
+void CTerrain::SetDetailTextureSize( int iTex1Size, int iTex2Size /*= 20*/, int iTex3Size /*= 20*/, int iTex4Size /*= 20*/ )
 {
 	m_vDetailTexSize.push_back(iTex1Size);
 	m_vDetailTexSize.push_back(iTex2Size);
@@ -321,7 +321,7 @@ void CGLTerrain::SetDetailTextureSize( int iTex1Size, int iTex2Size /*= 20*/, in
 	m_vDetailTexSize.push_back(iTex4Size);
 }
 
-void CGLTerrain::SetAlphaTexture( const std::string& sAlphaMap )
+void CTerrain::SetAlphaTexture( const std::string& sAlphaMap )
 {
 	if ( sAlphaMap.empty() )
 		return;
@@ -345,7 +345,7 @@ void CGLTerrain::SetAlphaTexture( const std::string& sAlphaMap )
 	}
 }
 
-void CGLTerrain::UpdateUniform()
+void CTerrain::UpdateUniform()
 {
 	for (int i = 0; i < m_vDetailTexture.size(); ++i)
 	{
@@ -374,17 +374,17 @@ void CGLTerrain::UpdateUniform()
 	}
 }
 
-void CGLTerrain::SetDrawWireFrame( bool bDraw )
+void CTerrain::SetDrawWireFrame( bool bDraw )
 {
 	m_bDrawWireFrame = bDraw;
 }
 
-void CGLTerrain::UpdateCrackFix()
+void CTerrain::UpdateCrackFix()
 {
-	VisitQuadTree(m_pRoot, std::bind(&CGLTerrain::UpdateCrackFixInternal, this, std::placeholders::_1));
+	VisitQuadTree(m_pRoot, std::bind(&CTerrain::UpdateCrackFixInternal, this, std::placeholders::_1));
 }
 
-void CGLTerrain::VisitQuadTree( SQuadNode* pNode, const std::function< void(SChunk*) >& pCallBack )
+void CTerrain::VisitQuadTree( SQuadNode* pNode, const std::function< void(SChunk*) >& pCallBack )
 {
 	if ( !pNode )
 		return;
@@ -403,7 +403,7 @@ void CGLTerrain::VisitQuadTree( SQuadNode* pNode, const std::function< void(SChu
 	}
 }
 
-void CGLTerrain::VisitQuadTree( SQuadNode* pNode, const std::function< bool(SQuadNode*) >& pCondition, const std::function< void(SChunk*) >& pCallBack )
+void CTerrain::VisitQuadTree( SQuadNode* pNode, const std::function< bool(SQuadNode*) >& pCondition, const std::function< void(SChunk*) >& pCallBack )
 {
 	if ( !pNode || !pCondition(pNode) )
 		return;
@@ -422,7 +422,7 @@ void CGLTerrain::VisitQuadTree( SQuadNode* pNode, const std::function< bool(SQua
 	}
 }
 
-void CGLTerrain::UpdateChunkLODInternal( SChunk* pChunk )
+void CTerrain::UpdateChunkLODInternal( SChunk* pChunk )
 {
 	Vec3 cameraPos = CDirector::GetInstance()->GetPerspectiveCamera()->GetCameraPos();
 	Vec3 centerPos = pChunk->m_pParent->m_boundingBoxLocal.GetCenter();
@@ -440,7 +440,7 @@ void CGLTerrain::UpdateChunkLODInternal( SChunk* pChunk )
 	}
 }
 
-void CGLTerrain::GenerateChunk( SChunk* pNewChunk, int j, int i )
+void CTerrain::GenerateChunk( SChunk* pNewChunk, int j, int i )
 {
 	pNewChunk->m_x = j;
 	pNewChunk->m_y = i;
@@ -468,7 +468,7 @@ void CGLTerrain::GenerateChunk( SChunk* pNewChunk, int j, int i )
 	}
 }
 
-void CGLTerrain::InitNeighbor()
+void CTerrain::InitNeighbor()
 {
 	for (int i = 0; i < m_iChunkCountY; ++i)
 	{
@@ -488,7 +488,7 @@ void CGLTerrain::InitNeighbor()
 	}
 }
 
-void CGLTerrain::LoadVertex( const unsigned char* pHeightMapData, int iWidth, int iHeight )
+void CTerrain::LoadVertex( const unsigned char* pHeightMapData, int iWidth, int iHeight )
 {
 	for (int i = 0; i < m_iHeightMapHeight; ++i)
 	{
@@ -511,12 +511,12 @@ void CGLTerrain::LoadVertex( const unsigned char* pHeightMapData, int iWidth, in
 	glGenVertexArrays(1, &m_vertexAttributeObj);
 }
 
-bool CGLTerrain::IsInFrustrum( const SQuadNode* pNode )
+bool CTerrain::IsInFrustrum( const SQuadNode* pNode )
 {
 	return CDirector::GetInstance()->GetPerspectiveCamera()->IsInFrustrum( pNode->m_boundingBoxLocal.Transform( m_transform.GetTransformMat() ) );
 }
 
-void CGLTerrain::Init(const std::string& sHeightMapFile)
+void CTerrain::Init(const std::string& sHeightMapFile)
 {
 	CPNGReader pngReader(sHeightMapFile);
 	if ( pngReader.GetData() )
@@ -537,7 +537,7 @@ void CGLTerrain::Init(const std::string& sHeightMapFile)
 	}
 }
 
-float CGLTerrain::GetHeight( const Vec2& worldPos )
+float CTerrain::GetHeight( const Vec2& worldPos )
 {
 	Vec3 p( worldPos.x, 0, worldPos.y );
 
@@ -566,7 +566,7 @@ float CGLTerrain::GetHeight( const Vec2& worldPos )
 	return p.y;
 }
 
-Vec3 CGLTerrain::GetIntersectionPoint( const CRay& worldRay )
+Vec3 CTerrain::GetIntersectionPoint( const CRay& worldRay )
 {
 	Vec3 startPos = worldRay.m_origin;
 	Vec3 lastPos = startPos;
@@ -591,7 +591,7 @@ Vec3 CGLTerrain::GetIntersectionPoint( const CRay& worldRay )
 	return startPos;
 }
 
-CGLTerrain::SQuadNode::SQuadNode( int x, int y, int iWidth, int iHeight, SQuadNode* pParent, CGLTerrain* pTerrain )
+CTerrain::SQuadNode::SQuadNode( int x, int y, int iWidth, int iHeight, SQuadNode* pParent, CTerrain* pTerrain )
 	: m_pRelatedChunk(nullptr)
 	, m_pParent(nullptr)
 {

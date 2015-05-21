@@ -6,11 +6,11 @@
 #include "ft2build.h"
 #include FT_FREETYPE_H
 
-class CGLLabel
+class CLabel
 {
 public:
-	CGLLabel(const std::string& fontName, int iFontSize);
-	~CGLLabel();
+	CLabel(const std::string& fontName, int iFontSize);
+	~CLabel();
 
 	void SetString(const std::string& sContent);
 	void Render();

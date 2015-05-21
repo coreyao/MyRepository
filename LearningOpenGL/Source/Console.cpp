@@ -3,27 +3,27 @@
 #include "FrameWork/Utility.h"
 #include "FrameWork/Image/PNGReader.h"
 #include "FrameWork/DataTypes.h"
-#include "FrameWork/GLMesh.h"
+#include "FrameWork/Mesh.h"
 #include "FrameWork/Director.h"
-#include "FrameWork/GLParticleSystem.h"
-#include "FrameWork/GLLabel.h"
-#include "FrameWork/GLPrimitive.h"
-#include "FrameWork/GLTerrain.h"
-#include "FrameWork/GLSkyBox.h"
+#include "FrameWork/ParticleSystem.h"
+#include "FrameWork/Label.h"
+#include "FrameWork/Primitive.h"
+#include "FrameWork/Terrain.h"
+#include "FrameWork/SkyBox.h"
 
-COGLMesh* g_pCharactor = nullptr;
-std::vector<COGLMesh*> g_vMesh;
+CMesh* g_pCharactor = nullptr;
+std::vector<CMesh*> g_vMesh;
 std::vector<GLuint> g_vGLProgram;
 
-GLParticleSystem* g_particleSystem = nullptr;
-CGLLabel* g_pDeltaTimeLabel = nullptr;
-CGLLabel* g_pFPSLabel = nullptr;
+CParticleSystem* g_particleSystem = nullptr;
+CLabel* g_pDeltaTimeLabel = nullptr;
+CLabel* g_pFPSLabel = nullptr;
 
-CGLPrimitive* g_pLineDrawer = nullptr;
-CGLPrimitive* g_pPointDrawer = nullptr;
+CPrimitive* g_pLineDrawer = nullptr;
+CPrimitive* g_pPointDrawer = nullptr;
 
-CGLTerrain* g_pTerrain = nullptr;
-CGLSkyBox* g_pSkyBox = nullptr;
+CTerrain* g_pTerrain = nullptr;
+CSkyBox* g_pSkyBox = nullptr;
 
 timeval g_fLastTime = {0, 0};
 float g_fDeltaTime = 0.0f;
@@ -65,23 +65,23 @@ void init()
 	CGLProgramManager::GetInstance()->Add("Terrain", SHADER_FILE_DIR + "Terrain_Vertex_Shader.vert", SHADER_FILE_DIR + "Terrain_Fragment_Shader.frag");
 	CGLProgramManager::GetInstance()->Add("SkyBox", SHADER_FILE_DIR + "SkyBox_Vertex_Shader.vert", SHADER_FILE_DIR + "SkyBox_Fragment_Shader.frag");
 
-	g_pDeltaTimeLabel = new CGLLabel(FONT_FILE_DIR + "simyou.ttf", 20);
+	g_pDeltaTimeLabel = new CLabel(FONT_FILE_DIR + "simyou.ttf", 20);
 	g_pDeltaTimeLabel->m_transform.m_pos.x = -RESOLUTION_WIDTH / 2 + 10;
 	g_pDeltaTimeLabel->m_transform.m_pos.y = RESOLUTION_HEIGHT / 2 - 20;
 	g_pDeltaTimeLabel->m_color = Color4F(0.0f, 1.0f, 0.0f, 1.0f);
 
-	g_pFPSLabel = new CGLLabel(FONT_FILE_DIR + "simyou.ttf", 20);
+	g_pFPSLabel = new CLabel(FONT_FILE_DIR + "simyou.ttf", 20);
 	g_pFPSLabel->SetString("FPS:0");
 	g_pFPSLabel->m_transform.m_pos.x = g_pDeltaTimeLabel->m_transform.m_pos.x;
 	g_pFPSLabel->m_transform.m_pos.y = g_pDeltaTimeLabel->m_transform.m_pos.y - 20;
 	g_pFPSLabel->m_color = Color4F(0.0f, 1.0f, 0.0f, 1.0f);
 
-	g_pLineDrawer = new CGLPrimitive(CGLPrimitive::EPrimitiveType_Line);
+	g_pLineDrawer = new CPrimitive(CPrimitive::EPrimitiveType_Line);
 
-	g_pPointDrawer = new CGLPrimitive(CGLPrimitive::EPrimitiveType_Point);
+	g_pPointDrawer = new CPrimitive(CPrimitive::EPrimitiveType_Point);
 	g_pPointDrawer->DrawPoint(Vec3(-100, -100, 0), 5);
 
-	g_particleSystem = new GLParticleSystem;
+	g_particleSystem = new CParticleSystem;
 	//g_particleSystem->GetTransformData().m_rotation.x = -90;
 	//g_particleSystem->GetTransformData().m_pos.z = 80;
 	//CEmitter* pEmitter = new CEmitter;
@@ -120,7 +120,7 @@ void init()
 	pEmitter->GetEmitterShapeRef().SetExtent(Vec3(100, 0, 100));
 	g_particleSystem->AddEmitter(pEmitter);
 
-	COGLMesh* planeMesh = new COGLMesh;
+	CMesh* planeMesh = new CMesh;
 	planeMesh->InitFromFile("plane.CSTM");
 	planeMesh->m_transform.m_scale.set(10, 10, -10);
 	planeMesh->m_transform.m_pos.set(0, -30, -100);
@@ -131,7 +131,7 @@ void init()
 	planeMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh") );
 	//g_vMesh.push_back(planeMesh);
 
-	g_pCharactor = new COGLMesh;
+	g_pCharactor = new CMesh;
 	g_pCharactor->InitFromFile("test.CSTM");
 	for ( int i = 0; i < g_pCharactor->GetMeshData().m_vSubMesh.size(); ++i )
 		g_pCharactor->SetTexture("cubemap_hills/hills_negative_x.png", i);
@@ -139,7 +139,7 @@ void init()
 	g_pCharactor->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("SkinMesh") );
 	g_vMesh.push_back(g_pCharactor);
 
-	g_pTerrain = new CGLTerrain();
+	g_pTerrain = new CTerrain();
 	g_pTerrain->SetDetailTexture("dirt.png", "Grass2.png", "road.png", "GreenSkin.png");
 	g_pTerrain->SetDetailTextureSize(20, 20, 20, 20);
 	g_pTerrain->SetAlphaTexture("alphamap.png");
@@ -149,7 +149,7 @@ void init()
 	g_pTerrain->m_transform.m_scale.z = 100;
 	g_pTerrain->Init("heightmap16.png");
 
-	g_pSkyBox = new CGLSkyBox;
+	g_pSkyBox = new CSkyBox;
 	g_pSkyBox->Init("skybox/right.png", "skybox/left.png",
 		"skybox/top.png", "skybox/bottom.png",
 		"skybox/back.png", "skybox/front.png"

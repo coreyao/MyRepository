@@ -1,7 +1,7 @@
-#include "GLCubeMap.h"
+#include "CubeMap.h"
 #include "Image/PNGReader.h"
 
-void CGLCubeMap::Init( const std::string& sPositiveX, const std::string& sNegativeX, const std::string& sPositiveY, const std::string& sNegativeY , 
+void CCubeMap::Init( const std::string& sPositiveX, const std::string& sNegativeX, const std::string& sPositiveY, const std::string& sNegativeY , 
 					  const std::string& sPositiveZ, const std::string& sNegativeZ )
 {
 	glGenTextures(1, &m_cubeTex);

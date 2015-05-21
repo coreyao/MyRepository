@@ -1,4 +1,4 @@
-#include "GLCollision.h"
+#include "Collision.h"
 
 
 CAABB::CAABB()

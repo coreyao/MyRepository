@@ -2,10 +2,10 @@
 
 #include "Utility.h"
 #include "Math/Plane.h"
-#include "GLCollision.h"
+#include "Collision.h"
 
 class CCamera;
-class CGLFrustrum
+class CFrustrum
 {
 public:
 	void Init( const CCamera& cam );

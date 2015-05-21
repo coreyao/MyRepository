@@ -3,7 +3,7 @@
 #include "Utility.h"
 #include "OpenGL/GLFrameWork.h"
 
-class CGLCubeMap
+class CCubeMap
 {
 public:
 	void Init(const std::string& sPositiveX, const std::string& sNegativeX, const std::string& sPositiveY, const std::string& sNegativeY

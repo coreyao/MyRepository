@@ -1,18 +1,18 @@
-#include "GLParticleSystem.h"
+#include "ParticleSystem.h"
 #include "OpenGL/GLProgramManager.h"
 #include "Director.h"
 #include "Image/PNGReader.h"
-#include "GLMesh.h"
+#include "Mesh.h"
 
 #include <utility>
 
-void GLParticleSystem::AddEmitter( CEmitter* pNewEmitter )
+void CParticleSystem::AddEmitter( CEmitter* pNewEmitter )
 {
 	pNewEmitter->m_pParticleSystem = this;
 	m_vEmitter.push_back(pNewEmitter);
 }
 
-void GLParticleSystem::Update( float dt )
+void CParticleSystem::Update( float dt )
 {
 	for ( auto& pEmitter : m_vEmitter )
 	{
@@ -20,7 +20,7 @@ void GLParticleSystem::Update( float dt )
 	}
 }
 
-void GLParticleSystem::Render()
+void CParticleSystem::Render()
 {
 	for ( auto& pEmitter : m_vEmitter )
 	{
@@ -28,7 +28,7 @@ void GLParticleSystem::Render()
 	}
 }
 
-STransform& GLParticleSystem::GetTransformData()
+STransform& CParticleSystem::GetTransformData()
 {
 	return m_transform;
 }
@@ -292,7 +292,7 @@ void CParticleInstance::BuildVBOAndVAO()
 	glSamplerParameteri(m_Sampler, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 }
 
-extern COGLMesh* g_planePolygonMesh;
+extern CMesh* g_planePolygonMesh;
 
 void CParticleInstance::Render()
 {

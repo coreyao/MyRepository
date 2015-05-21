@@ -1,15 +1,15 @@
-#include "GLPrimitive.h"
+#include "Primitive.h"
 #include "OpenGL/GLProgramManager.h"
 #include "Director.h"
 
-CGLPrimitive::CGLPrimitive(EPrimitiveType eType)
+CPrimitive::CPrimitive(EPrimitiveType eType)
 	: m_eType(eType)
 	, m_fPointSize(1.0f)
 {
 	InitVBOAndVAO();
 }
 
-void CGLPrimitive::InitVBOAndVAO()
+void CPrimitive::InitVBOAndVAO()
 {
 	glGenBuffers(1, &m_vertexDataObj);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -20,7 +20,7 @@ void CGLPrimitive::InitVBOAndVAO()
 	SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("Primitive") );
 }
 
-void CGLPrimitive::InitUniform()
+void CPrimitive::InitUniform()
 {
 	glUseProgram(m_theProgram);
 
@@ -34,13 +34,13 @@ void CGLPrimitive::InitUniform()
 	glUseProgram(0);
 }
 
-void CGLPrimitive::SetGLProgram( GLuint theProgram )
+void CPrimitive::SetGLProgram( GLuint theProgram )
 {
 	m_theProgram = theProgram;
 	InitUniform();
 }
 
-void CGLPrimitive::Render()
+void CPrimitive::Render()
 {
 	if ( m_eType == EPrimitiveType_None || m_vVertex.empty() )
 		return;
@@ -91,7 +91,7 @@ void CGLPrimitive::Render()
 	glBindVertexArray(0);
 }
 
-void CGLPrimitive::DrawLine( const Vec3& startLoc, const Vec3& endLoc )
+void CPrimitive::DrawLine( const Vec3& startLoc, const Vec3& endLoc )
 {
 	if ( m_eType != EPrimitiveType_Line )
 		return;
@@ -109,7 +109,7 @@ void CGLPrimitive::DrawLine( const Vec3& startLoc, const Vec3& endLoc )
 	m_vVertex.push_back(EndVertex);
 }
 
-void CGLPrimitive::DrawPoint( const Vec3& loc, float fPointSize /*= 1.0f*/ )
+void CPrimitive::DrawPoint( const Vec3& loc, float fPointSize /*= 1.0f*/ )
 {
 	if ( m_eType != EPrimitiveType_Point )
 		return;

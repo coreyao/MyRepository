@@ -3,7 +3,7 @@
 #include "Utility.h"
 #include "OpenGL/GLFrameWork.h"
 
-class CGLPrimitive
+class CPrimitive
 {
 public:
 	enum EPrimitiveType
@@ -14,7 +14,7 @@ public:
 		EPrimitiveType_Box,
 	};
 
-	CGLPrimitive(EPrimitiveType eType);
+	CPrimitive(EPrimitiveType eType);
 
 	void DrawPoint( const Vec3& loc, float fPointSize = 1.0f );
 	void DrawLine( const Vec3& startLoc, const Vec3& endLoc );

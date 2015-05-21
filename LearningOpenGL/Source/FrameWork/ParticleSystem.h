@@ -128,7 +128,7 @@ private:
 
 class CEmitter
 {
-	friend class GLParticleSystem;
+	friend class CParticleSystem;
 	friend class CParticleInstance;
 
 public:
@@ -231,7 +231,7 @@ private:
 	EBlendMode m_eBlendMode;
 	ERenderMode m_eRenderMode;
 
-	GLParticleSystem* m_pParticleSystem;
+	CParticleSystem* m_pParticleSystem;
 	std::vector<CParticleInstance*> m_vActiveParticle;
 	std::vector<CParticleInstance*> m_vInactiveParticle;
 
@@ -239,11 +239,11 @@ private:
 
 };
 
-class GLParticleSystem
+class CParticleSystem
 {
 	friend class CParticleInstance;
 public:
-	GLParticleSystem()
+	CParticleSystem()
 	{
 	}
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Utility.h"
-#include "GLFrustrum.h"
+#include "Frustrum.h"
 
 class CCamera
 {
@@ -27,7 +27,7 @@ public:
 
 	float GetFarZ() const;
 
-	const CGLFrustrum& GetFrustrum() const;
+	const CFrustrum& GetFrustrum() const;
 	bool IsInFrustrum(const CAABB& worldRect) const;
 
 private:
@@ -50,5 +50,5 @@ private:
 
 	EProjectionMode m_eMode;
 
-	CGLFrustrum m_frustrum;
+	CFrustrum m_frustrum;
 };

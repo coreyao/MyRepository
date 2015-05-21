@@ -1,7 +1,7 @@
-#include "GLFrustrum.h"
+#include "Frustrum.h"
 #include "Camera.h"
 
-bool CGLFrustrum::IsInFrustrum( const CAABB& worldRect ) const
+bool CFrustrum::IsInFrustrum( const CAABB& worldRect ) const
 {
 	bool bRet = true;
 	for (int i = 0; i < 6; ++i)
@@ -21,7 +21,7 @@ bool CGLFrustrum::IsInFrustrum( const CAABB& worldRect ) const
 	return bRet;
 }
 
-void CGLFrustrum::Init( const CCamera& cam )
+void CFrustrum::Init( const CCamera& cam )
 {
 	const Mat4& mat = cam.GetProjMat() * cam.GetViewMat();
 

@@ -80,7 +80,7 @@ Vec3 CCamera::GetLookAtDir() const
 	return m_lookAtDir;
 }
 
-const CGLFrustrum& CCamera::GetFrustrum() const
+const CFrustrum& CCamera::GetFrustrum() const
 {
 	return m_frustrum;
 }

@@ -2,10 +2,10 @@
 
 #include "Utility.h"
 #include "OpenGL/GLFrameWork.h"
-#include "GLCollision.h"
+#include "Collision.h"
 #include "Math/Ray.h"
 
-class CGLTerrain
+class CTerrain
 {
 public:
 	static const int conMaxLOD = 4;
@@ -18,7 +18,7 @@ public:
 		EChunkNeighbor_Bottom,
 	};
 
-	CGLTerrain();
+	CTerrain();
 
 	void Init(const std::string& sHeightMapFile);
 	void Update(float deltaTime);
@@ -73,7 +73,7 @@ private:
 		{
 		}
 
-		SQuadNode(int x, int y, int iWidth, int iHeight, SQuadNode* pParent, CGLTerrain* pTerrain);
+		SQuadNode(int x, int y, int iWidth, int iHeight, SQuadNode* pParent, CTerrain* pTerrain);
 
 		SChunk* m_pRelatedChunk;
 		

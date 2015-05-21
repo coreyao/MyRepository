@@ -3,11 +3,11 @@
 #include "BaseRenderingDataStructure.h"
 #include "OpenGL/GLFrameWork.h"
 
-class COGLMesh : public CBaseMesh
+class CMesh : public CBaseMesh
 {
 public:
-	COGLMesh();
-	virtual ~COGLMesh();
+	CMesh();
+	virtual ~CMesh();
 
 	virtual void Update(float dt);
 	virtual void Render();

@@ -1,8 +1,8 @@
-#include "GLSkyBox.h"
+#include "SkyBox.h"
 #include "OpenGL/GLProgramManager.h"
 #include "Director.h"
 
-void CGLSkyBox::Init( const std::string& sPositiveX, const std::string& sNegativeX, const std::string& sPositiveY, const std::string& sNegativeY , 
+void CSkyBox::Init( const std::string& sPositiveX, const std::string& sNegativeX, const std::string& sPositiveY, const std::string& sNegativeY , 
 					 const std::string& sPositiveZ, const std::string& sNegativeZ )
 {
 	 m_CubeMap.Init(sPositiveX, sNegativeX, sPositiveY, sNegativeY, sPositiveZ, sNegativeZ);
@@ -11,12 +11,12 @@ void CGLSkyBox::Init( const std::string& sPositiveX, const std::string& sNegativ
 	 InitUniform();
 }
 
-void CGLSkyBox::Update( float dt )
+void CSkyBox::Update( float dt )
 {
 	m_transform.m_pos = CDirector::GetInstance()->GetPerspectiveCamera()->GetCameraPos();
 }
 
-void CGLSkyBox::Render()
+void CSkyBox::Render()
 {
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_FRONT);
@@ -56,7 +56,7 @@ void CGLSkyBox::Render()
 	glBindVertexArray(0);
 }
 
-void CGLSkyBox::InitVBOAndVAO()
+void CSkyBox::InitVBOAndVAO()
 {
 	Vec3 vexBuf[] =
 	{
@@ -87,12 +87,12 @@ void CGLSkyBox::InitVBOAndVAO()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vec3), 0);
 }
 
-void CGLSkyBox::SetGLProgram( GLint theProgram )
+void CSkyBox::SetGLProgram( GLint theProgram )
 {
 	m_theProgram = theProgram;
 }
 
-void CGLSkyBox::InitUniform()
+void CSkyBox::InitUniform()
 {
 	glUseProgram(m_theProgram);
 
