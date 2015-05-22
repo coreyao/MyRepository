@@ -398,10 +398,10 @@ void MeshExporter::ParseGeomObject(INode* pNode)
 					tMesh.m_vFace.push_back(tFace);
 				}
 
-				vector<SVertex> tVertexVec;  
+				vector<SSkinMeshVertex> tVertexVec;  
 				for (int i = 0; i < tVertexNum; i++)
 				{  
-					SVertex tVertex;  
+					SSkinMeshVertex tVertex;  
 					Point3 vert = mesh->verts[i];  
 					tVertex.m_position.set(vert.x, vert.z, vert.y);  
 
@@ -456,9 +456,9 @@ void MeshExporter::ParseGeomObject(INode* pNode)
 						int tDestTexIndex2 = mesh->faces[i].v[1];  
 						int tDestTexIndex3 = mesh->faces[i].v[2];  
 
-						SVertex& tV1 = tVertexVec[tDestTexIndex1];  
-						SVertex& tV2 = tVertexVec[tDestTexIndex2];  
-						SVertex& tV3 = tVertexVec[tDestTexIndex3];  
+						SSkinMeshVertex& tV1 = tVertexVec[tDestTexIndex1];  
+						SSkinMeshVertex& tV2 = tVertexVec[tDestTexIndex2];  
+						SSkinMeshVertex& tV3 = tVertexVec[tDestTexIndex3];  
 
 						tV1.m_texCoord.x = mesh->tVerts[tSrcTexIndex1].x;  
 						tV1.m_texCoord.y = 1.0 - mesh->tVerts[tSrcTexIndex1].y;  
@@ -664,9 +664,6 @@ void MeshExporter::ParseAllInfo()
 	INode* pRootNode = m_pInterface->GetRootNode();
 	EnumBones(pRootNode);
 	ParseBoneAnimation();
-	for (auto& rBone : m_allBoneData)
-		m_MeshNode.m_skeleton.m_vBone.push_back(rBone.second);
-	m_MeshNode.m_skeleton.m_vFrame = m_allBoneFrames;
 
 	EnumGeomObjects(pRootNode);
 }
@@ -768,4 +765,8 @@ void MeshExporter::ParseBoneAnimation()
 
 		m_allBoneFrames.push_back(tempFrame);
 	}
+
+	for (auto& rBone : m_allBoneData)
+		m_MeshNode.m_skeleton.m_vBone.push_back(rBone.second);
+	m_MeshNode.m_skeleton.m_vFrame = m_allBoneFrames;
 }
