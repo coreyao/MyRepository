@@ -114,6 +114,8 @@ void CEmitter::SetTexture( const std::string& sTexFileName )
 			GL_RGBA, GL_UNSIGNED_BYTE, pngReader.GetData());
 
 		glBindTexture(GL_TEXTURE_2D, 0);
+
+		delete [] pngReader.GetData();
 	}
 }
 

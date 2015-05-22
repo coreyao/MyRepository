@@ -22,6 +22,8 @@ void CCubeMap::Init( const std::string& sPositiveX, const std::string& sNegative
 		{
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, pngReader.GetWidth(), pngReader.GetHeight(), 0,
 				GL_RGBA, GL_UNSIGNED_BYTE, pngReader.GetData());
+
+			delete [] pngReader.GetData();
 		}
 	}
 

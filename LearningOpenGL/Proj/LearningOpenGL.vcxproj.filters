@@ -97,6 +97,12 @@
     <ClCompile Include="..\Source\FrameWork\Collision.cpp">
       <Filter>Source Files\FrameWork</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\Image\TGAReader.cpp">
+      <Filter>Source Files\FrameWork\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\Image\ImageManager.cpp">
+      <Filter>Source Files\FrameWork\Image</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\FrameWork\Utility.h">
@@ -170,6 +176,12 @@
     </ClInclude>
     <ClInclude Include="..\Source\FrameWork\Collision.h">
       <Filter>Source Files\FrameWork</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\Image\TGAReader.h">
+      <Filter>Source Files\FrameWork\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\Image\ImageManager.h">
+      <Filter>Source Files\FrameWork\Image</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

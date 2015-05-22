@@ -18,6 +18,8 @@
     <ClCompile Include="..\Source\FrameWork\Collision.cpp" />
     <ClCompile Include="..\Source\FrameWork\CubeMap.cpp" />
     <ClCompile Include="..\Source\FrameWork\Frustrum.cpp" />
+    <ClCompile Include="..\Source\FrameWork\Image\ImageManager.cpp" />
+    <ClCompile Include="..\Source\FrameWork\Image\TGAReader.cpp" />
     <ClCompile Include="..\Source\FrameWork\Label.cpp" />
     <ClCompile Include="..\Source\FrameWork\Mesh.cpp" />
     <ClCompile Include="..\Source\FrameWork\ParticleSystem.cpp" />
@@ -45,6 +47,8 @@
     <ClInclude Include="..\Source\FrameWork\Collision.h" />
     <ClInclude Include="..\Source\FrameWork\CubeMap.h" />
     <ClInclude Include="..\Source\FrameWork\Frustrum.h" />
+    <ClInclude Include="..\Source\FrameWork\Image\ImageManager.h" />
+    <ClInclude Include="..\Source\FrameWork\Image\TGAReader.h" />
     <ClInclude Include="..\Source\FrameWork\Label.h" />
     <ClInclude Include="..\Source\FrameWork\Mesh.h" />
     <ClInclude Include="..\Source\FrameWork\ParticleSystem.h" />

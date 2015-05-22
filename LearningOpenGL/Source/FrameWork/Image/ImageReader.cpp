@@ -10,7 +10,7 @@ CImageReader::CImageReader()
 
 CImageReader::~CImageReader()
 {
-	ResetData();
+	//ResetData();
 }
 
 void CImageReader::ResetData()

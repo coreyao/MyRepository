@@ -1,7 +1,6 @@
 #include "Label.h"
 #include "Director.h"
 #include "OpenGL/GLProgramManager.h"
-#include "Image/PNGReader.h"
 
 FT_Library CLabel::s_library = nullptr;
 

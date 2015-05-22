@@ -342,6 +342,8 @@ void CTerrain::SetAlphaTexture( const std::string& sAlphaMap )
 		glSamplerParameteri(m_iAlphaSampler, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glSamplerParameteri(m_iAlphaSampler, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glSamplerParameteri(m_iAlphaSampler, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+		delete [] pngReader.GetData();
 	}
 }
 
@@ -534,6 +536,8 @@ void CTerrain::Init(const std::string& sHeightMapFile)
 		InitTerrain(pData, pngReader.GetWidth(), pngReader.GetHeight());
 		SetGLProgram(CGLProgramManager::GetInstance()->CreateProgramByName("Terrain"));
 		SetLODThreshold(500, 1000, 1500);
+
+		delete [] pngReader.GetData();
 	}
 }
 
