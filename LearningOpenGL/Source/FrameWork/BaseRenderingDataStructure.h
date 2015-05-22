@@ -41,7 +41,7 @@ public:
 	void SetTarget(CBaseMesh* pMesh);
 	void Update(float fDeltaTime);
 	void Reset();
-	void PlayAnim(int iStartFrameIndex, int iEndFrameIndex, bool bLoop);
+	void PlayAnim(int iStartFrameIndex, int iEndFrameIndex, bool bLoop, std::function<void(void)> callback);
 
 protected:
 	CBaseMesh* m_pTarget;
@@ -50,6 +50,8 @@ protected:
 
 	int m_iStartFrameIndex;
 	int m_iEndFrameIndex;
+
+	std::function<void(void)> m_callback;
 };
 
 class CBaseMesh

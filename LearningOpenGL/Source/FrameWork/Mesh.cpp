@@ -296,9 +296,9 @@ void CMesh::SetVisible(bool bVisible, const std::string& sSubMeshName)
 	}
 }
 
-void CMesh::PlayAnim( int iStartFrameIndex, int iEndFrameIndex, bool bLoop /*= false*/ )
+void CMesh::PlayAnim( int iStartFrameIndex, int iEndFrameIndex, bool bLoop, std::function<void(void)> callback )
 {
-	m_animator.PlayAnim(iStartFrameIndex, iEndFrameIndex, bLoop);
+	m_animator.PlayAnim(iStartFrameIndex, iEndFrameIndex, bLoop, callback);
 }
 
 

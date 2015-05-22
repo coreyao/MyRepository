@@ -15,7 +15,7 @@ public:
 	void SetTexture(const char* pTextureFileName, int iIndex);
 	void SetGLProgram(GLuint theProgram);
 	void SetVisible(bool bVisible, const std::string& sSubMeshName);
-	void PlayAnim( int iStartFrameIndex, int iEndFrameIndex, bool bLoop = false);
+	void PlayAnim( int iStartFrameIndex, int iEndFrameIndex, bool bLoop, std::function<void(void)> callback);
 
 private:
 	void InitVBOAndVAO();

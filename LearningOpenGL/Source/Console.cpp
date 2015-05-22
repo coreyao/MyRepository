@@ -139,7 +139,7 @@ void init()
 		g_pCharactor->SetTexture("cubemap_hills/hills_negative_x.png", i);*/
 	g_pCharactor->m_transform.m_scale.set(1, 1, 1);
 	g_pCharactor->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("SkinMesh") );
-	g_pCharactor->PlayAnim(0, 25, true);
+	g_pCharactor->PlayAnim(0, 25, true, nullptr);
 	g_vMesh.push_back(g_pCharactor);
 
 	g_pTerrain = new CTerrain();
@@ -291,7 +291,7 @@ void mouse_down( int button, int state, int x, int y )
 		//}
 
 		if ( state == GLUT_DOWN )
-			g_pCharactor->PlayAnim(215, 250, false);
+			g_pCharactor->PlayAnim(215, 245, false, [](){ g_pCharactor->PlayAnim(0, 25, true, nullptr); });
 
 		g_lastMousePos = Vec2(x, y);
 	}

@@ -123,6 +123,9 @@ void CSkeletonAnimator::Update( float fDeltaTime )
 
 	if ( bAllFinished )
 	{
+		if ( m_callback )
+			m_callback();
+
 		if ( m_bLoop )
 			Reset();
 	}
@@ -133,11 +136,12 @@ void CSkeletonAnimator::Reset()
 	m_fElapsedTime = m_iStartFrameIndex / 30.0f;
 }
 
-void CSkeletonAnimator::PlayAnim( int iStartFrameIndex, int iEndFrameIndex, bool bLoop )
+void CSkeletonAnimator::PlayAnim( int iStartFrameIndex, int iEndFrameIndex, bool bLoop, std::function<void(void)> callback )
 {
 	m_iStartFrameIndex = iStartFrameIndex;
 	m_iEndFrameIndex = iEndFrameIndex;
 	m_bLoop = bLoop;
+	m_callback = callback;
 
 	Reset();
 }
