@@ -41,11 +41,15 @@ public:
 	void SetTarget(CBaseMesh* pMesh);
 	void Update(float fDeltaTime);
 	void Reset();
+	void PlayAnim(int iStartFrameIndex, int iEndFrameIndex, bool bLoop);
 
 protected:
 	CBaseMesh* m_pTarget;
 	float m_fElapsedTime;
 	bool m_bLoop;
+
+	int m_iStartFrameIndex;
+	int m_iEndFrameIndex;
 };
 
 class CBaseMesh

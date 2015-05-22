@@ -43,6 +43,8 @@ CSkeletonAnimator::CSkeletonAnimator()
 	: m_pTarget(nullptr)
 	, m_fElapsedTime(0.0f)
 	, m_bLoop(true)
+	, m_iStartFrameIndex(0)
+	, m_iEndFrameIndex(-1)
 {
 }
 
@@ -53,13 +55,13 @@ void CSkeletonAnimator::SetTarget( CBaseMesh* pMesh )
 
 void CSkeletonAnimator::Update( float fDeltaTime )
 {
-	if ( !m_pTarget )
+	if ( !m_pTarget || m_iEndFrameIndex < 0 )
 		return;
 
 	m_fElapsedTime += fDeltaTime;
 
 	bool bAllFinished = false;
-	for (int i = 0; i < m_pTarget->GetMeshData().m_skeleton.m_vFrame.size() - 1; ++i)
+	for (int i = m_iStartFrameIndex; i < m_iEndFrameIndex; ++i)
 	{
 		const SBoneFrame* pCurFrame = &m_pTarget->GetMeshData().m_skeleton.m_vFrame[i];
 		const SBoneFrame* pNextFrame = &m_pTarget->GetMeshData().m_skeleton.m_vFrame[i + 1];
@@ -75,7 +77,7 @@ void CSkeletonAnimator::Update( float fDeltaTime )
 
 		if ( m_fElapsedTime > fEndTime )
 		{
-			bool bLast = ( i == m_pTarget->GetMeshData().m_skeleton.m_vFrame.size() - 2 );
+			bool bLast = ( i == m_iEndFrameIndex - 1 );
 			if ( bLast )
 			{
 				bAllFinished = true;
@@ -97,17 +99,12 @@ void CSkeletonAnimator::Update( float fDeltaTime )
 			return (CBone*)nullptr;
 		};
 
-		//pCurFrame = &m_pTarget->GetMeshData().m_skeleton.m_vFrame[0];
-		//pNextFrame = &m_pTarget->GetMeshData().m_skeleton.m_vFrame[0];
-
 		float fElapsedPercent = ( m_fElapsedTime - fStartTime ) / fCurTotalTime;
 		for ( int iKeyIdx = 0; iKeyIdx < pCurFrame->m_vKey.size(); ++iKeyIdx )
 		{
 			CBone* pBone = FindBoneByName(pCurFrame->m_vKey[iKeyIdx].m_sBoneName);
 			if ( pBone )
 			{
-				//fElapsedPercent = 0;
-
 				Vec3 finalPos = pCurFrame->m_vKey[iKeyIdx].m_translation + ( pNextFrame->m_vKey[iKeyIdx].m_translation - pCurFrame->m_vKey[iKeyIdx].m_translation ) * fElapsedPercent;
 				Vec3 finalScale = pCurFrame->m_vKey[iKeyIdx].m_scale + ( pNextFrame->m_vKey[iKeyIdx].m_scale - pCurFrame->m_vKey[iKeyIdx].m_scale ) * fElapsedPercent;
 				Quaternion finalRotation;
@@ -133,7 +130,16 @@ void CSkeletonAnimator::Update( float fDeltaTime )
 
 void CSkeletonAnimator::Reset()
 {
-	m_fElapsedTime = 0.0f;
+	m_fElapsedTime = m_iStartFrameIndex / 30.0f;
+}
+
+void CSkeletonAnimator::PlayAnim( int iStartFrameIndex, int iEndFrameIndex, bool bLoop )
+{
+	m_iStartFrameIndex = iStartFrameIndex;
+	m_iEndFrameIndex = iEndFrameIndex;
+	m_bLoop = bLoop;
+
+	Reset();
 }
 
 CBaseMesh::CBaseMesh()

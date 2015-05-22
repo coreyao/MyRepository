@@ -7,7 +7,7 @@ CThirdPersonController::CThirdPersonController()
 	: m_pCharactor(nullptr)
 	, m_pCamera(nullptr)
 {
-	m_cameraInitPos = Vec3(0, 100, 200);
+	m_cameraInitPos = Vec3(0, 100, 400);
 }
 
 void CThirdPersonController::SetCharactor( CMesh* pCharactor )
