@@ -134,7 +134,7 @@ void init()
 	//g_vMesh.push_back(planeMesh);
 
 	g_pCharactor = new CMesh;
-	g_pCharactor->InitFromFile("zero.CSTM");
+	g_pCharactor->InitFromFile("talu.CSTM");
 	/*for ( int i = 0; i < g_pCharactor->GetMeshData().m_vSubMesh.size(); ++i )
 		g_pCharactor->SetTexture("cubemap_hills/hills_negative_x.png", i);*/
 	g_pCharactor->m_transform.m_scale.set(1, 1, 1);
