@@ -64,8 +64,6 @@ void CPNGReader::ReadData(const std::string& sFileName)
 	png_destroy_read_struct(&png_ptr, &info_ptr, 0);
 
 	fclose(file);
-
-	return;
 }
 
 
