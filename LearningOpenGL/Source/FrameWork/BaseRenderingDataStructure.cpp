@@ -42,6 +42,7 @@ Vec4* CSkeleton::GetMatrixPalette()
 CSkeletonAnimator::CSkeletonAnimator()
 	: m_pTarget(nullptr)
 	, m_fElapsedTime(0.0f)
+	, m_fBlendTime(0.0f)
 	, m_bLoop(true)
 	, m_iStartFrameIndex(0)
 	, m_iEndFrameIndex(-1)
@@ -99,6 +100,9 @@ void CSkeletonAnimator::Update( float fDeltaTime )
 			return (CBone*)nullptr;
 		};
 
+		const SBoneFrame* pFirstFrame = &m_pTarget->GetMeshData().m_skeleton.m_vFrame[0];
+		const SBoneFrame* pLastFrame = &m_pTarget->GetMeshData().m_skeleton.m_vFrame[9];
+	
 		float fElapsedPercent = ( m_fElapsedTime - fStartTime ) / fCurTotalTime;
 		for ( int iKeyIdx = 0; iKeyIdx < pCurFrame->m_vKey.size(); ++iKeyIdx )
 		{
@@ -109,6 +113,22 @@ void CSkeletonAnimator::Update( float fDeltaTime )
 				Vec3 finalScale = pCurFrame->m_vKey[iKeyIdx].m_scale + ( pNextFrame->m_vKey[iKeyIdx].m_scale - pCurFrame->m_vKey[iKeyIdx].m_scale ) * fElapsedPercent;
 				Quaternion finalRotation;
 				Quaternion::slerp(pCurFrame->m_vKey[iKeyIdx].m_rotation, pNextFrame->m_vKey[iKeyIdx].m_rotation, fElapsedPercent, &finalRotation);
+
+				if ( i >= 235 )
+				{
+					m_fBlendTime += fDeltaTime;
+					float fBlendPercent = m_fBlendTime / (10 / 30.0f);
+
+					Vec3 tempPos = pFirstFrame->m_vKey[iKeyIdx].m_translation + ( pLastFrame->m_vKey[iKeyIdx].m_translation - pFirstFrame->m_vKey[iKeyIdx].m_translation ) * fElapsedPercent;
+					finalPos = finalPos * fBlendPercent + tempPos * ( 1.0f - fBlendPercent );
+
+					Vec3 tempScale = pFirstFrame->m_vKey[iKeyIdx].m_scale + ( pLastFrame->m_vKey[iKeyIdx].m_scale - pFirstFrame->m_vKey[iKeyIdx].m_scale ) * fElapsedPercent;
+					finalScale = finalScale * fBlendPercent + tempScale * ( 1.0f - fBlendPercent );
+					
+					Quaternion tempRotation;
+					Quaternion::slerp(pFirstFrame->m_vKey[iKeyIdx].m_rotation, pLastFrame->m_vKey[iKeyIdx].m_rotation, fElapsedPercent, &tempRotation);
+					Quaternion::slerp(finalRotation, tempRotation, fBlendPercent, &finalRotation);
+				}
 
 				Mat4 translationMatrix = Mat4::CreateFromTranslation(finalPos.x, finalPos.y, finalPos.z);
 				Mat4 scaleMatrix = Mat4::CreateFromScale(finalScale.x, finalScale.y, finalScale.z);
@@ -134,6 +154,7 @@ void CSkeletonAnimator::Update( float fDeltaTime )
 void CSkeletonAnimator::Reset()
 {
 	m_fElapsedTime = m_iStartFrameIndex / 30.0f;
+	m_fBlendTime = 0.0f;
 }
 
 void CSkeletonAnimator::PlayAnim( int iStartFrameIndex, int iEndFrameIndex, bool bLoop, std::function<void(void)> callback )

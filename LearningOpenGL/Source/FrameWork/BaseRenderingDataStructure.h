@@ -52,6 +52,7 @@ protected:
 	int m_iEndFrameIndex;
 
 	std::function<void(void)> m_callback;
+	float m_fBlendTime;
 };
 
 class CBaseMesh
