@@ -118,12 +118,16 @@ void CSkeletonAnimator::Update( float fDeltaTime )
 				{
 					m_fBlendTime += fDeltaTime;
 					float fBlendPercent = m_fBlendTime / (10 / 30.0f);
+					if ( fBlendPercent > 1 )
+					{
+						fBlendPercent = 1.0f;
+					}
 
 					Vec3 tempPos = pFirstFrame->m_vKey[iKeyIdx].m_translation + ( pLastFrame->m_vKey[iKeyIdx].m_translation - pFirstFrame->m_vKey[iKeyIdx].m_translation ) * fElapsedPercent;
-					finalPos = finalPos * fBlendPercent + tempPos * ( 1.0f - fBlendPercent );
+					finalPos = tempPos * fBlendPercent + finalPos * ( 1.0f - fBlendPercent );
 
 					Vec3 tempScale = pFirstFrame->m_vKey[iKeyIdx].m_scale + ( pLastFrame->m_vKey[iKeyIdx].m_scale - pFirstFrame->m_vKey[iKeyIdx].m_scale ) * fElapsedPercent;
-					finalScale = finalScale * fBlendPercent + tempScale * ( 1.0f - fBlendPercent );
+					finalScale = tempScale * fBlendPercent + finalScale * ( 1.0f - fBlendPercent );
 					
 					Quaternion tempRotation;
 					Quaternion::slerp(pFirstFrame->m_vKey[iKeyIdx].m_rotation, pLastFrame->m_vKey[iKeyIdx].m_rotation, fElapsedPercent, &tempRotation);
