@@ -9,7 +9,7 @@ Quaternion::Quaternion()
 
 Quaternion::Quaternion( float xx, float yy, float zz, float ww )
 {
-	x = xx; y == yy; z = zz; w = ww;
+	x = xx; y = yy; z = zz; w = ww;
 }
 
 Quaternion::Quaternion( const Vec3& axis, float angle )
@@ -146,5 +146,15 @@ void Quaternion::slerp( float q1x, float q1y, float q1z, float q1w, float q2x, f
 	*dstx = x * f1;
 	*dsty = y * f1;
 	*dstz = z * f1;
+}
+
+Quaternion Quaternion::operator*( float fScale )
+{
+	return Quaternion(this->x * fScale, this->y * fScale, this->z * fScale, this->w * fScale);
+}
+
+Quaternion Quaternion::operator+( const Quaternion& rh )
+{
+	return Quaternion( this->x + rh.x, this->y + rh.y, this->z + rh.z, this->w + rh.w );
 }
 

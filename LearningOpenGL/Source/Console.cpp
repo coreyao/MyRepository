@@ -181,6 +181,8 @@ void display()
 		g_fDeltaTime = std::max(0.0f, g_fDeltaTime);
 	}
 
+	g_fDeltaTime = std::min(g_fDeltaTime, 0.02f);
+
 	g_fElapsedTime += g_fDeltaTime;
 
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -291,7 +293,7 @@ void mouse_down( int button, int state, int x, int y )
 		//}
 
 		if ( state == GLUT_DOWN )
-			g_pCharactor->PlayAnim(215, 245, false, [](){ g_pCharactor->PlayAnim(0, 25, true, nullptr); });
+			g_pCharactor->PlayAnim(215, 245, false, [](){ g_pCharactor->PlayAnim(10, 25, true, nullptr); });
 
 		g_lastMousePos = Vec2(x, y);
 	}

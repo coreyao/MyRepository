@@ -13,6 +13,8 @@ public:
 	Quaternion();
 	Quaternion(float xx, float yy, float zz, float ww);
 	Quaternion(const Vec3& axis, float angle);
+	Quaternion operator*(float fScale);
+	Quaternion operator+(const Quaternion& rh);
 
 	void normalize();
 	static void slerp(const Quaternion& q1, const Quaternion& q2, float t, Quaternion* dst);

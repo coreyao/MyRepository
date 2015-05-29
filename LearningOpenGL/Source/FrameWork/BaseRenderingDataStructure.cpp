@@ -42,7 +42,7 @@ Vec4* CSkeleton::GetMatrixPalette()
 CSkeletonAnimator::CSkeletonAnimator()
 	: m_pTarget(nullptr)
 	, m_fElapsedTime(0.0f)
-	, m_fBlendTime(0.0f)
+	, m_fBlendElapsedTime(0.0f)
 	, m_bLoop(true)
 	, m_iStartFrameIndex(0)
 	, m_iEndFrameIndex(-1)
@@ -56,6 +56,19 @@ void CSkeletonAnimator::SetTarget( CBaseMesh* pMesh )
 
 void CSkeletonAnimator::Update( float fDeltaTime )
 {
+	auto FindBoneByName = [this](const std::string& sBoneName)
+	{
+		for (auto& pBone : m_pTarget->m_skeleton.m_vSkinBone)
+		{
+			if ( pBone->m_data.m_sName == sBoneName )
+			{
+				return pBone;
+			}
+		}
+
+		return (CBone*)nullptr;
+	};
+
 	if ( !m_pTarget || m_iEndFrameIndex < 0 )
 		return;
 
@@ -72,9 +85,7 @@ void CSkeletonAnimator::Update( float fDeltaTime )
 		float fCurTotalTime = fEndTime - fStartTime;
 
 		if ( m_fElapsedTime < fStartTime )
-		{
 			return;
-		}
 
 		if ( m_fElapsedTime > fEndTime )
 		{
@@ -87,22 +98,41 @@ void CSkeletonAnimator::Update( float fDeltaTime )
 			continue;
 		}
 
-		auto FindBoneByName = [this](const std::string& sBoneName)
+		const SBoneFrame* pBlendStartFrame = nullptr;
+		const SBoneFrame* pBlendEndFrame = nullptr;
+
+		float fBlendPercent = 0;
+		if ( i >= 235 )
 		{
-			for (auto& pBone : m_pTarget->m_skeleton.m_vSkinBone)
+			bool bFirst = false;
+			if ( m_fBlendElapsedTime == 0 )
+				bFirst = true;
+
+			if ( !bFirst )
+				m_fBlendElapsedTime += fDeltaTime;
+
+			for (int i = 0; i < 10; ++i)
 			{
-				if ( pBone->m_data.m_sName == sBoneName )
+				pBlendStartFrame = &m_pTarget->GetMeshData().m_skeleton.m_vFrame[i];
+				pBlendEndFrame = &m_pTarget->GetMeshData().m_skeleton.m_vFrame[i + 1];
+
+				float fStartTime = pBlendStartFrame->m_fTime;
+				float fEndTime = pBlendEndFrame->m_fTime;
+				float fCurTotalTime = fEndTime - fStartTime;
+
+				if ( m_fBlendElapsedTime >= fStartTime && m_fBlendElapsedTime < fEndTime )
 				{
-					return pBone;
+					fBlendPercent = ( m_fBlendElapsedTime - fStartTime ) / fCurTotalTime;
+					if ( fBlendPercent > 1 )
+						fBlendPercent = 1.0f;
+
+					if ( bFirst )
+						m_fBlendElapsedTime += fDeltaTime;
+					break;
 				}
 			}
+		}
 
-			return (CBone*)nullptr;
-		};
-
-		const SBoneFrame* pFirstFrame = &m_pTarget->GetMeshData().m_skeleton.m_vFrame[0];
-		const SBoneFrame* pLastFrame = &m_pTarget->GetMeshData().m_skeleton.m_vFrame[9];
-	
 		float fElapsedPercent = ( m_fElapsedTime - fStartTime ) / fCurTotalTime;
 		for ( int iKeyIdx = 0; iKeyIdx < pCurFrame->m_vKey.size(); ++iKeyIdx )
 		{
@@ -116,22 +146,28 @@ void CSkeletonAnimator::Update( float fDeltaTime )
 
 				if ( i >= 235 )
 				{
-					m_fBlendTime += fDeltaTime;
-					float fBlendPercent = m_fBlendTime / (10 / 30.0f);
-					if ( fBlendPercent > 1 )
-					{
-						fBlendPercent = 1.0f;
-					}
+					float fTempPercent = m_fBlendElapsedTime / (10 / 30.0f);
+					if ( fTempPercent > 1 )
+						fTempPercent = 1.0f;
 
-					Vec3 tempPos = pFirstFrame->m_vKey[iKeyIdx].m_translation + ( pLastFrame->m_vKey[iKeyIdx].m_translation - pFirstFrame->m_vKey[iKeyIdx].m_translation ) * fElapsedPercent;
-					finalPos = tempPos * fBlendPercent + finalPos * ( 1.0f - fBlendPercent );
+					Vec3 tempPos = pBlendStartFrame->m_vKey[iKeyIdx].m_translation + ( pBlendEndFrame->m_vKey[iKeyIdx].m_translation - pBlendStartFrame->m_vKey[iKeyIdx].m_translation ) * fBlendPercent;
+					finalPos = tempPos * fTempPercent + finalPos * ( 1.0f - fTempPercent );
 
-					Vec3 tempScale = pFirstFrame->m_vKey[iKeyIdx].m_scale + ( pLastFrame->m_vKey[iKeyIdx].m_scale - pFirstFrame->m_vKey[iKeyIdx].m_scale ) * fElapsedPercent;
-					finalScale = tempScale * fBlendPercent + finalScale * ( 1.0f - fBlendPercent );
+					Vec3 tempScale = pBlendStartFrame->m_vKey[iKeyIdx].m_scale + ( pBlendEndFrame->m_vKey[iKeyIdx].m_scale - pBlendStartFrame->m_vKey[iKeyIdx].m_scale ) * fBlendPercent;
+					finalScale = tempScale * fTempPercent + finalScale * ( 1.0f - fTempPercent );
 					
 					Quaternion tempRotation;
-					Quaternion::slerp(pFirstFrame->m_vKey[iKeyIdx].m_rotation, pLastFrame->m_vKey[iKeyIdx].m_rotation, fElapsedPercent, &tempRotation);
-					Quaternion::slerp(finalRotation, tempRotation, fBlendPercent, &finalRotation);
+					Quaternion::slerp(pBlendStartFrame->m_vKey[iKeyIdx].m_rotation, pBlendEndFrame->m_vKey[iKeyIdx].m_rotation, fBlendPercent, &tempRotation);
+					/*if ( pBlendStartFrame->m_vKey[iKeyIdx].m_rotation.x * pBlendEndFrame->m_vKey[iKeyIdx].m_rotation.x + 
+					pBlendStartFrame->m_vKey[iKeyIdx].m_rotation.y * pBlendEndFrame->m_vKey[iKeyIdx].m_rotation.y + 
+					pBlendStartFrame->m_vKey[iKeyIdx].m_rotation.z * pBlendEndFrame->m_vKey[iKeyIdx].m_rotation.z + 
+					pBlendStartFrame->m_vKey[iKeyIdx].m_rotation.w * pBlendEndFrame->m_vKey[iKeyIdx].m_rotation.w < 0)
+					{
+					fTempPercent = -fTempPercent;
+					}*/
+
+					Quaternion::slerp(finalRotation, tempRotation , fTempPercent, &finalRotation);
+					//finalRotation = tempRotation * fTempPercent + finalRotation * ( 1.0f - fTempPercent );
 				}
 
 				Mat4 translationMatrix = Mat4::CreateFromTranslation(finalPos.x, finalPos.y, finalPos.z);
@@ -151,14 +187,20 @@ void CSkeletonAnimator::Update( float fDeltaTime )
 			m_callback();
 
 		if ( m_bLoop )
+		{
 			Reset();
+			if ( m_iStartFrameIndex == 10 )
+			{
+				m_iStartFrameIndex = 0;
+			}
+		}
 	}
 }
 
 void CSkeletonAnimator::Reset()
 {
 	m_fElapsedTime = m_iStartFrameIndex / 30.0f;
-	m_fBlendTime = 0.0f;
+	m_fBlendElapsedTime = 0.0f;
 }
 
 void CSkeletonAnimator::PlayAnim( int iStartFrameIndex, int iEndFrameIndex, bool bLoop, std::function<void(void)> callback )
