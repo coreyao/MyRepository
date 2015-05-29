@@ -21,6 +21,7 @@
     <ClCompile Include="..\Source\FrameWork\Image\ImageManager.cpp" />
     <ClCompile Include="..\Source\FrameWork\Image\TGAReader.cpp" />
     <ClCompile Include="..\Source\FrameWork\Label.cpp" />
+    <ClCompile Include="..\Source\FrameWork\Light.cpp" />
     <ClCompile Include="..\Source\FrameWork\Mesh.cpp" />
     <ClCompile Include="..\Source\FrameWork\ParticleSystem.cpp" />
     <ClCompile Include="..\Source\FrameWork\Primitive.cpp" />
@@ -50,6 +51,7 @@
     <ClInclude Include="..\Source\FrameWork\Image\ImageManager.h" />
     <ClInclude Include="..\Source\FrameWork\Image\TGAReader.h" />
     <ClInclude Include="..\Source\FrameWork\Label.h" />
+    <ClInclude Include="..\Source\FrameWork\Light.h" />
     <ClInclude Include="..\Source\FrameWork\Mesh.h" />
     <ClInclude Include="..\Source\FrameWork\ParticleSystem.h" />
     <ClInclude Include="..\Source\FrameWork\Primitive.h" />

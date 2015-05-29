@@ -201,14 +201,18 @@ struct STransform
 {
 	STransform()
 	{
+		m_mat = Mat4::IDENTITY;
 		m_scale.set(1.0f, 1.0f, 1.0f);
 	}
 
 	Mat4 GetTransformMat();
 	Mat4 GetRotationMat();
 	void Reset();
+	void SetMat(const Mat4& mat);
 
 	Vec3 m_pos;
 	Vec3 m_rotation;
 	Vec3 m_scale;
+
+	Mat4 m_mat;
 };

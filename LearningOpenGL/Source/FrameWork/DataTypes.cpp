@@ -239,9 +239,19 @@ void STransform::Reset()
 
 Mat4 STransform::GetTransformMat()
 {
+	if ( m_mat != Mat4::IDENTITY )
+	{
+		return m_mat;
+	}
+
 	return Mat4::CreateFromTranslation(m_pos.x, m_pos.y, m_pos.z)
 		* Mat4::CreateFromScale(m_scale.x, m_scale.y, m_scale.z)
 		* GetRotationMat();
+}
+
+void STransform::SetMat( const Mat4& mat )
+{
+	m_mat = mat;
 }
 
 const Color4F Color4F::WHITE (1.0f, 1.0f, 1.0f, 1.0f);

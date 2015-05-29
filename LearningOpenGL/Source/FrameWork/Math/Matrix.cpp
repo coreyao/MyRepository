@@ -84,7 +84,7 @@ Matrix4X4 Matrix4X4::Transpose()
 						m[12], m[13], m[14], m[15]);
 }
 
-Matrix4X4 Matrix4X4::operator*( const Matrix4X4& rh )
+Matrix4X4 Matrix4X4::operator*( const Matrix4X4& rh ) const
 {
 	Matrix4X4 ret;
 
@@ -407,6 +407,16 @@ Vec3 Matrix4X4::TransformPoint( const Vec3& point ) const
 Vec3 Matrix4X4::TransformVector( const Vec3& vec ) const
 {
 	return *this * vec;
+}
+
+bool Matrix4X4::operator==( const Matrix4X4& rh )
+{
+	return !memcmp(this->m, IDENTITY.m, sizeof(this->m));
+}
+
+bool Matrix4X4::operator!=( const Matrix4X4& rh )
+{
+	return !this->operator==(rh);
 }
 
 Matrix4X4 Matrix4X4::ZERO= Matrix4X4(0, 0, 0, 0, 

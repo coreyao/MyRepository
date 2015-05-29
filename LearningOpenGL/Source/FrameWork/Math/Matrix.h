@@ -25,9 +25,11 @@ public:
 	void SetForward(float a02, float a12, float a22);
 	Vec3 GetForward();
 
-	Matrix4X4 operator*(const Matrix4X4& rh);
+	Matrix4X4 operator*(const Matrix4X4& rh) const;
 	Matrix4X4 operator*(float fScalar);
 	Matrix4X4 operator+(const Matrix4X4& rh);
+	bool operator==(const Matrix4X4& rh);
+	bool operator!=(const Matrix4X4& rh);
 
 	Vec4 operator*(const Vec4& vec) const;
 	Vec3 operator*(const Vec3& vec) const;

@@ -3,6 +3,19 @@
 #include "BaseRenderingDataStructure.h"
 #include "OpenGL/GLFrameWork.h"
 
+class CMesh;
+class CMeshSocket
+{
+public:
+	CMeshSocket(const CMesh* pTarget, const std::string& sBoneName, const STransform& offset);
+	Mat4 GetWorldMat();
+
+private:
+	std::string m_sBoneName;
+	STransform m_offset;
+	const CMesh* m_pTarget;
+};
+
 class CMesh : public CBaseMesh
 {
 public:
@@ -16,6 +29,8 @@ public:
 	void SetGLProgram(GLuint theProgram);
 	void SetVisible(bool bVisible, const std::string& sSubMeshName);
 	void PlayAnim( int iStartFrameIndex, int iEndFrameIndex, bool bLoop, std::function<void(void)> callback);
+
+	std::vector<CMeshSocket> m_vSocket;
 
 private:
 	void InitVBOAndVAO();
