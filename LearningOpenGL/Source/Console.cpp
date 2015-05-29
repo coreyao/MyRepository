@@ -84,42 +84,21 @@ void init()
 	g_pPointDrawer->DrawPoint(Vec3(-100, -100, 0), 5);
 
 	g_particleSystem = new CParticleSystem;
+	//g_particleSystem->GetTransformData().m_pos.x = 100;
 	//g_particleSystem->GetTransformData().m_rotation.x = -90;
-	//g_particleSystem->GetTransformData().m_pos.z = 80;
-	//CEmitter* pEmitter = new CEmitter;
-	//pEmitter->SetTotalDuration(2.0f);
-	//pEmitter->SetBlendMode(CEmitter::EBlendMode_ADD);
-	//pEmitter->SetTexture("ParticleFlamesSheet.png");
-	//pEmitter->SetTextureAnimationInfo(4, 8, 2);
-	//pEmitter->SetEmitMode(CEmitter::EEmitMode_Free);
-	//pEmitter->SetEmissionRate(3.0f);
-	//pEmitter->GetParticleTexSheetFrameOverLifeTimeRef().Init<int>(EPropertyType_Liner, 2, SKeyNode<int>(0.0f, 0), SKeyNode<int>(1.0f, 32));
-	//pEmitter->GetParticleStartLifeTimeRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 0.7f, 1.0f);
-	//pEmitter->GetParticleStartSizeRef().Init<double>(EPropertyType_Constant, 2.0f);
-	//pEmitter->GetParticleStartZRotationRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, -12.0f, 14.0f);
-	//pEmitter->GetParticleStartSpeedRef().Init<double>(EPropertyType_Constant, 0.0f);
-	//pEmitter->GetParticleAlphaOverLifeTimeRef().Init<double>(EPropertyType_Liner, 4, SKeyNode<float>(0.0f, 0.0f), SKeyNode<float>(0.191f, 255.0f), SKeyNode<float>(0.818f, 69.0f), SKeyNode<float>(1.0f, 0.0f));
-	//g_particleSystem->AddEmitter(pEmitter);
-
 	CEmitter* pEmitter = new CEmitter;
-	pEmitter->SetTotalDuration(5.0f);
-	pEmitter->SetTexture("ParticleCloudWhite.png");
+	pEmitter->SetTotalDuration(1.0f);
+	pEmitter->SetBlendMode(CEmitter::EBlendMode_ALPHA_BLEND);
+	pEmitter->SetTexture("T_FX_guangyun01.png");
 	pEmitter->SetEmitMode(CEmitter::EEmitMode_Relative);
-	pEmitter->SetEmissionRate(100.0f);
-	pEmitter->SetMaxParticles(1000);
-	pEmitter->SetRenderMode(CEmitter::ERenderMode_VerticalBillboard);
-	pEmitter->SetShaderColor(Color4F(204.0f / 255, 190.0f / 255, 174.0f / 255, 18.0f / 255));
-	pEmitter->GetParticleStartLifeTimeRef().Init<double>(EPropertyType_Constant, 5.0f);
-	pEmitter->GetParticleStartSpeedRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 20.0f, 40.0f);
-	pEmitter->GetParticleStartSizeRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 15.0f, 25.0f);
-	pEmitter->GetParticleStartZRotationRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 0, 360);
-	pEmitter->GetParticleStartColorRef().Init<Color3B>(EPropertyType_RandomBetweenConstant, 2, Color3B(79, 79, 79), Color3B(161, 161, 161));
-	pEmitter->GetParticleStartAlphaRef().Init<double>(EPropertyType_Constant, 255.0f);
-	pEmitter->GetParticleAlphaOverLifeTimeRef().Init<double>(EPropertyType_Liner, 4, SKeyNode<float>(0.0f, 0.0f), SKeyNode<float>(0.211f, 255.0f), SKeyNode<float>(0.67f, 255.0f), SKeyNode<float>(1.0f, 0.0f));
-	pEmitter->GetParticleSizeOverLifeTimeRef().Init<double>(EPropertyType_Constant, 1.0f);
-	pEmitter->GetParticleZRotationOverLifeTimeRef().Init<double>(EPropertyType_RandomBetweenCurve, 2, 4, 180.0f, 180.0f, 30.0f, 30.0f, 4, -180.0f, -180.0f, -30.0f, -30.0f);
-	pEmitter->GetEmitterShapeRef().SetShape(CEmitterShape::EShape_Box);
-	pEmitter->GetEmitterShapeRef().SetExtent(Vec3(100, 0, 100));
+	pEmitter->SetEmissionRate(50.0f);
+	pEmitter->GetEmitterShapeRef().SetShape(CEmitterShape::EShape_Cone);
+	pEmitter->GetEmitterShapeRef().SetRadius(10.0f);
+	pEmitter->GetEmitterShapeRef().SetAngle(10.0f);
+	pEmitter->GetParticleStartLifeTimeRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 0.4f, 0.5f);
+	pEmitter->GetParticleStartSizeRef().Init<double>(EPropertyType_Constant, 30.0f);
+	pEmitter->GetParticleStartZRotationRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, -12.0f, 14.0f);
+	pEmitter->GetParticleStartSpeedRef().Init<double>(EPropertyType_Constant, 500.0f);
 	g_particleSystem->AddEmitter(pEmitter);
 
 	CMesh* planeMesh = new CMesh;
@@ -137,7 +116,7 @@ void init()
 	g_pCharactor->InitFromFile("talu.CSTM");
 	/*for ( int i = 0; i < g_pCharactor->GetMeshData().m_vSubMesh.size(); ++i )
 		g_pCharactor->SetTexture("cubemap_hills/hills_negative_x.png", i);*/
-	g_pCharactor->m_transform.m_scale.set(1, 1, 1);
+	g_pCharactor->m_transform.m_scale.set(1, 1, -1);
 	g_pCharactor->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("SkinMesh") );
 	g_pCharactor->PlayAnim(0, 25, true, nullptr);
 	g_vMesh.push_back(g_pCharactor);
@@ -158,11 +137,9 @@ void init()
 		"skybox/back.png", "skybox/front.png"
 		);
 
-	//UpdatePos();
-
 	g_pController = new CThirdPersonController;
 	g_pController->m_transform.m_pos.y = g_pTerrain->GetHeight( Vec2(g_pController->m_transform.m_pos.x, g_pController->m_transform.m_pos.z) );
-	g_pController->SetCharactor(g_pCharactor);
+	//g_pController->SetCharactor(g_pCharactor);
 }
 
 void display()
@@ -223,16 +200,17 @@ void display()
 		g_fAccumulatedTime = 0;
 	}
 
-	g_pTerrain->Update(g_fDeltaTime);
-	g_pTerrain->Render();
+	//g_pTerrain->Update(g_fDeltaTime);
+	//g_pTerrain->Render();
 
 	//g_pPointDrawer->Render();
 
-	g_particleSystem->Update(g_fDeltaTime);
-	g_particleSystem->Render();
-
 	g_pSkyBox->Update(g_fDeltaTime);
 	g_pSkyBox->Render();
+
+	g_particleSystem->Update(g_fDeltaTime);
+	g_particleSystem->GetTransformData().SetMat(g_pCharactor->m_vSocket[0].GetWorldMat());
+	g_particleSystem->Render();
 
 	g_pDeltaTimeLabel->Render();
 	g_pFPSLabel->Render();
@@ -266,13 +244,11 @@ void keyboard(unsigned char key, int x, int y)
 	case 'b': bDrawWireFrame = !bDrawWireFrame; break;
 	}
 
-	g_pTerrain->SetDrawWireFrame(bDrawWireFrame);
+	//g_pTerrain->SetDrawWireFrame(bDrawWireFrame);
 
-	//CDirector::GetInstance()->GetPerspectiveCamera()->Move(iMoveLeftRight, 0, iMoveForwardBack);
-	g_pController->m_transform.m_pos.y = g_pTerrain->GetHeight( Vec2(g_pController->m_transform.m_pos.x, g_pController->m_transform.m_pos.z) );
-	g_pController->Move(iMoveLeftRight, 0, iMoveForwardBack);
-
-	//UpdatePos();
+	CDirector::GetInstance()->GetPerspectiveCamera()->Move(iMoveLeftRight, 0, iMoveForwardBack);
+	/*g_pController->m_transform.m_pos.y = g_pTerrain->GetHeight( Vec2(g_pController->m_transform.m_pos.x, g_pController->m_transform.m_pos.z) );
+	g_pController->Move(iMoveLeftRight, 0, iMoveForwardBack);*/
 }
 
 void mouse_down( int button, int state, int x, int y )
@@ -292,8 +268,8 @@ void mouse_down( int button, int state, int x, int y )
 		//	//g_pLineDrawer->DrawLine(ray.m_origin, ray.m_origin + ray.m_direction * 10000);
 		//}
 
-		if ( state == GLUT_DOWN )
-			g_pCharactor->PlayAnim(215, 245, false, [](){ g_pCharactor->PlayAnim(10, 25, true, nullptr); });
+		/*	if ( state == GLUT_DOWN )
+		g_pCharactor->PlayAnim(215, 245, false, [](){ g_pCharactor->PlayAnim(10, 25, true, nullptr); });*/
 
 		g_lastMousePos = Vec2(x, y);
 	}
@@ -323,10 +299,9 @@ void mouse_move(int x,int y)
 		float fPitchDelta = (g_lastMousePos.y - y) * 0.1f;
 		float fYawDelta = (g_lastMousePos.x - x) * 0.1f;
 
-		//CDirector::GetInstance()->GetPerspectiveCamera()->Rotate(fPitchDelta, fYawDelta);
-		//UpdatePos();
+		CDirector::GetInstance()->GetPerspectiveCamera()->Rotate(fPitchDelta, fYawDelta);
 
-		g_pController->Rotate(fPitchDelta, fYawDelta);
+		//g_pController->Rotate(fPitchDelta, fYawDelta);
 		g_lastMousePos = Vec2(x, y);
 	}
 }

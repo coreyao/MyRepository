@@ -14,5 +14,5 @@ void main()
 		finalCoord.x = u_UVAnim.y / u_UVAnim.w + finalCoord.x / u_UVAnim.w;
 		finalCoord.y = u_UVAnim.x / u_UVAnim.z + finalCoord.y / u_UVAnim.z;
 	}
-	outputColor = texture(u_colorTexture, finalCoord) * vertexColor * u_color * 2.0;
+	outputColor = texture(u_colorTexture, finalCoord) * vertexColor * u_color;
 }

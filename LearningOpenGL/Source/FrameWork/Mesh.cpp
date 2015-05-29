@@ -87,6 +87,13 @@ void CMesh::InitSkeleton()
 			m_skeleton.m_vSkinBone.push_back(pBoneFound);
 		}
 	}
+
+	STransform temp;
+	temp.m_rotation.y = 180;
+	temp.m_pos.x += 50;
+	temp.m_pos.z -= 80;
+	CMeshSocket sock(this, "b_Missle_L", temp);
+	m_vSocket.push_back(sock);
 }
 
 void CMesh::Update(float dt)
@@ -106,7 +113,7 @@ void CMesh::Render()
 	{
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
-		glFrontFace(GL_CW);
+		glFrontFace(GL_CCW);
 	}
 	else
 	{
@@ -301,4 +308,22 @@ void CMesh::PlayAnim( int iStartFrameIndex, int iEndFrameIndex, bool bLoop, std:
 	m_animator.PlayAnim(iStartFrameIndex, iEndFrameIndex, bLoop, callback);
 }
 
+CMeshSocket::CMeshSocket( const CMesh* pTarget, const std::string& sBoneName, const STransform& offset )
+{
+	m_sBoneName = sBoneName;
+	m_offset = offset;
+	m_pTarget = pTarget;
+}
 
+Mat4 CMeshSocket::GetWorldMat()
+{
+	for (auto& rBone : m_pTarget->m_skeleton.m_vBone)
+	{
+		if ( rBone.m_data.m_sName == m_sBoneName )
+		{
+			return rBone.m_worldMat * m_offset.GetTransformMat();
+		}
+	}
+
+	return Mat4::IDENTITY;
+}

@@ -88,8 +88,8 @@ public:
 	};
 
 	CEmitterShape()
-		: m_eShapeType(EShape_None)
-		, m_eEmitFromType(EEmitFrom_None)
+		: m_eShapeType(EShape_Cone)
+		, m_eEmitFromType(EEmitFrom_Base)
 		, m_fAngle(60.0f)
 		, m_fRadius(50.0f)
 		, m_bRandomDirection(false)
