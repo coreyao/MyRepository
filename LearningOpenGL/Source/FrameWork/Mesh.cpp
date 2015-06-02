@@ -273,6 +273,8 @@ void CMesh::InitVBOAndVAO()
 		glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(SSkinMeshVertex), (GLvoid*) offsetof(SSkinMeshVertex, m_boneIndex));
 		glEnableVertexAttribArray(3);
 		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(SSkinMeshVertex), (GLvoid*) offsetof(SSkinMeshVertex, m_blendWeight));
+		glEnableVertexAttribArray(4);
+		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(SSkinMeshVertex), (GLvoid*) offsetof(SSkinMeshVertex, m_normal));
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
