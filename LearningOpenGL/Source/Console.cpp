@@ -103,14 +103,14 @@ void init()
 
 	CMesh* planeMesh = new CMesh;
 	planeMesh->InitFromFile("plane.CSTM");
-	planeMesh->m_transform.m_scale.set(10, 10, -10);
+	planeMesh->m_transform.m_scale.set(50, 50, -50);
 	planeMesh->m_transform.m_pos.set(0, -30, -100);
 	for ( int i = 0; i < planeMesh->GetMeshData().m_vSubMesh.size(); ++i )
 		planeMesh->SetTexture("default.png", i);
 	planeMesh->m_color = Color4F(0.5f, 0.5f, 0.5f, 1.0f);
 	planeMesh->m_bEnableCullFace = false;
 	planeMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh") );
-	//g_vMesh.push_back(planeMesh);
+	g_vMesh.push_back(planeMesh);
 
 	g_pCharactor = new CMesh;
 	g_pCharactor->InitFromFile("talu.CSTM");
@@ -208,9 +208,9 @@ void display()
 	g_pSkyBox->Update(g_fDeltaTime);
 	g_pSkyBox->Render();
 
-	g_particleSystem->Update(g_fDeltaTime);
-	g_particleSystem->GetTransformData().SetMat(g_pCharactor->m_vSocket[0].GetWorldMat());
-	g_particleSystem->Render();
+	//g_particleSystem->Update(g_fDeltaTime);
+	//g_particleSystem->GetTransformData().SetMat(g_pCharactor->m_vSocket[0].GetWorldMat());
+	//g_particleSystem->Render();
 
 	g_pDeltaTimeLabel->Render();
 	g_pFPSLabel->Render();
