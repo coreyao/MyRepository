@@ -155,6 +155,13 @@ void CMesh::Render()
 			glUniformMatrix4fv(modelViewMatrixUnif, 1, GL_FALSE, m_MV[i].m);
 		}
 
+		GLint perspectiveMatrixUnif = glGetUniformLocation(m_theProgram, "perspectiveMatrix");
+		if ( perspectiveMatrixUnif >= 0 )
+		{
+			const Mat4& projMat = CDirector::GetInstance()->GetPerspectiveCamera()->GetProjMat();
+			glUniformMatrix4fv(perspectiveMatrixUnif, 1, GL_FALSE, projMat.m);
+		}
+
 		GLint matrixPaletteUnif = glGetUniformLocation(m_theProgram, "u_matrixPalette");
 		if ( matrixPaletteUnif >= 0 )
 		{
@@ -208,13 +215,6 @@ void CMesh::InitUniform()
 	if ( colorTextureUnif >= 0 )
 	{
 		glUniform1i(colorTextureUnif, m_colorTexUnit);
-	}
-
-	GLint perspectiveMatrixUnif = glGetUniformLocation(m_theProgram, "perspectiveMatrix");
-	if ( perspectiveMatrixUnif >= 0 )
-	{
-		const Mat4& projMat = CDirector::GetInstance()->GetPerspectiveCamera()->GetProjMat();
-		glUniformMatrix4fv(perspectiveMatrixUnif, 1, GL_FALSE, projMat.m);
 	}
 
 	glUseProgram(0);
