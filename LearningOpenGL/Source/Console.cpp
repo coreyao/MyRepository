@@ -13,7 +13,7 @@
 #include "FrameWork/Light.h"
 
 CMesh* g_pCharactor = nullptr;
-CMesh* g_pBallMesh = nullptr;
+CMesh* g_pDirLightMesh = nullptr;
 std::vector<CMesh*> g_vMesh;
 std::vector<GLuint> g_vGLProgram;
 
@@ -71,14 +71,6 @@ void init()
 	CGLProgramManager::GetInstance()->Add("Terrain", SHADER_FILE_DIR + "Terrain_Vertex_Shader.vert", SHADER_FILE_DIR + "Terrain_Fragment_Shader.frag");
 	CGLProgramManager::GetInstance()->Add("SkyBox", SHADER_FILE_DIR + "SkyBox_Vertex_Shader.vert", SHADER_FILE_DIR + "SkyBox_Fragment_Shader.frag");
 
-	g_pDirectionalLight = new CDirectionalLight;
-	g_pDirectionalLight->m_ambientColor = Vec3(0.2f, 0.2f, 0.2f);
-	g_pDirectionalLight->m_diffuseColor = Vec3(1.0f, 1.0f, 1.0f);
-	g_pDirectionalLight->m_specularColor = Vec3(1.0f, 1.0f, 1.0f);
-	g_pDirectionalLight->m_lightDir = Vec3(-1, -1, -1);
-	g_pDirectionalLight->m_lightDir.normalize();
-	CLightManager::GetInstance()->AddLight(g_pDirectionalLight);
-
 	g_pDeltaTimeLabel = new CLabel(FONT_FILE_DIR + "simyou.ttf", 20);
 	g_pDeltaTimeLabel->m_transform.m_pos.x = -RESOLUTION_WIDTH / 2 + 10;
 	g_pDeltaTimeLabel->m_transform.m_pos.y = RESOLUTION_HEIGHT / 2 - 20;
@@ -128,19 +120,19 @@ void init()
 	planeMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh") );
 	g_vMesh.push_back(planeMesh);
 
-	g_pBallMesh = new CMesh;
-	g_pBallMesh->InitFromFile("ball.CSTM");
-	g_pBallMesh->m_transform.m_pos.set(0, 100, -100);
-	for ( int i = 0; i < g_pBallMesh->GetMeshData().m_vSubMesh.size(); ++i )
+	g_pDirLightMesh = new CMesh;
+	g_pDirLightMesh->InitFromFile("ball.CSTM");
+	g_pDirLightMesh->m_transform.m_pos.set(0, 100, -100);
+	for ( int i = 0; i < g_pDirLightMesh->GetMeshData().m_vSubMesh.size(); ++i )
 	{
 		CMaterial newMaterial;
 		newMaterial.SetBaseColorTexture("default.png");
-		g_pBallMesh->SetMaterial(newMaterial, i);
+		g_pDirLightMesh->SetMaterial(newMaterial, i);
 	}
-	g_pBallMesh->m_color = Color4F(0.5f, 0.5f, 0.5f, 1.0f);
-	g_pBallMesh->m_bEnableCullFace = false;
-	g_pBallMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh") );
-	g_vMesh.push_back(g_pBallMesh);
+	g_pDirLightMesh->m_color = Color4F(0.5f, 0.5f, 0.5f, 1.0f);
+	g_pDirLightMesh->m_bEnableCullFace = false;
+	g_pDirLightMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh") );
+	g_vMesh.push_back(g_pDirLightMesh);
 
 	g_pCharactor = new CMesh;
 	g_pCharactor->InitFromFile("talu.CSTM");
@@ -169,6 +161,15 @@ void init()
 	g_pController = new CThirdPersonController;
 	g_pController->m_transform.m_pos.y = g_pTerrain->GetHeight( Vec2(g_pController->m_transform.m_pos.x, g_pController->m_transform.m_pos.z) );
 	//g_pController->SetCharactor(g_pCharactor);
+
+	g_pDirectionalLight = new CDirectionalLight;
+	g_pDirectionalLight->m_ambientColor = Vec3(0.2f, 0.2f, 0.2f);
+	g_pDirectionalLight->m_diffuseColor = Vec3(1.0f, 1.0f, 1.0f);
+	g_pDirectionalLight->m_specularColor = Vec3(1.0f, 1.0f, 1.0f);
+	g_pDirectionalLight->m_lightDir = Vec3(-1, -1, -1);
+	g_pDirectionalLight->m_lightDir.normalize();
+	g_pDirectionalLight->m_pDebugMesh = g_pDirLightMesh;
+	CLightManager::GetInstance()->AddLight(g_pDirectionalLight);
 }
 
 void DrawMesh();
@@ -301,6 +302,8 @@ void DrawMesh()
 {
 	if ( bDrawMesh )
 	{
+		g_pDirLightMesh->m_transform.m_pos = Vec3( cos(g_fDeltaTime) * 200, 100, sin(g_fDeltaTime) * 200 );
+
 		for (int i = 0; i < g_vMesh.size(); ++i)
 		{
 			g_vMesh[i]->Update(g_fDeltaTime);

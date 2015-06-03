@@ -24,6 +24,7 @@ enum ELightType
 	ELightType_SpotLight,
 };
 
+class CMesh;
 class CLightBase
 {
 public:
@@ -31,6 +32,7 @@ public:
 		: m_eLightType(ELightType_DirectionalLight)
 		, m_lightDir(Vec3(0, 0, -1))
 		, m_bOn(true)
+		, m_pDebugMesh(nullptr)
 	{
 	}
 
@@ -42,6 +44,8 @@ public:
 	Vec3 m_lightDir;
 	Vec3 m_lightPos;
 	bool m_bOn;
+
+	CMesh* m_pDebugMesh;
 };
 
 class CDirectionalLight : public CLightBase

@@ -1,5 +1,6 @@
 #include "Light.h"
 #include "Image/ImageManager.h"
+#include "Mesh.h"
 
 CDirectionalLight::CDirectionalLight()
 	: CLightBase()
