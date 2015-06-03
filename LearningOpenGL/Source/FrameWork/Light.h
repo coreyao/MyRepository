@@ -12,7 +12,7 @@ public:
 	void SetShininess(float fShininess);
 
 private:
-	GLint m_baseColorTex;
+	GLuint m_baseColorTex;
 	float m_fShininess;
 };
 
@@ -25,7 +25,7 @@ enum ELightType
 
 class CLightBase
 {
-protected:
+public:
 	CLightBase()
 		: m_eLightType(ELightType_DirectionalLight)
 		, m_lightDir(Vec3(0, 0, -1))
@@ -33,8 +33,13 @@ protected:
 	{
 	}
 
+	Vec3 m_ambientColor;
+	Vec3 m_diffuseColor;
+	Vec3 m_specularColor;
+
 	ELightType m_eLightType;
 	Vec3 m_lightDir;
+	Vec3 m_lightPos;
 	bool m_bOn;
 };
 

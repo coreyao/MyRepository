@@ -10,8 +10,10 @@
 #include "FrameWork/Terrain.h"
 #include "FrameWork/SkyBox.h"
 #include "FrameWork/ThirdPersonController.h"
+#include "FrameWork/Light.h"
 
 CMesh* g_pCharactor = nullptr;
+CMesh* g_pBallMesh = nullptr;
 std::vector<CMesh*> g_vMesh;
 std::vector<GLuint> g_vGLProgram;
 
@@ -26,6 +28,8 @@ CTerrain* g_pTerrain = nullptr;
 CSkyBox* g_pSkyBox = nullptr;
 
 CThirdPersonController* g_pController = nullptr;
+
+CDirectionalLight* g_pDirectionalLight = nullptr;
 
 timeval g_fLastTime = {0, 0};
 float g_fDeltaTime = 0.0f;
@@ -66,6 +70,14 @@ void init()
 	CGLProgramManager::GetInstance()->Add("Primitive", SHADER_FILE_DIR + "Primitive_Vertex_Shader.vert", SHADER_FILE_DIR + "Primitive_Fragment_Shader.frag");
 	CGLProgramManager::GetInstance()->Add("Terrain", SHADER_FILE_DIR + "Terrain_Vertex_Shader.vert", SHADER_FILE_DIR + "Terrain_Fragment_Shader.frag");
 	CGLProgramManager::GetInstance()->Add("SkyBox", SHADER_FILE_DIR + "SkyBox_Vertex_Shader.vert", SHADER_FILE_DIR + "SkyBox_Fragment_Shader.frag");
+
+	g_pDirectionalLight = new CDirectionalLight;
+	g_pDirectionalLight->m_ambientColor = Vec3(0.2f, 0.2f, 0.2f);
+	g_pDirectionalLight->m_diffuseColor = Vec3(1.0f, 1.0f, 1.0f);
+	g_pDirectionalLight->m_specularColor = Vec3(1.0f, 1.0f, 1.0f);
+	g_pDirectionalLight->m_lightDir = Vec3(-1, -1, -1);
+	g_pDirectionalLight->m_lightDir.normalize();
+	CLightManager::GetInstance()->AddLight(g_pDirectionalLight);
 
 	g_pDeltaTimeLabel = new CLabel(FONT_FILE_DIR + "simyou.ttf", 20);
 	g_pDeltaTimeLabel->m_transform.m_pos.x = -RESOLUTION_WIDTH / 2 + 10;
@@ -112,6 +124,16 @@ void init()
 	planeMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh") );
 	g_vMesh.push_back(planeMesh);
 
+	g_pBallMesh = new CMesh;
+	g_pBallMesh->InitFromFile("ball.CSTM");
+	g_pBallMesh->m_transform.m_pos.set(0, 100, -100);
+	for ( int i = 0; i < g_pBallMesh->GetMeshData().m_vSubMesh.size(); ++i )
+		g_pBallMesh->SetTexture("default.png", i);
+	g_pBallMesh->m_color = Color4F(0.5f, 0.5f, 0.5f, 1.0f);
+	g_pBallMesh->m_bEnableCullFace = false;
+	g_pBallMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh") );
+	g_vMesh.push_back(g_pBallMesh);
+
 	g_pCharactor = new CMesh;
 	g_pCharactor->InitFromFile("talu.CSTM");
 	/*for ( int i = 0; i < g_pCharactor->GetMeshData().m_vSubMesh.size(); ++i )
@@ -142,6 +164,13 @@ void init()
 	//g_pController->SetCharactor(g_pCharactor);
 }
 
+void DrawMesh();
+void DrawLabel();
+void DrawTerrain();
+void DrawPrimitive();
+void DrawSkyBox();
+void DrawParticleSystem();
+
 void display()
 {
 	struct timeval now;
@@ -159,63 +188,18 @@ void display()
 	}
 
 	g_fDeltaTime = std::min(g_fDeltaTime, 0.02f);
-
 	g_fElapsedTime += g_fDeltaTime;
 
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClearDepth(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	if ( bDrawMesh )
-	{
-		for (int i = 0; i < g_vMesh.size(); ++i)
-		{
-			g_vMesh[i]->Update(g_fDeltaTime);
-			g_vMesh[i]->Render();
-		}
-	}
-	
-	char buf[50] = {0};
-	sprintf(buf, "DeltaTime:%f", g_fDeltaTime);
-	g_pDeltaTimeLabel->SetString(buf);
-	if ( g_fDeltaTime >= 0.5f )
-		g_pDeltaTimeLabel->m_color = Color4F(1.0f, 0.0f, 0.0f, 1.0f);
-	else
-		g_pDeltaTimeLabel->m_color = Color4F(0.0f, 1.0f, 0.0f, 1.0f);
-
-	g_fAccumulatedTime += g_fDeltaTime;
-	++g_iFrame;
-	if ( g_fAccumulatedTime >= 1.0f )
-	{
-		char buf[50] = {0};
-		sprintf(buf, "FPS:%d", g_iFrame);
-		g_pFPSLabel->SetString(buf);
-
-		if ( g_iFrame <= 30 )
-			g_pFPSLabel->m_color = Color4F(1.0f, 0.0f, 0.0f, 1.0f);
-		else
-			g_pFPSLabel->m_color = Color4F(0.0f, 1.0f, 0.0f, 1.0f);
-
-		g_iFrame = 0;
-		g_fAccumulatedTime = 0;
-	}
-
-	//g_pTerrain->Update(g_fDeltaTime);
-	//g_pTerrain->Render();
-
-	//g_pPointDrawer->Render();
-
-	g_pSkyBox->Update(g_fDeltaTime);
-	g_pSkyBox->Render();
-
-	//g_particleSystem->Update(g_fDeltaTime);
-	//g_particleSystem->GetTransformData().SetMat(g_pCharactor->m_vSocket[0].GetWorldMat());
-	//g_particleSystem->Render();
-
-	g_pDeltaTimeLabel->Render();
-	g_pFPSLabel->Render();
-
-	g_pLineDrawer->Render();
+	DrawMesh();
+	//DrawTerrain();
+	//DrawPrimitive();
+	DrawSkyBox();
+	//DrawParticleSystem();
+	DrawLabel();
 
 	glutSwapBuffers();
 	glutPostRedisplay();
@@ -304,5 +288,73 @@ void mouse_move(int x,int y)
 		//g_pController->Rotate(fPitchDelta, fYawDelta);
 		g_lastMousePos = Vec2(x, y);
 	}
+}
+
+void DrawMesh()
+{
+	if ( bDrawMesh )
+	{
+		for (int i = 0; i < g_vMesh.size(); ++i)
+		{
+			g_vMesh[i]->Update(g_fDeltaTime);
+			g_vMesh[i]->Render();
+		}
+	}
+}
+
+void DrawLabel()
+{
+	char buf[50] = {0};
+	sprintf(buf, "DeltaTime:%f", g_fDeltaTime);
+	g_pDeltaTimeLabel->SetString(buf);
+	if ( g_fDeltaTime >= 0.5f )
+		g_pDeltaTimeLabel->m_color = Color4F(1.0f, 0.0f, 0.0f, 1.0f);
+	else
+		g_pDeltaTimeLabel->m_color = Color4F(0.0f, 1.0f, 0.0f, 1.0f);
+
+	g_fAccumulatedTime += g_fDeltaTime;
+	++g_iFrame;
+	if ( g_fAccumulatedTime >= 1.0f )
+	{
+		char buf[50] = {0};
+		sprintf(buf, "FPS:%d", g_iFrame);
+		g_pFPSLabel->SetString(buf);
+
+		if ( g_iFrame <= 30 )
+			g_pFPSLabel->m_color = Color4F(1.0f, 0.0f, 0.0f, 1.0f);
+		else
+			g_pFPSLabel->m_color = Color4F(0.0f, 1.0f, 0.0f, 1.0f);
+
+		g_iFrame = 0;
+		g_fAccumulatedTime = 0;
+	}
+
+	g_pDeltaTimeLabel->Render();
+	g_pFPSLabel->Render();
+}
+
+void DrawTerrain()
+{
+	g_pTerrain->Update(g_fDeltaTime);
+	g_pTerrain->Render();
+}
+
+void DrawPrimitive()
+{
+	g_pPointDrawer->Render();
+	g_pLineDrawer->Render();
+}
+
+void DrawSkyBox()
+{
+	g_pSkyBox->Update(g_fDeltaTime);
+	g_pSkyBox->Render();
+}
+
+void DrawParticleSystem()
+{
+	g_particleSystem->Update(g_fDeltaTime);
+	g_particleSystem->GetTransformData().SetMat(g_pCharactor->m_vSocket[0].GetWorldMat());
+	g_particleSystem->Render();
 }
 
