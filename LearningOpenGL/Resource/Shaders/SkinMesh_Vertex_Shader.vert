@@ -7,6 +7,7 @@ layout(location = 4) in vec3 a_normal;
 
 out vec2 colorCoord;
 out vec3 normal;
+out vec3 fragPos;
 
 uniform mat4 perspectiveMatrix;
 uniform mat4 modelViewMatrix;
@@ -14,7 +15,7 @@ uniform mat4 modelViewMatrix;
 const int SKINNING_JOINT_COUNT = 60;
 uniform vec4 u_matrixPalette[SKINNING_JOINT_COUNT * 3];
 
-vec4 getPosition()
+void getPositionAndNormal(out vec4 pos, out vec4 normal)
 {
 	int matrixIndex = 0;
     vec4 matrixPalette1 = vec4(0.0, 0.0, 0.0, 0.0);
@@ -23,7 +24,7 @@ vec4 getPosition()
 
 	if (a_boneWeight[0] == 0 && a_boneWeight[1] == 0 && a_boneWeight[2] == 0 && a_boneWeight[3] == 0)
 	{
-		return a_position;
+		return;
 	}
 
     float blendWeight = a_boneWeight[0];
@@ -67,14 +68,27 @@ vec4 getPosition()
     _skinnedposition.y = dot(a_position, matrixPalette2);
     _skinnedposition.z = dot(a_position, matrixPalette3);
     _skinnedposition.w = a_position.w;
+
+	vec4 _skinnednormal;
+	normal = vec4(a_normal, 0.0);
+    _skinnednormal.x = dot(normal, matrixPalette1);
+    _skinnednormal.y = dot(normal, matrixPalette2);
+    _skinnednormal.z = dot(normal, matrixPalette3);
+    _skinnednormal.w = 0;
     
-    return _skinnedposition;
+	pos = _skinnedposition;
+	normal = _skinnednormal;
 }
 
 void main()
 {
-	gl_Position = perspectiveMatrix * modelViewMatrix * getPosition();
+	vec4 localPos;
+	vec4 localNormal;
+	getPositionAndNormal(localPos, localNormal);
 
-	normal = (modelViewMatrix * vec4(a_normal, 0.0)).xyz;
+	fragPos = (modelViewMatrix * localPos).xyz;
+	normal = (modelViewMatrix * localNormal).xyz;
 	colorCoord = a_texCoord;
+
+	gl_Position = perspectiveMatrix * modelViewMatrix * localPos;
 }

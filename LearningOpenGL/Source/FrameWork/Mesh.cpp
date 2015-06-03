@@ -11,7 +11,7 @@ using namespace std;
 CMesh::CMesh()
 	: m_Sampler(0)
 	, m_theProgram(0)
-	, m_colorTexUnit(0)
+	, m_bEnableLight(false)
 {
 }
 
@@ -142,12 +142,20 @@ void CMesh::Render()
 
 		glBindVertexArray(m_vertexAttributeObj[i]);
 
-		if ( m_vTexture[i] >= 0 )
+		if ( m_vMaterial[i].GetBaseColorTex() >= 0 )
 		{
-			glActiveTexture(GL_TEXTURE0 + m_colorTexUnit);
-			glBindTexture(GL_TEXTURE_2D, m_vTexture[i]);
-			glBindSampler(m_colorTexUnit, m_Sampler);
+			GLint colorTextureUnif = glGetUniformLocation(m_theProgram, "u_Material.baseColorTex");
+			if ( colorTextureUnif >= 0 )
+			{
+				glUniform1i(colorTextureUnif, 0);
+
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, m_vMaterial[i].GetBaseColorTex());
+				glBindSampler(0, m_Sampler);
+			}
 		}
+
+		UpdateLightUniform();
 
 		GLint modelViewMatrixUnif = glGetUniformLocation(m_theProgram, "modelViewMatrix");
 		if ( modelViewMatrixUnif >= 0 )
@@ -177,7 +185,6 @@ void CMesh::Render()
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vertexIndexObj[i]);
 		glDrawElements(GL_TRIANGLES, m_data.m_vSubMesh[i].m_vFace.size() * 3, GL_UNSIGNED_INT, 0);
 
-		glBindSampler(m_colorTexUnit, 0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glBindVertexArray(0);
 		if ( m_bDrawWireFrame )
@@ -187,43 +194,15 @@ void CMesh::Render()
 	glUseProgram(0);
 }
 
-void CMesh::SetTexture( const char* pTextureFileName, int iIndex )
+void CMesh::SetMaterial( const CMaterial& rMaterial, int iIndex )
 {
-	unsigned char* pData = nullptr;
-	float fWidth = 0;
-	float fHeight = 0;
-
-	CImageManager::GetInstance()->Load(pTextureFileName, pData, fWidth, fHeight);
-	if ( pData )
-	{
-		glGenTextures(1, &m_vTexture[iIndex]);
-		glBindTexture(GL_TEXTURE_2D, m_vTexture[iIndex]);
-
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fWidth, fHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, pData);
-
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-		delete [] pData;
-	}
-}
-
-void CMesh::InitUniform()
-{
-	glUseProgram(m_theProgram);
-
-	GLint colorTextureUnif = glGetUniformLocation(m_theProgram, "u_colorTexture");
-	if ( colorTextureUnif >= 0 )
-	{
-		glUniform1i(colorTextureUnif, m_colorTexUnit);
-	}
-
-	glUseProgram(0);
+	m_vMaterial[iIndex] = rMaterial;
 }
 
 void CMesh::InitMaterial()
 {
 	int iSubMeshCount = m_data.m_vSubMesh.size();
-	m_vTexture.resize(iSubMeshCount);
+	m_vMaterial.resize(iSubMeshCount);
 
 	for ( int i = 0; i < iSubMeshCount; ++i )
 	{
@@ -232,7 +211,11 @@ void CMesh::InitMaterial()
 			sTextureFile = m_data.m_vSubMesh[i].m_cMaterial.m_SubTextureVec[0].m_sFileName;
 
 		if ( !sTextureFile.empty() )
-			SetTexture(sTextureFile.c_str(), i);
+		{
+			CMaterial newMaterial;
+			newMaterial.SetBaseColorTexture(sTextureFile);
+			SetMaterial(newMaterial, i);
+		}
 	}
 
 	glGenSamplers(1, &m_Sampler);
@@ -284,7 +267,6 @@ void CMesh::InitVBOAndVAO()
 void CMesh::SetGLProgram( GLuint theProgram )
 {
 	m_theProgram = theProgram;
-	InitUniform();
 }
 
 void CMesh::SetVisible(bool bVisible, const std::string& sSubMeshName)
@@ -308,6 +290,56 @@ void CMesh::SetVisible(bool bVisible, const std::string& sSubMeshName)
 void CMesh::PlayAnim( int iStartFrameIndex, int iEndFrameIndex, bool bLoop, std::function<void(void)> callback )
 {
 	m_animator.PlayAnim(iStartFrameIndex, iEndFrameIndex, bLoop, callback);
+}
+
+void CMesh::SetLightEnable( bool bEnable )
+{
+	m_bEnableLight = bEnable;
+}
+
+void CMesh::UpdateLightUniform()
+{
+	GLint enableLightUnif = glGetUniformLocation(m_theProgram, "u_enableLight");
+	if ( enableLightUnif >= 0 )
+	{
+		glUniform1i(enableLightUnif, m_bEnableLight);
+	}
+
+	if ( m_bEnableLight )
+	{
+		int iDirLightNum = 0;
+		const std::vector<CLightBase*>& vAllLight = CLightManager::GetInstance()->GetAllLights();
+		for (auto& pLight : vAllLight)
+		{
+			switch (pLight->m_eLightType)
+			{
+			case ELightType_DirectionalLight:
+				{
+					CDirectionalLight* pDirLight = static_cast<CDirectionalLight*>(pLight);
+					ostringstream oss;
+					oss << "u_AllDirLight[" << iDirLightNum++ << "]";
+					GLint unif = glGetUniformLocation(m_theProgram, (oss.str() + ".direction").c_str());
+					if ( unif >= 0 )
+						glUniform3f(unif, pDirLight->m_lightDir.x, pDirLight->m_lightDir.y, pDirLight->m_lightDir.z);
+
+					unif = glGetUniformLocation(m_theProgram, (oss.str() + ".ambient").c_str());
+					if ( unif >= 0 )
+						glUniform3f(unif, pDirLight->m_ambientColor.x, pDirLight->m_ambientColor.y, pDirLight->m_ambientColor.z);
+
+					unif = glGetUniformLocation(m_theProgram, (oss.str() + ".diffuse").c_str());
+					if ( unif >= 0 )
+						glUniform3f(unif, pDirLight->m_diffuseColor.x, pDirLight->m_diffuseColor.y, pDirLight->m_diffuseColor.z);
+
+					unif = glGetUniformLocation(m_theProgram, (oss.str() + ".specular").c_str());
+					if ( unif >= 0 )
+						glUniform3f(unif, pDirLight->m_specularColor.x, pDirLight->m_specularColor.y, pDirLight->m_specularColor.z);
+				}
+				break;
+			default:
+				break;
+			}
+		}
+	}
 }
 
 CMeshSocket::CMeshSocket( const CMesh* pTarget, const std::string& sBoneName, const STransform& offset )

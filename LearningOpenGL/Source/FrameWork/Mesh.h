@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BaseRenderingDataStructure.h"
+#include "Light.h"
 #include "OpenGL/GLFrameWork.h"
 
 class CMesh;
@@ -24,10 +25,12 @@ public:
 
 	virtual void Update(float dt);
 	virtual void Render();
+
 	void InitFromFile(const char* pMeshFileName);
-	void SetTexture(const char* pTextureFileName, int iIndex);
+	void SetMaterial(const CMaterial& rMaterial, int iIndex);
 	void SetGLProgram(GLuint theProgram);
 	void SetVisible(bool bVisible, const std::string& sSubMeshName);
+	void SetLightEnable(bool bEnable);
 	void PlayAnim( int iStartFrameIndex, int iEndFrameIndex, bool bLoop, std::function<void(void)> callback);
 
 	std::vector<CMeshSocket> m_vSocket;
@@ -35,19 +38,20 @@ public:
 private:
 	void InitVBOAndVAO();
 	void InitSkeleton();
-	void InitUniform();
 	void InitMaterial();
+	void UpdateLightUniform();
 
 private:
 	GLuint m_theProgram;
 
-	int m_colorTexUnit;
 	GLuint m_Sampler;
 	std::vector<Mat4> m_MV;
 
 	std::vector<GLuint> m_vertexDataObj;
 	std::vector<GLuint> m_vertexIndexObj;
-	std::vector<GLuint> m_vTexture;
+	std::vector<CMaterial> m_vMaterial;
 	std::vector<GLuint> m_vertexAttributeObj;
+
+	bool m_bEnableLight;
 };
 

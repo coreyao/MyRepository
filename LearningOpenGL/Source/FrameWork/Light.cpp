@@ -58,3 +58,8 @@ void CMaterial::SetShininess( float fShininess )
 {
 	m_fShininess = fShininess;
 }
+
+GLuint CMaterial::GetBaseColorTex()
+{
+	return m_baseColorTex;
+}

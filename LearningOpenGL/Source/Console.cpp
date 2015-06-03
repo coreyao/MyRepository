@@ -118,7 +118,11 @@ void init()
 	planeMesh->m_transform.m_scale.set(50, 50, -50);
 	planeMesh->m_transform.m_pos.set(0, -30, -100);
 	for ( int i = 0; i < planeMesh->GetMeshData().m_vSubMesh.size(); ++i )
-		planeMesh->SetTexture("default.png", i);
+	{
+		CMaterial newMaterial;
+		newMaterial.SetBaseColorTexture("default.png");
+		planeMesh->SetMaterial(newMaterial, i);
+	}
 	planeMesh->m_color = Color4F(0.5f, 0.5f, 0.5f, 1.0f);
 	planeMesh->m_bEnableCullFace = false;
 	planeMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh") );
@@ -128,7 +132,11 @@ void init()
 	g_pBallMesh->InitFromFile("ball.CSTM");
 	g_pBallMesh->m_transform.m_pos.set(0, 100, -100);
 	for ( int i = 0; i < g_pBallMesh->GetMeshData().m_vSubMesh.size(); ++i )
-		g_pBallMesh->SetTexture("default.png", i);
+	{
+		CMaterial newMaterial;
+		newMaterial.SetBaseColorTexture("default.png");
+		g_pBallMesh->SetMaterial(newMaterial, i);
+	}
 	g_pBallMesh->m_color = Color4F(0.5f, 0.5f, 0.5f, 1.0f);
 	g_pBallMesh->m_bEnableCullFace = false;
 	g_pBallMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh") );
@@ -136,11 +144,10 @@ void init()
 
 	g_pCharactor = new CMesh;
 	g_pCharactor->InitFromFile("talu.CSTM");
-	/*for ( int i = 0; i < g_pCharactor->GetMeshData().m_vSubMesh.size(); ++i )
-		g_pCharactor->SetTexture("cubemap_hills/hills_negative_x.png", i);*/
 	g_pCharactor->m_transform.m_scale.set(1, 1, -1);
 	g_pCharactor->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("SkinMesh") );
 	g_pCharactor->PlayAnim(0, 25, true, nullptr);
+	g_pCharactor->SetLightEnable(true);
 	g_vMesh.push_back(g_pCharactor);
 
 	g_pTerrain = new CTerrain();
