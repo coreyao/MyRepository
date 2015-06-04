@@ -100,10 +100,9 @@ void CMesh::Update(float dt)
 {
 	m_animator.Update(dt);
 
-	Mat4 viewMatrix = CDirector::GetInstance()->GetPerspectiveCamera()->GetViewMat();
 	for ( int i = 0; i < m_data.m_vSubMesh.size(); ++i )
 	{
-		m_MV[i] = viewMatrix * m_transform.GetTransformMat() * m_data.m_vSubMesh[i].m_MeshMatrix;
+		m_MV[i] = m_transform.GetTransformMat() * m_data.m_vSubMesh[i].m_MeshMatrix;
 	}
 }
 
@@ -157,11 +156,14 @@ void CMesh::Render()
 
 		UpdateLightUniform();
 
-		GLint modelViewMatrixUnif = glGetUniformLocation(m_theProgram, "modelViewMatrix");
-		if ( modelViewMatrixUnif >= 0 )
-		{
-			glUniformMatrix4fv(modelViewMatrixUnif, 1, GL_FALSE, m_MV[i].m);
-		}
+		GLint modelMatrixUnif = glGetUniformLocation(m_theProgram, "modelMatrix");
+		if ( modelMatrixUnif >= 0 )
+			glUniformMatrix4fv(modelMatrixUnif, 1, GL_FALSE, m_MV[i].m);
+
+		Mat4 viewMatrix = CDirector::GetInstance()->GetPerspectiveCamera()->GetViewMat();
+		GLint viewMatrixUnif = glGetUniformLocation(m_theProgram, "viewMatrix");
+		if ( viewMatrixUnif >= 0 )
+			glUniformMatrix4fv(viewMatrixUnif, 1, GL_FALSE, viewMatrix.m);
 
 		GLint perspectiveMatrixUnif = glGetUniformLocation(m_theProgram, "perspectiveMatrix");
 		if ( perspectiveMatrixUnif >= 0 )
@@ -320,7 +322,13 @@ void CMesh::UpdateLightUniform()
 					oss << "u_AllDirLight[" << iDirLightNum++ << "]";
 					GLint unif = glGetUniformLocation(m_theProgram, (oss.str() + ".direction").c_str());
 					if ( unif >= 0 )
+					{
+						if ( pLight->m_pDebugMesh )
+						{
+							pDirLight->m_lightDir = -pDirLight->m_pDebugMesh->m_transform.m_pos;
+						}
 						glUniform3f(unif, pDirLight->m_lightDir.x, pDirLight->m_lightDir.y, pDirLight->m_lightDir.z);
+					}
 
 					unif = glGetUniformLocation(m_theProgram, (oss.str() + ".ambient").c_str());
 					if ( unif >= 0 )

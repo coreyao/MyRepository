@@ -9,8 +9,9 @@ out vec2 colorCoord;
 out vec3 normal;
 out vec3 fragPos;
 
+uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
 uniform mat4 perspectiveMatrix;
-uniform mat4 modelViewMatrix;
 
 const int SKINNING_JOINT_COUNT = 60;
 uniform vec4 u_matrixPalette[SKINNING_JOINT_COUNT * 3];
@@ -86,9 +87,9 @@ void main()
 	vec4 localNormal;
 	getPositionAndNormal(localPos, localNormal);
 
-	fragPos = (modelViewMatrix * localPos).xyz;
-	normal = (modelViewMatrix * localNormal).xyz;
+	fragPos = (modelMatrix * localPos).xyz;
+	normal = normalize((modelMatrix * localNormal)).xyz;
 	colorCoord = a_texCoord;
 
-	gl_Position = perspectiveMatrix * modelViewMatrix * localPos;
+	gl_Position = perspectiveMatrix * viewMatrix * modelMatrix * localPos;
 }

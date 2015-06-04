@@ -34,7 +34,7 @@ vec3 CalcDirLightContribution()
 	for ( int i = 0; i < MAX_DIRECTIONAL_LIGHT_COUNT; ++i )
 	{
 		outColor += baseColor * u_AllDirLight[i].ambient;
-		outColor += baseColor * u_AllDirLight[i].diffuse * max(dot(-u_AllDirLight[i].direction, normal), 0.0);
+		outColor += baseColor * u_AllDirLight[i].diffuse * max(dot(-normalize(u_AllDirLight[i].direction), normalize(normal)), 0.0);
 	}
 
 	return outColor;

@@ -129,7 +129,7 @@ void init()
 		newMaterial.SetBaseColorTexture("default.png");
 		g_pDirLightMesh->SetMaterial(newMaterial, i);
 	}
-	g_pDirLightMesh->m_color = Color4F(0.5f, 0.5f, 0.5f, 1.0f);
+	g_pDirLightMesh->m_color = Color4F(1.0f, 1.0f, 1.0f, 1.0f);
 	g_pDirLightMesh->m_bEnableCullFace = false;
 	g_pDirLightMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh") );
 	g_vMesh.push_back(g_pDirLightMesh);
@@ -166,7 +166,7 @@ void init()
 	g_pDirectionalLight->m_ambientColor = Vec3(0.2f, 0.2f, 0.2f);
 	g_pDirectionalLight->m_diffuseColor = Vec3(1.0f, 1.0f, 1.0f);
 	g_pDirectionalLight->m_specularColor = Vec3(1.0f, 1.0f, 1.0f);
-	g_pDirectionalLight->m_lightDir = Vec3(-1, -1, -1);
+	g_pDirectionalLight->m_lightDir = Vec3(1, 1, 1);
 	g_pDirectionalLight->m_lightDir.normalize();
 	g_pDirectionalLight->m_pDebugMesh = g_pDirLightMesh;
 	CLightManager::GetInstance()->AddLight(g_pDirectionalLight);
@@ -302,7 +302,7 @@ void DrawMesh()
 {
 	if ( bDrawMesh )
 	{
-		g_pDirLightMesh->m_transform.m_pos = Vec3( cos(g_fDeltaTime) * 200, 100, sin(g_fDeltaTime) * 200 );
+		g_pDirLightMesh->m_transform.m_pos = Vec3( 500 * cos(g_fElapsedTime), 300, 500 * sin(g_fElapsedTime) );
 
 		for (int i = 0; i < g_vMesh.size(); ++i)
 		{
