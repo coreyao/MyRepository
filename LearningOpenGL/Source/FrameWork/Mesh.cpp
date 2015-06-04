@@ -154,6 +154,12 @@ void CMesh::Render()
 			}
 		}
 
+		GLint shininessUnif = glGetUniformLocation(m_theProgram, "u_Material.shininess");
+		if ( shininessUnif >= 0 )
+		{
+			glUniform1f(shininessUnif, m_vMaterial[i].GetShininess());
+		}
+
 		UpdateLightUniform();
 
 		GLint modelMatrixUnif = glGetUniformLocation(m_theProgram, "modelMatrix");
@@ -170,6 +176,13 @@ void CMesh::Render()
 		{
 			const Mat4& projMat = CDirector::GetInstance()->GetPerspectiveCamera()->GetProjMat();
 			glUniformMatrix4fv(perspectiveMatrixUnif, 1, GL_FALSE, projMat.m);
+		}
+
+		GLint eyePosUnif = glGetUniformLocation(m_theProgram, "u_eyePos");
+		if ( eyePosUnif >= 0 )
+		{
+			Vec3 eyePos = CDirector::GetInstance()->GetPerspectiveCamera()->GetCameraPos();
+			glUniform3f(eyePosUnif, eyePos.x, eyePos.y, eyePos.z);
 		}
 
 		GLint matrixPaletteUnif = glGetUniformLocation(m_theProgram, "u_matrixPalette");

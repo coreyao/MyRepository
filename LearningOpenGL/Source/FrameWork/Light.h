@@ -9,6 +9,8 @@ public:
 	CMaterial();
 
 	GLuint GetBaseColorTex();
+	float GetShininess();
+
 	void SetBaseColorTexture(const std::string& sFileName);
 	void SetShininess(float fShininess);
 

@@ -64,3 +64,8 @@ GLuint CMaterial::GetBaseColorTex()
 {
 	return m_baseColorTex;
 }
+
+float CMaterial::GetShininess()
+{
+	return m_fShininess;
+}

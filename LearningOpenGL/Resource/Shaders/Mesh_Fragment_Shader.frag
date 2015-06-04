@@ -2,10 +2,12 @@
 out vec4 outputColor;
 in vec2 colorCoord;
 in vec3 normal;
+in vec3 fragPos;
 
 uniform sampler2D u_colorTexture;
 uniform vec4 u_color;
 uniform int u_enableLight;
+uniform vec3 u_eyePos;
 
 // - Material
 struct Material
@@ -33,8 +35,13 @@ vec3 CalcDirLightContribution()
 	vec3 baseColor = texture(u_Material.baseColorTex, colorCoord).xyz;
 	for ( int i = 0; i < MAX_DIRECTIONAL_LIGHT_COUNT; ++i )
 	{
+		vec3 lightDir = -normalize(u_AllDirLight[i].direction);
+
 		outColor += baseColor * u_AllDirLight[i].ambient;
-		outColor += baseColor * u_AllDirLight[i].diffuse * max(dot(-normalize(u_AllDirLight[i].direction), normalize(normal)), 0.0);
+		outColor += baseColor * u_AllDirLight[i].diffuse * max(dot(lightDir, normalize(normal)), 0.0);
+
+		float spec = max(dot(normalize(reflect(lightDir, normal)), normalize(u_eyePos - fragPos)), 0.0);
+		outColor += baseColor * u_AllDirLight[i].specular * pow(spec, 32);
 	}
 
 	return outColor;
