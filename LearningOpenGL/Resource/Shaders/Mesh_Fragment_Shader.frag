@@ -125,10 +125,9 @@ vec3 CalcSpotLightContribution()
 		diffuse *= intensity;
 		specular *= intensity;
 
-		//outColor += baseColor * u_AllSpotLight[i].ambient * attenuation;
-		//outColor += diffuse;
-		//outColor += specular;
-		outColor += vec3(diffuse.r, 0, 0);
+		outColor += diffuse;
+		outColor += specular;
+		outColor += baseColor * u_AllSpotLight[i].ambient * attenuation;
 	}
 
 	return outColor;

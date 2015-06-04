@@ -390,6 +390,12 @@ void CMesh::UpdateLightUniform()
 				glUniform3f(unif, pSpotLight->m_lightPos.x, pSpotLight->m_lightPos.y, pSpotLight->m_lightPos.z);
 			}
 
+			unif = glGetUniformLocation(m_theProgram, (oss.str() + ".direction").c_str());
+			if ( unif >= 0 )
+			{
+				glUniform3f(unif, pSpotLight->m_lightDir.x, pSpotLight->m_lightDir.y, pSpotLight->m_lightDir.z);
+			}
+
 			unif = glGetUniformLocation(m_theProgram, (oss.str() + ".ambient").c_str());
 			if ( unif >= 0 )
 				glUniform3f(unif, pSpotLight->m_ambientColor.x, pSpotLight->m_ambientColor.y, pSpotLight->m_ambientColor.z);
