@@ -16,6 +16,7 @@ CLightManager* CLightManager::GetInstance()
 		s_pInstance = new CLightManager;
 		s_pInstance->m_vAllDirectionalLight.resize(conMaxDirectionalLightNum);
 		s_pInstance->m_vAllPointLight.resize(conMaxPointLightNum);
+		s_pInstance->m_vAllSpotLight.resize(conMaxSpotLightNum);
 	}
 
 	return s_pInstance;
@@ -37,6 +38,12 @@ void CLightManager::AddLight( CLightBase* pLight )
 				m_vAllPointLight[m_iCurPointLightNum++] = *(CPointLight*)pLight;
 		}
 		break;
+	case ELightType_SpotLight:
+		{
+			if ( m_iCurSpotLightNum < conMaxSpotLightNum )
+				m_vAllSpotLight[m_iCurSpotLightNum++] = *(CSpotLight*)pLight;
+		}
+		break;
 	default:
 		break;
 	}
@@ -52,9 +59,15 @@ const std::vector<CPointLight>& CLightManager::GetAllPointLights()
 	return m_vAllPointLight;
 }
 
+const std::vector<CSpotLight>& CLightManager::GetAllSpotLights()
+{
+	return m_vAllSpotLight;
+}
+
 CLightManager::CLightManager()
 	: m_iCurDirectionalLightNum(0)
 	, m_iCurPointLightNum(0)
+	, m_iCurSpotLightNum(0)
 {
 }
 
@@ -106,4 +119,15 @@ CPointLight::CPointLight()
 	, m_attenuation_quadratic(0.0f)
 {
 	m_eLightType = ELightType_PointLight;
+}
+
+CSpotLight::CSpotLight()
+	: CLightBase()
+	, m_attenuation_constant(1.0f)
+	, m_attenuation_linear(0.0f)
+	, m_attenuation_quadratic(0.0f)
+	, fInnerAngle(30.0f)
+	, fOuterAngle(60.0f)
+{
+	m_eLightType = ELightType_SpotLight;
 }

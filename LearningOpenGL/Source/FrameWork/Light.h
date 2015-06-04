@@ -68,6 +68,19 @@ public:
 	float m_attenuation_quadratic;
 };
 
+class CSpotLight : public CLightBase
+{
+public:
+	CSpotLight();
+
+	float fInnerAngle;
+	float fOuterAngle;
+
+	float m_attenuation_constant;
+	float m_attenuation_linear;
+	float m_attenuation_quadratic;
+};
+
 class CLightManager
 {
 public:
@@ -77,9 +90,11 @@ public:
 
 	const std::vector<CDirectionalLight>& GetAllDirectionalLights();
 	const std::vector<CPointLight>& GetAllPointLights();
+	const std::vector<CSpotLight>& GetAllSpotLights();
 
 	static const int conMaxDirectionalLightNum = 5;
 	static const int conMaxPointLightNum = 5;
+	static const int conMaxSpotLightNum = 5;
 
 private:
 	static CLightManager* s_pInstance;
@@ -91,4 +106,7 @@ private:
 
 	int m_iCurPointLightNum;
 	std::vector<CPointLight> m_vAllPointLight;
+
+	int m_iCurSpotLightNum;
+	std::vector<CSpotLight> m_vAllSpotLight;
 };

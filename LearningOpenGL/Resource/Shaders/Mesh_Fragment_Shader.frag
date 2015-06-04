@@ -44,6 +44,25 @@ struct PointLight
 const int MAX_POINT_LIGHT_COUNT = 5;
 uniform PointLight u_AllPointLight[MAX_POINT_LIGHT_COUNT];
 
+struct SpotLight
+{
+	vec3 position;
+	vec3 direction;
+
+	float innerCutoff;
+	float outerCutoff;
+
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+
+	float constant;
+	float linear;
+	float quadratic;
+};
+const int MAX_SPOT_LIGHT_COUNT = 5;
+uniform SpotLight u_AllSpotLight[MAX_SPOT_LIGHT_COUNT];
+
 vec3 CalcDirLightContribution()
 {
 	vec3 outColor = vec3(0.0, 0.0, 0.0);
@@ -84,6 +103,37 @@ vec3 CalcPointLightContribution()
 	return outColor;
 }
 
+vec3 CalcSpotLightContribution()
+{
+	vec3 outColor = vec3(0.0, 0.0, 0.0);
+	vec3 baseColor = texture(u_Material.baseColorTex, colorCoord).xyz;
+	
+	for ( int i = 0; i < MAX_SPOT_LIGHT_COUNT; ++i )
+	{
+		float distance = length(u_AllSpotLight[i].position - fragPos);
+		float attenuation = 1.0f / (u_AllSpotLight[i].constant + u_AllSpotLight[i].linear * distance + u_AllSpotLight[i].quadratic * (distance * distance));    
+
+		vec3 lightDir = normalize( u_AllSpotLight[i].position - fragPos);
+		vec3 diffuse = baseColor * u_AllSpotLight[i].diffuse * max(dot(lightDir, normalize(normal)), 0.0) * attenuation;
+
+		float spec = max(dot(normalize(reflect(lightDir, normal)), normalize(u_eyePos - fragPos)), 0.0);
+		vec3 specular = baseColor * u_AllSpotLight[i].specular * pow(spec, u_Material.shininess) * attenuation;
+
+		float fTheta = dot(lightDir, normalize(-u_AllSpotLight[i].direction));
+		float epsilon = u_AllSpotLight[i].innerCutoff - u_AllSpotLight[i].outerCutoff;
+		float intensity = clamp( (fTheta - u_AllSpotLight[i].outerCutoff) / epsilon, 0.0, 1.0 );
+		diffuse *= intensity;
+		specular *= intensity;
+
+		//outColor += baseColor * u_AllSpotLight[i].ambient * attenuation;
+		//outColor += diffuse;
+		//outColor += specular;
+		outColor += vec3(diffuse.r, 0, 0);
+	}
+
+	return outColor;
+}
+
 void main()
 {
 	vec4 baseColor = texture(u_Material.baseColorTex, colorCoord) * u_color;
@@ -92,6 +142,7 @@ void main()
 	{
 		finalColor += CalcDirLightContribution();
 		finalColor += CalcPointLightContribution();
+		finalColor += CalcSpotLightContribution();
 	}
 	else
 	{

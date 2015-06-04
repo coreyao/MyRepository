@@ -115,6 +115,7 @@ void init()
 	}
 	planeMesh->m_color = Color4F(0.5f, 0.5f, 0.5f, 1.0f);
 	planeMesh->m_bEnableCullFace = false;
+	planeMesh->SetLightEnable(true);
 	planeMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh") );
 	g_vMesh.push_back(planeMesh);
 
@@ -176,7 +177,16 @@ void init()
 	pPointLight->m_lightDir = Vec3(1, 1, 1);
 	pPointLight->m_lightDir.normalize();
 	pPointLight->m_pDebugMesh = g_pDirLightMesh;
-	CLightManager::GetInstance()->AddLight(pPointLight);
+	//CLightManager::GetInstance()->AddLight(pPointLight);
+
+	CSpotLight* pSpotLight = new CSpotLight;
+	pSpotLight->m_ambientColor = Vec3(0.1f, 0.1f, 0.1f);
+	pSpotLight->m_diffuseColor = Vec3(1.0f, 1.0f, 1.0f);
+	pSpotLight->m_specularColor = Vec3(1.0f, 1.0f, 1.0f);
+	pSpotLight->m_lightDir = Vec3(0, -1, 0);
+	pSpotLight->m_lightDir.normalize();
+	pSpotLight->m_pDebugMesh = g_pDirLightMesh;
+	CLightManager::GetInstance()->AddLight(pSpotLight);
 }
 
 void DrawMesh();

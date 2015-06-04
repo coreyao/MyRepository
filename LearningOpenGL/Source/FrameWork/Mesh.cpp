@@ -373,6 +373,55 @@ void CMesh::UpdateLightUniform()
 			if ( unif >= 0 )
 				glUniform1f(unif, pPointLight->m_attenuation_quadratic);
 		}
+
+		const std::vector<CSpotLight>& vAllSpotLight = CLightManager::GetInstance()->GetAllSpotLights();
+		for (int i = 0; i < vAllSpotLight.size(); ++i)
+		{
+			CSpotLight* pSpotLight = const_cast<CSpotLight*>(&vAllSpotLight[i]);
+			ostringstream oss;
+			oss << "u_AllSpotLight[" << i << "]";
+			GLint unif = glGetUniformLocation(m_theProgram, (oss.str() + ".position").c_str());
+			if ( unif >= 0 )
+			{
+				if ( pSpotLight->m_pDebugMesh )
+				{
+					pSpotLight->m_lightPos = pSpotLight->m_pDebugMesh->m_transform.m_pos;
+				}
+				glUniform3f(unif, pSpotLight->m_lightPos.x, pSpotLight->m_lightPos.y, pSpotLight->m_lightPos.z);
+			}
+
+			unif = glGetUniformLocation(m_theProgram, (oss.str() + ".ambient").c_str());
+			if ( unif >= 0 )
+				glUniform3f(unif, pSpotLight->m_ambientColor.x, pSpotLight->m_ambientColor.y, pSpotLight->m_ambientColor.z);
+
+			unif = glGetUniformLocation(m_theProgram, (oss.str() + ".diffuse").c_str());
+			if ( unif >= 0 )
+				glUniform3f(unif, pSpotLight->m_diffuseColor.x, pSpotLight->m_diffuseColor.y, pSpotLight->m_diffuseColor.z);
+
+			unif = glGetUniformLocation(m_theProgram, (oss.str() + ".specular").c_str());
+			if ( unif >= 0 )
+				glUniform3f(unif, pSpotLight->m_specularColor.x, pSpotLight->m_specularColor.y, pSpotLight->m_specularColor.z);
+
+			unif = glGetUniformLocation(m_theProgram, (oss.str() + ".constant").c_str());
+			if ( unif >= 0 )
+				glUniform1f(unif, pSpotLight->m_attenuation_constant);
+
+			unif = glGetUniformLocation(m_theProgram, (oss.str() + ".linear").c_str());
+			if ( unif >= 0 )
+				glUniform1f(unif, pSpotLight->m_attenuation_linear);
+
+			unif = glGetUniformLocation(m_theProgram, (oss.str() + ".quadratic").c_str());
+			if ( unif >= 0 )
+				glUniform1f(unif, pSpotLight->m_attenuation_quadratic);
+
+			unif = glGetUniformLocation(m_theProgram, (oss.str() + ".innerCutoff").c_str());
+			if ( unif >= 0 )
+				glUniform1f(unif, cos(DEGREES_TO_RADIANS(pSpotLight->fInnerAngle)));
+
+			unif = glGetUniformLocation(m_theProgram, (oss.str() + ".outerCutoff").c_str());
+			if ( unif >= 0 )
+				glUniform1f(unif, cos(DEGREES_TO_RADIANS(pSpotLight->fOuterAngle)));
+		}
 	}
 }
 
