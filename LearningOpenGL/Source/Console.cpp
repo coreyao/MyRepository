@@ -161,8 +161,8 @@ void init()
 	//g_pController->SetCharactor(g_pCharactor);
 
 	CDirectionalLight* pDirectionalLight = new CDirectionalLight;
-	pDirectionalLight->m_ambientColor = Vec3(0.2f, 0.2f, 0.2f);
-	pDirectionalLight->m_diffuseColor = Vec3(1.0f, 1.0f, 1.0f);
+	pDirectionalLight->m_ambientColor = Vec3(0.1f, 0.1f, 0.1f);
+	pDirectionalLight->m_diffuseColor = Vec3(0.3f, 0.3f, 0.3f);
 	pDirectionalLight->m_specularColor = Vec3(1.0f, 1.0f, 1.0f);
 	pDirectionalLight->m_lightDir = Vec3(1, 1, 1);
 	pDirectionalLight->m_lightDir.normalize();
@@ -170,7 +170,7 @@ void init()
 	//CLightManager::GetInstance()->AddLight(pDirectionalLight);
 
 	CPointLight* pPointLight = new CPointLight;
-	pPointLight->m_ambientColor = Vec3(0.2f, 0.2f, 0.2f);
+	pPointLight->m_ambientColor = Vec3(0.1f, 0.1f, 0.1f);
 	pPointLight->m_diffuseColor = Vec3(1.0f, 1.0f, 1.0f);
 	pPointLight->m_specularColor = Vec3(1.0f, 1.0f, 1.0f);
 	pPointLight->m_lightDir = Vec3(1, 1, 1);

@@ -90,7 +90,7 @@ void main()
 	vec3 finalColor = vec3(0.0, 0.0, 0.0);
 	if ( u_enableLight > 0 )
 	{
-		//finalColor += CalcDirLightContribution();
+		finalColor += CalcDirLightContribution();
 		finalColor += CalcPointLightContribution();
 	}
 	else
