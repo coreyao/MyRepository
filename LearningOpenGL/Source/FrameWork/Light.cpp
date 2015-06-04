@@ -14,6 +14,8 @@ CLightManager* CLightManager::GetInstance()
 	if ( !s_pInstance )
 	{
 		s_pInstance = new CLightManager;
+		s_pInstance->m_vAllDirectionalLight.resize(conMaxDirectionalLightNum);
+		s_pInstance->m_vAllPointLight.resize(conMaxPointLightNum);
 	}
 
 	return s_pInstance;
@@ -21,17 +23,44 @@ CLightManager* CLightManager::GetInstance()
 
 void CLightManager::AddLight( CLightBase* pLight )
 {
-	m_vAllLight.push_back(pLight);
+	switch (pLight->m_eLightType)
+	{
+	case ELightType_DirectionalLight:
+		{
+			if ( m_iCurDirectionalLightNum < conMaxDirectionalLightNum )
+				m_vAllDirectionalLight[m_iCurDirectionalLightNum++] = *(CDirectionalLight*)pLight;
+		}
+		break;
+	case ELightType_PointLight:
+		{
+			if ( m_iCurPointLightNum < conMaxDirectionalLightNum )
+				m_vAllPointLight[m_iCurPointLightNum++] = *(CPointLight*)pLight;
+		}
+		break;
+	default:
+		break;
+	}
 }
 
-const std::vector<CLightBase*>& CLightManager::GetAllLights()
+const std::vector<CDirectionalLight>& CLightManager::GetAllDirectionalLights()
 {
-	return m_vAllLight;
+	return m_vAllDirectionalLight;
+}
+
+const std::vector<CPointLight>& CLightManager::GetAllPointLights()
+{
+	return m_vAllPointLight;
+}
+
+CLightManager::CLightManager()
+	: m_iCurDirectionalLightNum(0)
+	, m_iCurPointLightNum(0)
+{
 }
 
 CMaterial::CMaterial()
 	: m_baseColorTex(-1)
-	, m_fShininess(1)
+	, m_fShininess(32)
 {
 }
 
@@ -68,4 +97,13 @@ GLuint CMaterial::GetBaseColorTex()
 float CMaterial::GetShininess()
 {
 	return m_fShininess;
+}
+
+CPointLight::CPointLight()
+	: CLightBase()
+	, m_attenuation_constant(1.0f)
+	, m_attenuation_linear(0.0f)
+	, m_attenuation_quadratic(0.0f)
+{
+	m_eLightType = ELightType_PointLight;
 }

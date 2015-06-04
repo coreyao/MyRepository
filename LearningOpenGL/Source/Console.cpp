@@ -29,8 +29,6 @@ CSkyBox* g_pSkyBox = nullptr;
 
 CThirdPersonController* g_pController = nullptr;
 
-CDirectionalLight* g_pDirectionalLight = nullptr;
-
 timeval g_fLastTime = {0, 0};
 float g_fDeltaTime = 0.0f;
 float g_fElapsedTime = 0.0f;
@@ -162,14 +160,23 @@ void init()
 	g_pController->m_transform.m_pos.y = g_pTerrain->GetHeight( Vec2(g_pController->m_transform.m_pos.x, g_pController->m_transform.m_pos.z) );
 	//g_pController->SetCharactor(g_pCharactor);
 
-	g_pDirectionalLight = new CDirectionalLight;
-	g_pDirectionalLight->m_ambientColor = Vec3(0.2f, 0.2f, 0.2f);
-	g_pDirectionalLight->m_diffuseColor = Vec3(1.0f, 1.0f, 1.0f);
-	g_pDirectionalLight->m_specularColor = Vec3(1.0f, 1.0f, 1.0f);
-	g_pDirectionalLight->m_lightDir = Vec3(1, 1, 1);
-	g_pDirectionalLight->m_lightDir.normalize();
-	g_pDirectionalLight->m_pDebugMesh = g_pDirLightMesh;
-	CLightManager::GetInstance()->AddLight(g_pDirectionalLight);
+	CDirectionalLight* pDirectionalLight = new CDirectionalLight;
+	pDirectionalLight->m_ambientColor = Vec3(0.2f, 0.2f, 0.2f);
+	pDirectionalLight->m_diffuseColor = Vec3(1.0f, 1.0f, 1.0f);
+	pDirectionalLight->m_specularColor = Vec3(1.0f, 1.0f, 1.0f);
+	pDirectionalLight->m_lightDir = Vec3(1, 1, 1);
+	pDirectionalLight->m_lightDir.normalize();
+	pDirectionalLight->m_pDebugMesh = g_pDirLightMesh;
+	//CLightManager::GetInstance()->AddLight(pDirectionalLight);
+
+	CPointLight* pPointLight = new CPointLight;
+	pPointLight->m_ambientColor = Vec3(0.2f, 0.2f, 0.2f);
+	pPointLight->m_diffuseColor = Vec3(1.0f, 1.0f, 1.0f);
+	pPointLight->m_specularColor = Vec3(1.0f, 1.0f, 1.0f);
+	pPointLight->m_lightDir = Vec3(1, 1, 1);
+	pPointLight->m_lightDir.normalize();
+	pPointLight->m_pDebugMesh = g_pDirLightMesh;
+	CLightManager::GetInstance()->AddLight(pPointLight);
 }
 
 void DrawMesh();

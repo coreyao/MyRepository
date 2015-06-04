@@ -141,25 +141,7 @@ void CMesh::Render()
 
 		glBindVertexArray(m_vertexAttributeObj[i]);
 
-		if ( m_vMaterial[i].GetBaseColorTex() >= 0 )
-		{
-			GLint colorTextureUnif = glGetUniformLocation(m_theProgram, "u_Material.baseColorTex");
-			if ( colorTextureUnif >= 0 )
-			{
-				glUniform1i(colorTextureUnif, 0);
-
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, m_vMaterial[i].GetBaseColorTex());
-				glBindSampler(0, m_Sampler);
-			}
-		}
-
-		GLint shininessUnif = glGetUniformLocation(m_theProgram, "u_Material.shininess");
-		if ( shininessUnif >= 0 )
-		{
-			glUniform1f(shininessUnif, m_vMaterial[i].GetShininess());
-		}
-
+		UpdateMaterialUniform(i);
 		UpdateLightUniform();
 
 		GLint modelMatrixUnif = glGetUniformLocation(m_theProgram, "modelMatrix");
@@ -176,13 +158,6 @@ void CMesh::Render()
 		{
 			const Mat4& projMat = CDirector::GetInstance()->GetPerspectiveCamera()->GetProjMat();
 			glUniformMatrix4fv(perspectiveMatrixUnif, 1, GL_FALSE, projMat.m);
-		}
-
-		GLint eyePosUnif = glGetUniformLocation(m_theProgram, "u_eyePos");
-		if ( eyePosUnif >= 0 )
-		{
-			Vec3 eyePos = CDirector::GetInstance()->GetPerspectiveCamera()->GetCameraPos();
-			glUniform3f(eyePosUnif, eyePos.x, eyePos.y, eyePos.z);
 		}
 
 		GLint matrixPaletteUnif = glGetUniformLocation(m_theProgram, "u_matrixPalette");
@@ -322,44 +297,104 @@ void CMesh::UpdateLightUniform()
 
 	if ( m_bEnableLight )
 	{
-		int iDirLightNum = 0;
-		const std::vector<CLightBase*>& vAllLight = CLightManager::GetInstance()->GetAllLights();
-		for (auto& pLight : vAllLight)
+		GLint eyePosUnif = glGetUniformLocation(m_theProgram, "u_eyePos");
+		if ( eyePosUnif >= 0 )
 		{
-			switch (pLight->m_eLightType)
-			{
-			case ELightType_DirectionalLight:
-				{
-					CDirectionalLight* pDirLight = static_cast<CDirectionalLight*>(pLight);
-					ostringstream oss;
-					oss << "u_AllDirLight[" << iDirLightNum++ << "]";
-					GLint unif = glGetUniformLocation(m_theProgram, (oss.str() + ".direction").c_str());
-					if ( unif >= 0 )
-					{
-						if ( pLight->m_pDebugMesh )
-						{
-							pDirLight->m_lightDir = -pDirLight->m_pDebugMesh->m_transform.m_pos;
-						}
-						glUniform3f(unif, pDirLight->m_lightDir.x, pDirLight->m_lightDir.y, pDirLight->m_lightDir.z);
-					}
-
-					unif = glGetUniformLocation(m_theProgram, (oss.str() + ".ambient").c_str());
-					if ( unif >= 0 )
-						glUniform3f(unif, pDirLight->m_ambientColor.x, pDirLight->m_ambientColor.y, pDirLight->m_ambientColor.z);
-
-					unif = glGetUniformLocation(m_theProgram, (oss.str() + ".diffuse").c_str());
-					if ( unif >= 0 )
-						glUniform3f(unif, pDirLight->m_diffuseColor.x, pDirLight->m_diffuseColor.y, pDirLight->m_diffuseColor.z);
-
-					unif = glGetUniformLocation(m_theProgram, (oss.str() + ".specular").c_str());
-					if ( unif >= 0 )
-						glUniform3f(unif, pDirLight->m_specularColor.x, pDirLight->m_specularColor.y, pDirLight->m_specularColor.z);
-				}
-				break;
-			default:
-				break;
-			}
+			Vec3 eyePos = CDirector::GetInstance()->GetPerspectiveCamera()->GetCameraPos();
+			glUniform3f(eyePosUnif, eyePos.x, eyePos.y, eyePos.z);
 		}
+
+		const std::vector<CDirectionalLight>& vAllDirectionalLight = CLightManager::GetInstance()->GetAllDirectionalLights();
+		for (int i = 0; i < vAllDirectionalLight.size(); ++i)
+		{
+			CDirectionalLight* pDirLight = const_cast<CDirectionalLight*>(&vAllDirectionalLight[i]);
+			ostringstream oss;
+			oss << "u_AllDirLight[" << i << "]";
+			GLint unif = glGetUniformLocation(m_theProgram, (oss.str() + ".direction").c_str());
+			if ( unif >= 0 )
+			{
+				if ( pDirLight->m_pDebugMesh )
+				{
+					pDirLight->m_lightDir = -pDirLight->m_pDebugMesh->m_transform.m_pos;
+				}
+				glUniform3f(unif, pDirLight->m_lightDir.x, pDirLight->m_lightDir.y, pDirLight->m_lightDir.z);
+			}
+
+			unif = glGetUniformLocation(m_theProgram, (oss.str() + ".ambient").c_str());
+			if ( unif >= 0 )
+				glUniform3f(unif, pDirLight->m_ambientColor.x, pDirLight->m_ambientColor.y, pDirLight->m_ambientColor.z);
+
+			unif = glGetUniformLocation(m_theProgram, (oss.str() + ".diffuse").c_str());
+			if ( unif >= 0 )
+				glUniform3f(unif, pDirLight->m_diffuseColor.x, pDirLight->m_diffuseColor.y, pDirLight->m_diffuseColor.z);
+
+			unif = glGetUniformLocation(m_theProgram, (oss.str() + ".specular").c_str());
+			if ( unif >= 0 )
+				glUniform3f(unif, pDirLight->m_specularColor.x, pDirLight->m_specularColor.y, pDirLight->m_specularColor.z);
+		}
+
+		const std::vector<CPointLight>& vAllPointLight = CLightManager::GetInstance()->GetAllPointLights();
+		for (int i = 0; i < vAllPointLight.size(); ++i)
+		{
+			CPointLight* pPointLight = const_cast<CPointLight*>(&vAllPointLight[i]);
+			ostringstream oss;
+			oss << "u_AllPointLight[" << i << "]";
+			GLint unif = glGetUniformLocation(m_theProgram, (oss.str() + ".position").c_str());
+			if ( unif >= 0 )
+			{
+				if ( pPointLight->m_pDebugMesh )
+				{
+					pPointLight->m_lightPos = pPointLight->m_pDebugMesh->m_transform.m_pos;
+				}
+				glUniform3f(unif, pPointLight->m_lightPos.x, pPointLight->m_lightPos.y, pPointLight->m_lightPos.z);
+			}
+
+			unif = glGetUniformLocation(m_theProgram, (oss.str() + ".ambient").c_str());
+			if ( unif >= 0 )
+				glUniform3f(unif, pPointLight->m_ambientColor.x, pPointLight->m_ambientColor.y, pPointLight->m_ambientColor.z);
+
+			unif = glGetUniformLocation(m_theProgram, (oss.str() + ".diffuse").c_str());
+			if ( unif >= 0 )
+				glUniform3f(unif, pPointLight->m_diffuseColor.x, pPointLight->m_diffuseColor.y, pPointLight->m_diffuseColor.z);
+
+			unif = glGetUniformLocation(m_theProgram, (oss.str() + ".specular").c_str());
+			if ( unif >= 0 )
+				glUniform3f(unif, pPointLight->m_specularColor.x, pPointLight->m_specularColor.y, pPointLight->m_specularColor.z);
+
+			unif = glGetUniformLocation(m_theProgram, (oss.str() + ".constant").c_str());
+			if ( unif >= 0 )
+				glUniform1f(unif, pPointLight->m_attenuation_constant);
+
+			unif = glGetUniformLocation(m_theProgram, (oss.str() + ".linear").c_str());
+			if ( unif >= 0 )
+				glUniform1f(unif, pPointLight->m_attenuation_linear);
+
+			unif = glGetUniformLocation(m_theProgram, (oss.str() + ".quadratic").c_str());
+			if ( unif >= 0 )
+				glUniform1f(unif, pPointLight->m_attenuation_quadratic);
+		}
+	}
+}
+
+void CMesh::UpdateMaterialUniform( int i )
+{
+	if ( m_vMaterial[i].GetBaseColorTex() >= 0 )
+	{
+		GLint colorTextureUnif = glGetUniformLocation(m_theProgram, "u_Material.baseColorTex");
+		if ( colorTextureUnif >= 0 )
+		{
+			glUniform1i(colorTextureUnif, 0);
+
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, m_vMaterial[i].GetBaseColorTex());
+			glBindSampler(0, m_Sampler);
+		}
+	}
+
+	GLint shininessUnif = glGetUniformLocation(m_theProgram, "u_Material.shininess");
+	if ( shininessUnif >= 0 )
+	{
+		glUniform1f(shininessUnif, m_vMaterial[i].GetShininess());
 	}
 }
 

@@ -40,6 +40,7 @@ private:
 	void InitSkeleton();
 	void InitMaterial();
 	void UpdateLightUniform();
+	void UpdateMaterialUniform( int i );
 
 private:
 	GLuint m_theProgram;
