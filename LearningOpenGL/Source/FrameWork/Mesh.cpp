@@ -422,11 +422,11 @@ void CMesh::UpdateLightUniform()
 
 			unif = glGetUniformLocation(m_theProgram, (oss.str() + ".innerCutoff").c_str());
 			if ( unif >= 0 )
-				glUniform1f(unif, cos(DEGREES_TO_RADIANS(pSpotLight->fInnerAngle)));
+				glUniform1f(unif, DEGREES_TO_RADIANS(pSpotLight->fInnerAngle));
 
 			unif = glGetUniformLocation(m_theProgram, (oss.str() + ".outerCutoff").c_str());
 			if ( unif >= 0 )
-				glUniform1f(unif, cos(DEGREES_TO_RADIANS(pSpotLight->fOuterAngle)));
+				glUniform1f(unif, DEGREES_TO_RADIANS(pSpotLight->fOuterAngle));
 		}
 	}
 }

@@ -183,8 +183,8 @@ void init()
 	pSpotLight->m_specularColor = Vec3(1.0f, 1.0f, 1.0f);
 	pSpotLight->m_lightDir = Vec3(0, -1, 0);
 	pSpotLight->m_lightDir.normalize();
-	pSpotLight->fInnerAngle = 5.0f;
-	pSpotLight->fOuterAngle = 10.0f;
+	pSpotLight->fInnerAngle = 30;
+	pSpotLight->fOuterAngle = 60;
 	//pSpotLight->m_attenuation_linear = 0.09f;
 	//pSpotLight->m_attenuation_quadratic = 0.032f;
 	pSpotLight->m_pDebugMesh = g_pDirLightMesh;

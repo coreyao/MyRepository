@@ -121,10 +121,9 @@ vec3 CalcSpotLightContribution()
 		float spec = max(dot(normalize(reflect(lightDir, normal)), normalize(u_eyePos - fragPos)), 0.0);
 		vec3 specular = baseColor * u_AllSpotLight[i].specular * pow(spec, u_Material.shininess) * attenuation;
 
-		float fTheta = max(dot(lightDir, normalize(-u_AllSpotLight[i].direction)), 0.0);
+		float fTheta = acos( dot(lightDir, normalize(-u_AllSpotLight[i].direction)) );
 		float epsilon = u_AllSpotLight[i].innerCutoff - u_AllSpotLight[i].outerCutoff;
-		//float intensity = clamp( (fTheta - u_AllSpotLight[i].outerCutoff) / epsilon, 0.0, 1.0 );
-		float intensity = clamp( smoothstep(u_AllSpotLight[i].outerCutoff, u_AllSpotLight[i].innerCutoff, fTheta), 0.0, 1.0 );
+		float intensity = clamp( (fTheta - u_AllSpotLight[i].outerCutoff) / epsilon, 0.0, 1.0 );
 		diffuse *= intensity;
 		specular *= intensity;
 
