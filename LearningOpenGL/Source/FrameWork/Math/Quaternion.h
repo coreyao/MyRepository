@@ -14,6 +14,7 @@ public:
 	Quaternion(float xx, float yy, float zz, float ww);
 	Quaternion(const Vec3& axis, float angle);
 	Quaternion operator*(float fScale);
+	Quaternion operator*(const Quaternion& rh);
 	Quaternion operator+(const Quaternion& rh);
 
 	void normalize();

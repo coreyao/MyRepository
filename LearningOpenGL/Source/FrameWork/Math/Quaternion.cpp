@@ -153,6 +153,25 @@ Quaternion Quaternion::operator*( float fScale )
 	return Quaternion(this->x * fScale, this->y * fScale, this->z * fScale, this->w * fScale);
 }
 
+Quaternion Quaternion::operator*( const Quaternion& rh )
+{
+	Quaternion dst;
+	Quaternion q1 = *this;
+	Quaternion q2 = rh;
+
+	float x = q1.w * q2.x + q1.x * q2.w + q1.y * q2.z - q1.z * q2.y;
+	float y = q1.w * q2.y - q1.x * q2.z + q1.y * q2.w + q1.z * q2.x;
+	float z = q1.w * q2.z + q1.x * q2.y - q1.y * q2.x + q1.z * q2.w;
+	float w = q1.w * q2.w - q1.x * q2.x - q1.y * q2.y - q1.z * q2.z;
+
+	dst.x = x;
+	dst.y = y;
+	dst.z = z;
+	dst.w = w;
+
+	return dst;
+}
+
 Quaternion Quaternion::operator+( const Quaternion& rh )
 {
 	return Quaternion( this->x + rh.x, this->y + rh.y, this->z + rh.z, this->w + rh.w );
