@@ -113,6 +113,8 @@ vec3 CalcSpotLightContribution()
 		float distance = length(u_AllSpotLight[i].position - fragPos);
 		float attenuation = 1.0f / (u_AllSpotLight[i].constant + u_AllSpotLight[i].linear * distance + u_AllSpotLight[i].quadratic * (distance * distance));    
 
+		vec3 ambient = baseColor * u_AllSpotLight[i].ambient * attenuation;
+
 		vec3 lightDir = normalize( u_AllSpotLight[i].position - fragPos);
 		vec3 diffuse = baseColor * u_AllSpotLight[i].diffuse * max(dot(lightDir, normalize(normal)), 0.0) * attenuation;
 
@@ -126,9 +128,11 @@ vec3 CalcSpotLightContribution()
 		diffuse *= intensity;
 		specular *= intensity;
 
-		outColor += diffuse;
-		outColor += specular;
-		outColor += baseColor * u_AllSpotLight[i].ambient * attenuation;
+		//outColor += ambient;
+		//outColor += diffuse;
+		//outColor += specular;
+
+		outColor += vec3(u_AllSpotLight[i].outerCutoff, u_AllSpotLight[i].outerCutoff, u_AllSpotLight[i].outerCutoff);
 	}
 
 	return outColor;

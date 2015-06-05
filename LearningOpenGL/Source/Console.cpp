@@ -113,7 +113,7 @@ void init()
 		newMaterial.SetBaseColorTexture("default.png");
 		planeMesh->SetMaterial(newMaterial, i);
 	}
-	planeMesh->m_color = Color4F(0.5f, 0.5f, 0.5f, 1.0f);
+	planeMesh->m_color = Color4F(1.0f, 1.0f, 1.0f, 1.0f);
 	planeMesh->m_bEnableCullFace = false;
 	planeMesh->SetLightEnable(true);
 	planeMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh") );
@@ -184,7 +184,7 @@ void init()
 	pSpotLight->m_lightDir = Vec3(0, -1, 0);
 	pSpotLight->m_lightDir.normalize();
 	pSpotLight->fInnerAngle = 10;
-	pSpotLight->fOuterAngle = 30;
+	pSpotLight->fOuterAngle = 90;
 	pSpotLight->m_pDebugMesh = g_pDirLightMesh;
 	CLightManager::GetInstance()->AddLight(pSpotLight);
 }
