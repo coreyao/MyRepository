@@ -172,7 +172,7 @@ void init()
 
 	CPointLight* pPointLight = new CPointLight;
 	pPointLight->m_ambientColor = Vec3(0.1f, 0.1f, 0.1f);
-	pPointLight->m_diffuseColor = Vec3(1.0f, 1.0f, 1.0f);
+	pPointLight->m_diffuseColor = Vec3(0.8f, 0.8f, 0.8f);
 	pPointLight->m_specularColor = Vec3(1.0f, 1.0f, 1.0f);
 	pPointLight->m_pDebugMesh = g_pDirLightMesh;
 	//CLightManager::GetInstance()->AddLight(pPointLight);
@@ -183,8 +183,8 @@ void init()
 	pSpotLight->m_specularColor = Vec3(1.0f, 1.0f, 1.0f);
 	pSpotLight->m_lightDir = Vec3(0, -1, 0);
 	pSpotLight->m_lightDir.normalize();
-	pSpotLight->fInnerAngle = 10;
-	pSpotLight->fOuterAngle = 90;
+	pSpotLight->fInnerAngle = 30;
+	pSpotLight->fOuterAngle = 60;
 	pSpotLight->m_pDebugMesh = g_pDirLightMesh;
 	CLightManager::GetInstance()->AddLight(pSpotLight);
 }
@@ -319,8 +319,8 @@ void DrawMesh()
 {
 	if ( bDrawMesh )
 	{
-		g_pDirLightMesh->m_transform.m_pos = Vec3( 500 * cos(g_fElapsedTime), 300, 500 * sin(g_fElapsedTime) );
-		//g_pDirLightMesh->m_transform.m_pos = Vec3( 300, 300, 300 );
+		//g_pDirLightMesh->m_transform.m_pos = Vec3( 500 * cos(g_fElapsedTime), 300, 500 * sin(g_fElapsedTime) );
+		g_pDirLightMesh->m_transform.m_pos = Vec3( 300, 300, 300 );
 
 		for (int i = 0; i < g_vMesh.size(); ++i)
 		{

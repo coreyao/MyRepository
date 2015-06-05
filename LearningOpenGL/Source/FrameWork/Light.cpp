@@ -126,8 +126,8 @@ CSpotLight::CSpotLight()
 	, m_attenuation_constant(1.0f)
 	, m_attenuation_linear(0.0f)
 	, m_attenuation_quadratic(0.0f)
-	, fInnerAngle(30.0f)
-	, fOuterAngle(60.0f)
+	, fInnerAngle(0.0f)
+	, fOuterAngle(0.0f)
 {
 	m_eLightType = ELightType_SpotLight;
 }

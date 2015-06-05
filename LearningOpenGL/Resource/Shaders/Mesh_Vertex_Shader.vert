@@ -1,5 +1,5 @@
 #version 330
-layout(location = 0) in vec4 a_position;
+layout(location = 0) in vec3 a_position;
 layout(location = 1) in vec2 a_texCoord;
 layout(location = 4) in vec3 a_normal;
 
@@ -13,9 +13,9 @@ uniform mat4 perspectiveMatrix;
 
 void main()
 {
-	fragPos = (modelMatrix * a_position).xyz;
+	fragPos = (modelMatrix * vec4(a_position, 1.0)).xyz;
 	normal = normalize((modelMatrix * vec4(a_normal, 0.0))).xyz;
 	colorCoord = a_texCoord;
 
-	gl_Position = perspectiveMatrix * viewMatrix * modelMatrix * a_position;
+	gl_Position = perspectiveMatrix * viewMatrix * modelMatrix * vec4(a_position, 1.0);
 }
