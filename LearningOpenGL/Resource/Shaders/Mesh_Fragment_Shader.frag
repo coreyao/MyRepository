@@ -171,8 +171,4 @@ void main()
 	}
 
 	outputColor = vec4(finalColor, baseColor.w);
-
-	// - gamma correction
-	float gamma = 2.2;
-    outputColor.rgb = pow(outputColor.rgb, vec3(1.0/gamma));
 }
