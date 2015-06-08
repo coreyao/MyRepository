@@ -25,6 +25,7 @@
     <ClCompile Include="..\Source\FrameWork\Mesh.cpp" />
     <ClCompile Include="..\Source\FrameWork\ParticleSystem.cpp" />
     <ClCompile Include="..\Source\FrameWork\Primitive.cpp" />
+    <ClCompile Include="..\Source\FrameWork\ShadowMap.cpp" />
     <ClCompile Include="..\Source\FrameWork\SkyBox.cpp" />
     <ClCompile Include="..\Source\FrameWork\Terrain.cpp" />
     <ClCompile Include="..\Source\FrameWork\Image\ImageReader.cpp" />
@@ -55,6 +56,7 @@
     <ClInclude Include="..\Source\FrameWork\Mesh.h" />
     <ClInclude Include="..\Source\FrameWork\ParticleSystem.h" />
     <ClInclude Include="..\Source\FrameWork\Primitive.h" />
+    <ClInclude Include="..\Source\FrameWork\ShadowMap.h" />
     <ClInclude Include="..\Source\FrameWork\SkyBox.h" />
     <ClInclude Include="..\Source\FrameWork\Terrain.h" />
     <ClInclude Include="..\Source\FrameWork\Image\ImageReader.h" />
@@ -78,6 +80,8 @@
     <None Include="..\Resource\Shaders\Particle_Vertex_Shader.vert" />
     <None Include="..\Resource\Shaders\Primitive_Fragment_Shader.frag" />
     <None Include="..\Resource\Shaders\Primitive_Vertex_Shader.vert" />
+    <None Include="..\Resource\Shaders\shadow_map.frag" />
+    <None Include="..\Resource\Shaders\shadow_map.vert" />
     <None Include="..\Resource\Shaders\SkinMesh_Vertex_Shader.vert" />
     <None Include="..\Resource\Shaders\SkyBox_Fragment_Shader.frag" />
     <None Include="..\Resource\Shaders\SkyBox_Vertex_Shader.vert" />

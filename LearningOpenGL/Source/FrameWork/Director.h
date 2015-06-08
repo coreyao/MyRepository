@@ -11,8 +11,15 @@ public:
 	void Init();
 	Vec3 Unproject(const Vec2& screenPos);
 
+	Mat4 GetCurProjectionMat();
+	Mat4 GetCurViewMat();
+
 	CCamera* GetPerspectiveCamera();
 	CCamera* GetOrthographicCamera();
+
+	Mat4 m_pLightViewMat;
+	Mat4 m_pLightProjMat;
+
 private:
 	CDirector();
 	~CDirector();

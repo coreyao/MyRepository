@@ -194,7 +194,7 @@ void CParticleInstance::Update( float dt )
 
 	m_position += m_moveDir * m_fCurSpeed * dt;
 
-	Mat4 viewMatrix = CDirector::GetInstance()->GetPerspectiveCamera()->GetViewMat();
+	Mat4 viewMatrix = CDirector::GetInstance()->GetCurViewMat();
 	Mat4 TranslationMatrix = Mat4::CreateFromTranslation(m_position.x,m_position.y, m_position.z);
 	Mat4 ScaleMatrix = Mat4::CreateFromScale(fFinalSize, fFinalSize, fFinalSize);
 	Mat4 ZRotationMatrix = Mat4::CreateFromRotationZ(m_fCurZRotation);
@@ -339,7 +339,7 @@ void CParticleInstance::Render()
 	GLint perspectiveMatrixUnif = glGetUniformLocation(m_theProgram, "perspectiveMatrix");
 	if ( perspectiveMatrixUnif >= 0 )
 	{
-		const Mat4& projMat = CDirector::GetInstance()->GetPerspectiveCamera()->GetProjMat();
+		const Mat4& projMat = CDirector::GetInstance()->GetCurProjectionMat();
 		glUniformMatrix4fv(perspectiveMatrixUnif, 1, GL_FALSE, projMat.m);
 	}
 

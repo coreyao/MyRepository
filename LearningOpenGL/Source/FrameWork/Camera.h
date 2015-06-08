@@ -18,8 +18,8 @@ public:
 	void Rotate(float fPitch, float fYaw);
 	void Zoom(float fDegOffset);
 
-	Mat4 GetViewMat() const;
-	Mat4 GetProjMat() const;
+	const Mat4& GetViewMat() const;
+	const Mat4& GetProjMat() const;
 
 	Vec3 GetCameraPos() const;
 	void SetCameraPos(const Vec3& pos);

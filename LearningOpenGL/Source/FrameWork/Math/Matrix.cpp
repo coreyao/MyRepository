@@ -411,7 +411,7 @@ Vec3 Matrix4X4::TransformVector( const Vec3& vec ) const
 
 bool Matrix4X4::operator==( const Matrix4X4& rh )
 {
-	return !memcmp(this->m, IDENTITY.m, sizeof(this->m));
+	return !memcmp(this->m, rh.m, sizeof(this->m));
 }
 
 bool Matrix4X4::operator!=( const Matrix4X4& rh )

@@ -54,5 +54,25 @@ Vec3 CDirector::Unproject( const Vec2& screenPos )
 	return finalPos;
 }
 
+Mat4 CDirector::GetCurProjectionMat()
+{
+	if ( m_pLightProjMat != Mat4::ZERO )
+	{
+		return m_pLightProjMat;
+
+	}
+	return m_pCameraPerspective->GetProjMat();
+}
+
+Mat4 CDirector::GetCurViewMat()
+{
+	if ( m_pLightViewMat != Mat4::ZERO )
+	{
+		return m_pLightViewMat;
+	}
+
+	return m_pCameraPerspective->GetViewMat();
+}
+
 CDirector* CDirector::s_pInstance = nullptr;
 

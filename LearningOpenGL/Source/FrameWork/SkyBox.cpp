@@ -37,14 +37,14 @@ void CSkyBox::Render()
 	GLint modelViewMatrixUnif = glGetUniformLocation(m_theProgram, "modelViewMatrix");
 	if ( modelViewMatrixUnif >= 0 )
 	{
-		Mat4 viewMatrix = CDirector::GetInstance()->GetPerspectiveCamera()->GetViewMat();
+		Mat4 viewMatrix = CDirector::GetInstance()->GetCurViewMat();
 		glUniformMatrix4fv(modelViewMatrixUnif, 1, GL_FALSE, (viewMatrix * m_transform.GetTransformMat()).m);
 	}
 
 	GLint perspectiveMatrixUnif = glGetUniformLocation(m_theProgram, "perspectiveMatrix");
 	if ( perspectiveMatrixUnif >= 0 )
 	{
-		const Mat4& projMat = CDirector::GetInstance()->GetPerspectiveCamera()->GetProjMat();
+		const Mat4& projMat = CDirector::GetInstance()->GetCurProjectionMat();
 		glUniformMatrix4fv(perspectiveMatrixUnif, 1, GL_FALSE, projMat.m);
 	}
 

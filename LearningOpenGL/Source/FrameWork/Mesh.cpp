@@ -148,7 +148,7 @@ void CMesh::Render()
 		if ( modelMatrixUnif >= 0 )
 			glUniformMatrix4fv(modelMatrixUnif, 1, GL_FALSE, m_MV[i].m);
 
-		Mat4 viewMatrix = CDirector::GetInstance()->GetPerspectiveCamera()->GetViewMat();
+		Mat4 viewMatrix = CDirector::GetInstance()->GetCurViewMat();
 		GLint viewMatrixUnif = glGetUniformLocation(m_theProgram, "viewMatrix");
 		if ( viewMatrixUnif >= 0 )
 			glUniformMatrix4fv(viewMatrixUnif, 1, GL_FALSE, viewMatrix.m);
@@ -156,7 +156,7 @@ void CMesh::Render()
 		GLint perspectiveMatrixUnif = glGetUniformLocation(m_theProgram, "perspectiveMatrix");
 		if ( perspectiveMatrixUnif >= 0 )
 		{
-			const Mat4& projMat = CDirector::GetInstance()->GetPerspectiveCamera()->GetProjMat();
+			const Mat4& projMat = CDirector::GetInstance()->GetCurProjectionMat();
 			glUniformMatrix4fv(perspectiveMatrixUnif, 1, GL_FALSE, projMat.m);
 		}
 
@@ -435,7 +435,7 @@ void CMesh::UpdateLightUniform()
 
 void CMesh::UpdateMaterialUniform( int i )
 {
-	if ( m_vMaterial[i].GetBaseColorTex() != 99999 )
+	if ( m_vMaterial[i].GetBaseColorTex() != -1 )
 	{
 		GLint colorTextureUnif = glGetUniformLocation(m_theProgram, "u_Material.baseColorTex");
 		if ( colorTextureUnif >= 0 )
@@ -448,7 +448,7 @@ void CMesh::UpdateMaterialUniform( int i )
 		}
 	}
 
-	if ( m_vMaterial[i].GetNormalMapTex() != 99999 )
+	if ( m_vMaterial[i].GetNormalMapTex() != -1 )
 	{
 		GLint colorTextureUnif = glGetUniformLocation(m_theProgram, "u_Material.normalMapTex");
 		if ( colorTextureUnif >= 0 )
@@ -464,7 +464,7 @@ void CMesh::UpdateMaterialUniform( int i )
 	GLint bHasNormalMapUnif = glGetUniformLocation(m_theProgram, "u_Material.bHasNormalMap");
 	if ( bHasNormalMapUnif >= 0 )
 	{
-		glUniform1i(bHasNormalMapUnif, int(m_vMaterial[i].GetNormalMapTex() != 99999));
+		glUniform1i(bHasNormalMapUnif, int(m_vMaterial[i].GetNormalMapTex() != -1));
 	}
 
 	GLint shininessUnif = glGetUniformLocation(m_theProgram, "u_Material.shininess");

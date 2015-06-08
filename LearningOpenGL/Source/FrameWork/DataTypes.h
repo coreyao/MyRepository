@@ -5,6 +5,7 @@
 #include <vector>
 #include <set>
 #include <queue>
+#include <stack>
 
 #include "Math/Vector.h"
 #include "Math/Quaternion.h"

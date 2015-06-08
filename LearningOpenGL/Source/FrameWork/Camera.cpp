@@ -52,12 +52,12 @@ void CCamera::Rotate( float fPitch, float fYaw )
 	UpdateProjectionViewMat();
 }
 
-Mat4 CCamera::GetViewMat() const
+const Mat4& CCamera::GetViewMat() const
 {
 	return m_viewMat;
 }
 
-Mat4 CCamera::GetProjMat() const
+const Mat4& CCamera::GetProjMat() const
 {
 	return m_ProjMat;
 }

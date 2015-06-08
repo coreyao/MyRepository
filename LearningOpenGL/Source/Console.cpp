@@ -11,6 +11,7 @@
 #include "FrameWork/SkyBox.h"
 #include "FrameWork/ThirdPersonController.h"
 #include "FrameWork/Light.h"
+#include "FrameWork/ShadowMap.h"
 
 CMesh* g_pCharactor = nullptr;
 CMesh* g_pLightMesh = nullptr;
@@ -28,6 +29,8 @@ CTerrain* g_pTerrain = nullptr;
 CSkyBox* g_pSkyBox = nullptr;
 
 CThirdPersonController* g_pController = nullptr;
+
+CShadowmap* g_pShadowMap = nullptr;
 
 timeval g_fLastTime = {0, 0};
 float g_fDeltaTime = 0.0f;
@@ -68,6 +71,7 @@ void init()
 	CGLProgramManager::GetInstance()->Add("Primitive", SHADER_FILE_DIR + "Primitive_Vertex_Shader.vert", SHADER_FILE_DIR + "Primitive_Fragment_Shader.frag");
 	CGLProgramManager::GetInstance()->Add("Terrain", SHADER_FILE_DIR + "Terrain_Vertex_Shader.vert", SHADER_FILE_DIR + "Terrain_Fragment_Shader.frag");
 	CGLProgramManager::GetInstance()->Add("SkyBox", SHADER_FILE_DIR + "SkyBox_Vertex_Shader.vert", SHADER_FILE_DIR + "SkyBox_Fragment_Shader.frag");
+	CGLProgramManager::GetInstance()->Add("ShadowMap", SHADER_FILE_DIR + "shadow_map.vert", SHADER_FILE_DIR + "shadow_map.frag");
 
 	g_pDeltaTimeLabel = new CLabel(FONT_FILE_DIR + "simyou.ttf", 20);
 	g_pDeltaTimeLabel->m_transform.m_pos.x = -RESOLUTION_WIDTH / 2 + 10;
@@ -191,8 +195,12 @@ void init()
 	//pSpotLight->m_attenuation_quadratic = 0.032f;
 	pSpotLight->m_pDebugMesh = g_pLightMesh;
 	//CLightManager::GetInstance()->AddLight(pSpotLight);
+
+	g_pShadowMap = new CShadowmap;
+	g_pShadowMap->Init(pDirectionalLight);
 }
 
+void DrawScene();
 void DrawMesh();
 void DrawLabel();
 void DrawTerrain();
@@ -223,11 +231,10 @@ void display()
 	glClearDepth(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	DrawMesh();
-	//DrawTerrain();
-	//DrawPrimitive();
-	DrawSkyBox();
-	//DrawParticleSystem();
+	//g_pShadowMap->PreRender();
+	DrawScene();
+	//g_pShadowMap->PostRender();
+	g_pShadowMap->DebugRenderShadowMap();
 	DrawLabel();
 
 	glutSwapBuffers();
@@ -272,7 +279,7 @@ void mouse_down( int button, int state, int x, int y )
 		//{
 		//	Vec3 pos = CDirector::GetInstance()->Unproject(Vec2(x, y));
 		//	CRay ray(Vec3(0, 0, 0), pos);
-		//	ray.Transform( CDirector::GetInstance()->GetPerspectiveCamera()->GetViewMat().Inverse() );
+		//	ray.Transform( CDirector::GetInstance()->GetCurViewMat().Inverse() );
 		//	if ( ray.m_direction.Dot(Vec3(0, 1, 0)) < 0 )
 		//	{
 		//		Vec3 intersectionPos = g_pTerrain->GetIntersectionPoint(ray);
@@ -324,7 +331,7 @@ void DrawMesh()
 	if ( bDrawMesh )
 	{
 		//g_pLightMesh->m_transform.m_pos = Vec3( 500 * cos(g_fElapsedTime), 500, 500 * sin(g_fElapsedTime) );
-		g_pLightMesh->m_transform.m_pos = Vec3( -300, 500, 300 );
+		g_pLightMesh->m_transform.m_pos = Vec3( -300, 1000, 300 );
 
 		for (int i = 0; i < g_vMesh.size(); ++i)
 		{
@@ -388,5 +395,14 @@ void DrawParticleSystem()
 	g_particleSystem->Update(g_fDeltaTime);
 	g_particleSystem->GetTransformData().SetMat(g_pCharactor->m_vSocket[0].GetWorldMat());
 	g_particleSystem->Render();
+}
+
+void DrawScene()
+{
+	DrawMesh();
+	//DrawTerrain();
+	//DrawPrimitive();
+	DrawSkyBox();
+	//DrawParticleSystem();
 }
 
