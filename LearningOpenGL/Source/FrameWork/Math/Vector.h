@@ -20,6 +20,7 @@ public:
 
 	bool operator==( const Vec2& rh );
 	bool operator!=( const Vec2& rh );
+	const Vec2 operator-(const Vec2& rh) const;
 	
 	float x, y;
 };

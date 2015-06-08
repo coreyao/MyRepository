@@ -4,10 +4,12 @@ layout(location = 1) in vec2 a_texCoord;
 layout(location = 2) in vec4 a_boneIndex;
 layout(location = 3) in vec4 a_boneWeight;
 layout(location = 4) in vec3 a_normal;
+layout(location = 5) in vec3 a_tangent;
 
 out vec2 colorCoord;
 out vec3 normal;
 out vec3 fragPos;
+out vec3 tangent;
 
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
@@ -89,6 +91,7 @@ void main()
 
 	fragPos = (modelMatrix * localPos).xyz;
 	normal = normalize((modelMatrix * localNormal)).xyz;
+	tangent = normalize((modelMatrix * vec4(a_tangent, 0.0))).xyz;
 	colorCoord = a_texCoord;
 
 	gl_Position = perspectiveMatrix * viewMatrix * modelMatrix * localPos;

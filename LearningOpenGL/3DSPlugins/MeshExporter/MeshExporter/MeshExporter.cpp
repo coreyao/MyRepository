@@ -470,6 +470,42 @@ void MeshExporter::ParseGeomObject(INode* pNode)
 						tV3.m_texCoord.y = 1.0 - mesh->tVerts[tSrcTexIndex3].y;
 					}  
 				}  
+
+				for ( auto& rFace : tMesh.m_vFace )
+				{
+					int tDestTexIndex1 = rFace.m_VertexIndex1;  
+					int tDestTexIndex2 = rFace.m_VertexIndex2;  
+					int tDestTexIndex3 = rFace.m_VertexIndex3;
+
+					SSkinMeshVertex& tV1 = tVertexVec[tDestTexIndex1];  
+					SSkinMeshVertex& tV2 = tVertexVec[tDestTexIndex2];  
+					SSkinMeshVertex& tV3 = tVertexVec[tDestTexIndex3];
+
+					Vec3 edge1 = tV2.m_position - tV1.m_position;
+					Vec3 edge2 = tV3.m_position - tV1.m_position;
+					Vec2 deltaUV1 = tV2.m_texCoord - tV1.m_texCoord;
+					Vec2 deltaUV2 = tV3.m_texCoord - tV1.m_texCoord;
+
+					float d = deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y;
+					if ( d == 0 )
+						d = 1;
+					float f = 1.0f / ( deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y );
+					Vec3 tangentNormal;
+					tangentNormal.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+					tangentNormal.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+					tangentNormal.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+					tangentNormal.normalize();
+
+					tV1.m_tangent += tangentNormal;
+					tV2.m_tangent += tangentNormal;
+					tV3.m_tangent += tangentNormal;
+				}
+
+				for (int i = 0; i < tVertexNum; i++)
+				{
+					SSkinMeshVertex& tV = tVertexVec[i];
+					tV.m_tangent.normalize();
+				}
   
 				vector<ISkin*> vSkinInfo = FindSkinModifier(pNode);
 				if ( !vSkinInfo.empty() )

@@ -73,6 +73,7 @@ CLightManager::CLightManager()
 
 CMaterial::CMaterial()
 	: m_baseColorTex(-1)
+	, m_normalMapTex(-1)
 	, m_fShininess(32)
 {
 }
@@ -97,6 +98,26 @@ void CMaterial::SetBaseColorTexture( const std::string& sFileName )
 	}
 }
 
+void CMaterial::SetNormalMapTexture( const std::string& sFileName )
+{
+	unsigned char* pData = nullptr;
+	float fWidth = 0;
+	float fHeight = 0;
+
+	CImageManager::GetInstance()->Load(sFileName.c_str(), pData, fWidth, fHeight);
+	if ( pData )
+	{
+		glGenTextures(1, &m_normalMapTex);
+		glBindTexture(GL_TEXTURE_2D, m_normalMapTex);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fWidth, fHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, pData);
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		delete [] pData;
+	}
+}
+
 void CMaterial::SetShininess( float fShininess )
 {
 	m_fShininess = fShininess;
@@ -110,6 +131,11 @@ GLuint CMaterial::GetBaseColorTex()
 float CMaterial::GetShininess()
 {
 	return m_fShininess;
+}
+
+GLuint CMaterial::GetNormalMapTex()
+{
+	return m_normalMapTex;
 }
 
 CPointLight::CPointLight()

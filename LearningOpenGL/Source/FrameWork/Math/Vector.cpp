@@ -11,6 +11,11 @@ bool Vec2::operator!=( const Vec2& rh )
 	return !(*this == rh);
 }
 
+const Vec2 Vec2::operator-( const Vec2& rh ) const
+{
+	return Vec2( this->x - rh.x, this->y - rh.y );
+}
+
 Vec3::Vec3()
 	: x(0), y(0), z(0)
 {

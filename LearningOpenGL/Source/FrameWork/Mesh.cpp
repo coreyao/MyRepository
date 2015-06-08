@@ -248,6 +248,8 @@ void CMesh::InitVBOAndVAO()
 		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(SSkinMeshVertex), (GLvoid*) offsetof(SSkinMeshVertex, m_blendWeight));
 		glEnableVertexAttribArray(4);
 		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(SSkinMeshVertex), (GLvoid*) offsetof(SSkinMeshVertex, m_normal));
+		glEnableVertexAttribArray(5);
+		glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, sizeof(SSkinMeshVertex), (GLvoid*) offsetof(SSkinMeshVertex, m_tangent));
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
@@ -444,6 +446,25 @@ void CMesh::UpdateMaterialUniform( int i )
 			glBindTexture(GL_TEXTURE_2D, m_vMaterial[i].GetBaseColorTex());
 			glBindSampler(0, m_Sampler);
 		}
+	}
+
+	if ( m_vMaterial[i].GetNormalMapTex() >= 0 )
+	{
+		GLint colorTextureUnif = glGetUniformLocation(m_theProgram, "u_Material.normalMapTex");
+		if ( colorTextureUnif >= 0 )
+		{
+			glUniform1i(colorTextureUnif, 1);
+
+			glActiveTexture(GL_TEXTURE0 + 1);
+			glBindTexture(GL_TEXTURE_2D, m_vMaterial[i].GetNormalMapTex());
+			glBindSampler(1, m_Sampler);
+		}
+	}
+
+	GLint bHasNormalMapUnif = glGetUniformLocation(m_theProgram, "u_Material.bHasNormalMap");
+	if ( bHasNormalMapUnif >= 0 )
+	{
+		glUniform1i(bHasNormalMapUnif, int(m_vMaterial[i].GetNormalMapTex() >= 0));
 	}
 
 	GLint shininessUnif = glGetUniformLocation(m_theProgram, "u_Material.shininess");

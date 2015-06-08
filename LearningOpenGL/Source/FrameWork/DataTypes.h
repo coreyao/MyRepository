@@ -96,6 +96,7 @@ struct SSkinMeshVertex
 
 	Vec3 m_position;
 	Vec3 m_normal;
+	Vec3 m_tangent;
 	Vec2 m_texCoord;
 	Color4F m_color;
 	Vec4 m_boneIndex;
@@ -104,6 +105,9 @@ struct SSkinMeshVertex
 
 struct SCommonVertex
 {
+	SCommonVertex(){}
+	SCommonVertex(const Vec3& pos, const Color4F& color, const Vec2& uv);
+
 	Vec3 m_pos;
 	Color4F m_color;
 	Vec2 m_UV;

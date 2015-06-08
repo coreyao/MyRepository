@@ -3,6 +3,7 @@ out vec4 outputColor;
 in vec2 colorCoord;
 in vec3 normal;
 in vec3 fragPos;
+in vec3 tangent;
 
 uniform sampler2D u_colorTexture;
 uniform vec4 u_color;
@@ -14,6 +15,9 @@ struct Material
 {
 	sampler2D baseColorTex;
 	float shininess;
+
+	bool bHasNormalMap;
+	sampler2D normalMapTex;
 };
 uniform Material u_Material;
 
@@ -63,7 +67,7 @@ struct SpotLight
 const int MAX_SPOT_LIGHT_COUNT = 5;
 uniform SpotLight u_AllSpotLight[MAX_SPOT_LIGHT_COUNT];
 
-vec3 CalcDirLightContribution()
+vec3 CalcDirLightContribution(vec3 n)
 {
 	vec3 outColor = vec3(0.0, 0.0, 0.0);
 	vec3 baseColor = (texture(u_Material.baseColorTex, colorCoord) * u_color ).xyz;
@@ -74,14 +78,14 @@ vec3 CalcDirLightContribution()
 		outColor += baseColor * u_AllDirLight[i].ambient;
 		outColor += baseColor * u_AllDirLight[i].diffuse * max(dot(lightDir, normalize(normal)), 0.0);
 
-		float spec = max(dot(normalize(reflect(lightDir, normal)), normalize(u_eyePos - fragPos)), 0.0);
+		float spec = max(dot(normalize(reflect(lightDir, n)), normalize(u_eyePos - fragPos)), 0.0);
 		outColor += baseColor * u_AllDirLight[i].specular * pow(spec, u_Material.shininess);
 	}
 
 	return outColor;
 }
 
-vec3 CalcPointLightContribution()
+vec3 CalcPointLightContribution(vec3 n)
 {
 	vec3 outColor = vec3(0.0, 0.0, 0.0);
 	vec3 baseColor = (texture(u_Material.baseColorTex, colorCoord) * u_color ).xyz;
@@ -94,16 +98,16 @@ vec3 CalcPointLightContribution()
 		vec3 lightDir = normalize( u_AllPointLight[i].position - fragPos);
 
 		outColor += baseColor * u_AllPointLight[i].ambient * attenuation;
-		outColor += baseColor * u_AllPointLight[i].diffuse * max(dot(lightDir, normalize(normal)), 0.0) * attenuation;
+		outColor += baseColor * u_AllPointLight[i].diffuse * max(dot(lightDir, normalize(n)), 0.0) * attenuation;
 
-		float spec = max(dot(normalize(reflect(lightDir, normal)), normalize(u_eyePos - fragPos)), 0.0);
+		float spec = max(dot(normalize(reflect(lightDir, n)), normalize(u_eyePos - fragPos)), 0.0);
 		outColor += baseColor * u_AllPointLight[i].specular * pow(spec, u_Material.shininess) * attenuation;
 	}
 
 	return outColor;
 }
 
-vec3 CalcSpotLightContribution()
+vec3 CalcSpotLightContribution(vec3 n)
 {
 	vec3 outColor = vec3(0.0, 0.0, 0.0);
 	vec3 baseColor = (texture(u_Material.baseColorTex, colorCoord) * u_color ).xyz;
@@ -116,9 +120,9 @@ vec3 CalcSpotLightContribution()
 		vec3 ambient = baseColor * u_AllSpotLight[i].ambient * attenuation;
 
 		vec3 lightDir = normalize( u_AllSpotLight[i].position - fragPos);
-		vec3 diffuse = baseColor * u_AllSpotLight[i].diffuse * max(dot(lightDir, normalize(normal)), 0.0) * attenuation;
+		vec3 diffuse = baseColor * u_AllSpotLight[i].diffuse * max(dot(lightDir, normalize(n)), 0.0) * attenuation;
 
-		float spec = max(dot(normalize(reflect(lightDir, normal)), normalize(u_eyePos - fragPos)), 0.0);
+		float spec = max(dot(normalize(reflect(lightDir, n)), normalize(u_eyePos - fragPos)), 0.0);
 		vec3 specular = baseColor * u_AllSpotLight[i].specular * pow(spec, u_Material.shininess) * attenuation;
 
 		float fTheta = acos( dot(lightDir, normalize(-u_AllSpotLight[i].direction)) );
@@ -141,9 +145,22 @@ void main()
 	vec3 finalColor = vec3(0.0, 0.0, 0.0);
 	if ( u_enableLight > 0 )
 	{
-		finalColor += CalcDirLightContribution();
-		finalColor += CalcPointLightContribution();
-		finalColor += CalcSpotLightContribution();
+		vec3 n = normal;
+		if (u_Material.bHasNormalMap)
+		{
+			vec3 T = normalize(tangent);
+			vec3 N = normalize(normal);
+			vec3 B = normalize(cross(N, T));
+			mat3 TBN = mat3(T, B, N);
+
+			n = texture(u_Material.normalMapTex, colorCoord).xyz;
+			n = n * 2.0 - 1.0;
+			n = normalize(TBN * n);
+		}
+
+		finalColor += CalcDirLightContribution(n);
+		finalColor += CalcPointLightContribution(n);
+		finalColor += CalcSpotLightContribution(n);
 	}
 	else
 	{

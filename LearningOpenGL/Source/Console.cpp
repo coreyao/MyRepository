@@ -13,7 +13,7 @@
 #include "FrameWork/Light.h"
 
 CMesh* g_pCharactor = nullptr;
-CMesh* g_pDirLightMesh = nullptr;
+CMesh* g_pLightMesh = nullptr;
 std::vector<CMesh*> g_vMesh;
 std::vector<GLuint> g_vGLProgram;
 
@@ -110,7 +110,8 @@ void init()
 	for ( int i = 0; i < planeMesh->GetMeshData().m_vSubMesh.size(); ++i )
 	{
 		CMaterial newMaterial;
-		newMaterial.SetBaseColorTexture("default.png");
+		newMaterial.SetBaseColorTexture("brickwall.png");
+		newMaterial.SetNormalMapTexture("brickwall_normal.png");
 		planeMesh->SetMaterial(newMaterial, i);
 	}
 	planeMesh->m_color = Color4F(1.0f, 1.0f, 1.0f, 1.0f);
@@ -119,22 +120,22 @@ void init()
 	planeMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh") );
 	g_vMesh.push_back(planeMesh);
 
-	g_pDirLightMesh = new CMesh;
-	g_pDirLightMesh->InitFromFile("ball.CSTM");
-	g_pDirLightMesh->m_transform.m_pos.set(0, 100, -100);
-	for ( int i = 0; i < g_pDirLightMesh->GetMeshData().m_vSubMesh.size(); ++i )
+	g_pLightMesh = new CMesh;
+	g_pLightMesh->InitFromFile("ball.CSTM");
+	g_pLightMesh->m_transform.m_pos.set(0, 100, -100);
+	for ( int i = 0; i < g_pLightMesh->GetMeshData().m_vSubMesh.size(); ++i )
 	{
 		CMaterial newMaterial;
 		newMaterial.SetBaseColorTexture("default.png");
-		g_pDirLightMesh->SetMaterial(newMaterial, i);
+		g_pLightMesh->SetMaterial(newMaterial, i);
 	}
-	g_pDirLightMesh->m_color = Color4F(1.0f, 1.0f, 1.0f, 1.0f);
-	g_pDirLightMesh->m_bEnableCullFace = false;
-	g_pDirLightMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh") );
-	g_vMesh.push_back(g_pDirLightMesh);
+	g_pLightMesh->m_color = Color4F(1.0f, 1.0f, 1.0f, 1.0f);
+	g_pLightMesh->m_bEnableCullFace = false;
+	g_pLightMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh") );
+	g_vMesh.push_back(g_pLightMesh);
 
 	g_pCharactor = new CMesh;
-	g_pCharactor->InitFromFile("talu.CSTM");
+	g_pCharactor->InitFromFile("hama.CSTM");
 	g_pCharactor->m_transform.m_scale.set(1, 1, -1);
 	g_pCharactor->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("SkinMesh") );
 	g_pCharactor->PlayAnim(0, 25, true, nullptr);
@@ -167,15 +168,15 @@ void init()
 	pDirectionalLight->m_specularColor = Vec3(1.0f, 1.0f, 1.0f);
 	pDirectionalLight->m_lightDir = Vec3(1, 1, 1);
 	pDirectionalLight->m_lightDir.normalize();
-	pDirectionalLight->m_pDebugMesh = g_pDirLightMesh;
+	pDirectionalLight->m_pDebugMesh = g_pLightMesh;
 	//CLightManager::GetInstance()->AddLight(pDirectionalLight);
 
 	CPointLight* pPointLight = new CPointLight;
 	pPointLight->m_ambientColor = Vec3(0.1f, 0.1f, 0.1f);
-	pPointLight->m_diffuseColor = Vec3(0.8f, 0.8f, 0.8f);
+	pPointLight->m_diffuseColor = Vec3(1.0f, 1.0f, 1.0f);
 	pPointLight->m_specularColor = Vec3(1.0f, 1.0f, 1.0f);
-	pPointLight->m_pDebugMesh = g_pDirLightMesh;
-	//CLightManager::GetInstance()->AddLight(pPointLight);
+	pPointLight->m_pDebugMesh = g_pLightMesh;
+	CLightManager::GetInstance()->AddLight(pPointLight);
 
 	CSpotLight* pSpotLight = new CSpotLight;
 	pSpotLight->m_ambientColor = Vec3(0.1f, 0.1f, 0.1f);
@@ -185,10 +186,10 @@ void init()
 	pSpotLight->m_lightDir.normalize();
 	pSpotLight->fInnerAngle = 30;
 	pSpotLight->fOuterAngle = 60;
-	//pSpotLight->m_attenuation_linear = 0.09f;
+	//pSpotLight->m_attenuation_linear = 0.0009f;
 	//pSpotLight->m_attenuation_quadratic = 0.032f;
-	pSpotLight->m_pDebugMesh = g_pDirLightMesh;
-	CLightManager::GetInstance()->AddLight(pSpotLight);
+	pSpotLight->m_pDebugMesh = g_pLightMesh;
+	//CLightManager::GetInstance()->AddLight(pSpotLight);
 }
 
 void DrawMesh();
@@ -321,8 +322,8 @@ void DrawMesh()
 {
 	if ( bDrawMesh )
 	{
-		//g_pDirLightMesh->m_transform.m_pos = Vec3( 500 * cos(g_fElapsedTime), 300, 500 * sin(g_fElapsedTime) );
-		g_pDirLightMesh->m_transform.m_pos = Vec3( 300, 300, 300 );
+		g_pLightMesh->m_transform.m_pos = Vec3( 500 * cos(g_fElapsedTime), 500, 500 * sin(g_fElapsedTime) );
+		//g_pLightMesh->m_transform.m_pos = Vec3( 300, 500, 300 );
 
 		for (int i = 0; i < g_vMesh.size(); ++i)
 		{
