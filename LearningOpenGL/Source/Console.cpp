@@ -112,6 +112,7 @@ void init()
 		CMaterial newMaterial;
 		newMaterial.SetBaseColorTexture("brickwall.png");
 		newMaterial.SetNormalMapTexture("brickwall_normal.png");
+		newMaterial.SetShininess(64.0f);
 		planeMesh->SetMaterial(newMaterial, i);
 	}
 	planeMesh->m_color = Color4F(1.0f, 1.0f, 1.0f, 1.0f);
@@ -322,8 +323,8 @@ void DrawMesh()
 {
 	if ( bDrawMesh )
 	{
-		g_pLightMesh->m_transform.m_pos = Vec3( 500 * cos(g_fElapsedTime), 500, 500 * sin(g_fElapsedTime) );
-		//g_pLightMesh->m_transform.m_pos = Vec3( 300, 500, 300 );
+		//g_pLightMesh->m_transform.m_pos = Vec3( 500 * cos(g_fElapsedTime), 500, 500 * sin(g_fElapsedTime) );
+		g_pLightMesh->m_transform.m_pos = Vec3( -300, 500, 300 );
 
 		for (int i = 0; i < g_vMesh.size(); ++i)
 		{

@@ -435,7 +435,7 @@ void CMesh::UpdateLightUniform()
 
 void CMesh::UpdateMaterialUniform( int i )
 {
-	if ( m_vMaterial[i].GetBaseColorTex() >= 0 )
+	if ( m_vMaterial[i].GetBaseColorTex() != 99999 )
 	{
 		GLint colorTextureUnif = glGetUniformLocation(m_theProgram, "u_Material.baseColorTex");
 		if ( colorTextureUnif >= 0 )
@@ -448,7 +448,7 @@ void CMesh::UpdateMaterialUniform( int i )
 		}
 	}
 
-	if ( m_vMaterial[i].GetNormalMapTex() >= 0 )
+	if ( m_vMaterial[i].GetNormalMapTex() != 99999 )
 	{
 		GLint colorTextureUnif = glGetUniformLocation(m_theProgram, "u_Material.normalMapTex");
 		if ( colorTextureUnif >= 0 )
@@ -464,7 +464,7 @@ void CMesh::UpdateMaterialUniform( int i )
 	GLint bHasNormalMapUnif = glGetUniformLocation(m_theProgram, "u_Material.bHasNormalMap");
 	if ( bHasNormalMapUnif >= 0 )
 	{
-		glUniform1i(bHasNormalMapUnif, int(m_vMaterial[i].GetNormalMapTex() >= 0));
+		glUniform1i(bHasNormalMapUnif, int(m_vMaterial[i].GetNormalMapTex() != 99999));
 	}
 
 	GLint shininessUnif = glGetUniformLocation(m_theProgram, "u_Material.shininess");

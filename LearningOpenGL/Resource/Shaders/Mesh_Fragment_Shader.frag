@@ -78,7 +78,8 @@ vec3 CalcDirLightContribution(vec3 n)
 		outColor += baseColor * u_AllDirLight[i].ambient;
 		outColor += baseColor * u_AllDirLight[i].diffuse * max(dot(lightDir, normalize(normal)), 0.0);
 
-		float spec = max(dot(normalize(reflect(lightDir, n)), normalize(u_eyePos - fragPos)), 0.0);
+		vec3 halfDir = normalize(lightDir + normalize(u_eyePos - fragPos));
+		float spec = max(dot(halfDir, normalize(n)), 0.0);
 		outColor += baseColor * u_AllDirLight[i].specular * pow(spec, u_Material.shininess);
 	}
 
@@ -100,7 +101,8 @@ vec3 CalcPointLightContribution(vec3 n)
 		outColor += baseColor * u_AllPointLight[i].ambient * attenuation;
 		outColor += baseColor * u_AllPointLight[i].diffuse * max(dot(lightDir, normalize(n)), 0.0) * attenuation;
 
-		float spec = max(dot(normalize(reflect(lightDir, n)), normalize(u_eyePos - fragPos)), 0.0);
+		vec3 halfDir = normalize(lightDir + normalize(u_eyePos - fragPos));
+		float spec = max(dot(halfDir, normalize(n)), 0.0);
 		outColor += baseColor * u_AllPointLight[i].specular * pow(spec, u_Material.shininess) * attenuation;
 	}
 
@@ -122,7 +124,8 @@ vec3 CalcSpotLightContribution(vec3 n)
 		vec3 lightDir = normalize( u_AllSpotLight[i].position - fragPos);
 		vec3 diffuse = baseColor * u_AllSpotLight[i].diffuse * max(dot(lightDir, normalize(n)), 0.0) * attenuation;
 
-		float spec = max(dot(normalize(reflect(lightDir, n)), normalize(u_eyePos - fragPos)), 0.0);
+		vec3 halfDir = normalize(lightDir + normalize(u_eyePos - fragPos));
+		float spec = max(dot(halfDir, normalize(n)), 0.0);
 		vec3 specular = baseColor * u_AllSpotLight[i].specular * pow(spec, u_Material.shininess) * attenuation;
 
 		float fTheta = acos( dot(lightDir, normalize(-u_AllSpotLight[i].direction)) );
@@ -168,4 +171,8 @@ void main()
 	}
 
 	outputColor = vec4(finalColor, baseColor.w);
+
+	// - gamma correction
+	float gamma = 2.2;
+    outputColor.rgb = pow(outputColor.rgb, vec3(1.0/gamma));
 }

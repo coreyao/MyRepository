@@ -72,8 +72,8 @@ CLightManager::CLightManager()
 }
 
 CMaterial::CMaterial()
-	: m_baseColorTex(-1)
-	, m_normalMapTex(-1)
+	: m_baseColorTex(99999)
+	, m_normalMapTex(99999)
 	, m_fShininess(32)
 {
 }
