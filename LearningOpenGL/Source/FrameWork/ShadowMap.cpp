@@ -2,6 +2,7 @@
 #include "OpenGL/GLProgramManager.h"
 #include "Director.h"
 #include "Light.h"
+#include "Mesh.h"
 
 const GLuint SHADOW_WIDTH = 1024;
 const GLuint SHADOW_HEIGHT = 1024;
@@ -13,6 +14,7 @@ void CShadowmap::Init(CDirectionalLight* pDirLight)
 	glGenTextures(1, &m_depthMapTex);
 	glBindTexture(GL_TEXTURE_2D, m_depthMapTex);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_RGBA, GL_FLOAT, nullptr);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); 
@@ -20,6 +22,7 @@ void CShadowmap::Init(CDirectionalLight* pDirLight)
 
 	glBindFramebuffer(GL_FRAMEBUFFER, m_depthMapFBO);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthMapTex, 0);
+	//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_depthMapTex, 0);
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -29,10 +32,10 @@ void CShadowmap::Init(CDirectionalLight* pDirLight)
 	glGenVertexArrays(1, &m_vertexAttributeObj);
 
 	SCommonVertex vVertex[4] = {
-		SCommonVertex(Vec3(-1, -1, 0), Color4F(1, 1, 1, 1), Vec2(0, 1)),
-		SCommonVertex(Vec3(-1, 1, 0), Color4F(1, 1, 1, 1), Vec2(0, 0)),
-		SCommonVertex(Vec3(1, 1, 0), Color4F(1, 1, 1, 1), Vec2(1, 0)),
-		SCommonVertex(Vec3(1, -1, 0), Color4F(1, 1, 1, 1), Vec2(1, 1))
+		SCommonVertex(Vec3(-1, -1, 0), Color4F(1, 1, 1, 1), Vec2(0, 0)),
+		SCommonVertex(Vec3(-1, 1, 0), Color4F(1, 1, 1, 1), Vec2(0, 1)),
+		SCommonVertex(Vec3(1, 1, 0), Color4F(1, 1, 1, 1), Vec2(1, 1)),
+		SCommonVertex(Vec3(1, -1, 0), Color4F(1, 1, 1, 1), Vec2(1, 0))
 	};
 
 	unsigned short vVertexIndex[6] = {
@@ -60,7 +63,7 @@ void CShadowmap::Init(CDirectionalLight* pDirLight)
 	glBindVertexArray(0);
 
 	m_lightProjMat = Mat4::createOrthographic(RESOLUTION_WIDTH, RESOLUTION_HEIGHT, 1.0f, 1000.0f);
-	m_lightViewMat = Mat4::createLookAt(Vec3(-300, 1000, 300), pDirLight->m_lightDir, Vec3(0, 1, 0));
+	m_lightViewMat = Mat4::createLookAt(pDirLight->m_pDebugMesh->m_transform.m_pos, pDirLight->m_lightDir, Vec3(0, 1, 0));
 
 	CDirector::GetInstance()->m_pLightProjMat = m_lightProjMat;
 	CDirector::GetInstance()->m_pLightViewMat = m_lightViewMat;
@@ -72,7 +75,7 @@ void CShadowmap::PreRender()
 {
 	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_depthMapFBO);
-	glClear(GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	CDirector::GetInstance()->m_pLightProjMat = m_lightProjMat;
 	CDirector::GetInstance()->m_pLightViewMat = m_lightViewMat;
@@ -104,11 +107,11 @@ void CShadowmap::DebugRenderShadowMap()
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, m_depthMapTex);
 	}
-
+	
+	glDisable(GL_CULL_FACE);
 	glUseProgram(m_theProgram);
-	glBindBuffer(GL_ARRAY_BUFFER, m_vertexDataObj);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vertexIndexObj);
 	glBindVertexArray(m_vertexAttributeObj);
-	//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vertexIndexObj);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 }
 

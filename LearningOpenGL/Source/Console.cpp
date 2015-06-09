@@ -174,14 +174,14 @@ void init()
 	pDirectionalLight->m_lightDir = Vec3(1, 1, 1);
 	pDirectionalLight->m_lightDir.normalize();
 	pDirectionalLight->m_pDebugMesh = g_pLightMesh;
-	//CLightManager::GetInstance()->AddLight(pDirectionalLight);
+	CLightManager::GetInstance()->AddLight(pDirectionalLight);
 
 	CPointLight* pPointLight = new CPointLight;
 	pPointLight->m_ambientColor = Vec3(0.1f, 0.1f, 0.1f);
 	pPointLight->m_diffuseColor = Vec3(1.0f, 1.0f, 1.0f);
 	pPointLight->m_specularColor = Vec3(1.0f, 1.0f, 1.0f);
 	pPointLight->m_pDebugMesh = g_pLightMesh;
-	CLightManager::GetInstance()->AddLight(pPointLight);
+	//CLightManager::GetInstance()->AddLight(pPointLight);
 
 	CSpotLight* pSpotLight = new CSpotLight;
 	pSpotLight->m_ambientColor = Vec3(0.1f, 0.1f, 0.1f);
@@ -196,6 +196,8 @@ void init()
 	pSpotLight->m_pDebugMesh = g_pLightMesh;
 	//CLightManager::GetInstance()->AddLight(pSpotLight);
 
+	g_pLightMesh->m_transform.m_pos = Vec3( -300, 1000, 300 );
+	pDirectionalLight->m_lightDir = -pDirectionalLight->m_pDebugMesh->m_transform.m_pos;
 	g_pShadowMap = new CShadowmap;
 	g_pShadowMap->Init(pDirectionalLight);
 }
@@ -229,12 +231,14 @@ void display()
 
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClearDepth(1.0f);
+	glDepthRange(0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//g_pShadowMap->PreRender();
+	g_pShadowMap->PreRender();
 	DrawScene();
-	//g_pShadowMap->PostRender();
+	g_pShadowMap->PostRender();
 	g_pShadowMap->DebugRenderShadowMap();
+	DrawSkyBox();
 	DrawLabel();
 
 	glutSwapBuffers();
@@ -267,6 +271,7 @@ void keyboard(unsigned char key, int x, int y)
 	//g_pTerrain->SetDrawWireFrame(bDrawWireFrame);
 
 	CDirector::GetInstance()->GetPerspectiveCamera()->Move(iMoveLeftRight, 0, iMoveForwardBack);
+	//CDirector::GetInstance()->GetOrthographicCamera()->Move(iMoveLeftRight, 0, iMoveForwardBack);
 	/*g_pController->m_transform.m_pos.y = g_pTerrain->GetHeight( Vec2(g_pController->m_transform.m_pos.x, g_pController->m_transform.m_pos.z) );
 	g_pController->Move(iMoveLeftRight, 0, iMoveForwardBack);*/
 }
@@ -320,6 +325,7 @@ void mouse_move(int x,int y)
 		float fYawDelta = (g_lastMousePos.x - x) * 0.1f;
 
 		CDirector::GetInstance()->GetPerspectiveCamera()->Rotate(fPitchDelta, fYawDelta);
+		//CDirector::GetInstance()->GetOrthographicCamera()->Rotate(fPitchDelta, fYawDelta);
 
 		//g_pController->Rotate(fPitchDelta, fYawDelta);
 		g_lastMousePos = Vec2(x, y);
@@ -402,7 +408,6 @@ void DrawScene()
 	DrawMesh();
 	//DrawTerrain();
 	//DrawPrimitive();
-	DrawSkyBox();
 	//DrawParticleSystem();
 }
 
