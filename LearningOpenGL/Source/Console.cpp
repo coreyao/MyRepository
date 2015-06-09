@@ -141,7 +141,7 @@ void init()
 	g_pCharactor->InitFromFile("hama.CSTM");
 	g_pCharactor->m_transform.m_scale.set(1, 1, -1);
 	g_pCharactor->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("SkinMesh") );
-	g_pCharactor->PlayAnim(0, 25, true, nullptr);
+	//g_pCharactor->PlayAnim(0, 25, true, nullptr);
 	g_pCharactor->SetLightEnable(true);
 	g_vMesh.push_back(g_pCharactor);
 
