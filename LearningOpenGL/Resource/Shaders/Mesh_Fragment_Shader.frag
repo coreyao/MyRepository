@@ -71,8 +71,8 @@ uniform SpotLight u_AllSpotLight[MAX_SPOT_LIGHT_COUNT];
 float CalcInShadow()
 {
 	vec3 projCoord = fragPosLightSpace.xyz / fragPosLightSpace.w;
-	//if ( projCoord.x < -1 || projCoord.x > 1 || projCoord.y < -1 || projCoord.y > 1 || projCoord.z < -1 || projCoord.z > 1 )
-		//return 0.0;
+	if ( projCoord.x < -1 || projCoord.x > 1 || projCoord.y < -1 || projCoord.y > 1 || projCoord.z < -1 || projCoord.z > 1 )
+		return 1.0;
 
 	projCoord = projCoord * 0.5 + 0.5;
 

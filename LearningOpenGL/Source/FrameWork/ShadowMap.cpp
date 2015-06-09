@@ -18,6 +18,10 @@ void CShadowmap::Init(CDirectionalLight* pDirLight)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	/*glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER); 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);*/
 
 	glBindFramebuffer(GL_FRAMEBUFFER, m_depthMapFBO);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthMapTex, 0);
@@ -61,7 +65,7 @@ void CShadowmap::Init(CDirectionalLight* pDirLight)
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	m_lightProjMat = Mat4::createOrthographic(RESOLUTION_WIDTH, RESOLUTION_HEIGHT, 1.0f, 1000.0f);
+	m_lightProjMat = Mat4::createOrthographic(SHADOW_WIDTH, SHADOW_HEIGHT, 1.0f, 1000.0f);
 	m_lightViewMat = Mat4::createLookAt(pDirLight->m_pDebugMesh->m_transform.m_pos, pDirLight->m_lightDir, Vec3(0, 0, 1));
 
 	m_theProgram = CGLProgramManager::GetInstance()->CreateProgramByName("ShadowMap");
