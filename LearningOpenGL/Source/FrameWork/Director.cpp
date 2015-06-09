@@ -15,6 +15,8 @@ CDirector* CDirector::GetInstance()
 CDirector::CDirector()
 	: m_pCameraPerspective(nullptr)
 	, m_pCameraOrthographic(nullptr)
+	, m_bDrawShadowMap(false)
+	, m_pShadowMap(nullptr)
 {
 	Init();
 }
@@ -56,22 +58,26 @@ Vec3 CDirector::Unproject( const Vec2& screenPos )
 
 Mat4 CDirector::GetCurProjectionMat()
 {
-	if ( m_pLightProjMat != Mat4::ZERO )
+	if ( m_bDrawShadowMap )
 	{
-		return m_pLightProjMat;
+		return m_pShadowMap->m_lightProjMat;
 
 	}
 	return m_pCameraPerspective->GetProjMat();
+
+	//return m_pCameraOrthographic->GetProjMat();
 }
 
 Mat4 CDirector::GetCurViewMat()
 {
-	if ( m_pLightViewMat != Mat4::ZERO )
+	if ( m_bDrawShadowMap )
 	{
-		return m_pLightViewMat;
+		return m_pShadowMap->m_lightViewMat;
 	}
 
 	return m_pCameraPerspective->GetViewMat();
+
+	//return m_pCameraOrthographic->GetViewMat();
 }
 
 CDirector* CDirector::s_pInstance = nullptr;

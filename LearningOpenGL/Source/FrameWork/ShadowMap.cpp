@@ -14,7 +14,6 @@ void CShadowmap::Init(CDirectionalLight* pDirLight)
 	glGenTextures(1, &m_depthMapTex);
 	glBindTexture(GL_TEXTURE_2D, m_depthMapTex);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_RGBA, GL_FLOAT, nullptr);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); 
@@ -22,7 +21,7 @@ void CShadowmap::Init(CDirectionalLight* pDirLight)
 
 	glBindFramebuffer(GL_FRAMEBUFFER, m_depthMapFBO);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthMapTex, 0);
-	//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_depthMapTex, 0);
+	//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_colorTex, 0);
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -63,10 +62,7 @@ void CShadowmap::Init(CDirectionalLight* pDirLight)
 	glBindVertexArray(0);
 
 	m_lightProjMat = Mat4::createOrthographic(RESOLUTION_WIDTH, RESOLUTION_HEIGHT, 1.0f, 1000.0f);
-	m_lightViewMat = Mat4::createLookAt(pDirLight->m_pDebugMesh->m_transform.m_pos, pDirLight->m_lightDir, Vec3(0, 1, 0));
-
-	CDirector::GetInstance()->m_pLightProjMat = m_lightProjMat;
-	CDirector::GetInstance()->m_pLightViewMat = m_lightViewMat;
+	m_lightViewMat = Mat4::createLookAt(pDirLight->m_pDebugMesh->m_transform.m_pos, pDirLight->m_lightDir, Vec3(0, 0, 1));
 
 	m_theProgram = CGLProgramManager::GetInstance()->CreateProgramByName("ShadowMap");
 }
@@ -77,14 +73,12 @@ void CShadowmap::PreRender()
 	glBindFramebuffer(GL_FRAMEBUFFER, m_depthMapFBO);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	CDirector::GetInstance()->m_pLightProjMat = m_lightProjMat;
-	CDirector::GetInstance()->m_pLightViewMat = m_lightViewMat;
+	CDirector::GetInstance()->m_bDrawShadowMap = true;
 }
 
 void CShadowmap::PostRender()
 {
-	CDirector::GetInstance()->m_pLightProjMat = Mat4::ZERO;
-	CDirector::GetInstance()->m_pLightViewMat = Mat4::ZERO;
+	CDirector::GetInstance()->m_bDrawShadowMap = false;
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 

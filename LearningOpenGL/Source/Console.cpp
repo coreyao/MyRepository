@@ -30,8 +30,6 @@ CSkyBox* g_pSkyBox = nullptr;
 
 CThirdPersonController* g_pController = nullptr;
 
-CShadowmap* g_pShadowMap = nullptr;
-
 timeval g_fLastTime = {0, 0};
 float g_fDeltaTime = 0.0f;
 float g_fElapsedTime = 0.0f;
@@ -196,10 +194,10 @@ void init()
 	pSpotLight->m_pDebugMesh = g_pLightMesh;
 	//CLightManager::GetInstance()->AddLight(pSpotLight);
 
-	g_pLightMesh->m_transform.m_pos = Vec3( -300, 1000, 300 );
+	g_pLightMesh->m_transform.m_pos = Vec3( 0, 500, 0 );
 	pDirectionalLight->m_lightDir = -pDirectionalLight->m_pDebugMesh->m_transform.m_pos;
-	g_pShadowMap = new CShadowmap;
-	g_pShadowMap->Init(pDirectionalLight);
+	CDirector::GetInstance()->m_pShadowMap = new CShadowmap;
+	CDirector::GetInstance()->m_pShadowMap->Init(pDirectionalLight);
 }
 
 void DrawScene();
@@ -234,11 +232,12 @@ void display()
 	glDepthRange(0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	g_pShadowMap->PreRender();
+	CDirector::GetInstance()->m_pShadowMap->PreRender();
 	DrawScene();
-	g_pShadowMap->PostRender();
-	g_pShadowMap->DebugRenderShadowMap();
-	DrawSkyBox();
+	CDirector::GetInstance()->m_pShadowMap->PostRender();
+	//CDirector::GetInstance()->m_pShadowMap->DebugRenderShadowMap();
+	DrawScene();
+	//DrawSkyBox();
 	DrawLabel();
 
 	glutSwapBuffers();
@@ -337,7 +336,7 @@ void DrawMesh()
 	if ( bDrawMesh )
 	{
 		//g_pLightMesh->m_transform.m_pos = Vec3( 500 * cos(g_fElapsedTime), 500, 500 * sin(g_fElapsedTime) );
-		g_pLightMesh->m_transform.m_pos = Vec3( -300, 1000, 300 );
+		//g_pLightMesh->m_transform.m_pos = Vec3( -300, 1000, 300 );
 
 		for (int i = 0; i < g_vMesh.size(); ++i)
 		{

@@ -429,6 +429,21 @@ void CMesh::UpdateLightUniform()
 			if ( unif >= 0 )
 				glUniform1f(unif, DEGREES_TO_RADIANS(pSpotLight->fOuterAngle));
 		}
+
+		GLint unif = glGetUniformLocation(m_theProgram, "lightSpaceMatrix");
+		if ( unif >= 0 )
+		{
+			glUniformMatrix4fv(unif, 1, GL_FALSE, (CDirector::GetInstance()->m_pShadowMap->m_lightProjMat * CDirector::GetInstance()->m_pShadowMap->m_lightViewMat).m);
+		}
+
+		unif = glGetUniformLocation(m_theProgram, "u_shadowMapTexture");
+		if ( unif >= 0 )
+		{
+			glUniform1i(unif, 2);
+
+			glActiveTexture(GL_TEXTURE0 + 2);
+			glBindTexture(GL_TEXTURE_2D, CDirector::GetInstance()->m_pShadowMap->GetDepthMapTex());
+		}
 	}
 }
 

@@ -2,6 +2,7 @@
 
 #include "Utility.h"
 #include "Camera.h"
+#include "ShadowMap.h"
 
 class CDirector
 {
@@ -17,8 +18,8 @@ public:
 	CCamera* GetPerspectiveCamera();
 	CCamera* GetOrthographicCamera();
 
-	Mat4 m_pLightViewMat;
-	Mat4 m_pLightProjMat;
+	bool m_bDrawShadowMap;
+	CShadowmap* m_pShadowMap;
 
 private:
 	CDirector();

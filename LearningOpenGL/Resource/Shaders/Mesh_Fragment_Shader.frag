@@ -4,8 +4,9 @@ in vec2 colorCoord;
 in vec3 normal;
 in vec3 fragPos;
 in vec3 tangent;
+in vec4 fragPosLightSpace;
 
-uniform sampler2D u_colorTexture;
+uniform sampler2D u_shadowMapTexture;
 uniform vec4 u_color;
 uniform int u_enableLight;
 uniform vec3 u_eyePos;
@@ -67,20 +68,36 @@ struct SpotLight
 const int MAX_SPOT_LIGHT_COUNT = 5;
 uniform SpotLight u_AllSpotLight[MAX_SPOT_LIGHT_COUNT];
 
+float CalcInShadow()
+{
+	vec3 projCoord = fragPosLightSpace.xyz / fragPosLightSpace.w;
+	//if ( projCoord.x < -1 || projCoord.x > 1 || projCoord.y < -1 || projCoord.y > 1 || projCoord.z < -1 || projCoord.z > 1 )
+		//return 0.0;
+
+	projCoord = projCoord * 0.5 + 0.5;
+
+	float clostDepth = texture(u_shadowMapTexture, projCoord.xy).r;
+	if ( clostDepth < projCoord.z )
+		return 1.0;
+	else
+		return 0.0;
+}
+
 vec3 CalcDirLightContribution(vec3 n)
 {
 	vec3 outColor = vec3(0.0, 0.0, 0.0);
 	vec3 baseColor = (texture(u_Material.baseColorTex, colorCoord) * u_color ).xyz;
 	for ( int i = 0; i < MAX_DIRECTIONAL_LIGHT_COUNT; ++i )
 	{
+		float IsInShadow = CalcInShadow();
 		vec3 lightDir = -normalize(u_AllDirLight[i].direction);
 
 		outColor += baseColor * u_AllDirLight[i].ambient;
-		outColor += baseColor * u_AllDirLight[i].diffuse * max(dot(lightDir, normalize(normal)), 0.0);
+		outColor += baseColor * u_AllDirLight[i].diffuse * max(dot(lightDir, normalize(normal)), 0.0) * (1.0 - IsInShadow);
 
 		vec3 halfDir = normalize(lightDir + normalize(u_eyePos - fragPos));
 		float spec = max(dot(halfDir, normalize(n)), 0.0);
-		outColor += baseColor * u_AllDirLight[i].specular * pow(spec, u_Material.shininess);
+		outColor += baseColor * u_AllDirLight[i].specular * pow(spec, u_Material.shininess) * (1.0 - IsInShadow);
 	}
 
 	return outColor;
