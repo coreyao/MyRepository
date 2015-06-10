@@ -141,7 +141,7 @@ void init()
 	g_pCharactor->InitFromFile("hama.CSTM");
 	g_pCharactor->m_transform.m_scale.set(1, 1, -1);
 	g_pCharactor->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("SkinMesh") );
-	//g_pCharactor->PlayAnim(0, 25, true, nullptr);
+	g_pCharactor->PlayAnim(0, 25, true, nullptr);
 	g_pCharactor->SetLightEnable(true);
 	g_vMesh.push_back(g_pCharactor);
 
@@ -200,7 +200,9 @@ void init()
 	CDirector::GetInstance()->m_pShadowMap->Init(pDirectionalLight);
 }
 
+void UpdateScene();
 void DrawScene();
+
 void DrawMesh();
 void DrawLabel();
 void DrawTerrain();
@@ -232,6 +234,7 @@ void display()
 	glDepthRange(0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	UpdateScene();
 	CDirector::GetInstance()->m_pShadowMap->PreRender();
 	DrawScene();
 	CDirector::GetInstance()->m_pShadowMap->PostRender();
@@ -340,7 +343,6 @@ void DrawMesh()
 
 		for (int i = 0; i < g_vMesh.size(); ++i)
 		{
-			g_vMesh[i]->Update(g_fDeltaTime);
 			g_vMesh[i]->Render();
 		}
 	}
@@ -379,7 +381,6 @@ void DrawLabel()
 
 void DrawTerrain()
 {
-	g_pTerrain->Update(g_fDeltaTime);
 	g_pTerrain->Render();
 }
 
@@ -391,14 +392,11 @@ void DrawPrimitive()
 
 void DrawSkyBox()
 {
-	g_pSkyBox->Update(g_fDeltaTime);
 	g_pSkyBox->Render();
 }
 
 void DrawParticleSystem()
 {
-	g_particleSystem->Update(g_fDeltaTime);
-	g_particleSystem->GetTransformData().SetMat(g_pCharactor->m_vSocket[0].GetWorldMat());
 	g_particleSystem->Render();
 }
 
@@ -408,5 +406,18 @@ void DrawScene()
 	//DrawTerrain();
 	//DrawPrimitive();
 	//DrawParticleSystem();
+}
+
+void UpdateScene()
+{
+	if ( bDrawMesh )
+	{
+		for (int i = 0; i < g_vMesh.size(); ++i)
+			g_vMesh[i]->Update(g_fDeltaTime);
+	}
+	//g_pTerrain->Update(g_fDeltaTime);
+	//g_pSkyBox->Update(g_fDeltaTime);
+	//g_particleSystem->Update(g_fDeltaTime);
+	//g_particleSystem->GetTransformData().SetMat(g_pCharactor->m_vSocket[0].GetWorldMat());
 }
 

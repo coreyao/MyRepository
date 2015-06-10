@@ -68,7 +68,7 @@ struct SpotLight
 const int MAX_SPOT_LIGHT_COUNT = 5;
 uniform SpotLight u_AllSpotLight[MAX_SPOT_LIGHT_COUNT];
 
-float CalcInShadow()
+float CalcInShadow(vec3 lightDir)
 {
 	vec3 projCoord = fragPosLightSpace.xyz / fragPosLightSpace.w;
 	//if ( projCoord.x < -1 || projCoord.x > 1 || projCoord.y < -1 || projCoord.y > 1 || projCoord.z < -1 || projCoord.z > 1 )
@@ -76,8 +76,9 @@ float CalcInShadow()
 
 	projCoord = projCoord * 0.5 + 0.5;
 
+	float bias = max( (1.0 - dot( normalize(normal), lightDir )) * 0.05, 0.005 );
 	float clostDepth = texture(u_shadowMapTexture, projCoord.xy).r;
-	if ( clostDepth < projCoord.z )
+	if ( clostDepth < projCoord.z - bias )
 		return 1.0;
 	else
 		return 0.0;
@@ -89,8 +90,8 @@ vec3 CalcDirLightContribution(vec3 n)
 	vec3 baseColor = (texture(u_Material.baseColorTex, colorCoord) * u_color ).xyz;
 	for ( int i = 0; i < MAX_DIRECTIONAL_LIGHT_COUNT; ++i )
 	{
-		float IsInShadow = CalcInShadow();
 		vec3 lightDir = -normalize(u_AllDirLight[i].direction);
+		float IsInShadow = CalcInShadow(lightDir);
 
 		outColor += baseColor * u_AllDirLight[i].ambient;
 		outColor += baseColor * u_AllDirLight[i].diffuse * max(dot(lightDir, normalize(normal)), 0.0) * (1.0 - IsInShadow);
