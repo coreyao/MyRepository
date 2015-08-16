@@ -245,8 +245,8 @@ Mat4 STransform::GetTransformMat()
 	}
 
 	return Mat4::CreateFromTranslation(m_pos.x, m_pos.y, m_pos.z)
-		* Mat4::CreateFromScale(m_scale.x, m_scale.y, m_scale.z)
-		* GetRotationMat();
+		* GetRotationMat() 
+		* Mat4::CreateFromScale(m_scale.x, m_scale.y, m_scale.z);
 }
 
 void STransform::SetMat( const Mat4& mat )
