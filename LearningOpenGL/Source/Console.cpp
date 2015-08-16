@@ -88,8 +88,9 @@ void init()
 	g_pPointDrawer->DrawPoint(Vec3(-100, -100, 0), 5);
 
 	g_particleSystem = new CParticleSystem;
-	//g_particleSystem->GetTransformData().m_pos.x = 100;
-	//g_particleSystem->GetTransformData().m_rotation.x = -90;
+	g_particleSystem->GetTransformData().m_pos.x = 300;
+	g_particleSystem->GetTransformData().m_rotation.x = -90;
+	g_particleSystem->GetTransformData().m_scale.x = g_particleSystem->GetTransformData().m_scale.y = g_particleSystem->GetTransformData().m_scale.z = 10.0f;
 	CEmitter* pEmitter = new CEmitter;
 	pEmitter->SetTotalDuration(1.0f);
 	pEmitter->SetBlendMode(CEmitter::EBlendMode_ALPHA_BLEND);
@@ -97,12 +98,12 @@ void init()
 	pEmitter->SetEmitMode(CEmitter::EEmitMode_Relative);
 	pEmitter->SetEmissionRate(50.0f);
 	pEmitter->GetEmitterShapeRef().SetShape(CEmitterShape::EShape_Cone);
-	pEmitter->GetEmitterShapeRef().SetRadius(10.0f);
-	pEmitter->GetEmitterShapeRef().SetAngle(10.0f);
-	pEmitter->GetParticleStartLifeTimeRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 0.4f, 0.5f);
+	pEmitter->GetEmitterShapeRef().SetRadius(30.0f);
+	pEmitter->GetEmitterShapeRef().SetAngle(30.0f);
+	pEmitter->GetParticleStartLifeTimeRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 4.f, 5.f);
 	pEmitter->GetParticleStartSizeRef().Init<double>(EPropertyType_Constant, 30.0f);
 	pEmitter->GetParticleStartZRotationRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, -12.0f, 14.0f);
-	pEmitter->GetParticleStartSpeedRef().Init<double>(EPropertyType_Constant, 500.0f);
+	pEmitter->GetParticleStartSpeedRef().Init<double>(EPropertyType_Constant, 50.0f);
 	g_particleSystem->AddEmitter(pEmitter);
 
 	CMesh* planeMesh = new CMesh;
@@ -140,6 +141,7 @@ void init()
 	g_pCharactor = new CMesh;
 	g_pCharactor->InitFromFile("hama.CSTM");
 	g_pCharactor->m_transform.m_scale.set(1, 1, -1);
+	g_pCharactor->m_transform.m_rotation.set(0, 60, 0);
 	g_pCharactor->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("SkinMesh") );
 	g_pCharactor->PlayAnim(0, 25, true, nullptr);
 	g_pCharactor->SetLightEnable(true);

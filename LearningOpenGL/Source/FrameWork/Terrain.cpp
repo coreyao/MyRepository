@@ -3,6 +3,7 @@
 #include "Image/PNGReader.h"
 #include "OpenGL/GLProgramManager.h"
 #include "Director.h"
+#include <iterator>
 
 const int conChunkSize = 32;
 

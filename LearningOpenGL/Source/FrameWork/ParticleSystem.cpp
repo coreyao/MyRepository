@@ -224,12 +224,12 @@ void CParticleInstance::Update( float dt )
 
 	if ( m_pEmitter->m_emitMode == CEmitter::EEmitMode_Free )
 	{
-		m_MV = viewMatrix * TranslationMatrix * ScaleMatrix * BillboardMatrix * ZRotationMatrix;
+		m_MV = viewMatrix * TranslationMatrix * BillboardMatrix * ZRotationMatrix * ScaleMatrix;
 	}
 	else if ( m_pEmitter->m_emitMode == CEmitter::EEmitMode_Relative )
 	{
 		m_parentMat = m_pEmitter->m_pParticleSystem->m_transform.GetTransformMat() * m_pEmitter->m_transform.GetTransformMat();
-		m_MV = viewMatrix * m_parentMat * TranslationMatrix * ScaleMatrix * BillboardMatrix * ZRotationMatrix;
+		m_MV = viewMatrix * m_parentMat * TranslationMatrix * BillboardMatrix * ZRotationMatrix * ScaleMatrix;
 	}
 }
 
