@@ -25,7 +25,7 @@ DWORD g_Clock;
 // 函数定义
 DWORD GetClock()
 {
-	return GetTickCount(); 
+	return GetTickCount();
 }
 
 void StartClock()
@@ -35,7 +35,7 @@ void StartClock()
 
 void WaitClock()
 {
-	while((GetClock() - g_Clock) < WAIT_TIME)
+	while ((GetClock() - g_Clock) < WAIT_TIME)
 	{
 		Sleep(5);
 	}
@@ -49,20 +49,27 @@ int Game_Init()
 
 int Game_Main()
 {
+	// 计时
 	StartClock();
 
-	// 画图
-	for (int x = 0; x < 50; ++x)
+	// 表面加锁
+	LockSurface();
+	
+	for (int i = 0; i < 50; ++i)
 	{
-		for (int y = 0; y < 50; ++y)
+		for (int j = 0; j < 50; ++j)
 		{
-			DrawPixel(x, y, ARGB(0, 255, 0, 255));
+			DrawPixel(i, j, ARGB(255, 255, 0, 0));
 		}
 	}
 
+	// 表面解锁
+	UnlockSurface();
+
 	// 输出
 	FlipSurface();
-	
+
+	// 锁帧
 	WaitClock();
 	return 1;
 }
@@ -78,30 +85,30 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	PAINTSTRUCT ps;
 	HDC hdc;
 
-	switch(msg)
+	switch (msg)
 	{
-	case WM_CREATE: 
-        {
-			return 0;
-		} break;
+	case WM_CREATE:
+	{
+					  return 0;
+	} break;
 	case WM_KEYDOWN:
-		{
-			if (wParam == VK_ESCAPE)
-			{
-				PostMessage(g_WindowHandle, WM_DESTROY, 0, 0);
-			} break;
-		}
+	{
+					   if (wParam == VK_ESCAPE)
+					   {
+						   PostMessage(g_WindowHandle, WM_DESTROY, 0, 0);
+					   } break;
+	}
 	case WM_PAINT:
-		{
-			hdc = BeginPaint(hwnd, &ps);
-			EndPaint(hwnd, &ps);
-			return 0;
-		} break;
+	{
+					 hdc = BeginPaint(hwnd, &ps);
+					 EndPaint(hwnd, &ps);
+					 return 0;
+	} break;
 	case WM_DESTROY:
-		{
-			PostQuitMessage(0);
-			return 0;
-		} break;
+	{
+					   PostQuitMessage(0);
+					   return 0;
+	} break;
 	default:break;
 	}
 
@@ -146,12 +153,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 	g_HInstance = hInstance;
 	g_WindowHandle = hwnd;
 
+	RECT window_rect = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+	AdjustWindowRectEx(&window_rect, GetWindowStyle(g_WindowHandle), GetMenu(g_WindowHandle) != NULL, GetWindowExStyle(g_WindowHandle));
+	MoveWindow(g_WindowHandle, 0, 0, window_rect.right - window_rect.left, window_rect.bottom - window_rect.top, FALSE);
+
 	if (!Game_Init())
 	{
 		return 0;
 	}
 
-	while(TRUE)
+	while (TRUE)
 	{
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{

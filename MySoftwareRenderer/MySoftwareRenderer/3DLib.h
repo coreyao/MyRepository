@@ -14,10 +14,13 @@ namespace _CPPYIN_3DLib
 	// 全局变量
 	static IDirect3DDevice9* pDevice = 0;
 	static IDirect3DSurface9* pSurface = 0;
+	static D3DLOCKED_RECT lockedRect;
 
 	// 函数
 	bool Init3DLib(HINSTANCE hInstance, HWND hWnd, int width, int height);
-	int DrawPixel(int x,int y, DWORD color);
+	int LockSurface();
+	int UnlockSurface();
+	int DrawPixel(int x, int y, DWORD color);
 	void FlipSurface();
 	void Release3DLib();
 }
