@@ -3,7 +3,7 @@
 #include <WindowsX.h>
 
 #include "3DLib.h"
-using namespace _CPPYIN_3DLib;
+using namespace Lib3D;
 
 // 宏定义
 #define WINDOW_CLASS_NAME TEXT("CPPYIN3DWNDCLS")
@@ -55,12 +55,9 @@ int Game_Main()
 	// 表面加锁
 	LockSurface();
 	
-	for (int i = 0; i < 50; ++i)
+	for (int i = 0; i < 1000; ++i)
 	{
-		for (int j = 0; j < 50; ++j)
-		{
-			DrawPixel(i, j, ARGB(255, 255, 0, 0));
-		}
+		DrawLine(rand() % SCREEN_WIDTH, rand() % SCREEN_HEIGHT, rand() % SCREEN_WIDTH, rand() % SCREEN_HEIGHT, ARGB(255, rand() % 255, rand() % 255, rand() % 255));
 	}
 
 	// 表面解锁

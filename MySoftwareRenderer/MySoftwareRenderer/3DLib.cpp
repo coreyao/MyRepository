@@ -1,6 +1,6 @@
 #include "3DLib.h"
 
-bool _CPPYIN_3DLib::Init3DLib(HINSTANCE hInstance, HWND hWnd, int width, int height)
+bool Lib3D::Init3DLib(HINSTANCE hInstance, HWND hWnd, int width, int height)
 {
 	IDirect3D9* d3d9 = Direct3DCreate9(D3D_SDK_VERSION);
 
@@ -28,20 +28,20 @@ bool _CPPYIN_3DLib::Init3DLib(HINSTANCE hInstance, HWND hWnd, int width, int hei
 	return true;
 }
 
-int _CPPYIN_3DLib::LockSurface()
+int Lib3D::LockSurface()
 {
 	memset(&lockedRect, 0, sizeof(lockedRect));
 	pSurface->LockRect(&lockedRect, NULL, D3DLOCK_DISCARD);
 	return 1;
 }
 
-int _CPPYIN_3DLib::UnlockSurface()
+int Lib3D::UnlockSurface()
 {
 	pSurface->UnlockRect();
 	return 1;
 }
 
-int _CPPYIN_3DLib::DrawPixel(int x, int y, DWORD color)
+int Lib3D::DrawPixel(int x, int y, DWORD color)
 {
 	DWORD* pBits = (DWORD*)lockedRect.pBits;
 	pBits[x + y * (lockedRect.Pitch >> 2)] = color;
@@ -49,7 +49,7 @@ int _CPPYIN_3DLib::DrawPixel(int x, int y, DWORD color)
 	return 1;
 }
 
-void _CPPYIN_3DLib::FlipSurface()
+void Lib3D::FlipSurface()
 {
 	// 获取后台缓存
 	IDirect3DSurface9* backBuffer = 0;
@@ -65,8 +65,45 @@ void _CPPYIN_3DLib::FlipSurface()
 	pDevice->Present(0, 0, 0, 0);
 }
 
-void _CPPYIN_3DLib::Release3DLib()
+void Lib3D::Release3DLib()
 {
 	pSurface->Release();
 	pDevice->Release();
+}
+
+void Lib3D::DrawLine(int x1, int y1, int x2, int y2, DWORD color)
+{
+	// - DDA
+	float k = (float)(y2 - y1) / (x2 - x1);
+	float kInverse = (float)(x2 - x1) / (y2 - y1);
+	if (fabs(k) <= 1)
+	{
+		if (x1 > x2)
+		{
+			Swap(x1, x2);
+			Swap(y1, y2);
+		}
+
+		float iCurY = y1;
+		for (int iCurX = x1; iCurX <= x2; ++iCurX)
+		{
+			DrawPixel(iCurX, (int)(iCurY + 0.5f), color);
+			iCurY += k;
+		}
+	}
+	else
+	{
+		if (y1 > y2)
+		{
+			Swap(x1, x2);
+			Swap(y1, y2);
+		}
+
+		float iCurX = x1;
+		for (int iCurY = y1; iCurY <= y2; ++iCurY)
+		{
+			DrawPixel((int)(iCurX + 0.5f), iCurY, color);
+			iCurX += kInverse;
+		}
+	}
 }
