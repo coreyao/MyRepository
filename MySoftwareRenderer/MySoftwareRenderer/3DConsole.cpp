@@ -6,8 +6,8 @@
 using namespace Lib3D;
 
 // ∫Í∂®“Â
-#define WINDOW_CLASS_NAME TEXT("CPPYIN3DWNDCLS")
-#define WINDOW_TITLE TEXT("CPPYIN3DCONSOLE")
+#define WINDOW_CLASS_NAME TEXT("MySoftwareRenderer")
+#define WINDOW_TITLE TEXT("MySoftwareRenderer")
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
 #define SCREEN_BPP 32

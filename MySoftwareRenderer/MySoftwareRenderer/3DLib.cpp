@@ -74,24 +74,7 @@ void Lib3D::Release3DLib()
 void Lib3D::DrawLine(int x1, int y1, int x2, int y2, DWORD color)
 {
 	// - DDA
-	float k = (float)(y2 - y1) / (x2 - x1);
-	float kInverse = (float)(x2 - x1) / (y2 - y1);
-	if (fabs(k) <= 1)
-	{
-		if (x1 > x2)
-		{
-			Swap(x1, x2);
-			Swap(y1, y2);
-		}
-
-		float iCurY = y1;
-		for (int iCurX = x1; iCurX <= x2; ++iCurX)
-		{
-			DrawPixel(iCurX, (int)(iCurY + 0.5f), color);
-			iCurY += k;
-		}
-	}
-	else
+	if ( x2 - x1 == 0 )
 	{
 		if (y1 > y2)
 		{
@@ -99,11 +82,42 @@ void Lib3D::DrawLine(int x1, int y1, int x2, int y2, DWORD color)
 			Swap(y1, y2);
 		}
 
-		float iCurX = x1;
 		for (int iCurY = y1; iCurY <= y2; ++iCurY)
+			DrawPixel(x1, iCurY, color);
+	}
+	else
+	{
+		float k = (float)(y2 - y1) / (x2 - x1);
+		float kInverse = (float)(x2 - x1) / (y2 - y1);
+		if (fabs(k) <= 1)
 		{
-			DrawPixel((int)(iCurX + 0.5f), iCurY, color);
-			iCurX += kInverse;
+			if (x1 > x2)
+			{
+				Swap(x1, x2);
+				Swap(y1, y2);
+			}
+
+			float iCurY = y1;
+			for (int iCurX = x1; iCurX <= x2; ++iCurX)
+			{
+				DrawPixel(iCurX, (int)(iCurY + 0.5f), color);
+				iCurY += k;
+			}
+		}
+		else
+		{
+			if (y1 > y2)
+			{
+				Swap(x1, x2);
+				Swap(y1, y2);
+			}
+
+			float iCurX = x1;
+			for (int iCurY = y1; iCurY <= y2; ++iCurY)
+			{
+				DrawPixel((int)(iCurX + 0.5f), iCurY, color);
+				iCurX += kInverse;
+			}
 		}
 	}
 }
