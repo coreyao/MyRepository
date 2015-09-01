@@ -1,4 +1,5 @@
 #include "3DLib.h"
+#include "Helper.h"
 
 bool Lib3D::Init3DLib(HINSTANCE hInstance, HWND hWnd, int width, int height)
 {
@@ -78,8 +79,8 @@ void Lib3D::DrawLine(int x1, int y1, int x2, int y2, DWORD color)
 	{
 		if (y1 > y2)
 		{
-			Swap(x1, x2);
-			Swap(y1, y2);
+			Helper::Swap(x1, x2);
+			Helper::Swap(y1, y2);
 		}
 
 		for (int iCurY = y1; iCurY <= y2; ++iCurY)
@@ -93,8 +94,8 @@ void Lib3D::DrawLine(int x1, int y1, int x2, int y2, DWORD color)
 		{
 			if (x1 > x2)
 			{
-				Swap(x1, x2);
-				Swap(y1, y2);
+				Helper::Swap(x1, x2);
+				Helper::Swap(y1, y2);
 			}
 
 			float iCurY = y1;
@@ -108,8 +109,8 @@ void Lib3D::DrawLine(int x1, int y1, int x2, int y2, DWORD color)
 		{
 			if (y1 > y2)
 			{
-				Swap(x1, x2);
-				Swap(y1, y2);
+				Helper::Swap(x1, x2);
+				Helper::Swap(y1, y2);
 			}
 
 			float iCurX = x1;

@@ -3,6 +3,7 @@
 
 #include <d3d9.h>
 #include <d3dx9.h>
+#include "Math.h"
 
 // ∫Í∂®“Â
 
@@ -20,21 +21,12 @@ namespace Lib3D
 	bool Init3DLib(HINSTANCE hInstance, HWND hWnd, int width, int height);
 	int LockSurface();
 	int UnlockSurface();
-	int DrawPixel(int x, int y, DWORD color);
 	void FlipSurface();
 	void Release3DLib();
-
-	template<typename T>
-	void Swap( T& a, T& b );
+	
+	int DrawPixel(int x, int y, DWORD color);
 	void DrawLine(int x1, int y1, int x2, int y2, DWORD color);
-}
-
-template<typename T>
-void Lib3D::Swap(T& a, T& b)
-{
-	T temp = a;
-	a = b;
-	b = temp;
+	void DrawTriangle(const Vec2& v1, const Vec2& v2, const Vec2& v3, bool bWireFrame = true);
 }
 
 #endif
