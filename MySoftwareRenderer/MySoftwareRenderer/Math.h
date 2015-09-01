@@ -1,5 +1,8 @@
 #pragma once
 
+#define PI 3.141592f
+#define DEG_TO_RAD(x) ((PI) * ((180.0f) / (x))) 
+#define RAD_TO_DEG(x) ((180) * ((PI) / (x)) )
 class Vec2
 {
 public:
@@ -52,6 +55,10 @@ public:
 	{
 	}
 
+	Vec4(float _x, float _y, float _z, float _w) : x(_x), y(_y), z(_z), w(_w)
+	{
+	}
+
 	float x;
 	float y;
 	float z;
@@ -65,11 +72,16 @@ public:
 	static Mat4 CreateRotationMat(float x, float y, float z);
 	static Mat4 CreateScaleMat(float x, float y, float z);
 	static Mat4 CreatePerspectiveMat(float fVerticleFov, float whRatio, float n, float f);
-	static Mat4 CreateOrthegraphicMat(float l, float r, float t, float b, float n, float f);
+	static Mat4 CreateOrthegraphicsMat(float l, float r, float t, float b, float n, float f);
+
+	Mat4(const Vec4& xAxis, const Vec4& yAxis, const Vec4& zAxis, const Vec4& origin);
 
 	Mat4 operator*(const Mat4& rh);
 	void operator*=(const Mat4& rh);
 
 	Mat4();
 	float m[16];
+
+	static Mat4 IDENTITY;
+	static Mat4 ZERO;
 };
