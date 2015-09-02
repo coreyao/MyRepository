@@ -3,6 +3,9 @@
 #define PI 3.141592f
 #define DEG_TO_RAD(x) ((PI) * ((180.0f) / (x))) 
 #define RAD_TO_DEG(x) ((180) * ((PI) / (x)) )
+#define EPSILON 0.00001f
+#define NEARLY_EQUAL(x,y) (fabs((x) - (y)) <= EPSILON)
+
 class Vec2
 {
 public:
@@ -90,6 +93,8 @@ public:
 
 	Mat4 GetInversed();
 	void Inverse();
+
+	float Determinant();
 
 	Mat4();
 

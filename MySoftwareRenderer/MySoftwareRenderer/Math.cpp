@@ -271,10 +271,36 @@ void Mat4::Transpose()
 Mat4 Mat4::GetInversed()
 {
 	Mat4 ret;
+	float det = Determinant();
+	if (!NEARLY_EQUAL(det, 0))
+	{
+		ret.m[0] = m[5] * m[10] - m[9] * m[6];
+		ret.m[1] = m[1] * m[10] - m[9] * m[2];
+		ret.m[2] = m[1] * m[6] - m[5] * m[2];
+
+		ret.m[4] = m[4] * m[10] - m[8] * m[6];
+		ret.m[5] = m[0] * m[10] - m[8] * m[2];
+		ret.m[6] = m[0] * m[6] - m[4] * m[2];
+
+		ret.m[8] = m[4] * m[9] - m[8] * m[5];
+		ret.m[9] = m[0] * m[9] - m[1] * m[8];
+		ret.m[10] = m[0] * m[5] - m[4] * m[1];
+
+		ret.m[12] = -(m[12] * ret.m[0] + m[13] * ret.m[4] + m[14] * ret.m[8]);
+		ret.m[13] = -(m[12] * ret.m[1] + m[13] * ret.m[5] + m[14] * ret.m[9]);
+		ret.m[14] = -(m[12] * ret.m[2] + m[13] * ret.m[6] + m[14] * ret.m[10]);
+	}
+
 	return ret;
 }
 
 void Mat4::Inverse()
 {
+	*this = GetInversed();
+}
 
+float Mat4::Determinant()
+{
+	return m[0] * m[5] * m[10] + m[4] * m[9] * m[2] + m[8] * m[6] * m[1]
+		- m[0] * m[6] * m[9] - m[4] * m[1] * m[10] - m[8] * m[5] * m[2];
 }
