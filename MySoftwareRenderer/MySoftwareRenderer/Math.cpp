@@ -107,9 +107,23 @@ Mat4 Mat4::operator*(const Mat4& rh)
 	return ret;
 }
 
+Mat4 Mat4::operator*(float fScalar)
+{
+	Mat4 ret;
+	for (int i = 0; i < 16; ++i)
+		ret.m[i] = m[i] * fScalar;
+
+	return ret;
+}
+
 void Mat4::operator*=(const Mat4& rh)
 {
 	*this = *this * rh;
+}
+
+void Mat4::operator*=(float fScalar)
+{
+	*this = *this * fScalar;
 }
 
 Mat4::Mat4(const Vec4& xAxis, const Vec4& yAxis, const Vec4& zAxis, const Vec4& origin)
@@ -164,17 +178,17 @@ Mat4 Mat4::CreateTranslationMat(const Vec3& trans)
 Mat4 Mat4::CreateRotationMat(float x, float y, float z)
 {
 	Mat4 rotateZMat( Vec4(cosf(z), sinf(z), 0, 0),
-		Vec4(sinf(z), cosf(z), 0, 0),
+		Vec4(-sinf(z), cosf(z), 0, 0),
 		Vec4(0, 0, 1, 0),
 		Vec4(0, 0, 0, 1) );
 
 	Mat4 rotateXMat(Vec4(1, 0, 0, 0),
 		Vec4(0, cosf(x), sinf(x), 0),
-		Vec4(0, sinf(x), cosf(x), 0),
+		Vec4(0, -sinf(x), cosf(x), 0),
 		Vec4(0, 0, 0, 1));
 
 	Mat4 rotateYMat(
-		Vec4(cosf(x), 0, sinf(x), 0),
+		Vec4(cosf(x), 0, -sinf(x), 0),
 		Vec4(1, 0, 0, 0),
 		Vec4(sinf(x), 0, cosf(x), 0),
 		Vec4(0, 0, 0, 1));
@@ -207,4 +221,60 @@ Mat4 Mat4::CreatePerspectiveMat(float fVerticleFov, float whRatio, float n, floa
 Mat4 Mat4::CreateOrthegraphicsMat(float l, float r, float t, float b, float n, float f)
 {
 	return Mat4::ZERO;
+}
+
+Mat4 Mat4::operator+(const Mat4& rh)
+{
+	Mat4 ret;
+	for (int i = 0; i < 16; ++i)
+		ret.m[i] = m[i] + rh.m[i];
+
+	return ret;
+}
+
+void Mat4::operator+=(const Mat4& rh)
+{
+	*this = *this + rh;
+}
+
+Mat4 Mat4::GetTransposed()
+{
+	Mat4 ret;
+	ret.m[0] = m[0];
+	ret.m[1] = m[4];
+	ret.m[2] = m[8];
+	ret.m[3] = m[12];
+
+	ret.m[4] = m[1];
+	ret.m[5] = m[5];
+	ret.m[6] = m[9];
+	ret.m[7] = m[13];
+
+	ret.m[8] = m[2];
+	ret.m[9] = m[6];
+	ret.m[10] = m[10];
+	ret.m[11] = m[14];
+
+	ret.m[12] = m[3];
+	ret.m[13] = m[7];
+	ret.m[14] = m[11];
+	ret.m[15] = m[15];
+
+	return ret;
+}
+
+void Mat4::Transpose()
+{
+	*this = GetTransposed();
+}
+
+Mat4 Mat4::GetInversed()
+{
+	Mat4 ret;
+	return ret;
+}
+
+void Mat4::Inverse()
+{
+
 }

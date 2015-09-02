@@ -79,7 +79,20 @@ public:
 	Mat4 operator*(const Mat4& rh);
 	void operator*=(const Mat4& rh);
 
+	Mat4 operator*(float fScalar);
+	void operator*=(float fScalar);
+
+	Mat4 operator+(const Mat4& rh);
+	void operator+=(const Mat4& rh);
+
+	Mat4 GetTransposed();
+	void Transpose();
+
+	Mat4 GetInversed();
+	void Inverse();
+
 	Mat4();
+
 	float m[16];
 
 	static Mat4 IDENTITY;
