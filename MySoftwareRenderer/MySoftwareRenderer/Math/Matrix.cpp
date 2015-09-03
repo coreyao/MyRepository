@@ -45,6 +45,17 @@ void Mat4::operator*=(float fScalar)
 	*this = *this * fScalar;
 }
 
+Vec4 Mat4::operator*(const Vec4& rh)
+{
+	Vec4 ret;
+	ret.x = m[0] * rh.x + m[4] * rh.y + m[8] * rh.z + m[12] * rh.w;
+	ret.y = m[1] * rh.x + m[5] * rh.y + m[9] * rh.z + m[13] * rh.w;
+	ret.z = m[2] * rh.x + m[6] * rh.y + m[10] * rh.z + m[14] * rh.w;
+	ret.w = m[3] * rh.x + m[7] * rh.y + m[11] * rh.z + m[15] * rh.w;
+
+	return ret;
+}
+
 Mat4::Mat4(const Vec3& xAxis, const Vec3& yAxis, const Vec3& zAxis, const Vec3& origin)
 {
 	m[0] = xAxis.x;
@@ -139,9 +150,9 @@ Mat4 Mat4::CreateOrthegraphicsMat(float l, float r, float t, float b, float n, f
 	return Mat4::ZERO;
 }
 
-Mat4 Mat4::CreateLookAt(const Vec3& eyePos, const Vec3& lookPos, const Vec3& upVec /*= Vec3(0, 1, 0)*/)
+Mat4 Mat4::CreateLookAt(const Vec3& eyePos, const Vec3& lookDir, const Vec3& upVec /*= Vec3(0, 1, 0)*/)
 {
-	Vec3 forward = lookPos - eyePos;
+	Vec3 forward = lookDir;
 	forward.Normalize();
 
 	Vec3 rightDir = forward.Cross(upVec);

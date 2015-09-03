@@ -80,10 +80,10 @@ struct SFace
 	int m_VertexIndex3;
 };
 
-struct SCommonVertex
+struct SVertex
 {
-	SCommonVertex(){}
-	SCommonVertex(const Vec3& pos, const Color4F& color, const Vec2& uv);
+	SVertex(){}
+	SVertex(const Vec3& pos, const Color4F& color, const Vec2& uv);
 
 	Vec3 m_pos;
 	Color4F m_color;
@@ -106,7 +106,7 @@ struct SSubMeshData
 	std::string				m_MeshName;
 	Mat4					m_MeshMatrix;
 	std::vector<SFace>		m_vFace;
-	std::vector<SCommonVertex>	m_vVectex;
+	std::vector<SVertex>	m_vVertex;
 	SMaterialData			m_cMaterial;
 };
 

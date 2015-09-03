@@ -5,6 +5,7 @@
 #include "Utility.h"
 #include "Math/Vector.h"
 #include "Math/Matrix.h"
+#include "DataTypes.h"
 
 namespace Rasterization
 {
@@ -22,8 +23,6 @@ namespace Rasterization
 	
 	int DrawPixel(int x, int y, DWORD color);
 	void DrawLine(int x1, int y1, int x2, int y2, DWORD color);
-	void DrawTriangle(const Vec2& v1, const Vec2& v2, const Vec2& v3, bool bWireFrame = true);
-
-	void InitMesh();
+	void DrawTriangle(const SVertex& v1, const SVertex& v2, const SVertex& v3, bool bWireFrame = true);
 }
 

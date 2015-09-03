@@ -77,7 +77,7 @@ Color4F Color4F::operator*(const Color4F& rh)
 	return Color4F(r * rh.r, g * rh.g, b * rh.b, a * rh.a);
 }
 
-SCommonVertex::SCommonVertex(const Vec3& pos, const Color4F& color, const Vec2& uv)
+SVertex::SVertex(const Vec3& pos, const Color4F& color, const Vec2& uv)
 : m_pos(pos)
 , m_color(color)
 , m_UV(uv)

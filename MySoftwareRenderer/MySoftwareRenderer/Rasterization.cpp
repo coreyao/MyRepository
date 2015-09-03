@@ -1,10 +1,4 @@
 #include "Rasterization.h"
-#include "Utility.h"
-#include "Math/Vector.h"
-#include "Math/Matrix.h"
-#include "Mesh.h"
-
-CMesh g_mesh;
 
 bool Rasterization::Init3DLib(HINSTANCE hInstance, HWND hWnd, int width, int height)
 {
@@ -128,9 +122,9 @@ void Rasterization::DrawLine(int x1, int y1, int x2, int y2, DWORD color)
 	}
 }
 
-void Rasterization::InitMesh()
+void Rasterization::DrawTriangle(const SVertex& v1, const SVertex& v2, const SVertex& v3, bool bWireFrame /*= true*/)
 {
-	SSubMeshData subMeshData;
-
+	DrawLine(v1.m_pos.x, v1.m_pos.y, v2.m_pos.x, v2.m_pos.y, 0xffffffff);
+	DrawLine(v2.m_pos.x, v2.m_pos.y, v3.m_pos.x, v3.m_pos.y, 0xffffffff);
+	DrawLine(v1.m_pos.x, v1.m_pos.y, v3.m_pos.x, v3.m_pos.y, 0xffffffff);
 }
-

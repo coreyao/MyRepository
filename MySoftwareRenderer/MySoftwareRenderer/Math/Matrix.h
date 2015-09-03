@@ -10,7 +10,7 @@ public:
 	static Mat4 CreateScaleMat(float x, float y, float z);
 	static Mat4 CreatePerspectiveMat(float fVerticleFov, float whRatio, float n, float f);
 	static Mat4 CreateOrthegraphicsMat(float l, float r, float t, float b, float n, float f);
-	static Mat4 CreateLookAt(const Vec3& eyePos, const Vec3& lookPos, const Vec3& upVec = Vec3(0, 1, 0));
+	static Mat4 CreateLookAt(const Vec3& eyePos, const Vec3& lookDir, const Vec3& upVec = Vec3(0, 1, 0));
 
 	Mat4(const Vec3& xAxis, const Vec3& yAxis, const Vec3& zAxis, const Vec3& origin);
 
@@ -19,6 +19,8 @@ public:
 
 	Mat4 operator*(float fScalar);
 	void operator*=(float fScalar);
+
+	Vec4 operator*(const Vec4& rh);
 
 	Mat4 operator+(const Mat4& rh);
 	void operator+=(const Mat4& rh);

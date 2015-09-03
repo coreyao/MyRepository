@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+using namespace std;
+
 #define PI 3.141592f
 #define DEG_TO_RAD(x) ((PI) * ((180.0f) / (x))) 
 #define RAD_TO_DEG(x) ((180) * ((PI) / (x)) )

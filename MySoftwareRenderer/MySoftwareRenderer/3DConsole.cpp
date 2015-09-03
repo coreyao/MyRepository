@@ -3,6 +3,7 @@
 #include <WindowsX.h>
 
 #include "Rasterization.h"
+#include "Mesh.h"
 using namespace Rasterization;
 
 // 宏定义
@@ -15,6 +16,32 @@ using namespace Rasterization;
 HWND g_WindowHandle;
 HINSTANCE g_HInstance;
 DWORD g_Clock;
+
+CMesh g_mesh;
+
+void InitMesh()
+{
+	SVertex vertex1;
+	vertex1.m_pos.set(0, 100, 0);
+	SVertex vertex2;
+	vertex2.m_pos.set(100, 0, 0);
+	SVertex vertex3;
+	vertex3.m_pos.set(-100, 0, 0);
+
+	SSubMeshData subMeshData;
+	subMeshData.m_MeshMatrix = Mat4::IDENTITY;
+	subMeshData.m_vVertex.push_back(vertex1);
+	subMeshData.m_vVertex.push_back(vertex2);
+	subMeshData.m_vVertex.push_back(vertex3);
+
+	SFace face;
+	face.m_VertexIndex1 = 0;
+	face.m_VertexIndex2 = 1;
+	face.m_VertexIndex3 = 2;
+	subMeshData.m_vFace.push_back(face);
+
+	g_mesh.m_meshData.m_vSubMesh.push_back(subMeshData);
+}
 
 // 宏脚本
 #define KEY_DOWN(vk_code) ((GetAsyncKeyState(vk_code) & 0x8000) ? 1 : 0)
@@ -42,6 +69,7 @@ void WaitClock()
 int Game_Init()
 {
 	Init3DLib(g_HInstance, g_WindowHandle, SCREEN_WIDTH, SCREEN_HEIGHT);
+	InitMesh();
 	return 1;
 }
 
@@ -53,7 +81,8 @@ int Game_Main()
 	// 表面加锁
 	LockSurface();
 	
-	
+	g_mesh.Update(0);
+	g_mesh.Render();
 
 	// 表面解锁
 	UnlockSurface();
