@@ -7,8 +7,8 @@
 using namespace std;
 
 #define PI 3.141592f
-#define DEG_TO_RAD(x) ((PI) * ((180.0f) / (x))) 
-#define RAD_TO_DEG(x) ((180) * ((PI) / (x)) )
+#define DEG_TO_RAD(x) ((PI) * ((x) / (180.0f))) 
+#define RAD_TO_DEG(x) ((180) * ((x) / (PI)) )
 #define EPSILON 0.00001f
 #define NEARLY_EQUAL(x,y) (fabs((x) - (y)) <= EPSILON)
 #define ARGB(a, r, g, b) ((b) + ((g) << 8) + ((r) << 16) + ((a) << 24))

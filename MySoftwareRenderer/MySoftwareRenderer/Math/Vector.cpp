@@ -68,7 +68,7 @@ float Vec3::Dot(const Vec3& rh)
 Vec3 Vec3::Cross(const Vec3& rh)
 {
 	float nx = y * rh.z - rh.y * z;
-	float ny = x * rh.z - rh.x * z;
+	float ny = z * rh.x - rh.z * x;
 	float nz = x * rh.y - rh.x * y;
 
 	return Vec3(nx, ny, nz);

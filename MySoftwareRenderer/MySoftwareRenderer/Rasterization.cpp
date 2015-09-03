@@ -32,6 +32,12 @@ int Rasterization::LockSurface()
 {
 	memset(&lockedRect, 0, sizeof(lockedRect));
 	pSurface->LockRect(&lockedRect, NULL, D3DLOCK_DISCARD);
+	for (int i = 0; i < SCREEN_WIDTH; ++i)
+	{
+		for (int j = 0; j < SCREEN_HEIGHT; ++j)
+			DrawPixel(i, j, 0);
+	}
+
 	return 1;
 }
 

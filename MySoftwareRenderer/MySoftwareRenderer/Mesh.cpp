@@ -12,6 +12,7 @@ CMesh::~CMesh()
 
 void CMesh::Update(float dt)
 {
+	m_transform.m_rotation.y += 10 * dt;
 }
 
 void CMesh::Render()
@@ -28,7 +29,7 @@ void CMesh::Render()
 			for (auto& rVertex : vVertex)
 			{
 				Vec4 localPos = Vec4(rVertex.m_pos.x, rVertex.m_pos.y, rVertex.m_pos.z, 1.0f);
-				Vec4 worldPos = m_transform.GetTransformMat() * localPos;
+				Vec4 worldPos = m_transform.GetTransformMat() * rSubMesh.m_MeshMatrix * localPos;
 				Vec4 cameraPos = CDirector::GetInstance()->GetCurViewMat() * worldPos;
 				Vec4 clippingPos = CDirector::GetInstance()->GetCurProjectionMat() * cameraPos;
 				if ( clippingPos.w != 0)

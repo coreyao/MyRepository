@@ -22,11 +22,11 @@ CMesh g_mesh;
 void InitMesh()
 {
 	SVertex vertex1;
-	vertex1.m_pos.set(0, 100, 0);
+	vertex1.m_pos.set(0, 10, 0);
 	SVertex vertex2;
-	vertex2.m_pos.set(100, 0, 0);
+	vertex2.m_pos.set(10, -10, 0);
 	SVertex vertex3;
-	vertex3.m_pos.set(-100, 0, 0);
+	vertex3.m_pos.set(-10, -10, 0);
 
 	SSubMeshData subMeshData;
 	subMeshData.m_MeshMatrix = Mat4::IDENTITY;
@@ -81,7 +81,7 @@ int Game_Main()
 	// 表面加锁
 	LockSurface();
 	
-	g_mesh.Update(0);
+	g_mesh.Update(0.2f);
 	g_mesh.Render();
 
 	// 表面解锁

@@ -126,7 +126,6 @@ struct STransform
 	Mat4 GetTransformMat();
 	Mat4 GetRotationMat();
 	void Reset();
-	void SetMat(const Mat4& mat);
 
 	Vec3 m_pos;
 	Vec3 m_rotation;

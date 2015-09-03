@@ -14,19 +14,14 @@ void STransform::Reset()
 
 Mat4 STransform::GetTransformMat()
 {
-	if (m_mat != Mat4::IDENTITY)
-	{
-		return m_mat;
-	}
+	Mat4 scaleMat = Mat4::CreateScaleMat(m_scale.x, m_scale.y, m_scale.z);
+	Mat4 rotationMat = GetRotationMat();
+	Mat4 translationMat = Mat4::CreateTranslationMat(m_pos.x, m_pos.y, m_pos.z);
 
-	return Mat4::CreateTranslationMat(m_pos.x, m_pos.y, m_pos.z)
-		* GetRotationMat()
-		* Mat4::CreateScaleMat(m_scale.x, m_scale.y, m_scale.z);
-}
+	Mat4 temp = rotationMat * scaleMat;
+	temp = translationMat * temp;
 
-void STransform::SetMat(const Mat4& mat)
-{
-	m_mat = mat;
+	return temp;
 }
 
 const Color4F Color4F::WHITE(1.0f, 1.0f, 1.0f, 1.0f);
