@@ -1,7 +1,12 @@
-#include "3DLib.h"
-#include "Helper.h"
+#include "Rasterization.h"
+#include "Utility.h"
+#include "Math/Vector.h"
+#include "Math/Matrix.h"
+#include "Mesh.h"
 
-bool Lib3D::Init3DLib(HINSTANCE hInstance, HWND hWnd, int width, int height)
+CMesh g_mesh;
+
+bool Rasterization::Init3DLib(HINSTANCE hInstance, HWND hWnd, int width, int height)
 {
 	IDirect3D9* d3d9 = Direct3DCreate9(D3D_SDK_VERSION);
 
@@ -29,20 +34,20 @@ bool Lib3D::Init3DLib(HINSTANCE hInstance, HWND hWnd, int width, int height)
 	return true;
 }
 
-int Lib3D::LockSurface()
+int Rasterization::LockSurface()
 {
 	memset(&lockedRect, 0, sizeof(lockedRect));
 	pSurface->LockRect(&lockedRect, NULL, D3DLOCK_DISCARD);
 	return 1;
 }
 
-int Lib3D::UnlockSurface()
+int Rasterization::UnlockSurface()
 {
 	pSurface->UnlockRect();
 	return 1;
 }
 
-int Lib3D::DrawPixel(int x, int y, DWORD color)
+int Rasterization::DrawPixel(int x, int y, DWORD color)
 {
 	DWORD* pBits = (DWORD*)lockedRect.pBits;
 	pBits[x + y * (lockedRect.Pitch >> 2)] = color;
@@ -50,7 +55,7 @@ int Lib3D::DrawPixel(int x, int y, DWORD color)
 	return 1;
 }
 
-void Lib3D::FlipSurface()
+void Rasterization::FlipSurface()
 {
 	// 获取后台缓存
 	IDirect3DSurface9* backBuffer = 0;
@@ -66,13 +71,13 @@ void Lib3D::FlipSurface()
 	pDevice->Present(0, 0, 0, 0);
 }
 
-void Lib3D::Release3DLib()
+void Rasterization::Release3DLib()
 {
 	pSurface->Release();
 	pDevice->Release();
 }
 
-void Lib3D::DrawLine(int x1, int y1, int x2, int y2, DWORD color)
+void Rasterization::DrawLine(int x1, int y1, int x2, int y2, DWORD color)
 {
 	// - DDA
 	if ( x2 - x1 == 0 )
@@ -122,3 +127,10 @@ void Lib3D::DrawLine(int x1, int y1, int x2, int y2, DWORD color)
 		}
 	}
 }
+
+void Rasterization::InitMesh()
+{
+	SSubMeshData subMeshData;
+
+}
+

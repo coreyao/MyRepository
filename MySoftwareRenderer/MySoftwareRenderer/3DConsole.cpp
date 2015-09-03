@@ -2,14 +2,12 @@
 #include <Windows.h>
 #include <WindowsX.h>
 
-#include "3DLib.h"
-using namespace Lib3D;
+#include "Rasterization.h"
+using namespace Rasterization;
 
 // 宏定义
 #define WINDOW_CLASS_NAME TEXT("MySoftwareRenderer")
 #define WINDOW_TITLE TEXT("MySoftwareRenderer")
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 600
 #define SCREEN_BPP 32
 #define WAIT_TIME 30
 
@@ -55,10 +53,7 @@ int Game_Main()
 	// 表面加锁
 	LockSurface();
 	
-	for (int i = 0; i < 1000; ++i)
-	{
-		DrawLine(rand() % SCREEN_WIDTH, rand() % SCREEN_HEIGHT, rand() % SCREEN_WIDTH, rand() % SCREEN_HEIGHT, ARGB(255, rand() % 255, rand() % 255, rand() % 255));
-	}
+	
 
 	// 表面解锁
 	UnlockSurface();

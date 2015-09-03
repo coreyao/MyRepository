@@ -1,85 +1,4 @@
-#include "Math.h"
-#include <cmath>
-#include <string>
-
-Vec3 Vec3::operator+(const Vec3& rh)
-{
-	return Vec3(x + rh.x, y + rh.y, z + rh.z);
-}
-
-void Vec3::operator+=(const Vec3& rh)
-{
-	x += rh.x;
-	y += rh.y;
-	z += rh.z;
-}
-
-Vec3 Vec3::operator-(const Vec3& rh)
-{
-	return Vec3(x - rh.x, y - rh.y, z - rh.z);
-}
-
-void Vec3::operator-=(const Vec3& rh)
-{
-	x -= rh.x;
-	y -= rh.y;
-	z -= rh.z;
-}
-
-Vec3 Vec3::operator*(float fScalar)
-{
-	return Vec3(x * fScalar, y * fScalar, z * fScalar);
-}
-
-void Vec3::operator*=(float fScalar)
-{
-	x *= fScalar;
-	y *= fScalar;
-	z *= fScalar;
-}
-
-Vec3 Vec3::operator/(float fScalar)
-{
-	return Vec3(x / fScalar, y / fScalar, z / fScalar);
-}
-
-void Vec3::operator/=(float fScalar)
-{
-	x /= fScalar;
-	y /= fScalar;
-	z /= fScalar;
-}
-
-float Vec3::Dot(const Vec3& rh)
-{
-	return x * rh.x + y * rh.y;
-}
-
-Vec3 Vec3::Cross(const Vec3& rh)
-{
-	float nx = y * rh.z - rh.y * z;
-	float ny = x * rh.z - rh.x * z;
-	float nz = x * rh.y - rh.x * y;
-
-	return Vec3(nx, ny, nz);
-}
-
-void Vec3::Normalize()
-{
-	float n = 1.0f / GetLength();
-	*this *= n;
-}
-
-Vec3 Vec3::GetNormalized()
-{
-	float n = 1.0f / GetLength();
-	return *this * n;
-}
-
-float Vec3::GetLength()
-{
-	return sqrt(x * x + y * y + z * z);
-}
+#include "Matrix.h"
 
 Mat4 Mat4::operator*(const Mat4& rh)
 {
@@ -126,22 +45,19 @@ void Mat4::operator*=(float fScalar)
 	*this = *this * fScalar;
 }
 
-Mat4::Mat4(const Vec4& xAxis, const Vec4& yAxis, const Vec4& zAxis, const Vec4& origin)
+Mat4::Mat4(const Vec3& xAxis, const Vec3& yAxis, const Vec3& zAxis, const Vec3& origin)
 {
 	m[0] = xAxis.x;
 	m[1] = xAxis.y;
 	m[2] = xAxis.z;
-	m[3] = xAxis.w;
 
 	m[4] = yAxis.x;
 	m[5] = yAxis.y;
 	m[6] = yAxis.z;
-	m[7] = yAxis.w;
 
 	m[8] = zAxis.x;
 	m[9] = zAxis.y;
 	m[10] = zAxis.z;
-	m[11] = zAxis.w;
 
 	m[12] = origin.x;
 	m[13] = origin.y;
@@ -154,46 +70,46 @@ Mat4::Mat4()
 	memset((void*)m, 0, sizeof(m));
 }
 
-Mat4 Mat4::IDENTITY = Mat4(Vec4(1, 0, 0, 0),
-							 Vec4(0, 1, 0, 0), 
-							 Vec4(0, 0, 1, 0), 
-							 Vec4(0, 0, 0, 1) );
+Mat4 Mat4::IDENTITY = Mat4(Vec3(1, 0, 0),
+	Vec3(0, 1, 0),
+	Vec3(0, 0, 1),
+	Vec3(0, 0, 0));
 
-Mat4 Mat4::ZERO = Mat4(	Vec4(0, 0, 0, 0),
-						Vec4(0, 0, 0, 0),
-						Vec4(0, 0, 0, 0),
-						Vec4(0, 0, 0, 0));
+Mat4 Mat4::ZERO = Mat4(Vec3(0, 0, 0),
+	Vec3(0, 0, 0),
+	Vec3(0, 0, 0),
+	Vec3(0, 0, 0));
 
 
-Mat4 Mat4::CreateTranslationMat(const Vec3& trans)
+Mat4 Mat4::CreateTranslationMat(float x, float y, float z)
 {
 	Mat4 ret = ZERO;
-	ret.m[12] = trans.x;
-	ret.m[13] = trans.y;
-	ret.m[14] = trans.z;
+	ret.m[12] = x;
+	ret.m[13] = y;
+	ret.m[14] = z;
 
 	return ret;
 }
 
 Mat4 Mat4::CreateRotationMat(float x, float y, float z)
 {
-	Mat4 rotateZMat( Vec4(cosf(z), sinf(z), 0, 0),
-		Vec4(-sinf(z), cosf(z), 0, 0),
-		Vec4(0, 0, 1, 0),
-		Vec4(0, 0, 0, 1) );
+	Mat4 rotateZMat(Vec3(cosf(z), sinf(z), 0),
+		Vec3(-sinf(z), cosf(z), 0),
+		Vec3(0, 0, 1),
+		Vec3(0, 0, 0));
 
-	Mat4 rotateXMat(Vec4(1, 0, 0, 0),
-		Vec4(0, cosf(x), sinf(x), 0),
-		Vec4(0, -sinf(x), cosf(x), 0),
-		Vec4(0, 0, 0, 1));
+	Mat4 rotateXMat(Vec3(1, 0, 0),
+		Vec3(0, cosf(x), sinf(x)),
+		Vec3(0, -sinf(x), cosf(x)),
+		Vec3(0, 0, 0));
 
 	Mat4 rotateYMat(
-		Vec4(cosf(x), 0, -sinf(x), 0),
-		Vec4(1, 0, 0, 0),
-		Vec4(sinf(x), 0, cosf(x), 0),
-		Vec4(0, 0, 0, 1));
+		Vec3(cosf(x), 0, -sinf(x)),
+		Vec3(1, 0, 0),
+		Vec3(sinf(x), 0, cosf(x)),
+		Vec3(0, 0, 0));
 
-	return rotateXMat * rotateYMat * rotateZMat;
+	return rotateYMat * rotateXMat * rotateZMat;
 }
 
 Mat4 Mat4::CreateScaleMat(float x, float y, float z)
@@ -223,6 +139,21 @@ Mat4 Mat4::CreateOrthegraphicsMat(float l, float r, float t, float b, float n, f
 	return Mat4::ZERO;
 }
 
+Mat4 Mat4::CreateLookAt(const Vec3& eyePos, const Vec3& lookPos, const Vec3& upVec /*= Vec3(0, 1, 0)*/)
+{
+	Vec3 forward = lookPos - eyePos;
+	forward.Normalize();
+
+	Vec3 rightDir = forward.Cross(upVec);
+	rightDir.Normalize();
+
+	Vec3 upDir = rightDir.Cross(forward);
+	upDir.Normalize();
+
+	Mat4 cameraWorld(rightDir, upDir, -forward, eyePos);
+	return cameraWorld.GetInversed();
+}
+
 Mat4 Mat4::operator+(const Mat4& rh)
 {
 	Mat4 ret;
@@ -235,6 +166,16 @@ Mat4 Mat4::operator+(const Mat4& rh)
 void Mat4::operator+=(const Mat4& rh)
 {
 	*this = *this + rh;
+}
+
+bool Mat4::operator==(const Mat4& rh)
+{
+	return !memcmp((void*)m, (void*)rh.m, sizeof(m));
+}
+
+bool Mat4::operator!=(const Mat4& rh)
+{
+	return !(*this == rh);
 }
 
 Mat4 Mat4::GetTransposed()

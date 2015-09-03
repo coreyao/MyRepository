@@ -12,14 +12,24 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3DConsole.cpp" />
-    <ClCompile Include="3DLib.cpp" />
-    <ClCompile Include="Helper.cpp" />
-    <ClCompile Include="Math.cpp" />
+    <ClCompile Include="Director.cpp" />
+    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Rasterization.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="DataTypes.cpp" />
+    <ClCompile Include="Utility.cpp" />
+    <ClCompile Include="Math\Matrix.cpp" />
+    <ClCompile Include="Math\Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="3DLib.h" />
-    <ClInclude Include="Helper.h" />
-    <ClInclude Include="Math.h" />
+    <ClInclude Include="Director.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Rasterization.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="DataTypes.h" />
+    <ClInclude Include="Utility.h" />
+    <ClInclude Include="Math\Matrix.h" />
+    <ClInclude Include="Math\Vector.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{D2FC023D-0873-4AC7-A8AA-825A7CE460F6}</ProjectGuid>

@@ -9,29 +9,62 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source\Math">
+      <UniqueIdentifier>{99c4f959-0fe9-49fd-8118-8fe9f956f85c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Math.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Helper.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="3DLib.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="3DConsole.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="DataTypes.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Matrix.cpp">
+      <Filter>Source\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Vector.cpp">
+      <Filter>Source\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Rasterization.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Director.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Math.h">
+    <ClInclude Include="Camera.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="Helper.h">
+    <ClInclude Include="DataTypes.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="3DLib.h">
+    <ClInclude Include="Math\Matrix.h">
+      <Filter>Source\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Vector.h">
+      <Filter>Source\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Rasterization.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Director.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
       <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
