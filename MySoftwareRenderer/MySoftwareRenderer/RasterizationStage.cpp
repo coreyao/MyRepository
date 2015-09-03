@@ -1,6 +1,6 @@
-#include "Rasterization.h"
+#include "RasterizationStage.h"
 
-bool Rasterization::Init3DLib(HINSTANCE hInstance, HWND hWnd, int width, int height)
+bool RasterizationStage::Init3DLib(HINSTANCE hInstance, HWND hWnd, int width, int height)
 {
 	IDirect3D9* d3d9 = Direct3DCreate9(D3D_SDK_VERSION);
 
@@ -28,7 +28,7 @@ bool Rasterization::Init3DLib(HINSTANCE hInstance, HWND hWnd, int width, int hei
 	return true;
 }
 
-int Rasterization::LockSurface()
+int RasterizationStage::LockSurface()
 {
 	memset(&lockedRect, 0, sizeof(lockedRect));
 	pSurface->LockRect(&lockedRect, NULL, D3DLOCK_DISCARD);
@@ -41,21 +41,24 @@ int Rasterization::LockSurface()
 	return 1;
 }
 
-int Rasterization::UnlockSurface()
+int RasterizationStage::UnlockSurface()
 {
 	pSurface->UnlockRect();
 	return 1;
 }
 
-int Rasterization::DrawPixel(int x, int y, DWORD color)
+int RasterizationStage::DrawPixel(int x, int y, DWORD color)
 {
+	if (IsOutSideScreen(x, y))
+		return 0;
+
 	DWORD* pBits = (DWORD*)lockedRect.pBits;
 	pBits[x + y * (lockedRect.Pitch >> 2)] = color;
 
 	return 1;
 }
 
-void Rasterization::FlipSurface()
+void RasterizationStage::FlipSurface()
 {
 	// 获取后台缓存
 	IDirect3DSurface9* backBuffer = 0;
@@ -71,13 +74,21 @@ void Rasterization::FlipSurface()
 	pDevice->Present(0, 0, 0, 0);
 }
 
-void Rasterization::Release3DLib()
+void RasterizationStage::Release3DLib()
 {
 	pSurface->Release();
 	pDevice->Release();
 }
 
-void Rasterization::DrawLine(int x1, int y1, int x2, int y2, DWORD color)
+bool RasterizationStage::IsOutSideScreen(int x, int y)
+{
+	if ( x < 0 || x > SCREEN_WIDTH || y < 0 || y > SCREEN_HEIGHT )
+		return true;
+
+	return false;
+}
+
+void RasterizationStage::DrawLine(int x1, int y1, int x2, int y2, DWORD color)
 {
 	// - DDA
 	if ( x2 - x1 == 0 )
@@ -128,7 +139,7 @@ void Rasterization::DrawLine(int x1, int y1, int x2, int y2, DWORD color)
 	}
 }
 
-void Rasterization::DrawTriangle(const SVertex& v1, const SVertex& v2, const SVertex& v3, bool bWireFrame /*= true*/)
+void RasterizationStage::DrawTriangle(const SVertex& v1, const SVertex& v2, const SVertex& v3, bool bWireFrame /*= true*/)
 {
 	DrawLine(v1.m_pos.x, v1.m_pos.y, v2.m_pos.x, v2.m_pos.y, 0xffffffff);
 	DrawLine(v2.m_pos.x, v2.m_pos.y, v3.m_pos.x, v3.m_pos.y, 0xffffffff);

@@ -62,7 +62,7 @@ void Vec3::operator/=(float fScalar)
 
 float Vec3::Dot(const Vec3& rh)
 {
-	return x * rh.x + y * rh.y;
+	return x * rh.x + y * rh.y + z * rh.z;
 }
 
 Vec3 Vec3::Cross(const Vec3& rh)

@@ -1,5 +1,7 @@
 #include "Mesh.h"
-#include "Rasterization.h"
+#include "ApplicationStage.h"
+#include "GeometryStage.h"
+#include "RasterizationStage.h"
 #include "Director.h"
 
 CMesh::CMesh()
@@ -12,7 +14,9 @@ CMesh::~CMesh()
 
 void CMesh::Update(float dt)
 {
-	m_transform.m_rotation.y += 10 * dt;
+	m_transform.m_rotation.x += 30 * dt;
+	m_transform.m_rotation.y += 30 * dt;
+	m_transform.m_rotation.z += 30 * dt;
 }
 
 void CMesh::Render()
@@ -30,29 +34,21 @@ void CMesh::Render()
 			{
 				Vec4 localPos = Vec4(rVertex.m_pos.x, rVertex.m_pos.y, rVertex.m_pos.z, 1.0f);
 				Vec4 worldPos = m_transform.GetTransformMat() * rSubMesh.m_MeshMatrix * localPos;
-				Vec4 cameraPos = CDirector::GetInstance()->GetCurViewMat() * worldPos;
-				Vec4 clippingPos = CDirector::GetInstance()->GetCurProjectionMat() * cameraPos;
-				if ( clippingPos.w != 0)
-				{
-					clippingPos.x /= clippingPos.w;
-					clippingPos.y /= clippingPos.w;
-					clippingPos.z /= clippingPos.w;
-
-					if (clippingPos.x >= -1 && clippingPos.x <= 1
-						&& clippingPos.y >= -1 && clippingPos.y <= 1
-						&& clippingPos.z >= -1 && clippingPos.z <= 1 )
-					{
-						Vec2 screenPos;
-						screenPos.x = (clippingPos.x * 0.5f + 0.5f) * SCREEN_WIDTH;
-						screenPos.y = SCREEN_HEIGHT - (clippingPos.y * 0.5f + 0.5f) * SCREEN_HEIGHT;
-
-						rVertex.m_pos.x = screenPos.x;
-						rVertex.m_pos.y = screenPos.y;
-					}
-				}
+				rVertex.m_pos = Vec3(worldPos.x, worldPos.y, worldPos.z);
 			}
 
-			Rasterization::DrawTriangle(vVertex[0], vVertex[1], vVertex[2]);
+			if (!ApplicationStage::IsBackFace(vVertex[0], vVertex[1], vVertex[2], m_eVertexOrder))
+			{
+				for (auto& rVertex : vVertex)
+					GeometryStage::TransformWorldToScreen(rVertex);
+
+				if (!RasterizationStage::IsOutSideScreen(vVertex[0].m_pos.x, vVertex[0].m_pos.y)
+					|| !RasterizationStage::IsOutSideScreen(vVertex[1].m_pos.x, vVertex[1].m_pos.y)
+					|| !RasterizationStage::IsOutSideScreen(vVertex[2].m_pos.x, vVertex[2].m_pos.y))
+				{
+					RasterizationStage::DrawTriangle(vVertex[0], vVertex[1], vVertex[2]);
+				}
+			}
 		}
 	}
 }
@@ -70,5 +66,6 @@ void CMesh::SetVisible(bool bVisible, const std::string& sSubMeshName)
 }
 
 CBaseMesh::CBaseMesh()
+: m_eVertexOrder(EVertexOrder_ClockWise)
 {
 }

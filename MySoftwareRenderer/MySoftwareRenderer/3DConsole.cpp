@@ -2,68 +2,192 @@
 #include <Windows.h>
 #include <WindowsX.h>
 
-#include "Rasterization.h"
+#include "RasterizationStage.h"
 #include "Mesh.h"
-using namespace Rasterization;
+using namespace RasterizationStage;
 
 // 宏定义
 #define WINDOW_CLASS_NAME TEXT("MySoftwareRenderer")
 #define WINDOW_TITLE TEXT("MySoftwareRenderer")
 #define SCREEN_BPP 32
-#define WAIT_TIME 30
+#define MAX_FRAME_RATE (1.0f / 60)
 
 // 全局变量定义
 HWND g_WindowHandle;
 HINSTANCE g_HInstance;
 DWORD g_Clock;
+DWORD g_deltaTime = 0;
 
 CMesh g_mesh;
 
 void InitMesh()
 {
-	SVertex vertex1;
-	vertex1.m_pos.set(0, 10, 0);
-	SVertex vertex2;
-	vertex2.m_pos.set(10, -10, 0);
-	SVertex vertex3;
-	vertex3.m_pos.set(-10, -10, 0);
-
 	SSubMeshData subMeshData;
+
+	{
+		SVertex vertex;
+		vertex.m_pos.set(-10, 10, 10);
+		subMeshData.m_vVertex.push_back(vertex);
+	}
+
+	{
+		SVertex vertex;
+		vertex.m_pos.set(10, 10, 10);
+		subMeshData.m_vVertex.push_back(vertex);
+	}
+
+	{
+		SVertex vertex;
+		vertex.m_pos.set(10, -10, 10);
+		subMeshData.m_vVertex.push_back(vertex);
+	}
+
+	{
+		SVertex vertex;
+		vertex.m_pos.set(-10, -10, 10);
+		subMeshData.m_vVertex.push_back(vertex);
+	}
+
+	{
+		SVertex vertex;
+		vertex.m_pos.set(-10, 10, -10);
+		subMeshData.m_vVertex.push_back(vertex);
+	}
+
+	{
+		SVertex vertex;
+		vertex.m_pos.set(10, 10, -10);
+		subMeshData.m_vVertex.push_back(vertex);
+	}
+
+	{
+		SVertex vertex;
+		vertex.m_pos.set(10, -10, -10);
+		subMeshData.m_vVertex.push_back(vertex);
+	}
+
+	{
+		SVertex vertex;
+		vertex.m_pos.set(-10, -10, -10);
+		subMeshData.m_vVertex.push_back(vertex);
+	}
+
 	subMeshData.m_MeshMatrix = Mat4::IDENTITY;
-	subMeshData.m_vVertex.push_back(vertex1);
-	subMeshData.m_vVertex.push_back(vertex2);
-	subMeshData.m_vVertex.push_back(vertex3);
 
-	SFace face;
-	face.m_VertexIndex1 = 0;
-	face.m_VertexIndex2 = 1;
-	face.m_VertexIndex3 = 2;
-	subMeshData.m_vFace.push_back(face);
+	{
+		SFace face;
+		face.m_VertexIndex1 = 0;
+		face.m_VertexIndex2 = 1;
+		face.m_VertexIndex3 = 3;
+		subMeshData.m_vFace.push_back(face);
+	}
 
+	{
+		SFace face;
+		face.m_VertexIndex1 = 1;
+		face.m_VertexIndex2 = 2;
+		face.m_VertexIndex3 = 3;
+		subMeshData.m_vFace.push_back(face);
+	}
+
+	{
+		SFace face;
+		face.m_VertexIndex1 = 4;
+		face.m_VertexIndex2 = 7;
+		face.m_VertexIndex3 = 5;
+		subMeshData.m_vFace.push_back(face);
+	}
+
+	{
+		SFace face;
+		face.m_VertexIndex1 = 5;
+		face.m_VertexIndex2 = 7;
+		face.m_VertexIndex3 = 6;
+		subMeshData.m_vFace.push_back(face);
+	}
+
+	{
+		SFace face;
+		face.m_VertexIndex1 = 4;
+		face.m_VertexIndex2 = 5;
+		face.m_VertexIndex3 = 0;
+		subMeshData.m_vFace.push_back(face);
+	}
+
+	{
+		SFace face;
+		face.m_VertexIndex1 = 5;
+		face.m_VertexIndex2 = 1;
+		face.m_VertexIndex3 = 0;
+		subMeshData.m_vFace.push_back(face);
+	}
+
+	{
+		SFace face;
+		face.m_VertexIndex1 = 7;
+		face.m_VertexIndex2 = 3;
+		face.m_VertexIndex3 = 6;
+		subMeshData.m_vFace.push_back(face);
+	}
+
+	{
+		SFace face;
+		face.m_VertexIndex1 = 6;
+		face.m_VertexIndex2 = 3;
+		face.m_VertexIndex3 = 2;
+		subMeshData.m_vFace.push_back(face);
+	}
+
+	{
+		SFace face;
+		face.m_VertexIndex1 = 0;
+		face.m_VertexIndex2 = 3;
+		face.m_VertexIndex3 = 4;
+		subMeshData.m_vFace.push_back(face);
+	}
+
+	{
+		SFace face;
+		face.m_VertexIndex1 = 4;
+		face.m_VertexIndex2 = 3;
+		face.m_VertexIndex3 = 7;
+		subMeshData.m_vFace.push_back(face);
+	}
+
+	{
+		SFace face;
+		face.m_VertexIndex1 = 1;
+		face.m_VertexIndex2 = 5;
+		face.m_VertexIndex3 = 2;
+		subMeshData.m_vFace.push_back(face);
+	}
+
+	{
+		SFace face;
+		face.m_VertexIndex1 = 5;
+		face.m_VertexIndex2 = 6;
+		face.m_VertexIndex3 = 2;
+		subMeshData.m_vFace.push_back(face);
+	}
+	
+	g_mesh.m_transform.m_pos.set(0, 0, 0);
 	g_mesh.m_meshData.m_vSubMesh.push_back(subMeshData);
 }
 
-// 宏脚本
+bool IsOutSideScreen(int x, int y)
+{
+	if (x < 0 || x > SCREEN_WIDTH || y < 0 || y > SCREEN_HEIGHT)
+		return false;
+
+	return true;
+}
+
 #define KEY_DOWN(vk_code) ((GetAsyncKeyState(vk_code) & 0x8000) ? 1 : 0)
 #define KEY_UP(vk_code) ((GetAsyncKeyState(vk_code) & 0x8000) ? 0 : 1)
 
-// 函数定义
 DWORD GetClock()
 {
 	return GetTickCount();
-}
-
-void StartClock()
-{
-	g_Clock = GetClock();
-}
-
-void WaitClock()
-{
-	while ((GetClock() - g_Clock) < WAIT_TIME)
-	{
-		Sleep(5);
-	}
 }
 
 int Game_Init()
@@ -73,15 +197,12 @@ int Game_Init()
 	return 1;
 }
 
-int Game_Main()
+int Game_Main(float dt)
 {
-	// 计时
-	StartClock();
-
 	// 表面加锁
 	LockSurface();
 	
-	g_mesh.Update(0.2f);
+	g_mesh.Update(dt);
 	g_mesh.Render();
 
 	// 表面解锁
@@ -90,8 +211,6 @@ int Game_Main()
 	// 输出
 	FlipSurface();
 
-	// 锁帧
-	WaitClock();
 	return 1;
 }
 
@@ -185,15 +304,21 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 
 	while (TRUE)
 	{
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		if (g_deltaTime == 0 || g_deltaTime >= MAX_FRAME_RATE)
 		{
-			if (msg.message == WM_QUIT)
-				break;
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+			g_Clock = GetClock();
+			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+			{
+				if (msg.message == WM_QUIT)
+					break;
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+
+			Game_Main(g_deltaTime / 1000.0f);
 		}
 
-		Game_Main();
+		g_deltaTime = GetClock() - g_Clock;
 	}
 
 	Game_Shutdown();

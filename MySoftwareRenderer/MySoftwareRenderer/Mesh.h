@@ -17,6 +17,7 @@ public:
 	bool m_bEnableCullFace;
 	bool m_bDrawWireFrame;
 	SMeshData m_meshData;
+	EVertexOrder m_eVertexOrder;
 
 protected:
 };

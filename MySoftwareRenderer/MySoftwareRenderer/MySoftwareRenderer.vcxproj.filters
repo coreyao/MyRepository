@@ -12,6 +12,9 @@
     <Filter Include="Source\Math">
       <UniqueIdentifier>{99c4f959-0fe9-49fd-8118-8fe9f956f85c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Pipeline">
+      <UniqueIdentifier>{f1c5d512-59b9-4482-acbe-f88cf72024ff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3DConsole.cpp">
@@ -32,14 +35,20 @@
     <ClCompile Include="Utility.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Rasterization.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Director.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="RasterizationStage.cpp">
+      <Filter>Source\Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="GeometryStage.cpp">
+      <Filter>Source\Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationStage.cpp">
+      <Filter>Source\Pipeline</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -58,14 +67,20 @@
     <ClInclude Include="Utility.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="Rasterization.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="Director.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="RasterizationStage.h">
+      <Filter>Source\Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryStage.h">
+      <Filter>Source\Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationStage.h">
+      <Filter>Source\Pipeline</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

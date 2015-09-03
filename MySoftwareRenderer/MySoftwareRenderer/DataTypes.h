@@ -4,6 +4,12 @@
 #include "Math/Vector.h"
 #include "Math/Matrix.h"
 
+enum EVertexOrder
+{
+	EVertexOrder_ClockWise,
+	EVertexOrder_Counter_ClockWise,
+};
+
 struct Color3B
 {
 	Color3B() : r(0), g(0), b(0)
