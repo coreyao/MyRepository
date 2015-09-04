@@ -22,6 +22,7 @@ namespace RasterizationStage
 	void Release3DLib();
 
 	bool IsOutSideScreen(int x, int y);
+	float ConverToPixelPos(float value);
 	
 	int DrawPixel(int x, int y, DWORD color);
 	void DrawLine(int x1, int y1, int x2, int y2, DWORD color);

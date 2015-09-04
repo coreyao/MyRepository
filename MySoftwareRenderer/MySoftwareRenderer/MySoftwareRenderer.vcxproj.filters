@@ -50,6 +50,9 @@
     <ClCompile Include="ApplicationStage.cpp">
       <Filter>Source\Pipeline</Filter>
     </ClCompile>
+    <ClCompile Include="Math\Quaternion.cpp">
+      <Filter>Source\Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -81,6 +84,9 @@
     </ClInclude>
     <ClInclude Include="ApplicationStage.h">
       <Filter>Source\Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Quaternion.h">
+      <Filter>Source\Math</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

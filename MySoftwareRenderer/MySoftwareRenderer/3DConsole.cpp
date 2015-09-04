@@ -4,6 +4,7 @@
 
 #include "RasterizationStage.h"
 #include "Mesh.h"
+#include "Director.h"
 using namespace RasterizationStage;
 
 // 宏定义
@@ -17,8 +18,9 @@ HWND g_WindowHandle;
 HINSTANCE g_HInstance;
 DWORD g_Clock;
 DWORD g_deltaTime = 0;
+int g_iStepLength = 50;
 
-CMesh g_mesh;
+std::vector<CMesh*> g_vMesh;
 
 void InitMesh()
 {
@@ -170,8 +172,51 @@ void InitMesh()
 		subMeshData.m_vFace.push_back(face);
 	}
 	
-	g_mesh.m_transform.m_pos.set(0, 0, 0);
-	g_mesh.m_meshData.m_vSubMesh.push_back(subMeshData);
+	CMesh* pCube = new CMesh;
+	pCube->m_transform.m_pos.set(0, 0, 0);
+	pCube->m_transform.m_rotation.set(0, 150, 0);
+	pCube->m_meshData.m_vSubMesh.push_back(subMeshData);
+	//g_vMesh.push_back(pCube);
+
+	CMesh* g_pCharactor = new CMesh;
+	g_pCharactor->InitFromFile("hama.CSTM");
+	g_pCharactor->m_transform.m_scale.set(1, 1, -1);
+	g_pCharactor->m_transform.m_rotation.set(0, 0, 0);
+	g_pCharactor->m_transform.m_pos.set(0, -100, 0);
+	g_pCharactor->m_eVertexOrder = EVertexOrder_Counter_ClockWise;
+	//g_vMesh.push_back(g_pCharactor);
+
+	SSubMeshData subMeshData1;
+	{
+		SVertex vertex;
+		vertex.m_pos.set(-10, 0, 0);
+		subMeshData1.m_vVertex.push_back(vertex);
+	}
+
+	{
+		SVertex vertex;
+		vertex.m_pos.set(10, 0, 0);
+		subMeshData1.m_vVertex.push_back(vertex);
+	}
+
+	{
+		SVertex vertex;
+		vertex.m_pos.set(10, 10, 0);
+		subMeshData1.m_vVertex.push_back(vertex);
+	}
+
+	{
+		SFace face;
+		face.m_VertexIndex1 = 0;
+		face.m_VertexIndex2 = 2;
+		face.m_VertexIndex3 = 1;
+		subMeshData1.m_vFace.push_back(face);
+	}
+	subMeshData1.m_MeshMatrix = Mat4::IDENTITY;
+	CMesh* pTriangle = new CMesh;
+	pTriangle->m_meshData.m_vSubMesh.push_back(subMeshData1);
+	pTriangle->m_bEnableCullFace = false;
+	g_vMesh.push_back(pTriangle);
 }
 
 bool IsOutSideScreen(int x, int y)
@@ -202,8 +247,11 @@ int Game_Main(float dt)
 	// 表面加锁
 	LockSurface();
 	
-	g_mesh.Update(dt);
-	g_mesh.Render();
+	for (auto& pMesh : g_vMesh)
+	{
+		pMesh->Update(dt);
+		pMesh->Render();
+	}
 
 	// 表面解锁
 	UnlockSurface();
@@ -225,31 +273,79 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	PAINTSTRUCT ps;
 	HDC hdc;
 
+	int iMoveLeftRight = 0;
+	int iMoveForwardBack = 0;
+	float fPitch = 0;
+	float fYaw = 0;
+
 	switch (msg)
 	{
 	case WM_CREATE:
-	{
-					  return 0;
-	} break;
+		return 0;
 	case WM_KEYDOWN:
 	{
-					   if (wParam == VK_ESCAPE)
-					   {
-						   PostMessage(g_WindowHandle, WM_DESTROY, 0, 0);
-					   } break;
+		if (wParam == VK_ESCAPE)
+		{
+			PostMessage(g_WindowHandle, WM_DESTROY, 0, 0);
+		}
+		else if (KEY_DOWN('W'))
+		{
+			iMoveForwardBack = g_iStepLength;
+		}
+		else if (KEY_DOWN('A'))
+		{
+			iMoveLeftRight = -g_iStepLength;
+		}
+		else if (KEY_DOWN('S'))
+		{
+			iMoveForwardBack = -g_iStepLength;
+		}
+		else if (KEY_DOWN('D'))
+		{
+			iMoveLeftRight = g_iStepLength;
+		}
+		else if (KEY_DOWN('J'))
+		{
+			fPitch = 5.0f;
+		}
+		else if (KEY_DOWN('K'))
+		{
+			fPitch = -5.0f;
+		}
+		else if (KEY_DOWN('N'))
+		{
+			fYaw = 5.0f;
+		}
+		else if (KEY_DOWN('M'))
+		{
+			fYaw = -5.0f;
+		}
+		else if (KEY_DOWN('B'))
+		{
+			for (auto& pMesh : g_vMesh)
+			{
+				pMesh->m_bDrawWireFrame = !pMesh->m_bDrawWireFrame;
+			}
+		}
+
+		CDirector::GetInstance()->GetPerspectiveCamera()->Rotate(fPitch, fYaw);
+		CDirector::GetInstance()->GetPerspectiveCamera()->Move(iMoveLeftRight, 0, iMoveForwardBack);
+
+		break;
 	}
 	case WM_PAINT:
 	{
-					 hdc = BeginPaint(hwnd, &ps);
-					 EndPaint(hwnd, &ps);
-					 return 0;
-	} break;
+		hdc = BeginPaint(hwnd, &ps);
+		EndPaint(hwnd, &ps);
+		return 0;
+	}
 	case WM_DESTROY:
 	{
-					   PostQuitMessage(0);
-					   return 0;
-	} break;
-	default:break;
+		PostQuitMessage(0);
+		return 0;
+	}
+	default:
+		break;
 	}
 
 	return DefWindowProc(hwnd, msg, wParam, lParam);

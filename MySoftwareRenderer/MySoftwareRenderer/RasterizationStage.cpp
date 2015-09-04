@@ -82,10 +82,15 @@ void RasterizationStage::Release3DLib()
 
 bool RasterizationStage::IsOutSideScreen(int x, int y)
 {
-	if ( x < 0 || x > SCREEN_WIDTH || y < 0 || y > SCREEN_HEIGHT )
+	if ( x < 0 || x >= SCREEN_WIDTH || y < 0 || y >= SCREEN_HEIGHT )
 		return true;
 
 	return false;
+}
+
+float RasterizationStage::ConverToPixelPos(float value)
+{
+	return floor(value + 0.5f);
 }
 
 void RasterizationStage::DrawLine(int x1, int y1, int x2, int y2, DWORD color)
@@ -117,7 +122,7 @@ void RasterizationStage::DrawLine(int x1, int y1, int x2, int y2, DWORD color)
 			float iCurY = y1;
 			for (int iCurX = x1; iCurX <= x2; ++iCurX)
 			{
-				DrawPixel(iCurX, (int)(iCurY + 0.5f), color);
+				DrawPixel(iCurX, ConverToPixelPos(iCurY), color);
 				iCurY += k;
 			}
 		}
@@ -132,7 +137,7 @@ void RasterizationStage::DrawLine(int x1, int y1, int x2, int y2, DWORD color)
 			float iCurX = x1;
 			for (int iCurY = y1; iCurY <= y2; ++iCurY)
 			{
-				DrawPixel((int)(iCurX + 0.5f), iCurY, color);
+				DrawPixel(ConverToPixelPos(iCurX), iCurY, color);
 				iCurX += kInverse;
 			}
 		}
@@ -141,7 +146,93 @@ void RasterizationStage::DrawLine(int x1, int y1, int x2, int y2, DWORD color)
 
 void RasterizationStage::DrawTriangle(const SVertex& v1, const SVertex& v2, const SVertex& v3, bool bWireFrame /*= true*/)
 {
-	DrawLine(v1.m_pos.x, v1.m_pos.y, v2.m_pos.x, v2.m_pos.y, 0xffffffff);
-	DrawLine(v2.m_pos.x, v2.m_pos.y, v3.m_pos.x, v3.m_pos.y, 0xffffffff);
-	DrawLine(v1.m_pos.x, v1.m_pos.y, v3.m_pos.x, v3.m_pos.y, 0xffffffff);
+	if ( bWireFrame )
+	{
+		DrawLine(v1.m_pos.x, v1.m_pos.y, v2.m_pos.x, v2.m_pos.y, 0xffffffff);
+		DrawLine(v2.m_pos.x, v2.m_pos.y, v3.m_pos.x, v3.m_pos.y, 0xffffffff);
+		DrawLine(v1.m_pos.x, v1.m_pos.y, v3.m_pos.x, v3.m_pos.y, 0xffffffff);
+	}
+	else
+	{
+		SVertex vVertex[3];
+		vVertex[0] = v1;
+		vVertex[1] = v2;
+		vVertex[2] = v3;
+
+		Vec3& p1 = vVertex[0].m_pos;
+		Vec3& p2 = vVertex[1].m_pos;
+		Vec3& p3 = vVertex[2].m_pos;
+
+		if (p1.y > p2.y)
+		{
+			if (p1.y > p3.y)
+				Helper::Swap(p1, p3);
+			else
+				Helper::Swap(p1, p2);
+		}
+		else
+		{
+			if (p1.y > p3.y)
+				Helper::Swap(p1, p3);
+
+			if (p2.y > p3.y)
+				Helper::Swap(p2, p3);
+		}
+
+		if (p1.y == p2.y && p2.y == p3.y
+			|| p1.x == p2.x && p2.x == p3.x)
+			return;
+
+		if ( p2.y == p3.y )
+		{
+			float kInverseLeft = (p1.x - p2.x) / (p1.y - p2.y);
+			float kInverseRight = (p1.x - p3.x) / (p1.y - p3.y);
+
+			float fLeftX = p1.x;
+			float fRightX = p1.x;
+			for (float y = p1.y; y <= p2.y; ++y)
+			{
+				DrawLine(fLeftX, y, fRightX, y, 0xffffffff);
+
+				fLeftX += kInverseLeft;
+				fRightX += kInverseRight;
+			}
+		}
+		else if (p1.y == p2.y)
+		{
+			float kInverseLeft = (p3.x - p1.x) / (p3.y - p1.y);
+			float kInverseRight = (p3.x - p2.x) / (p3.y - p2.y);
+
+			float fLeftX = p1.x;
+			float fRightX = p2.x;
+			for (float y = p1.y; y <= p3.y; ++y)
+			{
+				DrawLine(fLeftX, y, fRightX, y, 0xffffffff);
+
+				fLeftX += kInverseLeft;
+				fRightX += kInverseRight;
+			}
+		}
+		else
+		{
+			if (p2.x < p3.x)
+			{
+				float kInverseRight = (p3.x - p1.x) / (p3.y - p1.y);
+
+				SVertex newVertex;
+				newVertex.m_pos.set(p1.x + (p2.y - p1.y) * kInverseRight, p2.y, 0);
+				DrawTriangle(vVertex[0], vVertex[1], newVertex, bWireFrame);
+				DrawTriangle(vVertex[1], newVertex, vVertex[2], bWireFrame);
+			}
+			else if ( p2.x >= p3.x )
+			{
+				float kInverseLeft = (p3.x - p1.x) / (p3.y - p1.y);
+
+				SVertex newVertex;
+				newVertex.m_pos.set(p1.x + (p2.y - p1.y) * kInverseLeft, p2.y, 0);
+				DrawTriangle(vVertex[0], newVertex, vVertex[1], bWireFrame);
+				DrawTriangle(newVertex, vVertex[1], vVertex[2], bWireFrame);
+			}
+		}
+	}
 }

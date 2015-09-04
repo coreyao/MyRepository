@@ -15,6 +15,7 @@
     <ClCompile Include="ApplicationStage.cpp" />
     <ClCompile Include="Director.cpp" />
     <ClCompile Include="GeometryStage.cpp" />
+    <ClCompile Include="Math\Quaternion.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="RasterizationStage.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -27,6 +28,7 @@
     <ClInclude Include="ApplicationStage.h" />
     <ClInclude Include="Director.h" />
     <ClInclude Include="GeometryStage.h" />
+    <ClInclude Include="Math\Quaternion.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="RasterizationStage.h" />
     <ClInclude Include="Camera.h" />
@@ -80,7 +82,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
@@ -97,7 +99,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>

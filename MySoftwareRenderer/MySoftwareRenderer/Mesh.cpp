@@ -14,9 +14,9 @@ CMesh::~CMesh()
 
 void CMesh::Update(float dt)
 {
-	m_transform.m_rotation.x += 30 * dt;
+	//m_transform.m_rotation.x += 30 * dt;
 	m_transform.m_rotation.y += 30 * dt;
-	m_transform.m_rotation.z += 30 * dt;
+	//m_transform.m_rotation.z += 30 * dt;
 }
 
 void CMesh::Render()
@@ -37,7 +37,7 @@ void CMesh::Render()
 				rVertex.m_pos = Vec3(worldPos.x, worldPos.y, worldPos.z);
 			}
 
-			if (!ApplicationStage::IsBackFace(vVertex[0], vVertex[1], vVertex[2], m_eVertexOrder))
+			if (!m_bEnableCullFace || !ApplicationStage::IsBackFace(vVertex[0], vVertex[1], vVertex[2], m_eVertexOrder))
 			{
 				for (auto& rVertex : vVertex)
 					GeometryStage::TransformWorldToScreen(rVertex);
@@ -46,7 +46,7 @@ void CMesh::Render()
 					|| !RasterizationStage::IsOutSideScreen(vVertex[1].m_pos.x, vVertex[1].m_pos.y)
 					|| !RasterizationStage::IsOutSideScreen(vVertex[2].m_pos.x, vVertex[2].m_pos.y))
 				{
-					RasterizationStage::DrawTriangle(vVertex[0], vVertex[1], vVertex[2]);
+					RasterizationStage::DrawTriangle(vVertex[0], vVertex[1], vVertex[2], m_bDrawWireFrame);
 				}
 			}
 		}
@@ -55,6 +55,13 @@ void CMesh::Render()
 
 void CMesh::InitFromFile(const char* pMeshFileName)
 {
+	FILE* pMeshFile = fopen((MESH_FILE_DIR + pMeshFileName).c_str(), "rb");
+	if (!pMeshFile)
+		return;
+
+	m_meshData.ReadFromFile(pMeshFile);
+	m_vSubMeshVisibility.resize(m_meshData.m_vSubMesh.size(), true);
+	m_MV.resize(m_meshData.m_vSubMesh.size());
 }
 
 void CMesh::SetMaterial(const CMaterial& rMaterial, int iIndex)
@@ -67,5 +74,7 @@ void CMesh::SetVisible(bool bVisible, const std::string& sSubMeshName)
 
 CBaseMesh::CBaseMesh()
 : m_eVertexOrder(EVertexOrder_ClockWise)
+, m_bDrawWireFrame(true)
+, m_bEnableCullFace(true)
 {
 }

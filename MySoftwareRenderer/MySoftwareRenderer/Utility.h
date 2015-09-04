@@ -16,6 +16,10 @@ using namespace std;
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
 
+#ifndef MESH_FILE_DIR
+#define MESH_FILE_DIR std::string("./Resource/Mesh/")
+#endif
+
 namespace Helper
 {
 	template<typename T>
