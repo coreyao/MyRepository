@@ -145,16 +145,11 @@ void RasterizationStage::DrawLine(int x1, int y1, int x2, int y2, DWORD color)
 	}
 }
 
-void RasterizationStage::DrawTriangle(const SVertex& v1, const SVertex& v2, const SVertex& v3, bool bWireFrame /*= true*/)
+void RasterizationStage::DrawTriangle(SVertex& v1, SVertex& v2, SVertex& v3, bool bWireFrame /*= true*/)
 {
-	SVertex vVertex[3];
-	vVertex[0] = v1;
-	vVertex[1] = v2;
-	vVertex[2] = v3;
-
-	Vec3& p1 = vVertex[0].m_pos;
-	Vec3& p2 = vVertex[1].m_pos;
-	Vec3& p3 = vVertex[2].m_pos;
+	Vec3& p1 = v1.m_pos;
+	Vec3& p2 = v2.m_pos;
+	Vec3& p3 = v3.m_pos;
 
 	p1.x = ConverToPixelPos(p1.x);
 	p1.y = ConverToPixelPos(p1.y);
@@ -222,8 +217,8 @@ void RasterizationStage::DrawTriangle(const SVertex& v1, const SVertex& v2, cons
 
 				SVertex newVertex;
 				newVertex.m_pos.set(p1.x + (p2.y - p1.y) * kInverseRight, p2.y, 0);
-				DrawTriangle(vVertex[0], vVertex[1], newVertex, bWireFrame);
-				DrawTriangle(vVertex[1], newVertex, vVertex[2], bWireFrame);
+				DrawTriangle(v1, v2, newVertex, bWireFrame);
+				DrawTriangle(v2, newVertex, v3, bWireFrame);
 			}
 			else if ( p2.x >= p3.x )
 			{
@@ -231,8 +226,8 @@ void RasterizationStage::DrawTriangle(const SVertex& v1, const SVertex& v2, cons
 
 				SVertex newVertex;
 				newVertex.m_pos.set(p1.x + (p2.y - p1.y) * kInverseLeft, p2.y, 0);
-				DrawTriangle(vVertex[0], newVertex, vVertex[1], bWireFrame);
-				DrawTriangle(newVertex, vVertex[1], vVertex[2], bWireFrame);
+				DrawTriangle(v1, newVertex, v2, bWireFrame);
+				DrawTriangle(newVertex, v2, v3, bWireFrame);
 			}
 		}
 	}
