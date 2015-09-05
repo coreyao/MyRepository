@@ -14,9 +14,9 @@ CMesh::~CMesh()
 
 void CMesh::Update(float dt)
 {
-	//m_transform.m_rotation.x += 30 * dt;
-	m_transform.m_rotation.y += 30 * dt;
-	//m_transform.m_rotation.z += 30 * dt;
+	m_transform.m_rotation.x += 30 * dt;
+	m_transform.m_rotation.y += 60 * dt;
+	m_transform.m_rotation.z += 30 * dt;
 }
 
 void CMesh::Render()

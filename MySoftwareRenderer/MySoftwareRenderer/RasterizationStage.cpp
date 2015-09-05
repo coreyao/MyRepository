@@ -91,6 +91,7 @@ bool RasterizationStage::IsOutSideScreen(int x, int y)
 float RasterizationStage::ConverToPixelPos(float value)
 {
 	return floor(value + 0.5f);
+	//return int(value + 0.5f);
 }
 
 void RasterizationStage::DrawLine(int x1, int y1, int x2, int y2, DWORD color)
@@ -146,38 +147,38 @@ void RasterizationStage::DrawLine(int x1, int y1, int x2, int y2, DWORD color)
 
 void RasterizationStage::DrawTriangle(const SVertex& v1, const SVertex& v2, const SVertex& v3, bool bWireFrame /*= true*/)
 {
+	SVertex vVertex[3];
+	vVertex[0] = v1;
+	vVertex[1] = v2;
+	vVertex[2] = v3;
+
+	Vec3& p1 = vVertex[0].m_pos;
+	Vec3& p2 = vVertex[1].m_pos;
+	Vec3& p3 = vVertex[2].m_pos;
+
+	p1.x = ConverToPixelPos(p1.x);
+	p1.y = ConverToPixelPos(p1.y);
+	p2.x = ConverToPixelPos(p2.x);
+	p2.y = ConverToPixelPos(p2.y);
+	p3.x = ConverToPixelPos(p3.x);
+	p3.y = ConverToPixelPos(p3.y);
+
 	if ( bWireFrame )
 	{
-		DrawLine(v1.m_pos.x, v1.m_pos.y, v2.m_pos.x, v2.m_pos.y, 0xffffffff);
-		DrawLine(v2.m_pos.x, v2.m_pos.y, v3.m_pos.x, v3.m_pos.y, 0xffffffff);
-		DrawLine(v1.m_pos.x, v1.m_pos.y, v3.m_pos.x, v3.m_pos.y, 0xffffffff);
+		DrawLine(p1.x, p1.y, p2.x, p2.y, 0xffffffff);
+		DrawLine(p2.x, p2.y, p3.x, p3.y, 0xffffffff);
+		DrawLine(p1.x, p1.y, p3.x, p3.y, 0xffffffff);
 	}
 	else
 	{
-		SVertex vVertex[3];
-		vVertex[0] = v1;
-		vVertex[1] = v2;
-		vVertex[2] = v3;
-
-		Vec3& p1 = vVertex[0].m_pos;
-		Vec3& p2 = vVertex[1].m_pos;
-		Vec3& p3 = vVertex[2].m_pos;
-
 		if (p1.y > p2.y)
-		{
-			if (p1.y > p3.y)
-				Helper::Swap(p1, p3);
-			else
-				Helper::Swap(p1, p2);
-		}
-		else
-		{
-			if (p1.y > p3.y)
-				Helper::Swap(p1, p3);
+			Helper::Swap(p1, p2);
 
-			if (p2.y > p3.y)
-				Helper::Swap(p2, p3);
-		}
+		if (p1.y > p3.y)
+			Helper::Swap(p1, p3);
+
+		if (p2.y > p3.y)
+			Helper::Swap(p2, p3);
 
 		if (p1.y == p2.y && p2.y == p3.y
 			|| p1.x == p2.x && p2.x == p3.x)
@@ -192,7 +193,7 @@ void RasterizationStage::DrawTriangle(const SVertex& v1, const SVertex& v2, cons
 			float fRightX = p1.x;
 			for (float y = p1.y; y <= p2.y; ++y)
 			{
-				DrawLine(fLeftX, y, fRightX, y, 0xffffffff);
+				DrawLine(ConverToPixelPos(fLeftX), y, ConverToPixelPos(fRightX), y, 0xffffffff);
 
 				fLeftX += kInverseLeft;
 				fRightX += kInverseRight;
@@ -207,7 +208,7 @@ void RasterizationStage::DrawTriangle(const SVertex& v1, const SVertex& v2, cons
 			float fRightX = p2.x;
 			for (float y = p1.y; y <= p3.y; ++y)
 			{
-				DrawLine(fLeftX, y, fRightX, y, 0xffffffff);
+				DrawLine(ConverToPixelPos(fLeftX), y, ConverToPixelPos(fRightX), y, 0xffffffff);
 
 				fLeftX += kInverseLeft;
 				fRightX += kInverseRight;
