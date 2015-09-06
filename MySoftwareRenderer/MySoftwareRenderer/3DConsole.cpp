@@ -18,7 +18,7 @@ HWND g_WindowHandle;
 HINSTANCE g_HInstance;
 DWORD g_Clock;
 DWORD g_deltaTime = 0;
-int g_iStepLength = 50;
+float g_iStepLength = 50;
 
 std::vector<CMesh*> g_vMesh;
 
@@ -273,8 +273,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	PAINTSTRUCT ps;
 	HDC hdc;
 
-	int iMoveLeftRight = 0;
-	int iMoveForwardBack = 0;
+	float iMoveLeftRight = 0;
+	float iMoveForwardBack = 0;
 	float fPitch = 0;
 	float fYaw = 0;
 
