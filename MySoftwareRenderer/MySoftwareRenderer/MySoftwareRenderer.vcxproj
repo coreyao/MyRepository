@@ -17,6 +17,7 @@
     <ClCompile Include="GeometryStage.cpp" />
     <ClCompile Include="Math\Quaternion.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Pipeline.cpp" />
     <ClCompile Include="RasterizationStage.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DataTypes.cpp" />
@@ -30,6 +31,7 @@
     <ClInclude Include="GeometryStage.h" />
     <ClInclude Include="Math\Quaternion.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Pipeline.h" />
     <ClInclude Include="RasterizationStage.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="DataTypes.h" />

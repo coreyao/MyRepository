@@ -34,3 +34,22 @@ void Helper::Swap(T& a, T& b)
 	b = temp;
 }
 
+enum EVertexOrder
+{
+	EVertexOrder_ClockWise,
+	EVertexOrder_Counter_ClockWise,
+};
+
+class CRenderObject
+{
+public:
+	CRenderObject();
+
+	virtual void Update(float dt) = 0;
+	virtual void Render() = 0;
+
+	bool m_bEnableCullFace;
+	bool m_bDrawWireFrame;
+	EVertexOrder m_eVertexOrder;
+};
+

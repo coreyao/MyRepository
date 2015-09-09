@@ -72,9 +72,3 @@ void CMesh::SetVisible(bool bVisible, const std::string& sSubMeshName)
 {
 }
 
-CBaseMesh::CBaseMesh()
-: m_eVertexOrder(EVertexOrder_ClockWise)
-, m_bDrawWireFrame(true)
-, m_bEnableCullFace(true)
-{
-}
