@@ -154,17 +154,13 @@ void RasterizationStage::DrawAnyTriangle(SVertex& v1, SVertex& v2, SVertex& v3, 
 	v3.m_pos.x = ConvertToPixelPos(v3.m_pos.x);
 	v3.m_pos.y = ConvertToPixelPos(v3.m_pos.y);
 
-	DrawLine(v1.m_pos.x, v1.m_pos.y, v2.m_pos.x, v2.m_pos.y, 0xffffffff);
-	DrawLine(v2.m_pos.x, v2.m_pos.y, v3.m_pos.x, v3.m_pos.y, 0xffffffff);
-	DrawLine(v1.m_pos.x, v1.m_pos.y, v3.m_pos.x, v3.m_pos.y, 0xffffffff);
-
-	/*if (bWireFrame)
+	if (bWireFrame)
 	{
 		DrawLine(v1.m_pos.x, v1.m_pos.y, v2.m_pos.x, v2.m_pos.y, 0xffffffff);
 		DrawLine(v2.m_pos.x, v2.m_pos.y, v3.m_pos.x, v3.m_pos.y, 0xffffffff);
 		DrawLine(v1.m_pos.x, v1.m_pos.y, v3.m_pos.x, v3.m_pos.y, 0xffffffff);
 	}
-	else*/
+	else
 	{
 		if (v1.m_pos.y > v2.m_pos.y)
 			Helper::Swap(v1, v2);
