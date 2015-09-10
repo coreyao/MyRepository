@@ -72,6 +72,67 @@ Color4F Color4F::operator*(const Color4F& rh)
 	return Color4F(r * rh.r, g * rh.g, b * rh.b, a * rh.a);
 }
 
+int Color4F::ToARGB()
+{
+	if ( a < 0 )
+		a = 0;
+	if (a > 1)
+		a = 1;
+
+	if (r < 0)
+		r = 0;
+	if (r > 1)
+		r = 1;
+
+	if (g < 0)
+		g = 0;
+	if (g > 1)
+		g = 1;
+
+	if (b < 0)
+		b = 0;
+	if (b > 1)
+		b = 1;
+
+	return ARGB((int)(a * 255) % 255, (int)(r * 255) % 255, (int)(g * 255) % 255, (int)(b * 255) % 255);
+}
+
+void Color4F::operator+=(const Color4F& rh)
+{
+	this->a += rh.a;
+	this->r += rh.r;
+	this->g += rh.g;
+	this->b += rh.b;
+}
+
+Color4F Color4F::operator-(const Color4F& rh)
+{
+	return Color4F(r - rh.r, g - rh.g, b - rh.b, a - rh.a);
+}
+
+Color4F Color4F::operator/(float fScalar)
+{
+	return Color4F(r / fScalar, g / fScalar, b / fScalar, a / fScalar);
+}
+
+Color4F Color4F::operator*(float fScalar)
+{
+	return Color4F(r * fScalar, g * fScalar, b * fScalar, a * fScalar);
+}
+
+void Color4F::Set(float _r, float _g, float _b, float _a)
+{
+	r = _r;
+	g = _g;
+	b = _b;
+	a = _a;
+}
+
+Color4F Color4F::operator+(const Color4F& rh)
+{
+	return Color4F(this->r + rh.r, this->g + rh.g, this->b + rh.b, this->a + rh.a);
+}
+
 void CMaterial::SetBaseColorTexture(const std::string& sFileName)
 {
 

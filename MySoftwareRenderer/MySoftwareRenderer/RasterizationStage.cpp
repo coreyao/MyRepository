@@ -88,7 +88,7 @@ bool RasterizationStage::IsOutSideScreen(int x, int y)
 	return false;
 }
 
-float RasterizationStage::ConverToPixelPos(float value)
+float RasterizationStage::ConvertToPixelPos(float value)
 {
 	return floor(value + 0.5f);
 	//return int(value + 0.5f);
@@ -123,7 +123,7 @@ void RasterizationStage::DrawLine(int x1, int y1, int x2, int y2, DWORD color)
 			float iCurY = y1;
 			for (int iCurX = x1; iCurX <= x2; ++iCurX)
 			{
-				DrawPixel(iCurX, ConverToPixelPos(iCurY), color);
+				DrawPixel(iCurX, ConvertToPixelPos(iCurY), color);
 				iCurY += k;
 			}
 		}
@@ -138,97 +138,197 @@ void RasterizationStage::DrawLine(int x1, int y1, int x2, int y2, DWORD color)
 			float iCurX = x1;
 			for (int iCurY = y1; iCurY <= y2; ++iCurY)
 			{
-				DrawPixel(ConverToPixelPos(iCurX), iCurY, color);
+				DrawPixel(ConvertToPixelPos(iCurX), iCurY, color);
 				iCurX += kInverse;
 			}
 		}
 	}
 }
 
-void RasterizationStage::DrawTriangle(SVertex& v1, SVertex& v2, SVertex& v3, bool bWireFrame /*= true*/)
+void RasterizationStage::DrawAnyTriangle(SVertex& v1, SVertex& v2, SVertex& v3, bool bWireFrame /*= true*/)
 {
-	Vec3& p1 = v1.m_pos;
-	Vec3& p2 = v2.m_pos;
-	Vec3& p3 = v3.m_pos;
+	v1.m_pos.x = ConvertToPixelPos(v1.m_pos.x);
+	v1.m_pos.y = ConvertToPixelPos(v1.m_pos.y);
+	v2.m_pos.x = ConvertToPixelPos(v2.m_pos.x);
+	v2.m_pos.y = ConvertToPixelPos(v2.m_pos.y);
+	v3.m_pos.x = ConvertToPixelPos(v3.m_pos.x);
+	v3.m_pos.y = ConvertToPixelPos(v3.m_pos.y);
 
-	p1.x = ConverToPixelPos(p1.x);
-	p1.y = ConverToPixelPos(p1.y);
-	p2.x = ConverToPixelPos(p2.x);
-	p2.y = ConverToPixelPos(p2.y);
-	p3.x = ConverToPixelPos(p3.x);
-	p3.y = ConverToPixelPos(p3.y);
+	DrawLine(v1.m_pos.x, v1.m_pos.y, v2.m_pos.x, v2.m_pos.y, 0xffffffff);
+	DrawLine(v2.m_pos.x, v2.m_pos.y, v3.m_pos.x, v3.m_pos.y, 0xffffffff);
+	DrawLine(v1.m_pos.x, v1.m_pos.y, v3.m_pos.x, v3.m_pos.y, 0xffffffff);
 
-	if ( bWireFrame )
+	/*if (bWireFrame)
 	{
-		DrawLine(p1.x, p1.y, p2.x, p2.y, 0xffffffff);
-		DrawLine(p2.x, p2.y, p3.x, p3.y, 0xffffffff);
-		DrawLine(p1.x, p1.y, p3.x, p3.y, 0xffffffff);
+		DrawLine(v1.m_pos.x, v1.m_pos.y, v2.m_pos.x, v2.m_pos.y, 0xffffffff);
+		DrawLine(v2.m_pos.x, v2.m_pos.y, v3.m_pos.x, v3.m_pos.y, 0xffffffff);
+		DrawLine(v1.m_pos.x, v1.m_pos.y, v3.m_pos.x, v3.m_pos.y, 0xffffffff);
 	}
-	else
+	else*/
 	{
-		if (p1.y > p2.y)
-			Helper::Swap(p1, p2);
+		if (v1.m_pos.y > v2.m_pos.y)
+			Helper::Swap(v1, v2);
 
-		if (p1.y > p3.y)
-			Helper::Swap(p1, p3);
+		if (v1.m_pos.y > v3.m_pos.y)
+			Helper::Swap(v1, v3);
 
-		if (p2.y > p3.y)
-			Helper::Swap(p2, p3);
+		if (v2.m_pos.y > v3.m_pos.y)
+			Helper::Swap(v2, v3);
 
-		if (p1.y == p2.y && p2.y == p3.y
-			|| p1.x == p2.x && p2.x == p3.x)
+		if (v1.m_pos.y == v2.m_pos.y && v2.m_pos.y == v3.m_pos.y
+			|| v1.m_pos.x == v2.m_pos.x && v2.m_pos.x == v3.m_pos.x)
 			return;
 
-		if ( p2.y == p3.y )
+		if (v2.m_pos.y == v3.m_pos.y)
 		{
-			float kInverseLeft = (p1.x - p2.x) / (p1.y - p2.y);
-			float kInverseRight = (p1.x - p3.x) / (p1.y - p3.y);
-
-			float fLeftX = p1.x;
-			float fRightX = p1.x;
-			for (float y = p1.y; y <= p2.y; ++y)
+			DrawBottomTriangle(v1, v2, v3);
+		}
+		else if (v1.m_pos.y == v2.m_pos.y)
+		{
+			DrawTopTriangle(v1, v2, v3);
+		}
+		else
+		{
+			if (v2.m_pos.x < v3.m_pos.x)
 			{
-				DrawLine(ConverToPixelPos(fLeftX), y, ConverToPixelPos(fRightX), y, 0xffffffff);
+				float kInverseSlopeRightX = (v3.m_pos.x - v1.m_pos.x) / (v3.m_pos.y - v1.m_pos.y);
 
-				fLeftX += kInverseLeft;
-				fRightX += kInverseRight;
+				Color4F kInverseSlopeRightColor = Color4F((v3.m_color.r - v1.m_color.r) / (v3.m_pos.y - v1.m_pos.y),
+					(v3.m_color.g - v1.m_color.g) / (v3.m_pos.y - v1.m_pos.y),
+					(v3.m_color.b - v1.m_color.b) / (v3.m_pos.y - v1.m_pos.y),
+					(v3.m_color.a - v1.m_color.a) / (v3.m_pos.y - v1.m_pos.y));
+
+				SVertex newVertex;
+				newVertex.m_pos.set(v1.m_pos.x + (v2.m_pos.y - v1.m_pos.y) * kInverseSlopeRightX, v2.m_pos.y, 0);
+				newVertex.m_color = (v1.m_color + kInverseSlopeRightColor * (v2.m_pos.y - v1.m_pos.y));
+				DrawAnyTriangle(v1, v2, newVertex, bWireFrame);
+				DrawAnyTriangle(v2, newVertex, v3, bWireFrame);
+			}
+			else if ( v2.m_pos.x >= v3.m_pos.x )
+			{
+				float kInverseSlopeLeftX = (v3.m_pos.x - v1.m_pos.x) / (v3.m_pos.y - v1.m_pos.y);
+
+				Color4F kInverseSlopeLeftColor = Color4F((v3.m_color.r - v1.m_color.r) / (v3.m_pos.y - v1.m_pos.y),
+					(v3.m_color.g - v1.m_color.g) / (v3.m_pos.y - v1.m_pos.y),
+					(v3.m_color.b - v1.m_color.b) / (v3.m_pos.y - v1.m_pos.y),
+					(v3.m_color.a - v1.m_color.a) / (v3.m_pos.y - v1.m_pos.y));
+
+				SVertex newVertex;
+				newVertex.m_pos.set(v1.m_pos.x + (v2.m_pos.y - v1.m_pos.y) * kInverseSlopeLeftX, v2.m_pos.y, 0);
+				newVertex.m_color = (v1.m_color + kInverseSlopeLeftColor * (v2.m_pos.y - v1.m_pos.y));
+				DrawAnyTriangle(v1, newVertex, v2, bWireFrame);
+				DrawAnyTriangle(newVertex, v2, v3, bWireFrame);
 			}
 		}
-		else if (p1.y == p2.y)
+	}
+}
+
+void RasterizationStage::DrawBottomTriangle(SVertex &v1, SVertex &v2, SVertex &v3)
+{
+	float kInverseSlopeLeftX = (v1.m_pos.x - v2.m_pos.x) / (v1.m_pos.y - v2.m_pos.y);
+	float kInverseSlopeRightX = (v1.m_pos.x - v3.m_pos.x) / (v1.m_pos.y - v3.m_pos.y);
+
+	Color4F kInverseSlopeLeftColor = Color4F((v1.m_color.r - v2.m_color.r) / (v1.m_pos.y - v2.m_pos.y),
+		(v1.m_color.g - v2.m_color.g) / (v1.m_pos.y - v2.m_pos.y),
+		(v1.m_color.b - v2.m_color.b) / (v1.m_pos.y - v2.m_pos.y),
+		(v1.m_color.a - v2.m_color.a) / (v1.m_pos.y - v2.m_pos.y));
+
+	Color4F kInverseSlopeRightColor = Color4F((v1.m_color.r - v3.m_color.r) / (v1.m_pos.y - v3.m_pos.y),
+		(v1.m_color.g - v3.m_color.g) / (v1.m_pos.y - v3.m_pos.y),
+		(v1.m_color.b - v3.m_color.b) / (v1.m_pos.y - v3.m_pos.y),
+		(v1.m_color.a - v3.m_color.a) / (v1.m_pos.y - v3.m_pos.y));
+
+	float fLeftX = v1.m_pos.x;
+	float fRightX = v1.m_pos.x;
+	Color4F leftColor = v1.m_color;
+	Color4F rightColor = v1.m_color;
+	for (float y = v1.m_pos.y; y <= v2.m_pos.y; ++y)
+	{
+		int iStartX = ConvertToPixelPos(fLeftX);
+		int iEndX = ConvertToPixelPos(fRightX);
+		Color4F curColor = leftColor;
+		if (iEndX != iStartX)
 		{
-			float kInverseLeft = (p3.x - p1.x) / (p3.y - p1.y);
-			float kInverseRight = (p3.x - p2.x) / (p3.y - p2.y);
-
-			float fLeftX = p1.x;
-			float fRightX = p2.x;
-			for (float y = p1.y; y <= p3.y; ++y)
+			int iStep = 1;
+			int iDeltaX = iEndX - iStartX;
+			Color4F kInverseSlopeColor = (rightColor - leftColor) / iDeltaX;
+			if (iDeltaX < 0)
 			{
-				DrawLine(ConverToPixelPos(fLeftX), y, ConverToPixelPos(fRightX), y, 0xffffffff);
+				iStep = -1;
+				kInverseSlopeColor = kInverseSlopeColor * (-1);
+			}
 
-				fLeftX += kInverseLeft;
-				fRightX += kInverseRight;
+			iDeltaX = abs(iDeltaX);
+			for (int i = 0; i <= iDeltaX; ++i)
+			{
+				DrawPixel(iStartX + i * iStep, y, curColor.ToARGB());
+				curColor += kInverseSlopeColor;
 			}
 		}
 		else
 		{
-			if (p2.x < p3.x)
-			{
-				float kInverseRight = (p3.x - p1.x) / (p3.y - p1.y);
+			DrawPixel(iStartX, y, curColor.ToARGB());
+		}
 
-				SVertex newVertex;
-				newVertex.m_pos.set(p1.x + (p2.y - p1.y) * kInverseRight, p2.y, 0);
-				DrawTriangle(v1, v2, newVertex, bWireFrame);
-				DrawTriangle(v2, newVertex, v3, bWireFrame);
+		fLeftX += kInverseSlopeLeftX;
+		fRightX += kInverseSlopeRightX;
+
+		leftColor += kInverseSlopeLeftColor;
+		rightColor += kInverseSlopeRightColor;
+	}
+}
+
+void RasterizationStage::DrawTopTriangle(SVertex &v1, SVertex &v2, SVertex &v3)
+{
+	float kInverseSlopeLeftX = (v3.m_pos.x - v1.m_pos.x) / (v3.m_pos.y - v1.m_pos.y);
+	float kInverseSlopeRightX = (v3.m_pos.x - v2.m_pos.x) / (v3.m_pos.y - v2.m_pos.y);
+
+	Color4F kInverseSlopeLeftColor = Color4F((v3.m_color.r - v1.m_color.r) / (v3.m_pos.y - v1.m_pos.y),
+		(v3.m_color.g - v1.m_color.g) / (v3.m_pos.y - v1.m_pos.y),
+		(v3.m_color.b - v1.m_color.b) / (v3.m_pos.y - v1.m_pos.y),
+		(v3.m_color.a - v1.m_color.a) / (v3.m_pos.y - v1.m_pos.y));
+
+	Color4F kInverseSlopeRightColor = Color4F((v3.m_color.r - v2.m_color.r) / (v3.m_pos.y - v2.m_pos.y),
+		(v3.m_color.g - v2.m_color.g) / (v3.m_pos.y - v2.m_pos.y),
+		(v3.m_color.b - v2.m_color.b) / (v3.m_pos.y - v2.m_pos.y),
+		(v3.m_color.a - v2.m_color.a) / (v3.m_pos.y - v2.m_pos.y));
+
+	float fLeftX = v1.m_pos.x;
+	float fRightX = v2.m_pos.x;
+	Color4F leftColor = v1.m_color;
+	Color4F rightColor = v2.m_color;
+	for (float y = v1.m_pos.y; y <= v3.m_pos.y; ++y)
+	{
+		int iStartX = ConvertToPixelPos(fLeftX);
+		int iEndX = ConvertToPixelPos(fRightX);
+		Color4F curColor = leftColor;
+		if (iEndX != iStartX)
+		{
+			int iStep = 1;
+			int iDeltaX = iEndX - iStartX;
+			Color4F kInverseSlopeColor = (rightColor - leftColor) / iDeltaX;
+			if (iDeltaX < 0)
+			{
+				iStep = -1;
+				kInverseSlopeColor = kInverseSlopeColor * (-1);
 			}
-			else if ( p2.x >= p3.x )
-			{
-				float kInverseLeft = (p3.x - p1.x) / (p3.y - p1.y);
 
-				SVertex newVertex;
-				newVertex.m_pos.set(p1.x + (p2.y - p1.y) * kInverseLeft, p2.y, 0);
-				DrawTriangle(v1, newVertex, v2, bWireFrame);
-				DrawTriangle(newVertex, v2, v3, bWireFrame);
+			iDeltaX = abs(iDeltaX);
+			for (int i = 0; i <= iDeltaX; ++i)
+			{
+				DrawPixel(iStartX + i * iStep, y, curColor.ToARGB());
+				curColor += kInverseSlopeColor;
 			}
 		}
+		else
+		{
+			DrawPixel(iStartX, y, curColor.ToARGB());
+		}
+
+		fLeftX += kInverseSlopeLeftX;
+		fRightX += kInverseSlopeRightX;
+
+		leftColor += kInverseSlopeLeftColor;
+		rightColor += kInverseSlopeRightColor;
 	}
 }

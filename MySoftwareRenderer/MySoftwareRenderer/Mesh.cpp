@@ -14,9 +14,9 @@ CMesh::~CMesh()
 
 void CMesh::Update(float dt)
 {
-	m_transform.m_rotation.x += 30 * dt;
+	/*m_transform.m_rotation.x += 30 * dt;
 	m_transform.m_rotation.y += 60 * dt;
-	m_transform.m_rotation.z += 30 * dt;
+	m_transform.m_rotation.z += 30 * dt;*/
 }
 
 void CMesh::Render()
@@ -46,7 +46,7 @@ void CMesh::Render()
 					|| !RasterizationStage::IsOutSideScreen(vVertex[1].m_pos.x, vVertex[1].m_pos.y)
 					|| !RasterizationStage::IsOutSideScreen(vVertex[2].m_pos.x, vVertex[2].m_pos.y))
 				{
-					RasterizationStage::DrawTriangle(vVertex[0], vVertex[1], vVertex[2], m_bDrawWireFrame);
+					RasterizationStage::DrawAnyTriangle(vVertex[0], vVertex[1], vVertex[2], m_bDrawWireFrame);
 				}
 			}
 		}

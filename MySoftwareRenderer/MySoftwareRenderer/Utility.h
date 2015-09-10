@@ -3,6 +3,7 @@
 #include <cmath>
 #include <string>
 #include <vector>
+#include <memory>
 
 using namespace std;
 
@@ -52,4 +53,6 @@ public:
 	bool m_bDrawWireFrame;
 	EVertexOrder m_eVertexOrder;
 };
+
+typedef shared_ptr<CRenderObject> RenderObjPtr;
 

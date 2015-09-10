@@ -184,24 +184,27 @@ void InitMesh()
 	g_pCharactor->m_transform.m_rotation.set(0, 0, 0);
 	g_pCharactor->m_transform.m_pos.set(0, -100, 0);
 	g_pCharactor->m_eVertexOrder = EVertexOrder_Counter_ClockWise;
-	g_vMesh.push_back(g_pCharactor);
+	//g_vMesh.push_back(g_pCharactor);
 
 	SSubMeshData subMeshData1;
 	{
 		SVertex vertex;
 		vertex.m_pos.set(-10, 0, 0);
+		vertex.m_color.Set(1.0f, 0.0f, 0.0f, 1.0f);
 		subMeshData1.m_vVertex.push_back(vertex);
 	}
 
 	{
 		SVertex vertex;
 		vertex.m_pos.set(10, 0, 0);
+		vertex.m_color.Set(0.0f, 0.0f, 1.0f, 1.0f);
 		subMeshData1.m_vVertex.push_back(vertex);
 	}
 
 	{
 		SVertex vertex;
-		vertex.m_pos.set(10, 10, 0);
+		vertex.m_pos.set(0, -30, 0);
+		vertex.m_color.Set(0.0f, 1.0f, 0.0f, 1.0f);
 		subMeshData1.m_vVertex.push_back(vertex);
 	}
 
@@ -216,7 +219,10 @@ void InitMesh()
 	CMesh* pTriangle = new CMesh;
 	pTriangle->m_meshData.m_vSubMesh.push_back(subMeshData1);
 	pTriangle->m_bEnableCullFace = false;
-	//g_vMesh.push_back(pTriangle);
+	/*pTriangle->m_transform.m_rotation.x = 30;
+	pTriangle->m_transform.m_rotation.y = 30;
+	pTriangle->m_transform.m_rotation.z = -60;*/
+	g_vMesh.push_back(pTriangle);
 }
 
 bool IsOutSideScreen(int x, int y)

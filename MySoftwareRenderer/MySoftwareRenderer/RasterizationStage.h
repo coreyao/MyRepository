@@ -22,9 +22,12 @@ namespace RasterizationStage
 	void Release3DLib();
 
 	bool IsOutSideScreen(int x, int y);
-	float ConverToPixelPos(float value);
+	float ConvertToPixelPos(float value);
 	
 	int DrawPixel(int x, int y, DWORD color);
 	void DrawLine(int x1, int y1, int x2, int y2, DWORD color);
-	void DrawTriangle(SVertex& v1, SVertex& v2, SVertex& v3, bool bWireFrame = true);
+	void DrawAnyTriangle(SVertex& v1, SVertex& v2, SVertex& v3, bool bWireFrame = true);
+	void DrawTopTriangle(SVertex &v1, SVertex &v2, SVertex &v3);
+	void DrawBottomTriangle(SVertex &v1, SVertex &v2, SVertex &v3);
+
 }
