@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <map>
 
 using namespace std;
 
@@ -19,6 +20,10 @@ using namespace std;
 
 #ifndef MESH_FILE_DIR
 #define MESH_FILE_DIR std::string("./Resource/Mesh/")
+#endif
+
+#ifndef IMAGE_FILE_DIR
+#define IMAGE_FILE_DIR std::string("./Resource/Images/")
 #endif
 
 namespace Helper
@@ -55,4 +60,61 @@ public:
 };
 
 typedef shared_ptr<CRenderObject> RenderObjPtr;
+
+class CTexture
+{
+public:
+	CTexture()
+		: m_iWidth(0)
+		, m_iHeight(0)
+		, m_pData(nullptr)
+	{
+	}
+
+	int m_iWidth;
+	int m_iHeight;
+	unsigned char* m_pData;
+};
+
+class CSampler
+{
+public:
+	enum EUVWrapMode
+	{
+		EUVWrapMode_Repeat,
+		EUVWrapMode_Clamp,
+	};
+
+	enum ETextureFilter
+	{
+		ETextureFilter_Nearest,
+		ETextureFilter_Liner,
+	};
+
+	CSampler()
+		: UV_WRAP_S(EUVWrapMode_Clamp)
+		, UV_WRAP_T(EUVWrapMode_Clamp)
+		, TEXTURE_MAG_FILTER(ETextureFilter_Nearest)
+		, TEXTURE_MIN_FILTER(ETextureFilter_Nearest)
+	{
+	}
+
+	EUVWrapMode UV_WRAP_S;
+	EUVWrapMode UV_WRAP_T;
+
+	ETextureFilter TEXTURE_MAG_FILTER;
+	ETextureFilter TEXTURE_MIN_FILTER;
+};
+
+class CMaterial
+{
+public:
+	CMaterial();
+
+	int GetBaseColorTex();
+	void SetBaseColorTexture(const std::string& sFileName);
+
+private:
+	int m_baseColorTex;
+};
 

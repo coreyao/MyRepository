@@ -90,3 +90,35 @@ float Vec3::GetLength()
 {
 	return sqrt(x * x + y * y + z * z);
 }
+
+Vec2 Vec2::operator-(const Vec2& rh)
+{
+	return Vec2( this->x - rh.x, this->y - rh.y );
+}
+
+Vec2 Vec2::operator+(const Vec2& rh)
+{
+	return Vec2(this->x + rh.x, this->y + rh.y);
+}
+
+Vec2 Vec2::operator/(float fScalar)
+{
+	return Vec2( this->x / fScalar, this->y / fScalar );
+}
+
+Vec2 Vec2::operator*(float fScalar)
+{
+	return Vec2(this->x * fScalar, this->y * fScalar);
+}
+
+void Vec2::operator+=(const Vec2& rh)
+{
+	this->x += rh.x;
+	this->y += rh.y;
+}
+
+void Vec2::set(float _x, float _y)
+{
+	x = _x;
+	y = _y;
+}

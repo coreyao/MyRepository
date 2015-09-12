@@ -207,15 +207,3 @@ struct STransform
 
 	Mat4 m_mat;
 };
-
-class CMaterial
-{
-public:
-	CMaterial();
-
-	//GLuint GetBaseColorTex();
-	void SetBaseColorTexture(const std::string& sFileName);
-
-private:
-	//GLuint m_baseColorTex;
-};

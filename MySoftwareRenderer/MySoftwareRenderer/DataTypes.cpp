@@ -94,7 +94,7 @@ int Color4F::ToARGB()
 	if (b > 1)
 		b = 1;
 
-	return ARGB((int)(a * 255) % 255, (int)(r * 255) % 255, (int)(g * 255) % 255, (int)(b * 255) % 255);
+	return ARGB((int)(a * 255) % 256, (int)(r * 255) % 256, (int)(g * 255) % 256, (int)(b * 255) % 256);
 }
 
 void Color4F::operator+=(const Color4F& rh)
@@ -131,11 +131,6 @@ void Color4F::Set(float _r, float _g, float _b, float _a)
 Color4F Color4F::operator+(const Color4F& rh)
 {
 	return Color4F(this->r + rh.r, this->g + rh.g, this->b + rh.b, this->a + rh.a);
-}
-
-void CMaterial::SetBaseColorTexture(const std::string& sFileName)
-{
-
 }
 
 void SSubMeshData::WriteToFile(FILE* hFile)

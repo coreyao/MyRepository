@@ -9,6 +9,18 @@ public:
 	{
 	}
 
+	Vec2( float _x, float _y ) : x(_x), y(_y)
+	{
+	}
+
+	Vec2 operator-(const Vec2& rh);
+	Vec2 operator+(const Vec2& rh);
+	Vec2 operator/(float fScalar);
+	Vec2 operator*(float fScalar);
+	void operator+=(const Vec2& rh);
+
+	void set(float _x, float _y);
+
 	float x;
 	float y;
 };

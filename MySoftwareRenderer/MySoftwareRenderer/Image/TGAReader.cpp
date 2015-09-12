@@ -1,5 +1,4 @@
 #include "TGAReader.h"
-#include "png.h"
 #include "../Utility.h"
 #include <cstdio>
 

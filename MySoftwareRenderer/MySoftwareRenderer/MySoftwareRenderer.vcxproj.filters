@@ -15,6 +15,9 @@
     <Filter Include="Source\Pipeline">
       <UniqueIdentifier>{f1c5d512-59b9-4482-acbe-f88cf72024ff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Image">
+      <UniqueIdentifier>{9447ce13-7b7f-4155-b28d-9a344318137d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3DConsole.cpp">
@@ -56,6 +59,18 @@
     <ClCompile Include="Pipeline.cpp">
       <Filter>Source\Pipeline</Filter>
     </ClCompile>
+    <ClCompile Include="Image\PNGReader.cpp">
+      <Filter>Source\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="Image\TGAReader.cpp">
+      <Filter>Source\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="Image\ImageManager.cpp">
+      <Filter>Source\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="Image\ImageReader.cpp">
+      <Filter>Source\Image</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -93,6 +108,18 @@
     </ClInclude>
     <ClInclude Include="Pipeline.h">
       <Filter>Source\Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Image\PNGReader.h">
+      <Filter>Source\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="Image\TGAReader.h">
+      <Filter>Source\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="Image\ImageManager.h">
+      <Filter>Source\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="Image\ImageReader.h">
+      <Filter>Source\Image</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

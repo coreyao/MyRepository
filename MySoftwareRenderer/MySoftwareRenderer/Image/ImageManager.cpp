@@ -16,9 +16,12 @@ CImageManager* CImageManager::GetInstance()
 	return s_pInstance;
 }
 
-void CImageManager::Load( const char* pFileName, unsigned char*& pOutData, float& fOutWidth, float& fOutHeight )
+int CImageManager::Load(const char* pFileName)
 {
-	pOutData = nullptr;
+	CTexture outTexture;
+	unsigned char* pOutData = nullptr;
+	float fOutWidth = 0;
+	float fOutHeight = 0;
 
 	std::string sExt(pFileName);
 	sExt = sExt.substr( sExt.find_last_of('.') + 1 );
@@ -43,5 +46,24 @@ void CImageManager::Load( const char* pFileName, unsigned char*& pOutData, float
 			fOutHeight = tgaReader.GetHeight();
 		}
 	}
+
+	outTexture.m_pData = pOutData;
+	outTexture.m_iWidth = fOutWidth;
+	outTexture.m_iHeight = fOutHeight;
+
+	int iID = s_iNextID++;
+	m_mAllTexture[iID] = outTexture;
+	return iID;
 }
+
+const CTexture* CImageManager::FindTexture(int iID)
+{
+	auto it = m_mAllTexture.find(iID);
+	if ( it != m_mAllTexture.end() )
+		return &it->second;
+
+	return nullptr;
+}
+
+int CImageManager::s_iNextID = 1;
 

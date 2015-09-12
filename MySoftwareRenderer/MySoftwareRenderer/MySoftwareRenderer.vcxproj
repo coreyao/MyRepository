@@ -15,6 +15,10 @@
     <ClCompile Include="ApplicationStage.cpp" />
     <ClCompile Include="Director.cpp" />
     <ClCompile Include="GeometryStage.cpp" />
+    <ClCompile Include="Image\ImageManager.cpp" />
+    <ClCompile Include="Image\ImageReader.cpp" />
+    <ClCompile Include="Image\PNGReader.cpp" />
+    <ClCompile Include="Image\TGAReader.cpp" />
     <ClCompile Include="Math\Quaternion.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Pipeline.cpp" />
@@ -29,6 +33,10 @@
     <ClInclude Include="ApplicationStage.h" />
     <ClInclude Include="Director.h" />
     <ClInclude Include="GeometryStage.h" />
+    <ClInclude Include="Image\ImageManager.h" />
+    <ClInclude Include="Image\ImageReader.h" />
+    <ClInclude Include="Image\PNGReader.h" />
+    <ClInclude Include="Image\TGAReader.h" />
     <ClInclude Include="Math\Quaternion.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Pipeline.h" />
@@ -86,11 +94,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>.\Extern\lpng1616;.\Extern\freetype-2.5.5\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d9.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d9.lib;libpng16.lib;zlib.lib;freetype255ST.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>.\Extern\lpng1616\projects\vstudio\Release Library;.\Extern\freetype-2.5.5\objs\vc2010\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -103,13 +113,15 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>.\Extern\lpng1616;.\Extern\freetype-2.5.5\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>d3d9.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d9.lib;libpng16.lib;zlib.lib;freetype255ST.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>.\Extern\lpng1616\projects\vstudio\Release Library;.\Extern\freetype-2.5.5\objs\vc2010\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

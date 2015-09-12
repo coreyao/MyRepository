@@ -3,6 +3,7 @@
 #include <WindowsX.h>
 
 #include "RasterizationStage.h"
+#include "Image/ImageManager.h"
 #include "Mesh.h"
 #include "Director.h"
 using namespace RasterizationStage;
@@ -29,48 +30,56 @@ void InitMesh()
 	{
 		SVertex vertex;
 		vertex.m_pos.set(-10, 10, 10);
+		vertex.m_color.Set(1.0f, 0.0f, 1.0f, 1.0f);
 		subMeshData.m_vVertex.push_back(vertex);
 	}
 
 	{
 		SVertex vertex;
 		vertex.m_pos.set(10, 10, 10);
+		vertex.m_color.Set(0.0f, 0.0f, 1.0f, 1.0f);
 		subMeshData.m_vVertex.push_back(vertex);
 	}
 
 	{
 		SVertex vertex;
 		vertex.m_pos.set(10, -10, 10);
+		vertex.m_color.Set(0.0f, 1.0f, 1.0f, 1.0f);
 		subMeshData.m_vVertex.push_back(vertex);
 	}
 
 	{
 		SVertex vertex;
 		vertex.m_pos.set(-10, -10, 10);
+		vertex.m_color.Set(0.0f, 0.0f, 1.0f, 1.0f);
 		subMeshData.m_vVertex.push_back(vertex);
 	}
 
 	{
 		SVertex vertex;
 		vertex.m_pos.set(-10, 10, -10);
+		vertex.m_color.Set(1.0f, 1.0f, 1.0f, 1.0f);
 		subMeshData.m_vVertex.push_back(vertex);
 	}
 
 	{
 		SVertex vertex;
 		vertex.m_pos.set(10, 10, -10);
+		vertex.m_color.Set(0.0f, 0.0f, 1.0f, 1.0f);
 		subMeshData.m_vVertex.push_back(vertex);
 	}
 
 	{
 		SVertex vertex;
 		vertex.m_pos.set(10, -10, -10);
+		vertex.m_color.Set(0.0f, 0.0f, 1.0f, 1.0f);
 		subMeshData.m_vVertex.push_back(vertex);
 	}
 
 	{
 		SVertex vertex;
 		vertex.m_pos.set(-10, -10, -10);
+		vertex.m_color.Set(0.0f, 0.0f, 1.0f, 1.0f);
 		subMeshData.m_vVertex.push_back(vertex);
 	}
 
@@ -190,21 +199,21 @@ void InitMesh()
 	{
 		SVertex vertex;
 		vertex.m_pos.set(-10, 0, 0);
-		vertex.m_color.Set(1.0f, 0.0f, 0.0f, 1.0f);
+		vertex.m_UV.set(0, 0);
 		subMeshData1.m_vVertex.push_back(vertex);
 	}
 
 	{
 		SVertex vertex;
 		vertex.m_pos.set(10, 0, 0);
-		vertex.m_color.Set(0.0f, 0.0f, 1.0f, 1.0f);
+		vertex.m_UV.set(1, 0);
 		subMeshData1.m_vVertex.push_back(vertex);
 	}
 
 	{
 		SVertex vertex;
-		vertex.m_pos.set(0, -30, 0);
-		vertex.m_color.Set(0.0f, 1.0f, 0.0f, 1.0f);
+		vertex.m_pos.set(0, 30, 0);
+		vertex.m_UV.set(0.5f, 1.0f);
 		subMeshData1.m_vVertex.push_back(vertex);
 	}
 
@@ -219,9 +228,9 @@ void InitMesh()
 	CMesh* pTriangle = new CMesh;
 	pTriangle->m_meshData.m_vSubMesh.push_back(subMeshData1);
 	pTriangle->m_bEnableCullFace = false;
-	/*pTriangle->m_transform.m_rotation.x = 30;
-	pTriangle->m_transform.m_rotation.y = 30;
-	pTriangle->m_transform.m_rotation.z = -60;*/
+	//pTriangle->m_transform.m_rotation.x += 30;
+	//pTriangle->m_transform.m_rotation.y += 60;
+	//pTriangle->m_transform.m_rotation.z += 30;
 	g_vMesh.push_back(pTriangle);
 }
 
@@ -244,6 +253,8 @@ DWORD GetClock()
 int Game_Init()
 {
 	Init3DLib(g_HInstance, g_WindowHandle, SCREEN_WIDTH, SCREEN_HEIGHT);
+	CImageManager::GetInstance()->Load("brickwall.png");
+
 	InitMesh();
 	return 1;
 }
