@@ -19,10 +19,10 @@ void GeometryStage::TransformWorldToScreen(SVertex& rVertex)
 		rVertex.m_pos.y = screenPos.y;
 		rVertex.m_pos.z = clippingPos.z;
 
-		rVertex.m_posZ = clippingPos.w;
+		rVertex.m_inverseZ = 1.0f / clippingPos.w;
 
-		rVertex.m_UV.x /= clippingPos.w;
-		rVertex.m_UV.y /= clippingPos.w;
+		rVertex.m_UV.x *= rVertex.m_inverseZ;
+		rVertex.m_UV.y *= rVertex.m_inverseZ;
 	}
 }
 
