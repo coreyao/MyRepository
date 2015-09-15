@@ -31,6 +31,7 @@ void InitMesh()
 		SVertex vertex;
 		vertex.m_pos.set(-10, 10, 10);
 		vertex.m_color.Set(1.0f, 0.0f, 1.0f, 1.0f);
+		vertex.m_UV.set(0, 1);
 		subMeshData.m_vVertex.push_back(vertex);
 	}
 
@@ -38,6 +39,7 @@ void InitMesh()
 		SVertex vertex;
 		vertex.m_pos.set(10, 10, 10);
 		vertex.m_color.Set(0.0f, 0.0f, 1.0f, 1.0f);
+		vertex.m_UV.set(1, 1);
 		subMeshData.m_vVertex.push_back(vertex);
 	}
 
@@ -45,6 +47,7 @@ void InitMesh()
 		SVertex vertex;
 		vertex.m_pos.set(10, -10, 10);
 		vertex.m_color.Set(0.0f, 1.0f, 1.0f, 1.0f);
+		vertex.m_UV.set(1, 0);
 		subMeshData.m_vVertex.push_back(vertex);
 	}
 
@@ -52,6 +55,7 @@ void InitMesh()
 		SVertex vertex;
 		vertex.m_pos.set(-10, -10, 10);
 		vertex.m_color.Set(0.0f, 0.0f, 1.0f, 1.0f);
+		vertex.m_UV.set(0, 0);
 		subMeshData.m_vVertex.push_back(vertex);
 	}
 
@@ -59,6 +63,7 @@ void InitMesh()
 		SVertex vertex;
 		vertex.m_pos.set(-10, 10, -10);
 		vertex.m_color.Set(1.0f, 1.0f, 1.0f, 1.0f);
+		vertex.m_UV.set(0, 0);
 		subMeshData.m_vVertex.push_back(vertex);
 	}
 
@@ -66,6 +71,7 @@ void InitMesh()
 		SVertex vertex;
 		vertex.m_pos.set(10, 10, -10);
 		vertex.m_color.Set(0.0f, 0.0f, 1.0f, 1.0f);
+		vertex.m_UV.set(1, 0);
 		subMeshData.m_vVertex.push_back(vertex);
 	}
 
@@ -73,6 +79,7 @@ void InitMesh()
 		SVertex vertex;
 		vertex.m_pos.set(10, -10, -10);
 		vertex.m_color.Set(0.0f, 0.0f, 1.0f, 1.0f);
+		vertex.m_UV.set(1, 1);
 		subMeshData.m_vVertex.push_back(vertex);
 	}
 
@@ -80,6 +87,7 @@ void InitMesh()
 		SVertex vertex;
 		vertex.m_pos.set(-10, -10, -10);
 		vertex.m_color.Set(0.0f, 0.0f, 1.0f, 1.0f);
+		vertex.m_UV.set(0, 1);
 		subMeshData.m_vVertex.push_back(vertex);
 	}
 
@@ -183,9 +191,8 @@ void InitMesh()
 	
 	CMesh* pCube = new CMesh;
 	pCube->m_transform.m_pos.set(0, 0, 0);
-	pCube->m_transform.m_rotation.set(0, 150, 0);
 	pCube->m_meshData.m_vSubMesh.push_back(subMeshData);
-	//g_vMesh.push_back(pCube);
+	g_vMesh.push_back(pCube);
 
 	CMesh* g_pCharactor = new CMesh;
 	g_pCharactor->InitFromFile("hama.CSTM");
@@ -231,7 +238,7 @@ void InitMesh()
 	//pTriangle->m_transform.m_rotation.x += 30;
 	//pTriangle->m_transform.m_rotation.y += 60;
 	//pTriangle->m_transform.m_rotation.z += 30;
-	g_vMesh.push_back(pTriangle);
+	//g_vMesh.push_back(pTriangle);
 }
 
 bool IsOutSideScreen(int x, int y)
