@@ -91,7 +91,13 @@ struct SFace
 
 struct SVertex
 {
+	SVertex()
+	: m_posZ(0)
+	{
+	}
+
 	Vec3 m_pos;
+	float m_posZ;
 	Vec3 m_normal;
 	Vec3 m_tangent;
 	Vec2 m_UV;

@@ -19,7 +19,7 @@ HWND g_WindowHandle;
 HINSTANCE g_HInstance;
 DWORD g_Clock;
 DWORD g_deltaTime = 0;
-float g_iStepLength = 50;
+float g_iStepLength = 25;
 
 std::vector<CMesh*> g_vMesh;
 
