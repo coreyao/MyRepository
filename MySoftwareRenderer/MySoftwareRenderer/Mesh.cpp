@@ -33,8 +33,7 @@ void CMesh::Render()
 
 			for (auto& rVertex : vVertex)
 			{
-				Vec4 localPos = Vec4(rVertex.m_pos.x, rVertex.m_pos.y, rVertex.m_pos.z, 1.0f);
-				Vec4 worldPos = m_transform.GetTransformMat() * rSubMesh.m_MeshMatrix * localPos;
+				Vec4 worldPos = m_transform.GetTransformMat() * rSubMesh.m_MeshMatrix * Vec4(rVertex.m_pos.x, rVertex.m_pos.y, rVertex.m_pos.z, 1.0f);
 				rVertex.m_pos = Vec3(worldPos.x, worldPos.y, worldPos.z);
 			}
 

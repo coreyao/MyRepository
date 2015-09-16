@@ -512,8 +512,6 @@ bool RasterizationStage::CRasterizer::CanDrawPixel(int x, int y, float z)
 	}
 
 	return false;
-
-	//return true;
 }
 
 void RasterizationStage::CRasterizer::ClearDepthBuffer(float val)
