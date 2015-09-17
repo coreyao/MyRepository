@@ -1,7 +1,7 @@
 #include "RasterizationStage.h"
 #include "Image/ImageManager.h"
 
-bool RasterizationStage::Init3DLib(HINSTANCE hInstance, HWND hWnd, int width, int height)
+bool RasterizationStage::InitDX(HINSTANCE hInstance, HWND hWnd, int width, int height)
 {
 	IDirect3D9* d3d9 = Direct3DCreate9(D3D_SDK_VERSION);
 
@@ -36,7 +36,7 @@ int RasterizationStage::LockSurface()
 	for (int i = 0; i < SCREEN_WIDTH; ++i)
 	{
 		for (int j = 0; j < SCREEN_HEIGHT; ++j)
-			DrawPixel(i, j, 0);
+			CRasterizer::GetInstance()->DrawPixel(i, j, 0);
 	}
 
 	return 1;
@@ -48,13 +48,13 @@ int RasterizationStage::UnlockSurface()
 	return 1;
 }
 
-int RasterizationStage::DrawPixel(int x, int y, DWORD color)
+int RasterizationStage::CRasterizer::DrawPixel(int x, int y, DWORD color)
 {
 	if (IsOutSideScreen(x, y))
 		return 0;
 
-	DWORD* pBits = (DWORD*)lockedRect.pBits;
-	pBits[x + y * (lockedRect.Pitch >> 2)] = color;
+	DWORD* pBits = (DWORD*)RasterizationStage::lockedRect.pBits;
+	pBits[x + y * (RasterizationStage::lockedRect.Pitch >> 2)] = color;
 
 	return 1;
 }
@@ -75,13 +75,13 @@ void RasterizationStage::FlipSurface()
 	pDevice->Present(0, 0, 0, 0);
 }
 
-void RasterizationStage::Release3DLib()
+void RasterizationStage::ReleaseDX()
 {
 	pSurface->Release();
 	pDevice->Release();
 }
 
-bool RasterizationStage::IsOutSideScreen(int x, int y)
+bool RasterizationStage::CRasterizer::IsOutSideScreen(int x, int y)
 {
 	if ( x < 0 || x >= SCREEN_WIDTH || y < 0 || y >= SCREEN_HEIGHT )
 		return true;
@@ -89,13 +89,13 @@ bool RasterizationStage::IsOutSideScreen(int x, int y)
 	return false;
 }
 
-float RasterizationStage::ConvertToPixelPos(float value)
+float RasterizationStage::CRasterizer::ConvertToPixelPos(float value)
 {
 	return floor(value + 0.5f);
 	//return int(value + 0.5f);
 }
 
-void RasterizationStage::DrawLine(int x1, int y1, int x2, int y2, DWORD color)
+void RasterizationStage::CRasterizer::DrawLine(int x1, int y1, int x2, int y2, DWORD color)
 {
 	// - DDA
 	if ( x2 - x1 == 0 )
@@ -146,7 +146,7 @@ void RasterizationStage::DrawLine(int x1, int y1, int x2, int y2, DWORD color)
 	}
 }
 
-void RasterizationStage::DrawAnyTriangle(SVertexRuntime& v1, SVertexRuntime& v2, SVertexRuntime& v3, bool bWireFrame /*= true*/, int iTextureID /*= 0*/)
+void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVertexRuntime& v2, SVertexRuntime& v3, bool bWireFrame /*= true*/, int iTextureID /*= 0*/)
 {
 	v1.m_pos.x = ConvertToPixelPos(v1.m_pos.x);
 	v1.m_pos.y = ConvertToPixelPos(v1.m_pos.y);
@@ -189,6 +189,7 @@ void RasterizationStage::DrawAnyTriangle(SVertexRuntime& v1, SVertexRuntime& v2,
 			if (v2.m_pos.x < v3.m_pos.x)
 			{
 				float kInverseSlopeRightX = (v3.m_pos.x - v1.m_pos.x) / (v3.m_pos.y - v1.m_pos.y);
+				float kInverseSlopeRightZ = (v3.m_pos.z - v1.m_pos.z) / (v3.m_pos.y - v1.m_pos.y);
 
 				Color4F kInverseSlopeRightColor = Color4F((v3.m_color.r - v1.m_color.r) / (v3.m_pos.y - v1.m_pos.y),
 					(v3.m_color.g - v1.m_color.g) / (v3.m_pos.y - v1.m_pos.y),
@@ -197,19 +198,20 @@ void RasterizationStage::DrawAnyTriangle(SVertexRuntime& v1, SVertexRuntime& v2,
 
 				Vec2 kInverseSlopeRightUV = Vec2((v3.m_UV.x - v1.m_UV.x) / (v3.m_pos.y - v1.m_pos.y), (v3.m_UV.y - v1.m_UV.y) / (v3.m_pos.y - v1.m_pos.y));
 
-				float kInverseSlopeRightZ = (v3.m_inverseZ - v1.m_inverseZ) / (v3.m_pos.y - v1.m_pos.y);
+				float kInverseSlopeRightInverseZ = (v3.m_inverseZ - v1.m_inverseZ) / (v3.m_pos.y - v1.m_pos.y);
 
 				SVertexRuntime newVertex;
-				newVertex.m_pos.set(v1.m_pos.x + (v2.m_pos.y - v1.m_pos.y) * kInverseSlopeRightX, v2.m_pos.y, 0);
+				newVertex.m_pos.set(v1.m_pos.x + (v2.m_pos.y - v1.m_pos.y) * kInverseSlopeRightX, v2.m_pos.y, v1.m_pos.z + (v2.m_pos.y - v1.m_pos.y) * kInverseSlopeRightZ);
 				newVertex.m_color = (v1.m_color + kInverseSlopeRightColor * (v2.m_pos.y - v1.m_pos.y));
 				newVertex.m_UV = v1.m_UV + kInverseSlopeRightUV * (v2.m_pos.y - v1.m_pos.y);
-				newVertex.m_inverseZ = v1.m_inverseZ + kInverseSlopeRightZ * (v2.m_pos.y - v1.m_pos.y);
+				newVertex.m_inverseZ = v1.m_inverseZ + kInverseSlopeRightInverseZ * (v2.m_pos.y - v1.m_pos.y);
 				DrawAnyTriangle(v1, v2, newVertex, bWireFrame);
 				DrawAnyTriangle(v2, newVertex, v3, bWireFrame);
 			}
 			else if ( v2.m_pos.x >= v3.m_pos.x )
 			{
 				float kInverseSlopeLeftX = (v3.m_pos.x - v1.m_pos.x) / (v3.m_pos.y - v1.m_pos.y);
+				float kInverseSlopeLeftZ = (v3.m_pos.z - v1.m_pos.z) / (v3.m_pos.y - v1.m_pos.y);
 
 				Color4F kInverseSlopeLeftColor = Color4F((v3.m_color.r - v1.m_color.r) / (v3.m_pos.y - v1.m_pos.y),
 					(v3.m_color.g - v1.m_color.g) / (v3.m_pos.y - v1.m_pos.y),
@@ -218,13 +220,13 @@ void RasterizationStage::DrawAnyTriangle(SVertexRuntime& v1, SVertexRuntime& v2,
 
 				Vec2 kInverseSlopeLeftUV = Vec2((v3.m_UV.x - v1.m_UV.x) / (v3.m_pos.y - v1.m_pos.y), (v3.m_UV.y - v1.m_UV.y) / (v3.m_pos.y - v1.m_pos.y));
 
-				float kInverseSlopeLeftZ = (v3.m_inverseZ - v1.m_inverseZ) / (v3.m_pos.y - v1.m_pos.y);
+				float kInverseSlopeLeftInverseZ = (v3.m_inverseZ - v1.m_inverseZ) / (v3.m_pos.y - v1.m_pos.y);
 
 				SVertexRuntime newVertex;
-				newVertex.m_pos.set(v1.m_pos.x + (v2.m_pos.y - v1.m_pos.y) * kInverseSlopeLeftX, v2.m_pos.y, 0);
+				newVertex.m_pos.set(v1.m_pos.x + (v2.m_pos.y - v1.m_pos.y) * kInverseSlopeLeftX, v2.m_pos.y, v1.m_pos.z + (v2.m_pos.y - v1.m_pos.y) * kInverseSlopeLeftZ);
 				newVertex.m_color = (v1.m_color + kInverseSlopeLeftColor * (v2.m_pos.y - v1.m_pos.y));
 				newVertex.m_UV = (v1.m_UV + kInverseSlopeLeftUV * (v2.m_pos.y - v1.m_pos.y));
-				newVertex.m_inverseZ = (v1.m_inverseZ + kInverseSlopeLeftZ * (v2.m_pos.y - v1.m_pos.y));
+				newVertex.m_inverseZ = (v1.m_inverseZ + kInverseSlopeLeftInverseZ * (v2.m_pos.y - v1.m_pos.y));
 				DrawAnyTriangle(v1, newVertex, v2, bWireFrame);
 				DrawAnyTriangle(newVertex, v2, v3, bWireFrame);
 			}
@@ -232,7 +234,7 @@ void RasterizationStage::DrawAnyTriangle(SVertexRuntime& v1, SVertexRuntime& v2,
 	}
 }
 
-void RasterizationStage::DrawBottomTriangle(SVertexRuntime &v1, SVertexRuntime &v2, SVertexRuntime &v3)
+void RasterizationStage::CRasterizer::DrawBottomTriangle(SVertexRuntime &v1, SVertexRuntime &v2, SVertexRuntime &v3)
 {
 	float kInverseSlopeLeftX = (v1.m_pos.x - v2.m_pos.x) / (v1.m_pos.y - v2.m_pos.y);
 	float kInverseSlopeRightX = (v1.m_pos.x - v3.m_pos.x) / (v1.m_pos.y - v3.m_pos.y);
@@ -250,23 +252,34 @@ void RasterizationStage::DrawBottomTriangle(SVertexRuntime &v1, SVertexRuntime &
 	Vec2 kInverseSlopeLeftUV = Vec2((v1.m_UV.x - v2.m_UV.x) / (v1.m_pos.y - v2.m_pos.y), (v1.m_UV.y - v2.m_UV.y) / (v1.m_pos.y - v2.m_pos.y));
 	Vec2 kInverseSlopeRightUV = Vec2((v1.m_UV.x - v3.m_UV.x) / (v1.m_pos.y - v3.m_pos.y), (v1.m_UV.y - v3.m_UV.y) / (v1.m_pos.y - v3.m_pos.y));
 
-	float kInverseSlopeLeftZ = (v1.m_inverseZ - v2.m_inverseZ) / (v1.m_pos.y - v2.m_pos.y);
-	float kInverseSlopeRightZ = (v1.m_inverseZ - v3.m_inverseZ) / (v1.m_pos.y - v3.m_pos.y);
+	float kInverseSlopeLeftInverseZ = (v1.m_inverseZ - v2.m_inverseZ) / (v1.m_pos.y - v2.m_pos.y);
+	float kInverseSlopeRightInverseZ = (v1.m_inverseZ - v3.m_inverseZ) / (v1.m_pos.y - v3.m_pos.y);
+
+	float kInverseSlopeLeftZ = (v1.m_pos.z - v2.m_pos.z) / (v1.m_pos.y - v2.m_pos.y);
+	float kInverseSlopeRightZ = (v1.m_pos.z - v3.m_pos.z) / (v1.m_pos.y - v3.m_pos.y);
 
 	float fLeftX = v1.m_pos.x;
 	float fRightX = v1.m_pos.x;
+
 	Color4F leftColor = v1.m_color;
 	Color4F rightColor = v1.m_color;
+
 	Vec2 leftUV = v1.m_UV;
 	Vec2 rightUV = v1.m_UV;
-	float fLeftZ = v1.m_inverseZ;
-	float fRightZ = v1.m_inverseZ;
+
+	float fLeftInverseZ = v1.m_inverseZ;
+	float fRightInverseZ = v1.m_inverseZ;
+
+	float fLeftZ = v1.m_pos.z;
+	float fRightZ = v1.m_pos.z;
+
 	for (float y = v1.m_pos.y; y <= v2.m_pos.y; ++y)
 	{
 		int iStartX = ConvertToPixelPos(fLeftX);
 		int iEndX = ConvertToPixelPos(fRightX);
 		Color4F curColor = leftColor;
 		Vec2 curUV = leftUV;
+		float curInverseZ = fLeftInverseZ;
 		float curZ = fLeftZ;
 		if (iEndX != iStartX)
 		{
@@ -274,30 +287,43 @@ void RasterizationStage::DrawBottomTriangle(SVertexRuntime &v1, SVertexRuntime &
 			int iDeltaX = iEndX - iStartX;
 			Color4F kInverseSlopeColor = (rightColor - leftColor) / iDeltaX;
 			Vec2 kInverseSlopeUV = (rightUV - leftUV) / iDeltaX;
+			float kInverseSlopeInverseZ = (fRightInverseZ - fLeftInverseZ) / iDeltaX;
 			float kInverseSlopeZ = (fRightZ - fLeftZ) / iDeltaX;
 			if (iDeltaX < 0)
 			{
 				iStep = -1;
 				kInverseSlopeColor = kInverseSlopeColor * (-1);
 				kInverseSlopeUV = kInverseSlopeUV * (-1);
+				kInverseSlopeInverseZ = kInverseSlopeInverseZ * (-1);
 				kInverseSlopeZ = kInverseSlopeZ * (-1);
 			}
 
 			iDeltaX = abs(iDeltaX);
 			for (int i = 0; i <= iDeltaX; ++i)
 			{
-				Color4F texColor = SampleTexture(1, curUV / curZ);
-				DrawPixel(iStartX + i * iStep, y, (texColor * curColor).ToARGB());
+				int iPixelX = iStartX + i * iStep;
+				int iPixelY = y;
+				if (CanDrawPixel(iPixelX, iPixelY, curZ))
+				{
+					Color4F texColor = SampleTexture(1, curUV / curInverseZ);
+					DrawPixel(iPixelX, iPixelY, (texColor * curColor / curInverseZ).ToARGB());
+				}
 
 				curColor += kInverseSlopeColor;
 				curUV += kInverseSlopeUV;
+				curInverseZ += kInverseSlopeInverseZ;
 				curZ += kInverseSlopeZ;
 			}
 		}
 		else
 		{
-			Color4F texColor = SampleTexture(1, curUV / curZ);
-			DrawPixel(iStartX, y, (texColor * curColor).ToARGB());
+			int iPixelX = iStartX;
+			int iPixelY = y;
+			if (CanDrawPixel(iPixelX, iPixelY, curZ))
+			{
+				Color4F texColor = SampleTexture(1, curUV / curInverseZ);
+				DrawPixel(iPixelX, iPixelY, (texColor * curColor / curInverseZ).ToARGB());
+			}
 		}
 
 		fLeftX += kInverseSlopeLeftX;
@@ -309,12 +335,15 @@ void RasterizationStage::DrawBottomTriangle(SVertexRuntime &v1, SVertexRuntime &
 		leftUV += kInverseSlopeLeftUV;
 		rightUV += kInverseSlopeRightUV;
 
+		fLeftInverseZ += kInverseSlopeLeftInverseZ;
+		fRightInverseZ += kInverseSlopeRightInverseZ;
+
 		fLeftZ += kInverseSlopeLeftZ;
 		fRightZ += kInverseSlopeRightZ;
 	}
 }
 
-void RasterizationStage::DrawTopTriangle(SVertexRuntime &v1, SVertexRuntime &v2, SVertexRuntime &v3)
+void RasterizationStage::CRasterizer::DrawTopTriangle(SVertexRuntime &v1, SVertexRuntime &v2, SVertexRuntime &v3)
 {
 	float kInverseSlopeLeftX = (v3.m_pos.x - v1.m_pos.x) / (v3.m_pos.y - v1.m_pos.y);
 	float kInverseSlopeRightX = (v3.m_pos.x - v2.m_pos.x) / (v3.m_pos.y - v2.m_pos.y);
@@ -332,23 +361,34 @@ void RasterizationStage::DrawTopTriangle(SVertexRuntime &v1, SVertexRuntime &v2,
 	Vec2 kInverseSlopeLeftUV = Vec2((v3.m_UV.x - v1.m_UV.x) / (v3.m_pos.y - v1.m_pos.y), (v3.m_UV.y - v1.m_UV.y) / (v3.m_pos.y - v1.m_pos.y));
 	Vec2 kInverseSlopeRightUV = Vec2((v3.m_UV.x - v2.m_UV.x) / (v3.m_pos.y - v2.m_pos.y), (v3.m_UV.y - v2.m_UV.y) / (v3.m_pos.y - v2.m_pos.y));
 
-	float kInverseSlopeLeftZ = (v3.m_inverseZ - v1.m_inverseZ) / (v3.m_pos.y - v1.m_pos.y);
-	float kInverseSlopeRightZ = (v3.m_inverseZ - v2.m_inverseZ) / (v3.m_pos.y - v2.m_pos.y);
+	float kInverseSlopeLeftInverseZ = (v3.m_inverseZ - v1.m_inverseZ) / (v3.m_pos.y - v1.m_pos.y);
+	float kInverseSlopeRightInverseZ = (v3.m_inverseZ - v2.m_inverseZ) / (v3.m_pos.y - v2.m_pos.y);
+
+	float kInverseSlopeLeftZ = (v3.m_pos.z - v1.m_pos.z) / (v3.m_pos.y - v1.m_pos.y);
+	float kInverseSlopeRightZ = (v3.m_pos.z - v2.m_pos.z) / (v3.m_pos.y - v2.m_pos.y);
 
 	float fLeftX = v1.m_pos.x;
 	float fRightX = v2.m_pos.x;
+
 	Color4F leftColor = v1.m_color;
 	Color4F rightColor = v2.m_color;
+
 	Vec2 leftUV = v1.m_UV;
 	Vec2 rightUV = v2.m_UV;
-	float fLeftZ = v1.m_inverseZ;
-	float fRightZ = v2.m_inverseZ;
+
+	float fLeftInverseZ = v1.m_inverseZ;
+	float fRightInverseZ = v2.m_inverseZ;
+
+	float fLeftZ = v1.m_pos.z;
+	float fRightZ = v2.m_pos.z;
+
 	for (float y = v1.m_pos.y; y <= v3.m_pos.y; ++y)
 	{
 		int iStartX = ConvertToPixelPos(fLeftX);
 		int iEndX = ConvertToPixelPos(fRightX);
 		Color4F curColor = leftColor;
 		Vec2 curUV = leftUV;
+		float curInverseZ = fLeftInverseZ;
 		float curZ = fLeftZ;
 		if (iEndX != iStartX)
 		{
@@ -356,30 +396,43 @@ void RasterizationStage::DrawTopTriangle(SVertexRuntime &v1, SVertexRuntime &v2,
 			int iDeltaX = iEndX - iStartX;
 			Color4F kInverseSlopeColor = (rightColor - leftColor) / iDeltaX;
 			Vec2 kInverseSlopeUV = (rightUV - leftUV) / iDeltaX;
+			float kInverseSlopeInverseZ = (fRightInverseZ - fLeftInverseZ) / iDeltaX;
 			float kInverseSlopeZ = (fRightZ - fLeftZ) / iDeltaX;
 			if (iDeltaX < 0)
 			{
 				iStep = -1;
 				kInverseSlopeColor = kInverseSlopeColor * (-1);
 				kInverseSlopeUV = kInverseSlopeUV * (-1);
+				kInverseSlopeInverseZ = kInverseSlopeInverseZ * (-1);
 				kInverseSlopeZ = kInverseSlopeZ * (-1);
 			}
 
 			iDeltaX = abs(iDeltaX);
 			for (int i = 0; i <= iDeltaX; ++i)
 			{
-				Color4F texColor = SampleTexture(1, curUV / curZ);
-				DrawPixel(iStartX + i * iStep, y, (texColor * curColor).ToARGB());
+				int iPixelX = iStartX + i * iStep;
+				int iPixelY = y;
+				if (CanDrawPixel(iPixelX, iPixelY, curZ))
+				{
+					Color4F texColor = SampleTexture(1, curUV / curInverseZ);
+					DrawPixel(iPixelX, iPixelY, (texColor * curColor / curInverseZ).ToARGB());
+				}
 
 				curColor += kInverseSlopeColor;
 				curUV += kInverseSlopeUV;
+				curInverseZ += kInverseSlopeInverseZ;
 				curZ += kInverseSlopeZ;
 			}
 		}
 		else
 		{
-			Color4F texColor = SampleTexture(1, curUV / curZ);
-			DrawPixel(iStartX, y, (texColor * curColor).ToARGB());
+			int iPixelX = iStartX;
+			int iPixelY = y;
+			if (CanDrawPixel(iPixelX, iPixelY, curZ))
+			{
+				Color4F texColor = SampleTexture(1, curUV / curInverseZ);
+				DrawPixel(iPixelX, iPixelY, (texColor * curColor / curInverseZ).ToARGB());
+			}
 		}
 
 		fLeftX += kInverseSlopeLeftX;
@@ -391,12 +444,15 @@ void RasterizationStage::DrawTopTriangle(SVertexRuntime &v1, SVertexRuntime &v2,
 		leftUV += kInverseSlopeLeftUV;
 		rightUV += kInverseSlopeRightUV;
 
+		fLeftInverseZ += kInverseSlopeLeftInverseZ;
+		fRightInverseZ += kInverseSlopeRightInverseZ;
+
 		fLeftZ += kInverseSlopeLeftZ;
 		fRightZ += kInverseSlopeRightZ;
 	}
 }
 
-Color4F RasterizationStage::SampleTexture(int iTextureID, Vec2 uv)
+Color4F RasterizationStage::CRasterizer::SampleTexture(int iTextureID, Vec2 uv)
 {
 	const CTexture* pTexture = CImageManager::GetInstance()->FindTexture(iTextureID);
 	if ( !pTexture )
@@ -425,3 +481,50 @@ Color4F RasterizationStage::SampleTexture(int iTextureID, Vec2 uv)
 		return Color4F(pColorData[0] / 255.0f, pColorData[1] / 255.0f, pColorData[2] / 255.0f, pColorData[3] / 255.0f);
 	}
 }
+
+RasterizationStage::CRasterizer* RasterizationStage::CRasterizer::GetInstance()
+{
+	if ( !s_pInstance )
+	{
+		s_pInstance = new CRasterizer;
+	}
+
+	return s_pInstance;
+}
+
+void RasterizationStage::CRasterizer::Init()
+{
+	ZBUFFER = new float*[SCREEN_HEIGHT];
+	memset(ZBUFFER, 0, SCREEN_HEIGHT);
+	for (int i = 0; i < SCREEN_HEIGHT; ++i)
+	{
+		ZBUFFER[i] = new float[SCREEN_WIDTH];
+		memset(ZBUFFER[i], 0, SCREEN_WIDTH);
+	}
+}
+
+bool RasterizationStage::CRasterizer::CanDrawPixel(int x, int y, float z)
+{
+	if ( ZBUFFER[y][x] >= z )
+	{
+		ZBUFFER[y][x] = z;
+		return true;
+	}
+
+	return false;
+
+	//return true;
+}
+
+void RasterizationStage::CRasterizer::ClearDepthBuffer(float val)
+{
+	for (int i = 0; i < SCREEN_HEIGHT; ++i)
+	{
+		for (int j = 0; j < SCREEN_WIDTH; ++j)
+		{
+			ZBUFFER[i][j] = val;
+		}
+	}
+}
+
+RasterizationStage::CRasterizer* RasterizationStage::CRasterizer::s_pInstance;

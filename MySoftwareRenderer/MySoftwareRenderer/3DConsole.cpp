@@ -204,7 +204,7 @@ void InitMesh()
 			pCube->m_vVertexRunTime[i].push_back(v);
 		}
 	}
-	g_vMesh.push_back(pCube);
+	//g_vMesh.push_back(pCube);
 
 	CMesh* pFileCube = new CMesh;
 	pFileCube->InitFromFile("cube.CSTM");
@@ -219,7 +219,7 @@ void InitMesh()
 	g_pCharactor->m_transform.m_rotation.set(0, 0, 0);
 	g_pCharactor->m_transform.m_pos.set(0, -100, 0);
 	g_pCharactor->m_eVertexOrder = EVertexOrder_Counter_ClockWise;
-	//g_vMesh.push_back(g_pCharactor);
+	g_vMesh.push_back(g_pCharactor);
 
 	{
 		SSubMeshData subMeshData1;
@@ -290,11 +290,12 @@ DWORD GetClock()
 
 int Game_Init()
 {
-	Init3DLib(g_HInstance, g_WindowHandle, SCREEN_WIDTH, SCREEN_HEIGHT);
+	InitDX(g_HInstance, g_WindowHandle, SCREEN_WIDTH, SCREEN_HEIGHT);
+	CRasterizer::GetInstance()->Init();
 	
+	CImageManager::GetInstance()->Load("Hama.png");
 	CImageManager::GetInstance()->Load("HelloWorld.png");
 	CImageManager::GetInstance()->Load("brickwall.png");
-	CImageManager::GetInstance()->Load("Hama.png");
 
 	InitMesh();
 	return 1;
@@ -305,6 +306,7 @@ int Game_Main(float dt)
 	// ±íÃæ¼ÓËø
 	LockSurface();
 	
+	CRasterizer::GetInstance()->ClearDepthBuffer(1.0f);
 	for (auto& pMesh : g_vMesh)
 	{
 		pMesh->Update(dt);
@@ -322,7 +324,7 @@ int Game_Main(float dt)
 
 int Game_Shutdown()
 {
-	Release3DLib();
+	ReleaseDX();
 	return 1;
 }
 

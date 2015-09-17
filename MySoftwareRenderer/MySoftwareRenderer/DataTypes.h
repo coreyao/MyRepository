@@ -63,6 +63,8 @@ struct Color4F
 	void operator+=(const Color4F& rh);
 	Color4F operator+(const Color4F& rh);
 
+	void operator*=(float fScalar);
+
 	int ToARGB();
 	void Set(float _r, float _g, float _b, float _a);
 

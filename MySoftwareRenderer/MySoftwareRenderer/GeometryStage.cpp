@@ -23,6 +23,8 @@ void GeometryStage::TransformWorldToScreen(SVertexRuntime& rVertex)
 
 		rVertex.m_UV.x *= rVertex.m_inverseZ;
 		rVertex.m_UV.y *= rVertex.m_inverseZ;
+
+		rVertex.m_color *= rVertex.m_inverseZ;
 	}
 }
 

@@ -133,6 +133,14 @@ Color4F Color4F::operator+(const Color4F& rh)
 	return Color4F(this->r + rh.r, this->g + rh.g, this->b + rh.b, this->a + rh.a);
 }
 
+void Color4F::operator*=(float fScalar)
+{
+	this->a *= fScalar;
+	this->r *= fScalar;
+	this->g *= fScalar;
+	this->b *= fScalar;
+}
+
 void SSubMeshData::WriteToFile(FILE* hFile)
 {
 	int iMeshNameSize = m_MeshName.size();

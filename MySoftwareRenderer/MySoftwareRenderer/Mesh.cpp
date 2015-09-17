@@ -43,11 +43,11 @@ void CMesh::Render()
 				for (auto& rVertex : vVertex)
 					GeometryStage::TransformWorldToScreen(rVertex);
 
-				if (!RasterizationStage::IsOutSideScreen(vVertex[0].m_pos.x, vVertex[0].m_pos.y)
-					|| !RasterizationStage::IsOutSideScreen(vVertex[1].m_pos.x, vVertex[1].m_pos.y)
-					|| !RasterizationStage::IsOutSideScreen(vVertex[2].m_pos.x, vVertex[2].m_pos.y))
+				if (!RasterizationStage::CRasterizer::GetInstance()->IsOutSideScreen(vVertex[0].m_pos.x, vVertex[0].m_pos.y)
+					|| !RasterizationStage::CRasterizer::GetInstance()->IsOutSideScreen(vVertex[1].m_pos.x, vVertex[1].m_pos.y)
+					|| !RasterizationStage::CRasterizer::GetInstance()->IsOutSideScreen(vVertex[2].m_pos.x, vVertex[2].m_pos.y))
 				{
-					RasterizationStage::DrawAnyTriangle(vVertex[0], vVertex[1], vVertex[2], m_bDrawWireFrame);
+					RasterizationStage::CRasterizer::GetInstance()->DrawAnyTriangle(vVertex[0], vVertex[1], vVertex[2], m_bDrawWireFrame);
 				}
 			}
 		}
