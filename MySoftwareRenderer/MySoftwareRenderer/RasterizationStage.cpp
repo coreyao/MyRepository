@@ -505,6 +505,9 @@ void RasterizationStage::CRasterizer::Init()
 
 bool RasterizationStage::CRasterizer::CanDrawPixel(int x, int y, float z)
 {
+	if (IsOutSideScreen(x, y))
+		return false;
+
 	if ( ZBUFFER[y][x] >= z )
 	{
 		ZBUFFER[y][x] = z;

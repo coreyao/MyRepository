@@ -84,7 +84,6 @@ bool GeometryStage::FrustrumCulling(SFaceRuntime& face, bool& bAddFace, SFaceRun
 				newVertex1.m_pos.z = fNear;
 				newVertex1.m_UV = face.m_vertex1.m_UV + (face.m_vertex3.m_UV - face.m_vertex1.m_UV) * t;
 				newVertex1.m_color = face.m_vertex1.m_color + (face.m_vertex3.m_color - face.m_vertex1.m_color) * t;
-				newVertex1.m_inverseZ = face.m_vertex1.m_inverseZ + (face.m_vertex3.m_inverseZ - face.m_vertex1.m_inverseZ) * t;
 
 				SVertexRuntime newVertex2;
 				t = (fNear - face.m_vertex2.m_pos.z) / (face.m_vertex3.m_pos.z - face.m_vertex2.m_pos.z);
@@ -93,7 +92,6 @@ bool GeometryStage::FrustrumCulling(SFaceRuntime& face, bool& bAddFace, SFaceRun
 				newVertex2.m_pos.z = fNear;
 				newVertex2.m_UV = face.m_vertex2.m_UV + (face.m_vertex3.m_UV - face.m_vertex2.m_UV) * t;
 				newVertex2.m_color = face.m_vertex2.m_color + (face.m_vertex3.m_color - face.m_vertex2.m_color) * t;
-				newVertex2.m_inverseZ = face.m_vertex2.m_inverseZ + (face.m_vertex3.m_inverseZ - face.m_vertex2.m_inverseZ) * t;
 
 				bAddFace = true;
 				addFace.m_vertex1 = face.m_vertex1;
@@ -111,7 +109,6 @@ bool GeometryStage::FrustrumCulling(SFaceRuntime& face, bool& bAddFace, SFaceRun
 				face.m_vertex2.m_pos.z = fNear;
 				face.m_vertex2.m_UV = face.m_vertex1.m_UV + (face.m_vertex2.m_UV - face.m_vertex1.m_UV) * t;
 				face.m_vertex2.m_color = face.m_vertex1.m_color + (face.m_vertex2.m_color - face.m_vertex1.m_color) * t;
-				face.m_vertex2.m_inverseZ = face.m_vertex1.m_inverseZ + (face.m_vertex2.m_inverseZ - face.m_vertex1.m_inverseZ) * t;
 
 				t = (fNear - face.m_vertex1.m_pos.z) / (face.m_vertex3.m_pos.z - face.m_vertex1.m_pos.z);
 				face.m_vertex3.m_pos.x = face.m_vertex1.m_pos.x + t * (face.m_vertex3.m_pos.x - face.m_vertex1.m_pos.x);
@@ -119,7 +116,6 @@ bool GeometryStage::FrustrumCulling(SFaceRuntime& face, bool& bAddFace, SFaceRun
 				face.m_vertex3.m_pos.z = fNear;
 				face.m_vertex3.m_UV = face.m_vertex1.m_UV + (face.m_vertex3.m_UV - face.m_vertex1.m_UV) * t;
 				face.m_vertex3.m_color = face.m_vertex1.m_color + (face.m_vertex3.m_color - face.m_vertex1.m_color) * t;
-				face.m_vertex3.m_inverseZ = face.m_vertex1.m_inverseZ + (face.m_vertex3.m_inverseZ - face.m_vertex1.m_inverseZ) * t;
 			}
 		}
 

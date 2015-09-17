@@ -19,7 +19,7 @@ HWND g_WindowHandle;
 HINSTANCE g_HInstance;
 DWORD g_Clock;
 DWORD g_deltaTime = 0;
-float g_iStepLength = 25;
+float g_iStepLength = 5;
 
 std::vector<CMesh*> g_vMesh;
 
@@ -219,7 +219,7 @@ void InitMesh()
 	g_pCharactor->m_transform.m_rotation.set(0, 0, 0);
 	g_pCharactor->m_transform.m_pos.set(0, -100, 0);
 	g_pCharactor->m_eVertexOrder = EVertexOrder_Counter_ClockWise;
-	//g_vMesh.push_back(g_pCharactor);
+	g_vMesh.push_back(g_pCharactor);
 
 	{
 		SSubMeshData subMeshData1;
@@ -269,7 +269,7 @@ void InitMesh()
 			}
 		}
 
-		g_vMesh.push_back(pTriangle);
+		//g_vMesh.push_back(pTriangle);
 	}
 }
 

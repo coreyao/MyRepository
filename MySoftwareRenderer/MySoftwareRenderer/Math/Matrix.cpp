@@ -81,7 +81,7 @@ Mat4::Mat4(const Vec3& xAxis, const Vec3& yAxis, const Vec3& zAxis, const Vec3& 
 
 Mat4::Mat4()
 {
-	*this = IDENTITY;
+	memset((void*)m, 0, sizeof(m));
 }
 
 Mat4 Mat4::IDENTITY = Mat4(Vec3(1, 0, 0),
