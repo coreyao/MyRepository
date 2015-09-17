@@ -14,21 +14,22 @@ CMesh::~CMesh()
 
 void CMesh::Update(float dt)
 {
-	//m_transform.m_rotation.x += 30 * dt;
-	m_transform.m_rotation.y += 60 * dt;
-	//m_transform.m_rotation.z += 30 * dt;
+	m_transform.m_rotation.x += 30 * dt;
+	m_transform.m_rotation.y += 30 * dt;
+	m_transform.m_rotation.z += 30 * dt;
 }
 
 void CMesh::Render()
 {
-	for (auto& rSubMesh : m_meshData.m_vSubMesh)
+	for (int i = 0; i < m_meshData.m_vSubMesh.size(); ++i)
 	{
+		auto& rSubMesh = m_meshData.m_vSubMesh[i];
 		for (auto& rFace : rSubMesh.m_vFace)
 		{
-			vector<SVertex> vVertex;
-			vVertex.push_back(rSubMesh.m_vVertex[rFace.m_VertexIndex1]);
-			vVertex.push_back(rSubMesh.m_vVertex[rFace.m_VertexIndex2]);
-			vVertex.push_back(rSubMesh.m_vVertex[rFace.m_VertexIndex3]);
+			vector<SVertexRuntime> vVertex;
+			vVertex.push_back(m_vVertexRunTime[i][rFace.m_VertexIndex1]);
+			vVertex.push_back(m_vVertexRunTime[i][rFace.m_VertexIndex2]);
+			vVertex.push_back(m_vVertexRunTime[i][rFace.m_VertexIndex3]);
 
 			for (auto& rVertex : vVertex)
 			{
@@ -62,6 +63,18 @@ void CMesh::InitFromFile(const char* pMeshFileName)
 	m_meshData.ReadFromFile(pMeshFile);
 	m_vSubMeshVisibility.resize(m_meshData.m_vSubMesh.size(), true);
 	m_MV.resize(m_meshData.m_vSubMesh.size());
+	m_vVertexRunTime.resize(m_meshData.m_vSubMesh.size());
+	for (int i = 0; i < m_meshData.m_vSubMesh.size(); ++i)
+	{
+		auto& rSubMesh = m_meshData.m_vSubMesh[i];
+		for (auto& rVertex : rSubMesh.m_vVertex)
+		{
+			SVertexRuntime v;
+			memcpy((void*)&v, (void*)&rVertex, sizeof(SVertex));
+			v.m_inverseZ = 0;
+			m_vVertexRunTime[i].push_back(v);
+		}
+	}
 }
 
 void CMesh::SetMaterial(const CMaterial& rMaterial, int iIndex)

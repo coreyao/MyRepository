@@ -91,19 +91,23 @@ struct SFace
 
 struct SVertex
 {
-	SVertex()
-	: m_inverseZ(0)
-	{
-	}
-
 	Vec3 m_pos;
-	float m_inverseZ;
 	Vec3 m_normal;
 	Vec3 m_tangent;
 	Vec2 m_UV;
 	Color4F m_color;
 	Vec4 m_boneIndex;
 	Vec4 m_blendWeight;
+};
+
+struct SVertexRuntime : public SVertex
+{
+	SVertexRuntime()
+	: m_inverseZ(0)
+	{
+	}
+
+	float m_inverseZ;
 };
 
 struct STextureData
@@ -193,7 +197,6 @@ struct SMeshData
 	std::vector<SSubMeshData>	m_vSubMesh;
 	SSkeletonData				m_skeleton;
 };
-
 
 struct STransform
 {

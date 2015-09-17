@@ -31,7 +31,7 @@ void InitMesh()
 		SVertex vertex;
 		vertex.m_pos.set(-10, 10, 10);
 		vertex.m_color.Set(1.0f, 0.0f, 1.0f, 1.0f);
-		vertex.m_UV.set(0, 1);
+		vertex.m_UV.set(0, 0);
 		subMeshData.m_vVertex.push_back(vertex);
 	}
 
@@ -39,7 +39,7 @@ void InitMesh()
 		SVertex vertex;
 		vertex.m_pos.set(10, 10, 10);
 		vertex.m_color.Set(0.0f, 0.0f, 1.0f, 1.0f);
-		vertex.m_UV.set(1, 1);
+		vertex.m_UV.set(1, 0);
 		subMeshData.m_vVertex.push_back(vertex);
 	}
 
@@ -47,7 +47,7 @@ void InitMesh()
 		SVertex vertex;
 		vertex.m_pos.set(10, -10, 10);
 		vertex.m_color.Set(0.0f, 1.0f, 1.0f, 1.0f);
-		vertex.m_UV.set(1, 0);
+		vertex.m_UV.set(1, 1);
 		subMeshData.m_vVertex.push_back(vertex);
 	}
 
@@ -55,7 +55,7 @@ void InitMesh()
 		SVertex vertex;
 		vertex.m_pos.set(-10, -10, 10);
 		vertex.m_color.Set(0.0f, 0.0f, 1.0f, 1.0f);
-		vertex.m_UV.set(0, 0);
+		vertex.m_UV.set(0, 1);
 		subMeshData.m_vVertex.push_back(vertex);
 	}
 
@@ -192,7 +192,26 @@ void InitMesh()
 	CMesh* pCube = new CMesh;
 	pCube->m_transform.m_pos.set(0, 0, 0);
 	pCube->m_meshData.m_vSubMesh.push_back(subMeshData);
+	pCube->m_vVertexRunTime.resize(1);
+	for (int i = 0; i < pCube->m_meshData.m_vSubMesh.size(); ++i)
+	{
+		auto& rSubMesh = pCube->m_meshData.m_vSubMesh[i];
+		for (auto& rVertex : rSubMesh.m_vVertex)
+		{
+			SVertexRuntime v;
+			memcpy((void*)&v, (void*)&rVertex, sizeof(SVertex));
+			v.m_inverseZ = 0;
+			pCube->m_vVertexRunTime[i].push_back(v);
+		}
+	}
 	g_vMesh.push_back(pCube);
+
+	CMesh* pFileCube = new CMesh;
+	pFileCube->InitFromFile("cube.CSTM");
+	pFileCube->m_transform.m_scale.set(1, 1, -1);
+	pFileCube->m_transform.m_rotation.set(0, 0, 0);
+	pFileCube->m_eVertexOrder = EVertexOrder_Counter_ClockWise;
+	//g_vMesh.push_back(g_pCube);
 
 	CMesh* g_pCharactor = new CMesh;
 	g_pCharactor->InitFromFile("hama.CSTM");
@@ -202,43 +221,55 @@ void InitMesh()
 	g_pCharactor->m_eVertexOrder = EVertexOrder_Counter_ClockWise;
 	//g_vMesh.push_back(g_pCharactor);
 
-	SSubMeshData subMeshData1;
 	{
-		SVertex vertex;
-		vertex.m_pos.set(-10, 0, 0);
-		vertex.m_UV.set(0, 0);
-		subMeshData1.m_vVertex.push_back(vertex);
-	}
+		SSubMeshData subMeshData1;
+		{
+			SVertex vertex;
+			vertex.m_pos.set(-10, 0, 0);
+			vertex.m_UV.set(0, 0);
+			subMeshData1.m_vVertex.push_back(vertex);
+		}
 
-	{
-		SVertex vertex;
-		vertex.m_pos.set(10, 0, 0);
-		vertex.m_UV.set(1, 0);
-		subMeshData1.m_vVertex.push_back(vertex);
-	}
+		{
+			SVertex vertex;
+			vertex.m_pos.set(10, 0, 0);
+			vertex.m_UV.set(1, 0);
+			subMeshData1.m_vVertex.push_back(vertex);
+		}
 
-	{
-		SVertex vertex;
-		vertex.m_pos.set(0, 30, 0);
-		vertex.m_UV.set(0.5f, 1.0f);
-		subMeshData1.m_vVertex.push_back(vertex);
-	}
+		{
+			SVertex vertex;
+			vertex.m_pos.set(0, 30, 0);
+			vertex.m_UV.set(0.5f, 1.0f);
+			subMeshData1.m_vVertex.push_back(vertex);
+		}
 
-	{
-		SFace face;
-		face.m_VertexIndex1 = 0;
-		face.m_VertexIndex2 = 2;
-		face.m_VertexIndex3 = 1;
-		subMeshData1.m_vFace.push_back(face);
+		{
+			SFace face;
+			face.m_VertexIndex1 = 0;
+			face.m_VertexIndex2 = 2;
+			face.m_VertexIndex3 = 1;
+			subMeshData1.m_vFace.push_back(face);
+		}
+		subMeshData1.m_MeshMatrix = Mat4::IDENTITY;
+		CMesh* pTriangle = new CMesh;
+		pTriangle->m_meshData.m_vSubMesh.push_back(subMeshData1);
+		pTriangle->m_bEnableCullFace = false;
+		pTriangle->m_vVertexRunTime.resize(1);
+		for (int i = 0; i < pTriangle->m_meshData.m_vSubMesh.size(); ++i)
+		{
+			auto& rSubMesh = pTriangle->m_meshData.m_vSubMesh[i];
+			for (auto& rVertex : rSubMesh.m_vVertex)
+			{
+				SVertexRuntime v;
+				memcpy((void*)&v, (void*)&rVertex, sizeof(SVertex));
+				v.m_inverseZ = 0;
+				pTriangle->m_vVertexRunTime[i].push_back(v);
+			}
+		}
+
+		//g_vMesh.push_back(pTriangle);
 	}
-	subMeshData1.m_MeshMatrix = Mat4::IDENTITY;
-	CMesh* pTriangle = new CMesh;
-	pTriangle->m_meshData.m_vSubMesh.push_back(subMeshData1);
-	pTriangle->m_bEnableCullFace = false;
-	//pTriangle->m_transform.m_rotation.x += 30;
-	//pTriangle->m_transform.m_rotation.y += 60;
-	//pTriangle->m_transform.m_rotation.z += 30;
-	//g_vMesh.push_back(pTriangle);
 }
 
 bool IsOutSideScreen(int x, int y)
@@ -260,7 +291,10 @@ DWORD GetClock()
 int Game_Init()
 {
 	Init3DLib(g_HInstance, g_WindowHandle, SCREEN_WIDTH, SCREEN_HEIGHT);
+	
+	CImageManager::GetInstance()->Load("HelloWorld.png");
 	CImageManager::GetInstance()->Load("brickwall.png");
+	CImageManager::GetInstance()->Load("Hama.png");
 
 	InitMesh();
 	return 1;

@@ -4,5 +4,5 @@
 
 namespace GeometryStage
 {
-	void TransformWorldToScreen(SVertex& rVertex);
+	void TransformWorldToScreen(SVertexRuntime& rVertex);
 }

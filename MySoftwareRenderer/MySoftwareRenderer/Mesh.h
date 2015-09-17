@@ -23,4 +23,6 @@ public:
 
 	std::vector<bool> m_vSubMeshVisibility;
 	SMeshData m_meshData;
+
+	std::vector< std::vector<SVertexRuntime> > m_vVertexRunTime;
 };

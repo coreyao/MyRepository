@@ -146,7 +146,7 @@ void RasterizationStage::DrawLine(int x1, int y1, int x2, int y2, DWORD color)
 	}
 }
 
-void RasterizationStage::DrawAnyTriangle(SVertex& v1, SVertex& v2, SVertex& v3, bool bWireFrame /*= true*/, int iTextureID /*= 0*/)
+void RasterizationStage::DrawAnyTriangle(SVertexRuntime& v1, SVertexRuntime& v2, SVertexRuntime& v3, bool bWireFrame /*= true*/, int iTextureID /*= 0*/)
 {
 	v1.m_pos.x = ConvertToPixelPos(v1.m_pos.x);
 	v1.m_pos.y = ConvertToPixelPos(v1.m_pos.y);
@@ -199,7 +199,7 @@ void RasterizationStage::DrawAnyTriangle(SVertex& v1, SVertex& v2, SVertex& v3, 
 
 				float kInverseSlopeRightZ = (v3.m_inverseZ - v1.m_inverseZ) / (v3.m_pos.y - v1.m_pos.y);
 
-				SVertex newVertex;
+				SVertexRuntime newVertex;
 				newVertex.m_pos.set(v1.m_pos.x + (v2.m_pos.y - v1.m_pos.y) * kInverseSlopeRightX, v2.m_pos.y, 0);
 				newVertex.m_color = (v1.m_color + kInverseSlopeRightColor * (v2.m_pos.y - v1.m_pos.y));
 				newVertex.m_UV = v1.m_UV + kInverseSlopeRightUV * (v2.m_pos.y - v1.m_pos.y);
@@ -220,7 +220,7 @@ void RasterizationStage::DrawAnyTriangle(SVertex& v1, SVertex& v2, SVertex& v3, 
 
 				float kInverseSlopeLeftZ = (v3.m_inverseZ - v1.m_inverseZ) / (v3.m_pos.y - v1.m_pos.y);
 
-				SVertex newVertex;
+				SVertexRuntime newVertex;
 				newVertex.m_pos.set(v1.m_pos.x + (v2.m_pos.y - v1.m_pos.y) * kInverseSlopeLeftX, v2.m_pos.y, 0);
 				newVertex.m_color = (v1.m_color + kInverseSlopeLeftColor * (v2.m_pos.y - v1.m_pos.y));
 				newVertex.m_UV = (v1.m_UV + kInverseSlopeLeftUV * (v2.m_pos.y - v1.m_pos.y));
@@ -232,7 +232,7 @@ void RasterizationStage::DrawAnyTriangle(SVertex& v1, SVertex& v2, SVertex& v3, 
 	}
 }
 
-void RasterizationStage::DrawBottomTriangle(SVertex &v1, SVertex &v2, SVertex &v3)
+void RasterizationStage::DrawBottomTriangle(SVertexRuntime &v1, SVertexRuntime &v2, SVertexRuntime &v3)
 {
 	float kInverseSlopeLeftX = (v1.m_pos.x - v2.m_pos.x) / (v1.m_pos.y - v2.m_pos.y);
 	float kInverseSlopeRightX = (v1.m_pos.x - v3.m_pos.x) / (v1.m_pos.y - v3.m_pos.y);
@@ -314,7 +314,7 @@ void RasterizationStage::DrawBottomTriangle(SVertex &v1, SVertex &v2, SVertex &v
 	}
 }
 
-void RasterizationStage::DrawTopTriangle(SVertex &v1, SVertex &v2, SVertex &v3)
+void RasterizationStage::DrawTopTriangle(SVertexRuntime &v1, SVertexRuntime &v2, SVertexRuntime &v3)
 {
 	float kInverseSlopeLeftX = (v3.m_pos.x - v1.m_pos.x) / (v3.m_pos.y - v1.m_pos.y);
 	float kInverseSlopeRightX = (v3.m_pos.x - v2.m_pos.x) / (v3.m_pos.y - v2.m_pos.y);

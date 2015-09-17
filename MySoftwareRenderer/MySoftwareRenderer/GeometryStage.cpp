@@ -1,7 +1,7 @@
 #include "GeometryStage.h"
 #include "Director.h"
 
-void GeometryStage::TransformWorldToScreen(SVertex& rVertex)
+void GeometryStage::TransformWorldToScreen(SVertexRuntime& rVertex)
 {
 	Vec4 cameraPos = CDirector::GetInstance()->GetCurViewMat() * Vec4(rVertex.m_pos.x, rVertex.m_pos.y, rVertex.m_pos.z, 1);
 	Vec4 clippingPos = CDirector::GetInstance()->GetCurProjectionMat() * cameraPos;
