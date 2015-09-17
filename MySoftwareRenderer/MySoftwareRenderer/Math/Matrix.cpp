@@ -157,7 +157,7 @@ Mat4 Mat4::CreateOrthegraphicsMat(float l, float r, float t, float b, float n, f
 	return Mat4::ZERO;
 }
 
-Mat4 Mat4::CreateLookAt(const Vec3& eyePos, const Vec3& lookDir, const Vec3& upVec /*= Vec3(0, 1, 0)*/)
+Mat4 Mat4::CreateLookAt(const Vec3& eyePos, const Vec3& lookDir, Vec3 upVec /*= Vec3(0, 1, 0)*/)
 {
 	Vec3 forward = lookDir;
 	forward.Normalize();
@@ -233,17 +233,19 @@ Mat4 Mat4::GetInversed()
 	float det = Determinant();
 	if (!NEARLY_EQUAL(det, 0))
 	{
-		ret.m[0] = m[5] * m[10] - m[9] * m[6];
-		ret.m[1] = m[1] * m[10] - m[9] * m[2];
-		ret.m[2] = m[1] * m[6] - m[5] * m[2];
+		float det_inv = 1.0 / det;
 
-		ret.m[4] = m[4] * m[10] - m[8] * m[6];
-		ret.m[5] = m[0] * m[10] - m[8] * m[2];
-		ret.m[6] = m[0] * m[6] - m[4] * m[2];
+		ret.m[0] = det_inv * ( m[5] * m[10] - m[9] * m[6] );
+		ret.m[1] = -det_inv * ( m[1] * m[10] - m[9] * m[2] );
+		ret.m[2] = det_inv * ( m[1] * m[6] - m[5] * m[2] );
 
-		ret.m[8] = m[4] * m[9] - m[8] * m[5];
-		ret.m[9] = m[0] * m[9] - m[1] * m[8];
-		ret.m[10] = m[0] * m[5] - m[4] * m[1];
+		ret.m[4] = -det_inv * ( m[4] * m[10] - m[8] * m[6] );
+		ret.m[5] = det_inv * ( m[0] * m[10] - m[8] * m[2] );
+		ret.m[6] = -det_inv * ( m[0] * m[6] - m[4] * m[2] );
+
+		ret.m[8] = det_inv * ( m[4] * m[9] - m[8] * m[5] );
+		ret.m[9] = -det_inv * ( m[0] * m[9] - m[1] * m[8] );
+		ret.m[10] = det_inv * ( m[0] * m[5] - m[4] * m[1] );
 
 		ret.m[12] = -(m[12] * ret.m[0] + m[13] * ret.m[4] + m[14] * ret.m[8]);
 		ret.m[13] = -(m[12] * ret.m[1] + m[13] * ret.m[5] + m[14] * ret.m[9]);

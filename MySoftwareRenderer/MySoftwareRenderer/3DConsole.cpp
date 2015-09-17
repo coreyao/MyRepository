@@ -20,6 +20,8 @@ HINSTANCE g_HInstance;
 DWORD g_Clock;
 DWORD g_deltaTime = 0;
 float g_iStepLength = 5;
+Vec2 g_lastMouseClockPos;
+bool g_bLeftMouseClicked = false;
 
 std::vector<CMesh*> g_vMesh;
 
@@ -403,6 +405,36 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_DESTROY:
 	{
 		PostQuitMessage(0);
+		return 0;
+	}
+	case WM_LBUTTONDOWN:
+	{
+		int mouse_x = (int)LOWORD(lParam);
+		int mouse_y = (int)HIWORD(lParam);
+		g_lastMouseClockPos = Vec2(mouse_x, mouse_y);
+		g_bLeftMouseClicked = true;
+
+		return 0;
+	}
+	case WM_LBUTTONUP:
+	{
+		g_bLeftMouseClicked = false;
+		return 0;
+	}
+	case WM_MOUSEMOVE:
+	{
+		if (g_bLeftMouseClicked)
+		{
+		    int mouse_x = (int)LOWORD(lParam);
+			int mouse_y = (int)HIWORD(lParam);
+
+			Vec2 delta = g_lastMouseClockPos - Vec2(mouse_x, mouse_y);
+			delta = delta * 0.5f;
+			CDirector::GetInstance()->GetPerspectiveCamera()->Rotate(delta.y, delta.x);
+
+			g_lastMouseClockPos = Vec2(mouse_x, mouse_y);
+		}
+		
 		return 0;
 	}
 	default:

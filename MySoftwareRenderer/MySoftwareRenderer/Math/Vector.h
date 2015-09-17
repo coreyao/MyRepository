@@ -52,8 +52,8 @@ public:
 
 	Vec3 operator-() const;
 
-	float Dot(const Vec3& rh);
-	Vec3 Cross(const Vec3& rh);
+	float Dot(const Vec3& rh) const;
+	Vec3 Cross(const Vec3& rh) const;
 	void Normalize();
 	Vec3 GetNormalized();
 	float GetLength();

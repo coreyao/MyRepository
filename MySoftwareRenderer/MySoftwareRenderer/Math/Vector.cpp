@@ -60,12 +60,12 @@ void Vec3::operator/=(float fScalar)
 	z /= fScalar;
 }
 
-float Vec3::Dot(const Vec3& rh)
+float Vec3::Dot(const Vec3& rh) const
 {
 	return x * rh.x + y * rh.y + z * rh.z;
 }
 
-Vec3 Vec3::Cross(const Vec3& rh)
+Vec3 Vec3::Cross(const Vec3& rh) const
 {
 	float nx = y * rh.z - rh.y * z;
 	float ny = z * rh.x - rh.z * x;
