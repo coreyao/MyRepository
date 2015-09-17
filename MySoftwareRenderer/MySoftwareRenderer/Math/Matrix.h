@@ -20,7 +20,7 @@ public:
 	Mat4 operator*(float fScalar);
 	void operator*=(float fScalar);
 
-	Vec4 operator*(const Vec4& rh);
+	Vec4 operator*(const Vec4& rh) const;
 
 	Mat4 operator+(const Mat4& rh);
 	void operator+=(const Mat4& rh);

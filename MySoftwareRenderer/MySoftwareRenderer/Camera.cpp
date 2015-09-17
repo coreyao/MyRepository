@@ -11,10 +11,11 @@ CCamera::CCamera(Vec3 eyePos, Vec3 lookAtDir, Vec3 upDir, EProjectionMode eMode)
 	m_eyePos = eyePos;
 	m_lookAtDir = lookAtDir;
 	m_UpDir = upDir;
+	m_aspectRatio = (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT;
 
 	if ( m_eMode == EProjectionMode_Perspective)
 	{
-		m_ProjMat = Mat4::CreatePerspectiveMat(m_fFOV, (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, m_fNearZ, m_fFarZ);
+		m_ProjMat = Mat4::CreatePerspectiveMat(m_fFOV, m_aspectRatio, m_fNearZ, m_fFarZ);
 	}
 	else if ( m_eMode == EProjectionMode_Orthographic )
 	{
@@ -101,5 +102,20 @@ void CCamera::Zoom( float fDegOffset )
 float CCamera::GetFarZ() const
 {
 	return m_fFarZ;
+}
+
+float CCamera::GetNearZ() const
+{
+	return m_fNearZ;
+}
+
+float CCamera::GetFOV() const
+{
+	return m_fFOV;
+}
+
+float CCamera::GetAspectRatio() const
+{
+	return m_aspectRatio;
 }
 

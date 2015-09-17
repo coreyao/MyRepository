@@ -28,7 +28,11 @@ public:
 	Vec3 GetLookAtDir() const;
 	void SetLookAtDir(const Vec3& dir);
 
+	float GetNearZ() const;
 	float GetFarZ() const;
+
+	float GetFOV() const;
+	float GetAspectRatio() const;
 
 private:
 	void UpdateProjectionViewMat();
@@ -43,6 +47,8 @@ private:
 	float m_fPitch;
 	float m_fYaw;
 	float m_fFOV;
+
+	float m_aspectRatio;
 
 	Mat4 m_viewMat;
 	Mat4 m_ProjMat;

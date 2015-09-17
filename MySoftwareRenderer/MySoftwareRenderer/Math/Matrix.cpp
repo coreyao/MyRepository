@@ -45,7 +45,7 @@ void Mat4::operator*=(float fScalar)
 	*this = *this * fScalar;
 }
 
-Vec4 Mat4::operator*(const Vec4& rh)
+Vec4 Mat4::operator*(const Vec4& rh) const
 {
 	Vec4 ret;
 	ret.x = m[0] * rh.x + m[4] * rh.y + m[8] * rh.z + m[12] * rh.w;

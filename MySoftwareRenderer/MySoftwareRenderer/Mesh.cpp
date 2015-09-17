@@ -14,9 +14,9 @@ CMesh::~CMesh()
 
 void CMesh::Update(float dt)
 {
-	m_transform.m_rotation.x += 30 * dt;
+	/*m_transform.m_rotation.x += 30 * dt;
 	m_transform.m_rotation.y += 30 * dt;
-	m_transform.m_rotation.z += 30 * dt;
+	m_transform.m_rotation.z += 30 * dt;*/
 }
 
 void CMesh::Render()
@@ -26,28 +26,31 @@ void CMesh::Render()
 		auto& rSubMesh = m_meshData.m_vSubMesh[i];
 		for (auto& rFace : rSubMesh.m_vFace)
 		{
-			vector<SVertexRuntime> vVertex;
-			vVertex.push_back(m_vVertexRunTime[i][rFace.m_VertexIndex1]);
-			vVertex.push_back(m_vVertexRunTime[i][rFace.m_VertexIndex2]);
-			vVertex.push_back(m_vVertexRunTime[i][rFace.m_VertexIndex3]);
+			SFaceRuntime curFace;
+			curFace.m_vertex1 = m_vVertexRunTime[i][rFace.m_VertexIndex1];
+			curFace.m_vertex2 = m_vVertexRunTime[i][rFace.m_VertexIndex2];
+			curFace.m_vertex3 = m_vVertexRunTime[i][rFace.m_VertexIndex3];
 
-			for (auto& rVertex : vVertex)
+			ApplicationStage::TransformLocalToWorld(curFace, m_transform.GetTransformMat() * rSubMesh.m_MeshMatrix);
+
+			if (!m_bEnableCullFace || !ApplicationStage::IsBackFace(curFace, m_eVertexOrder))
 			{
-				Vec4 worldPos = m_transform.GetTransformMat() * rSubMesh.m_MeshMatrix * Vec4(rVertex.m_pos.x, rVertex.m_pos.y, rVertex.m_pos.z, 1.0f);
-				rVertex.m_pos = Vec3(worldPos.x, worldPos.y, worldPos.z);
-			}
+				GeometryStage::TransformWorldToCamera(curFace);
 
-			if (!m_bEnableCullFace || !ApplicationStage::IsBackFace(vVertex[0], vVertex[1], vVertex[2], m_eVertexOrder))
-			{
-				for (auto& rVertex : vVertex)
-					GeometryStage::TransformWorldToScreen(rVertex);
+				bool bAddFace = false;
+				SFaceRuntime newFace;
+				bool bClip = GeometryStage::FrustrumCulling(curFace, bAddFace, newFace);
+				if ( bClip )
+					continue;
 
-				if (!RasterizationStage::CRasterizer::GetInstance()->IsOutSideScreen(vVertex[0].m_pos.x, vVertex[0].m_pos.y)
-					|| !RasterizationStage::CRasterizer::GetInstance()->IsOutSideScreen(vVertex[1].m_pos.x, vVertex[1].m_pos.y)
-					|| !RasterizationStage::CRasterizer::GetInstance()->IsOutSideScreen(vVertex[2].m_pos.x, vVertex[2].m_pos.y))
+				if ( bAddFace )
 				{
-					RasterizationStage::CRasterizer::GetInstance()->DrawAnyTriangle(vVertex[0], vVertex[1], vVertex[2], m_bDrawWireFrame);
+					GeometryStage::TransformCameraToScreen(newFace);
+					RasterizationStage::CRasterizer::GetInstance()->DrawAnyTriangle(newFace.m_vertex1, newFace.m_vertex2, newFace.m_vertex3, m_bDrawWireFrame);
 				}
+
+				GeometryStage::TransformCameraToScreen(curFace);
+				RasterizationStage::CRasterizer::GetInstance()->DrawAnyTriangle(curFace.m_vertex1, curFace.m_vertex2, curFace.m_vertex3, m_bDrawWireFrame);
 			}
 		}
 	}

@@ -4,5 +4,6 @@
 
 namespace ApplicationStage
 {
-	bool IsBackFace(const SVertex& v1, const SVertex& v2, const SVertex& v3, EVertexOrder eOrder = EVertexOrder_ClockWise);
+	void TransformLocalToWorld(SFaceRuntime& face, const Mat4& worldTransform);
+	bool IsBackFace(SFaceRuntime& face, EVertexOrder eOrder = EVertexOrder_ClockWise);
 }

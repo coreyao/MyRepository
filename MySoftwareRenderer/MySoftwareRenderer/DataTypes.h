@@ -112,6 +112,13 @@ struct SVertexRuntime : public SVertex
 	float m_inverseZ;
 };
 
+struct SFaceRuntime
+{
+	SVertexRuntime m_vertex1;
+	SVertexRuntime m_vertex2;
+	SVertexRuntime m_vertex3;
+};
+
 struct STextureData
 {
 	std::string m_sFileName;

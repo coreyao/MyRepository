@@ -4,7 +4,9 @@
 
 namespace GeometryStage
 {
-	void TransformWorldToCamera(SVertexRuntime& rVertex);
-	void TransformWorldToScreen(SVertexRuntime& rVertex);
-
+	void TransformWorldToCamera(SFaceRuntime& face);
+	bool FrustrumCulling(SFaceRuntime& face, bool& bAddFace, SFaceRuntime& addFace);
+	bool IsVertexInFrustrum(SVertexRuntime& vertex);
+	void TransformCameraToScreen(SFaceRuntime& face);
+	void TransformCameraToScreen(SVertexRuntime& vertex);
 }
