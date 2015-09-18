@@ -448,6 +448,8 @@ void RasterizationStage::CRasterizer::DrawTopTriangle(SVertexRuntime &v1, SVerte
 
 Color4F RasterizationStage::CRasterizer::SampleTexture(int iTextureID, Vec2 uv)
 {
+	//return Color4F(1.0, 1.0, 1.0, 1.0f);
+
 	const CTexture* pTexture = CImageManager::GetInstance()->FindTexture(iTextureID);
 	if ( !pTexture )
 	{

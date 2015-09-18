@@ -56,7 +56,6 @@ void CMesh::InitFromFile(const char* pMeshFileName)
 		{
 			SVertexRuntime v;
 			memcpy((void*)&v, (void*)&rVertex, sizeof(SVertex));
-			v.m_color.a = 0.5f;
 			v.m_inverseZ = 0;
 			m_vVertexRunTime[i].push_back(v);
 		}
