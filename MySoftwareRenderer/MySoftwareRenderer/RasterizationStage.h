@@ -24,20 +24,24 @@ namespace RasterizationStage
 	{
 	public:
 		void Init();
-		bool IsOutSideScreen(int x, int y);
-		int ConvertToPixelPos(float value);
+
+		bool CanDrawPixel(int x, int y, float z);
+		bool OwnershipTest(int x, int y);
+		bool DepthTest(int x, int y, float z);
+		bool AlphaTest(float fAlpha);
 
 		void ClearDepthBuffer(float val);
 		void ClearColorBuffer(Color4F val);
-		Color4F** GetColorBuffer() { return COLOR_BUFFER; }
 
-		bool CanDrawPixel(int x, int y, float z);
-		int DrawPixel(int x, int y, Color4F src);
+		void DrawPixel(int x, int y, Color4F src);
 		void DrawLine(int x1, int y1, int x2, int y2, Color4F color);
 		void DrawAnyTriangle(SVertexRuntime& v1, SVertexRuntime& v2, SVertexRuntime& v3, bool bWireFrame = true, int iTextureID = 0);
 		void DrawTopTriangle(SVertexRuntime &v1, SVertexRuntime &v2, SVertexRuntime &v3);
 		void DrawBottomTriangle(SVertexRuntime &v1, SVertexRuntime &v2, SVertexRuntime &v3);
 		Color4F SampleTexture(int iTextureID, Vec2 uv);
+
+		Color4F** GetColorBuffer() { return COLOR_BUFFER; }
+		int ConvertToPixelPos(float value);
 
 		static CRasterizer* GetInstance();
 

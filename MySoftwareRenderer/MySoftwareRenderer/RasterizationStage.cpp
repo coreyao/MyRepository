@@ -29,13 +29,10 @@ bool RasterizationStage::InitDX(HINSTANCE hInstance, HWND hWnd, int width, int h
 	return true;
 }
 
-int RasterizationStage::CRasterizer::DrawPixel(int x, int y, Color4F src)
+void RasterizationStage::CRasterizer::DrawPixel(int x, int y, Color4F src)
 {
-	if (IsOutSideScreen(x, y))
-		return 0;
-
 	Color4F& dst = COLOR_BUFFER[y][x];
-	COLOR_BUFFER[y][x] = src * src.a + dst * (1.0f - src.a);
+	dst = src * src.a + dst * (1.0f - src.a);
 }
 
 void RasterizationStage::FlipDXSurface()
@@ -78,9 +75,9 @@ void RasterizationStage::FillDXSurface()
 	pSurface->UnlockRect();
 }
 
-bool RasterizationStage::CRasterizer::IsOutSideScreen(int x, int y)
+bool RasterizationStage::CRasterizer::OwnershipTest(int x, int y)
 {
-	if ( x < 0 || x >= SCREEN_WIDTH || y < 0 || y >= SCREEN_HEIGHT )
+	if ( x >= 0 && x < SCREEN_WIDTH && y >= 0 && y < SCREEN_HEIGHT )
 		return true;
 
 	return false;
@@ -104,7 +101,10 @@ void RasterizationStage::CRasterizer::DrawLine(int x1, int y1, int x2, int y2, C
 		}
 
 		for (int iCurY = y1; iCurY <= y2; ++iCurY)
-			DrawPixel(x1, iCurY, color);
+		{
+			if (CanDrawPixel(x1, iCurY, 0))
+				DrawPixel(x1, iCurY, color);
+		}
 	}
 	else
 	{
@@ -121,7 +121,9 @@ void RasterizationStage::CRasterizer::DrawLine(int x1, int y1, int x2, int y2, C
 			float iCurY = y1;
 			for (int iCurX = x1; iCurX <= x2; ++iCurX)
 			{
-				DrawPixel(iCurX, ConvertToPixelPos(iCurY), color);
+				int iPixelY = ConvertToPixelPos(iCurY);
+				if (CanDrawPixel(iCurX, iPixelY, 0))
+					DrawPixel(iCurX, iPixelY, color);
 				iCurY += k;
 			}
 		}
@@ -136,7 +138,9 @@ void RasterizationStage::CRasterizer::DrawLine(int x1, int y1, int x2, int y2, C
 			float iCurX = x1;
 			for (int iCurY = y1; iCurY <= y2; ++iCurY)
 			{
-				DrawPixel(ConvertToPixelPos(iCurX), iCurY, color);
+				int iPixelX = ConvertToPixelPos(iCurX);
+				if (CanDrawPixel(iPixelX, iCurY, 0))
+					DrawPixel(iPixelX, iCurY, color);
 				iCurX += kInverse;
 			}
 		}
@@ -307,8 +311,9 @@ void RasterizationStage::CRasterizer::DrawBottomTriangle(SVertexRuntime &v1, SVe
 				int iPixelY = y;
 				if (CanDrawPixel(iPixelX, iPixelY, curZ))
 				{
-					Color4F texColor = SampleTexture(1, curUV / curInverseZ);
-					DrawPixel(iPixelX, iPixelY, texColor * curColor / curInverseZ);
+					Color4F finalColor = SampleTexture(1, curUV / curInverseZ) * curColor / curInverseZ;
+					if (AlphaTest(finalColor.a))
+						DrawPixel(iPixelX, iPixelY, finalColor);
 				}
 
 				curColor += kInverseSlopeColor;
@@ -418,8 +423,9 @@ void RasterizationStage::CRasterizer::DrawTopTriangle(SVertexRuntime &v1, SVerte
 				int iPixelY = y;
 				if (CanDrawPixel(iPixelX, iPixelY, curZ))
 				{
-					Color4F texColor = SampleTexture(1, curUV / curInverseZ);
-					DrawPixel(iPixelX, iPixelY, texColor * curColor / curInverseZ);
+					Color4F finalColor = SampleTexture(1, curUV / curInverseZ) * curColor / curInverseZ;
+					if (AlphaTest(finalColor.a))
+						DrawPixel(iPixelX, iPixelY, finalColor);
 				}
 
 				curColor += kInverseSlopeColor;
@@ -448,7 +454,7 @@ void RasterizationStage::CRasterizer::DrawTopTriangle(SVertexRuntime &v1, SVerte
 
 Color4F RasterizationStage::CRasterizer::SampleTexture(int iTextureID, Vec2 uv)
 {
-	//return Color4F(1.0, 1.0, 1.0, 1.0f);
+	//return Color4F(1.0, 1.0, 1.0, 0.f);
 
 	const CTexture* pTexture = CImageManager::GetInstance()->FindTexture(iTextureID);
 	if ( !pTexture )
@@ -509,16 +515,13 @@ void RasterizationStage::CRasterizer::Init()
 
 bool RasterizationStage::CRasterizer::CanDrawPixel(int x, int y, float z)
 {
-	if (IsOutSideScreen(x, y))
+	if (!OwnershipTest(x, y))
 		return false;
 
-	if ( ZBUFFER[y][x] >= z )
-	{
-		ZBUFFER[y][x] = z;
-		return true;
-	}
+	if (!DepthTest(x, y, z))
+		return false;
 
-	return false;
+	return true;
 }
 
 void RasterizationStage::CRasterizer::ClearDepthBuffer(float val)
@@ -541,6 +544,25 @@ void RasterizationStage::CRasterizer::ClearColorBuffer(Color4F val)
 			COLOR_BUFFER[i][j] = val;
 		}
 	}
+}
+
+bool RasterizationStage::CRasterizer::DepthTest(int x, int y, float z)
+{
+	if (ZBUFFER[y][x] >= z)
+	{
+		ZBUFFER[y][x] = z;
+		return true;
+	}
+
+	return false;
+}
+
+bool RasterizationStage::CRasterizer::AlphaTest(float fAlpha)
+{
+	if ( fAlpha <= 0 )
+		return false;
+
+	return true;
 }
 
 RasterizationStage::CRasterizer* RasterizationStage::CRasterizer::s_pInstance;
