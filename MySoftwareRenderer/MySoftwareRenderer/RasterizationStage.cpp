@@ -31,8 +31,7 @@ bool RasterizationStage::InitDX(HINSTANCE hInstance, HWND hWnd, int width, int h
 
 void RasterizationStage::CRasterizer::DrawPixel(int x, int y, Color4F src)
 {
-	Color4F& dst = COLOR_BUFFER[y][x];
-	dst = src * src.a + dst * (1.0f - src.a);
+	Blending(src, COLOR_BUFFER[y][x]);
 }
 
 void RasterizationStage::FlipDXSurface()
@@ -85,8 +84,7 @@ bool RasterizationStage::CRasterizer::OwnershipTest(int x, int y)
 
 int RasterizationStage::CRasterizer::ConvertToPixelPos(float value)
 {
-	//return floor(value + 0.5f);
-	return ceil(value /*- 0.5f*/);
+	return ceil(value);
 }
 
 void RasterizationStage::CRasterizer::DrawLine(int x1, int y1, int x2, int y2, Color4F color)
@@ -563,6 +561,11 @@ bool RasterizationStage::CRasterizer::AlphaTest(float fAlpha)
 		return false;
 
 	return true;
+}
+
+void RasterizationStage::CRasterizer::Blending(Color4F& src, Color4F& dst)
+{
+	dst = src * src.a + dst * (1.0f - src.a);
 }
 
 RasterizationStage::CRasterizer* RasterizationStage::CRasterizer::s_pInstance;

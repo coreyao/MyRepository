@@ -29,6 +29,7 @@ namespace RasterizationStage
 		bool OwnershipTest(int x, int y);
 		bool DepthTest(int x, int y, float z);
 		bool AlphaTest(float fAlpha);
+		void Blending(Color4F& src, Color4F& dst);
 
 		void ClearDepthBuffer(float val);
 		void ClearColorBuffer(Color4F val);
