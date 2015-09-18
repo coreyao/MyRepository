@@ -145,9 +145,9 @@ void RasterizationStage::CRasterizer::DrawLine(int x1, int y1, int x2, int y2, C
 	}
 }
 
-void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVertexRuntime& v2, SVertexRuntime& v3, bool bWireFrame /*= true*/, int iTextureID /*= 0*/)
+void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVertexRuntime& v2, SVertexRuntime& v3, float fAlpha, SRenderState* pRenderState)
 {
-	if (bWireFrame)
+	if (pRenderState->m_bDrawWireFrame)
 	{
 		DrawLine(v1.m_pos.x, v1.m_pos.y, v2.m_pos.x, v2.m_pos.y, Color4F::WHITE);
 		DrawLine(v2.m_pos.x, v2.m_pos.y, v3.m_pos.x, v3.m_pos.y, Color4F::WHITE);
@@ -170,11 +170,11 @@ void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVerte
 
 		if (v2.m_pos.y == v3.m_pos.y)
 		{
-			DrawBottomTriangle(v1, v2, v3);
+			DrawBottomTriangle(v1, v2, v3, fAlpha, pRenderState);
 		}
 		else if (v1.m_pos.y == v2.m_pos.y)
 		{
-			DrawTopTriangle(v1, v2, v3);
+			DrawTopTriangle(v1, v2, v3, fAlpha, pRenderState);
 		}
 		else
 		{
@@ -197,8 +197,8 @@ void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVerte
 				newVertex.m_color = (v1.m_color + kInverseSlopeRightColor * (v2.m_pos.y - v1.m_pos.y));
 				newVertex.m_UV = v1.m_UV + kInverseSlopeRightUV * (v2.m_pos.y - v1.m_pos.y);
 				newVertex.m_inverseZ = v1.m_inverseZ + kInverseSlopeRightInverseZ * (v2.m_pos.y - v1.m_pos.y);
-				DrawAnyTriangle(v1, v2, newVertex, bWireFrame);
-				DrawAnyTriangle(v2, newVertex, v3, bWireFrame);
+				DrawAnyTriangle(v1, v2, newVertex, fAlpha, pRenderState);
+				DrawAnyTriangle(v2, newVertex, v3, fAlpha, pRenderState);
 			}
 			else if ( v2.m_pos.x >= v3.m_pos.x )
 			{
@@ -219,14 +219,14 @@ void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVerte
 				newVertex.m_color = (v1.m_color + kInverseSlopeLeftColor * (v2.m_pos.y - v1.m_pos.y));
 				newVertex.m_UV = (v1.m_UV + kInverseSlopeLeftUV * (v2.m_pos.y - v1.m_pos.y));
 				newVertex.m_inverseZ = (v1.m_inverseZ + kInverseSlopeLeftInverseZ * (v2.m_pos.y - v1.m_pos.y));
-				DrawAnyTriangle(v1, newVertex, v2, bWireFrame);
-				DrawAnyTriangle(newVertex, v2, v3, bWireFrame);
+				DrawAnyTriangle(v1, newVertex, v2, fAlpha, pRenderState);
+				DrawAnyTriangle(newVertex, v2, v3, fAlpha, pRenderState);
 			}
 		}
 	}
 }
 
-void RasterizationStage::CRasterizer::DrawBottomTriangle(SVertexRuntime &v1, SVertexRuntime &v2, SVertexRuntime &v3)
+void RasterizationStage::CRasterizer::DrawBottomTriangle(SVertexRuntime &v1, SVertexRuntime &v2, SVertexRuntime &v3, float fAlpha, SRenderState* pRenderState)
 {
 	float kInverseSlopeLeftX = (v1.m_pos.x - v2.m_pos.x) / (v1.m_pos.y - v2.m_pos.y);
 	float kInverseSlopeRightX = (v1.m_pos.x - v3.m_pos.x) / (v1.m_pos.y - v3.m_pos.y);
@@ -309,7 +309,7 @@ void RasterizationStage::CRasterizer::DrawBottomTriangle(SVertexRuntime &v1, SVe
 				int iPixelY = y;
 				if (CanDrawPixel(iPixelX, iPixelY, curZ))
 				{
-					Color4F finalColor = SampleTexture(1, curUV / curInverseZ) * curColor / curInverseZ;
+					Color4F finalColor = SampleTexture(1, curUV / curInverseZ) * (curColor / curInverseZ) * fAlpha;
 					if (AlphaTest(finalColor.a))
 						DrawPixel(iPixelX, iPixelY, finalColor);
 				}
@@ -338,7 +338,7 @@ void RasterizationStage::CRasterizer::DrawBottomTriangle(SVertexRuntime &v1, SVe
 	}
 }
 
-void RasterizationStage::CRasterizer::DrawTopTriangle(SVertexRuntime &v1, SVertexRuntime &v2, SVertexRuntime &v3)
+void RasterizationStage::CRasterizer::DrawTopTriangle(SVertexRuntime &v1, SVertexRuntime &v2, SVertexRuntime &v3, float fAlpha, SRenderState* pRenderState)
 {
 	float kInverseSlopeLeftX = (v3.m_pos.x - v1.m_pos.x) / (v3.m_pos.y - v1.m_pos.y);
 	float kInverseSlopeRightX = (v3.m_pos.x - v2.m_pos.x) / (v3.m_pos.y - v2.m_pos.y);
@@ -421,7 +421,7 @@ void RasterizationStage::CRasterizer::DrawTopTriangle(SVertexRuntime &v1, SVerte
 				int iPixelY = y;
 				if (CanDrawPixel(iPixelX, iPixelY, curZ))
 				{
-					Color4F finalColor = SampleTexture(1, curUV / curInverseZ) * curColor / curInverseZ;
+					Color4F finalColor = SampleTexture(1, curUV / curInverseZ) * (curColor / curInverseZ) * fAlpha;
 					if (AlphaTest(finalColor.a))
 						DrawPixel(iPixelX, iPixelY, finalColor);
 				}
@@ -452,7 +452,7 @@ void RasterizationStage::CRasterizer::DrawTopTriangle(SVertexRuntime &v1, SVerte
 
 Color4F RasterizationStage::CRasterizer::SampleTexture(int iTextureID, Vec2 uv)
 {
-	//return Color4F(1.0, 1.0, 1.0, 0.f);
+	//return Color4F(1.0, 1.0, 1.0, 1.f);
 
 	const CTexture* pTexture = CImageManager::GetInstance()->FindTexture(iTextureID);
 	if ( !pTexture )

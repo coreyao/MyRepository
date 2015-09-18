@@ -114,12 +114,14 @@ struct SFaceRuntime
 {
 	SFaceRuntime()
 	: m_pRenderState(nullptr)
+	, m_fAlpha(1.0f)
 	{
 	}
 
 	SVertexRuntime m_vertex1;
 	SVertexRuntime m_vertex2;
 	SVertexRuntime m_vertex3;
+	float m_fAlpha;
 	SRenderState* m_pRenderState;
 };
 
@@ -224,9 +226,16 @@ public:
 	Mat4 GetTransformMat();
 	Mat4 GetRotationMat();
 	void Reset();
+
+	const Vec3& GetPosition() const;
 	void SetPosition(const Vec3& pos);
+
+	const Vec3& GetRotation() const;
 	void SetRotation(const Vec3& rot);
+
+	const Vec3& GetScale() const;
 	void SetScale(const Vec3& scale);
+
 	bool IsTransformDirty();
 
 private:

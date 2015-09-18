@@ -36,9 +36,9 @@ namespace RasterizationStage
 
 		void DrawPixel(int x, int y, Color4F src);
 		void DrawLine(int x1, int y1, int x2, int y2, Color4F color);
-		void DrawAnyTriangle(SVertexRuntime& v1, SVertexRuntime& v2, SVertexRuntime& v3, bool bWireFrame = true, int iTextureID = 0);
-		void DrawTopTriangle(SVertexRuntime &v1, SVertexRuntime &v2, SVertexRuntime &v3);
-		void DrawBottomTriangle(SVertexRuntime &v1, SVertexRuntime &v2, SVertexRuntime &v3);
+		void DrawAnyTriangle(SVertexRuntime& v1, SVertexRuntime& v2, SVertexRuntime& v3, float fAlpha, SRenderState* pRenderState);
+		void DrawTopTriangle(SVertexRuntime &v1, SVertexRuntime &v2, SVertexRuntime &v3, float fAlpha, SRenderState* pRenderState);
+		void DrawBottomTriangle(SVertexRuntime &v1, SVertexRuntime &v2, SVertexRuntime &v3, float fAlpha, SRenderState* pRenderState);
 		Color4F SampleTexture(int iTextureID, Vec2 uv);
 
 		Color4F** GetColorBuffer() { return COLOR_BUFFER; }

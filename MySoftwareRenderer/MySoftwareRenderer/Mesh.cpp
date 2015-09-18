@@ -34,6 +34,7 @@ void CMesh::Render()
 			curFace->m_vertex2 = m_vVertexRunTime[i][rFace.m_VertexIndex2];
 			curFace->m_vertex3 = m_vVertexRunTime[i][rFace.m_VertexIndex3];
 			curFace->m_pRenderState = &m_renderState;
+			curFace->m_fAlpha = 0.5f;
 			CPipeline::GetInstance()->AddFace(curFace);
 		}
 	}

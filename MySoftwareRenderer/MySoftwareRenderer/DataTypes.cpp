@@ -52,6 +52,21 @@ bool STransform::IsTransformDirty()
 	return m_bTransformDirty;
 }
 
+const Vec3& STransform::GetPosition() const
+{
+	return m_pos;
+}
+
+const Vec3& STransform::GetRotation() const
+{
+	return m_rotation;
+}
+
+const Vec3& STransform::GetScale() const
+{
+	return m_scale;
+}
+
 const Color4F Color4F::WHITE(1.0f, 1.0f, 1.0f, 1.0f);
 const Color4F Color4F::GREEN(0.0f, 1.0f, 0.0f, 1.0f);
 const Color4F Color4F::BLACK(0.0f, 0.0f, 0.0f, 1.0f);

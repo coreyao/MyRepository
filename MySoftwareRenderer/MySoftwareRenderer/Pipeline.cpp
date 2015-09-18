@@ -23,11 +23,11 @@ void CPipeline::Draw()
 			if (bAddFace)
 			{
 				GeometryStage::TransformCameraToScreen(newFace);
-				RasterizationStage::CRasterizer::GetInstance()->DrawAnyTriangle(newFace.m_vertex1, newFace.m_vertex2, newFace.m_vertex3, curFace->m_pRenderState->m_bDrawWireFrame);
+				RasterizationStage::CRasterizer::GetInstance()->DrawAnyTriangle(newFace.m_vertex1, newFace.m_vertex2, newFace.m_vertex3, newFace.m_fAlpha, curFace->m_pRenderState);
 			}
 
 			GeometryStage::TransformCameraToScreen(*curFace);
-			RasterizationStage::CRasterizer::GetInstance()->DrawAnyTriangle(curFace->m_vertex1, curFace->m_vertex2, curFace->m_vertex3, curFace->m_pRenderState->m_bDrawWireFrame);
+			RasterizationStage::CRasterizer::GetInstance()->DrawAnyTriangle(curFace->m_vertex1, curFace->m_vertex2, curFace->m_vertex3, curFace->m_fAlpha, curFace->m_pRenderState);
 		}
 
 		delete curFace;
