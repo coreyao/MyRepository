@@ -209,9 +209,10 @@ void InitMesh()
 
 	CMesh* pFileCube = new CMesh;
 	pFileCube->InitFromFile("cube.CSTM");
+	pFileCube->m_transform.SetPosition(Vec3(0, -25, 0));
 	pFileCube->m_transform.SetScale(Vec3(1, 1, -1));
 	pFileCube->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
-	//g_vMesh.push_back(g_pCube);
+	//g_vMesh.push_back(pFileCube);
 
 	CMesh* g_pCharactor = new CMesh;
 	g_pCharactor->InitFromFile("hama.CSTM");
@@ -231,14 +232,22 @@ void InitMesh()
 
 		{
 			SVertex vertex;
-			vertex.m_pos.set(10, 0, 0);
+			vertex.m_pos.set(-10, -10, 0);
 			vertex.m_UV.set(1, 0);
 			subMeshData1.m_vVertex.push_back(vertex);
 		}
 
 		{
 			SVertex vertex;
-			vertex.m_pos.set(0, 30, 0);
+			vertex.m_pos.set(0, -10, 0);
+			vertex.m_UV.set(1, 0);
+			subMeshData1.m_vVertex.push_back(vertex);
+		}
+
+
+		{
+			SVertex vertex;
+			vertex.m_pos.set(0, 0, 0);
 			vertex.m_UV.set(0.5f, 1.0f);
 			subMeshData1.m_vVertex.push_back(vertex);
 		}
@@ -246,10 +255,19 @@ void InitMesh()
 		{
 			SFace face;
 			face.m_VertexIndex1 = 0;
-			face.m_VertexIndex2 = 2;
-			face.m_VertexIndex3 = 1;
+			face.m_VertexIndex2 = 1;
+			face.m_VertexIndex3 = 2;
 			subMeshData1.m_vFace.push_back(face);
 		}
+
+		{
+			SFace face;
+			face.m_VertexIndex1 = 3;
+			face.m_VertexIndex2 = 0;
+			face.m_VertexIndex3 = 2;
+			subMeshData1.m_vFace.push_back(face);
+		}
+
 		subMeshData1.m_MeshMatrix = Mat4::IDENTITY;
 		CMesh* pTriangle = new CMesh;
 		pTriangle->m_meshData.m_vSubMesh.push_back(subMeshData1);

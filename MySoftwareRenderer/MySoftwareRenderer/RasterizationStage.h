@@ -25,7 +25,7 @@ namespace RasterizationStage
 	public:
 		void Init();
 		bool IsOutSideScreen(int x, int y);
-		float ConvertToPixelPos(float value);
+		int ConvertToPixelPos(float value);
 
 		void ClearDepthBuffer(float val);
 		void ClearColorBuffer(Color4F val);
