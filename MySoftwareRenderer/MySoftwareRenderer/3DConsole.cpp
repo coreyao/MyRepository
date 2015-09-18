@@ -302,19 +302,15 @@ int Game_Init()
 
 int Game_Main(float dt)
 {
-	RasterizationStage::LockSurface();
-	
 	for (auto& pMesh : g_vMesh)
 	{
 		pMesh->Update(dt);
 		pMesh->Render();
 	}
-
 	CPipeline::GetInstance()->Draw();
 
-	RasterizationStage::UnlockSurface();
-
-	RasterizationStage::FlipSurface();
+	RasterizationStage::FillDXSurface();
+	RasterizationStage::FlipDXSurface();
 
 	return 1;
 }
@@ -423,7 +419,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			int mouse_y = (int)HIWORD(lParam);
 
 			Vec2 delta = g_lastMouseClockPos - Vec2(mouse_x, mouse_y);
-			delta = delta * 0.5f;
+			delta = delta * 0.1f;
 			CDirector::GetInstance()->GetPerspectiveCamera()->Rotate(delta.y, delta.x);
 
 			g_lastMouseClockPos = Vec2(mouse_x, mouse_y);

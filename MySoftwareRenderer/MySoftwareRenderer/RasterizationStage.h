@@ -17,9 +17,8 @@ namespace RasterizationStage
 	// º¯Êý
 	bool InitDX(HINSTANCE hInstance, HWND hWnd, int width, int height);
 	void ReleaseDX();
-	int LockSurface();
-	int UnlockSurface();
-	void FlipSurface();
+	void FillDXSurface();
+	void FlipDXSurface();
 
 	class CRasterizer
 	{
@@ -29,9 +28,13 @@ namespace RasterizationStage
 		float ConvertToPixelPos(float value);
 
 		void ClearDepthBuffer(float val);
+		void ClearColorBuffer(Color4F val);
+		Color4F** GetColorBuffer() { return COLOR_BUFFER; }
+
 		bool CanDrawPixel(int x, int y, float z);
 		int DrawPixel(int x, int y, DWORD color);
-		void DrawLine(int x1, int y1, int x2, int y2, DWORD color);
+		int DrawPixel(int x, int y, Color4F color);
+		void DrawLine(int x1, int y1, int x2, int y2, Color4F color);
 		void DrawAnyTriangle(SVertexRuntime& v1, SVertexRuntime& v2, SVertexRuntime& v3, bool bWireFrame = true, int iTextureID = 0);
 		void DrawTopTriangle(SVertexRuntime &v1, SVertexRuntime &v2, SVertexRuntime &v3);
 		void DrawBottomTriangle(SVertexRuntime &v1, SVertexRuntime &v2, SVertexRuntime &v3);
@@ -43,5 +46,6 @@ namespace RasterizationStage
 		static CRasterizer* s_pInstance;
 
 		float** ZBUFFER;
+		Color4F** COLOR_BUFFER;
 	};
 }

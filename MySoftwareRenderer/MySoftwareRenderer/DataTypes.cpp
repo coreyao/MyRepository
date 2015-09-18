@@ -54,6 +54,7 @@ bool STransform::IsTransformDirty()
 
 const Color4F Color4F::WHITE(1.0f, 1.0f, 1.0f, 1.0f);
 const Color4F Color4F::GREEN(0.0f, 1.0f, 0.0f, 1.0f);
+const Color4F Color4F::BLACK(0.0f, 0.0f, 0.0f, 1.0f);
 
 const Color3B Color3B::WHITE(255, 255, 255);
 const Color3B Color3B::GREEN(0, 255, 0);

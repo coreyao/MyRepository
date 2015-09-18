@@ -72,6 +72,7 @@ struct Color4F
 
 	static const Color4F WHITE;
 	static const Color4F GREEN;
+	static const Color4F BLACK;
 };
 
 struct SFace

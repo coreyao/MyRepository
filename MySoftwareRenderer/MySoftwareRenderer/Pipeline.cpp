@@ -5,6 +5,7 @@ CPipeline* CPipeline::s_pInstance;
 void CPipeline::Draw()
 {
 	RasterizationStage::CRasterizer::GetInstance()->ClearDepthBuffer(1.0f);
+	RasterizationStage::CRasterizer::GetInstance()->ClearColorBuffer(Color4F::BLACK);
 
 	for (auto& curFace : m_vRenderList)
 	{

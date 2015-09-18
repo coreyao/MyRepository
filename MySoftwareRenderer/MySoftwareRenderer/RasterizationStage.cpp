@@ -29,29 +29,9 @@ bool RasterizationStage::InitDX(HINSTANCE hInstance, HWND hWnd, int width, int h
 	return true;
 }
 
-int RasterizationStage::LockSurface()
-{
-	memset(&lockedRect, 0, sizeof(lockedRect));
-	pSurface->LockRect(&lockedRect, NULL, D3DLOCK_DISCARD);
-	for (int i = 0; i < SCREEN_WIDTH; ++i)
-	{
-		for (int j = 0; j < SCREEN_HEIGHT; ++j)
-			CRasterizer::GetInstance()->DrawPixel(i, j, 0);
-	}
-
-	return 1;
-}
-
-int RasterizationStage::UnlockSurface()
-{
-	pSurface->UnlockRect();
-	return 1;
-}
-
 int RasterizationStage::CRasterizer::DrawPixel(int x, int y, DWORD color)
 {
-	if (IsOutSideScreen(x, y))
-		return 0;
+	
 
 	DWORD* pBits = (DWORD*)RasterizationStage::lockedRect.pBits;
 	pBits[x + y * (RasterizationStage::lockedRect.Pitch >> 2)] = color;
@@ -59,7 +39,15 @@ int RasterizationStage::CRasterizer::DrawPixel(int x, int y, DWORD color)
 	return 1;
 }
 
-void RasterizationStage::FlipSurface()
+int RasterizationStage::CRasterizer::DrawPixel(int x, int y, Color4F color)
+{
+	if (IsOutSideScreen(x, y))
+		return 0;
+
+	COLOR_BUFFER[y][x] = color;
+}
+
+void RasterizationStage::FlipDXSurface()
 {
 	// 获取后台缓存
 	IDirect3DSurface9* backBuffer = 0;
@@ -81,6 +69,24 @@ void RasterizationStage::ReleaseDX()
 	pDevice->Release();
 }
 
+void RasterizationStage::FillDXSurface()
+{
+	memset(&lockedRect, 0, sizeof(lockedRect));
+	pSurface->LockRect(&lockedRect, NULL, D3DLOCK_DISCARD);
+
+	Color4F** pColorBuffer = CRasterizer::GetInstance()->GetColorBuffer();
+	DWORD* pBits = (DWORD*)RasterizationStage::lockedRect.pBits;
+	for (int i = 0; i < SCREEN_WIDTH; ++i)
+	{
+		for (int j = 0; j < SCREEN_HEIGHT; ++j)
+		{
+			pBits[i + j * (RasterizationStage::lockedRect.Pitch >> 2)] = pColorBuffer[j][i].ToARGB();
+		}
+	}
+
+	pSurface->UnlockRect();
+}
+
 bool RasterizationStage::CRasterizer::IsOutSideScreen(int x, int y)
 {
 	if ( x < 0 || x >= SCREEN_WIDTH || y < 0 || y >= SCREEN_HEIGHT )
@@ -95,7 +101,7 @@ float RasterizationStage::CRasterizer::ConvertToPixelPos(float value)
 	//return int(value + 0.5f);
 }
 
-void RasterizationStage::CRasterizer::DrawLine(int x1, int y1, int x2, int y2, DWORD color)
+void RasterizationStage::CRasterizer::DrawLine(int x1, int y1, int x2, int y2, Color4F color)
 {
 	// - DDA
 	if ( x2 - x1 == 0 )
@@ -157,9 +163,9 @@ void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVerte
 
 	if (bWireFrame)
 	{
-		DrawLine(v1.m_pos.x, v1.m_pos.y, v2.m_pos.x, v2.m_pos.y, 0xffffffff);
-		DrawLine(v2.m_pos.x, v2.m_pos.y, v3.m_pos.x, v3.m_pos.y, 0xffffffff);
-		DrawLine(v1.m_pos.x, v1.m_pos.y, v3.m_pos.x, v3.m_pos.y, 0xffffffff);
+		DrawLine(v1.m_pos.x, v1.m_pos.y, v2.m_pos.x, v2.m_pos.y, Color4F::WHITE);
+		DrawLine(v2.m_pos.x, v2.m_pos.y, v3.m_pos.x, v3.m_pos.y, Color4F::WHITE);
+		DrawLine(v1.m_pos.x, v1.m_pos.y, v3.m_pos.x, v3.m_pos.y, Color4F::WHITE);
 	}
 	else
 	{
@@ -306,7 +312,7 @@ void RasterizationStage::CRasterizer::DrawBottomTriangle(SVertexRuntime &v1, SVe
 				if (CanDrawPixel(iPixelX, iPixelY, curZ))
 				{
 					Color4F texColor = SampleTexture(1, curUV / curInverseZ);
-					DrawPixel(iPixelX, iPixelY, (texColor * curColor / curInverseZ).ToARGB());
+					DrawPixel(iPixelX, iPixelY, texColor * curColor / curInverseZ);
 				}
 
 				curColor += kInverseSlopeColor;
@@ -322,7 +328,7 @@ void RasterizationStage::CRasterizer::DrawBottomTriangle(SVertexRuntime &v1, SVe
 			if (CanDrawPixel(iPixelX, iPixelY, curZ))
 			{
 				Color4F texColor = SampleTexture(1, curUV / curInverseZ);
-				DrawPixel(iPixelX, iPixelY, (texColor * curColor / curInverseZ).ToARGB());
+				DrawPixel(iPixelX, iPixelY, texColor * curColor / curInverseZ);
 			}
 		}
 
@@ -415,7 +421,7 @@ void RasterizationStage::CRasterizer::DrawTopTriangle(SVertexRuntime &v1, SVerte
 				if (CanDrawPixel(iPixelX, iPixelY, curZ))
 				{
 					Color4F texColor = SampleTexture(1, curUV / curInverseZ);
-					DrawPixel(iPixelX, iPixelY, (texColor * curColor / curInverseZ).ToARGB());
+					DrawPixel(iPixelX, iPixelY, texColor * curColor / curInverseZ);
 				}
 
 				curColor += kInverseSlopeColor;
@@ -431,7 +437,7 @@ void RasterizationStage::CRasterizer::DrawTopTriangle(SVertexRuntime &v1, SVerte
 			if (CanDrawPixel(iPixelX, iPixelY, curZ))
 			{
 				Color4F texColor = SampleTexture(1, curUV / curInverseZ);
-				DrawPixel(iPixelX, iPixelY, (texColor * curColor / curInverseZ).ToARGB());
+				DrawPixel(iPixelX, iPixelY, texColor * curColor / curInverseZ);
 			}
 		}
 
@@ -494,6 +500,14 @@ RasterizationStage::CRasterizer* RasterizationStage::CRasterizer::GetInstance()
 
 void RasterizationStage::CRasterizer::Init()
 {
+	COLOR_BUFFER = new Color4F*[SCREEN_HEIGHT];
+	memset(COLOR_BUFFER, 0, SCREEN_HEIGHT);
+	for (int i = 0; i < SCREEN_HEIGHT; ++i)
+	{
+		COLOR_BUFFER[i] = new Color4F[SCREEN_WIDTH];
+		memset(COLOR_BUFFER[i], 0, SCREEN_WIDTH);
+	}
+
 	ZBUFFER = new float*[SCREEN_HEIGHT];
 	memset(ZBUFFER, 0, SCREEN_HEIGHT);
 	for (int i = 0; i < SCREEN_HEIGHT; ++i)
@@ -524,6 +538,17 @@ void RasterizationStage::CRasterizer::ClearDepthBuffer(float val)
 		for (int j = 0; j < SCREEN_WIDTH; ++j)
 		{
 			ZBUFFER[i][j] = val;
+		}
+	}
+}
+
+void RasterizationStage::CRasterizer::ClearColorBuffer(Color4F val)
+{
+	for (int i = 0; i < SCREEN_HEIGHT; ++i)
+	{
+		for (int j = 0; j < SCREEN_WIDTH; ++j)
+		{
+			COLOR_BUFFER[i][j] = val;
 		}
 	}
 }
