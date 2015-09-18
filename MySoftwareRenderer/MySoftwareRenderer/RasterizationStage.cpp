@@ -29,16 +29,6 @@ bool RasterizationStage::InitDX(HINSTANCE hInstance, HWND hWnd, int width, int h
 	return true;
 }
 
-int RasterizationStage::CRasterizer::DrawPixel(int x, int y, DWORD color)
-{
-	
-
-	DWORD* pBits = (DWORD*)RasterizationStage::lockedRect.pBits;
-	pBits[x + y * (RasterizationStage::lockedRect.Pitch >> 2)] = color;
-
-	return 1;
-}
-
 int RasterizationStage::CRasterizer::DrawPixel(int x, int y, Color4F color)
 {
 	if (IsOutSideScreen(x, y))
