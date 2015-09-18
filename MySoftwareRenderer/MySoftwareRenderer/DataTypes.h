@@ -1,9 +1,6 @@
 #pragma once
 
 #include "Utility.h"
-#include "Math/Vector.h"
-#include "Math/Matrix.h"
-#include "Math/Quaternion.h"
 
 struct Color3B
 {
@@ -114,9 +111,15 @@ struct SVertexRuntime : public SVertex
 
 struct SFaceRuntime
 {
+	SFaceRuntime()
+	: m_pRenderState(nullptr)
+	{
+	}
+
 	SVertexRuntime m_vertex1;
 	SVertexRuntime m_vertex2;
 	SVertexRuntime m_vertex3;
+	SRenderState* m_pRenderState;
 };
 
 struct STextureData
@@ -209,19 +212,28 @@ struct SMeshData
 
 struct STransform
 {
+public:
 	STransform()
 	{
 		m_mat = Mat4::IDENTITY;
 		m_scale.set(1.0f, 1.0f, 1.0f);
+		m_bTransformDirty = true;
 	}
 
 	Mat4 GetTransformMat();
 	Mat4 GetRotationMat();
 	void Reset();
+	void SetPosition(const Vec3& pos);
+	void SetRotation(const Vec3& rot);
+	void SetScale(const Vec3& scale);
+	bool IsTransformDirty();
 
+private:
 	Vec3 m_pos;
 	Vec3 m_rotation;
 	Vec3 m_scale;
 
 	Mat4 m_mat;
+
+	bool m_bTransformDirty;
 };

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../Utility.h"
-
 class Vec2
 {
 public:

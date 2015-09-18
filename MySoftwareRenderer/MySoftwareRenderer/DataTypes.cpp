@@ -10,18 +10,46 @@ void STransform::Reset()
 	m_pos = Vec3(0, 0, 0);
 	m_rotation = Vec3(0, 0, 0);
 	m_scale = Vec3(1.0f, 1.0f, 1.0f);
+	m_bTransformDirty = true;
 }
 
 Mat4 STransform::GetTransformMat()
 {
-	Mat4 scaleMat = Mat4::CreateScaleMat(m_scale.x, m_scale.y, m_scale.z);
-	Mat4 rotationMat = GetRotationMat();
-	Mat4 translationMat = Mat4::CreateTranslationMat(m_pos.x, m_pos.y, m_pos.z);
+	if (m_bTransformDirty)
+	{
+		Mat4 scaleMat = Mat4::CreateScaleMat(m_scale.x, m_scale.y, m_scale.z);
+		Mat4 rotationMat = GetRotationMat();
+		Mat4 translationMat = Mat4::CreateTranslationMat(m_pos.x, m_pos.y, m_pos.z);
 
-	Mat4 temp = rotationMat * scaleMat;
-	temp = translationMat * temp;
+		m_mat = translationMat * rotationMat * scaleMat;
 
-	return temp;
+		m_bTransformDirty = false;
+	}
+
+	return m_mat;
+}
+
+void STransform::SetPosition(const Vec3& pos)
+{
+	m_pos = pos;
+	m_bTransformDirty = true;
+}
+
+void STransform::SetScale(const Vec3& scale)
+{
+	m_scale = scale;
+	m_bTransformDirty = true;
+}
+
+void STransform::SetRotation(const Vec3& rot)
+{
+	m_rotation = rot;
+	m_bTransformDirty = true;
+}
+
+bool STransform::IsTransformDirty()
+{
+	return m_bTransformDirty;
 }
 
 const Color4F Color4F::WHITE(1.0f, 1.0f, 1.0f, 1.0f);

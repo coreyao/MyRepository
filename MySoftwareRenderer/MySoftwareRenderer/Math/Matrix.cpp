@@ -1,4 +1,5 @@
 #include "Matrix.h"
+#include "../Utility.h"
 
 Mat4 Mat4::operator*(const Mat4& rh)
 {

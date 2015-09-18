@@ -1,4 +1,5 @@
 #include "Vector.h"
+#include "../Utility.h"
 
 void Vec3::set(float _x, float _y, float _z)
 {

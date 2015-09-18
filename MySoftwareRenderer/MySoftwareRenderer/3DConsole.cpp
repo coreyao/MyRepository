@@ -6,7 +6,7 @@
 #include "Image/ImageManager.h"
 #include "Mesh.h"
 #include "Director.h"
-using namespace RasterizationStage;
+#include "Pipeline.h"
 
 // 宏定义
 #define WINDOW_CLASS_NAME TEXT("MySoftwareRenderer")
@@ -192,7 +192,6 @@ void InitMesh()
 	}
 	
 	CMesh* pCube = new CMesh;
-	pCube->m_transform.m_pos.set(0, 0, 0);
 	pCube->m_meshData.m_vSubMesh.push_back(subMeshData);
 	pCube->m_vVertexRunTime.resize(1);
 	for (int i = 0; i < pCube->m_meshData.m_vSubMesh.size(); ++i)
@@ -210,17 +209,15 @@ void InitMesh()
 
 	CMesh* pFileCube = new CMesh;
 	pFileCube->InitFromFile("cube.CSTM");
-	pFileCube->m_transform.m_scale.set(1, 1, -1);
-	pFileCube->m_transform.m_rotation.set(0, 0, 0);
-	pFileCube->m_eVertexOrder = EVertexOrder_Counter_ClockWise;
+	pFileCube->m_transform.SetScale(Vec3(1, 1, -1));
+	pFileCube->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
 	//g_vMesh.push_back(g_pCube);
 
 	CMesh* g_pCharactor = new CMesh;
 	g_pCharactor->InitFromFile("hama.CSTM");
-	g_pCharactor->m_transform.m_scale.set(1, 1, -1);
-	g_pCharactor->m_transform.m_rotation.set(0, 0, 0);
-	g_pCharactor->m_transform.m_pos.set(0, -100, 0);
-	g_pCharactor->m_eVertexOrder = EVertexOrder_Counter_ClockWise;
+	g_pCharactor->m_transform.SetScale(Vec3(1, 1, -1));
+	g_pCharactor->m_transform.SetPosition(Vec3(0, -100, 0));
+	g_pCharactor->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
 	g_vMesh.push_back(g_pCharactor);
 
 	{
@@ -256,8 +253,7 @@ void InitMesh()
 		subMeshData1.m_MeshMatrix = Mat4::IDENTITY;
 		CMesh* pTriangle = new CMesh;
 		pTriangle->m_meshData.m_vSubMesh.push_back(subMeshData1);
-		pTriangle->m_bEnableCullFace = false;
-		pTriangle->m_transform.m_rotation.set(70, 0, 0);
+		pTriangle->m_renderState.m_bEnableCullFace = false;
 		pTriangle->m_vVertexRunTime.resize(1);
 		for (int i = 0; i < pTriangle->m_meshData.m_vSubMesh.size(); ++i)
 		{
@@ -293,8 +289,8 @@ DWORD GetClock()
 
 int Game_Init()
 {
-	InitDX(g_HInstance, g_WindowHandle, SCREEN_WIDTH, SCREEN_HEIGHT);
-	CRasterizer::GetInstance()->Init();
+	RasterizationStage::InitDX(g_HInstance, g_WindowHandle, SCREEN_WIDTH, SCREEN_HEIGHT);
+	RasterizationStage::CRasterizer::GetInstance()->Init();
 	
 	CImageManager::GetInstance()->Load("Hama.png");
 	CImageManager::GetInstance()->Load("HelloWorld.png");
@@ -306,28 +302,26 @@ int Game_Init()
 
 int Game_Main(float dt)
 {
-	// 表面加锁
-	LockSurface();
+	RasterizationStage::LockSurface();
 	
-	CRasterizer::GetInstance()->ClearDepthBuffer(1.0f);
 	for (auto& pMesh : g_vMesh)
 	{
 		pMesh->Update(dt);
 		pMesh->Render();
 	}
 
-	// 表面解锁
-	UnlockSurface();
+	CPipeline::GetInstance()->Draw();
 
-	// 输出
-	FlipSurface();
+	RasterizationStage::UnlockSurface();
+
+	RasterizationStage::FlipSurface();
 
 	return 1;
 }
 
 int Game_Shutdown()
 {
-	ReleaseDX();
+	RasterizationStage::ReleaseDX();
 	return 1;
 }
 
@@ -387,7 +381,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		{
 			for (auto& pMesh : g_vMesh)
 			{
-				pMesh->m_bDrawWireFrame = !pMesh->m_bDrawWireFrame;
+				pMesh->m_renderState.m_bDrawWireFrame = !pMesh->m_renderState.m_bDrawWireFrame;
 			}
 		}
 

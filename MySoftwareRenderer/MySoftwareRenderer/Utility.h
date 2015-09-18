@@ -7,6 +7,10 @@
 #include <map>
 #include <list>
 
+#include "Math/Vector.h"
+#include "Math/Matrix.h"
+#include "Math/Quaternion.h"
+
 using namespace std;
 
 #define PI 3.141592f
@@ -47,17 +51,29 @@ enum EVertexOrder
 	EVertexOrder_Counter_ClockWise,
 };
 
-class CRenderObject
+struct SRenderState
 {
-public:
-	CRenderObject();
-
-	virtual void Update(float dt) = 0;
-	virtual void Render() = 0;
+	SRenderState()
+	: m_bEnableCullFace(true)
+	, m_bDrawWireFrame(true)
+	, m_eVertexOrder(EVertexOrder_ClockWise)
+	{
+		m_worldTransform = Mat4::IDENTITY;
+	}
 
 	bool m_bEnableCullFace;
 	bool m_bDrawWireFrame;
 	EVertexOrder m_eVertexOrder;
+	Mat4 m_worldTransform;
+};
+
+class CRenderObject
+{
+public:
+	virtual void Update(float dt) = 0;
+	virtual void Render() = 0;
+
+	SRenderState m_renderState;
 };
 
 typedef shared_ptr<CRenderObject> RenderObjPtr;
@@ -118,4 +134,3 @@ public:
 private:
 	int m_baseColorTex;
 };
-
