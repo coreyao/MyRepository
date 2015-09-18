@@ -29,12 +29,13 @@ bool RasterizationStage::InitDX(HINSTANCE hInstance, HWND hWnd, int width, int h
 	return true;
 }
 
-int RasterizationStage::CRasterizer::DrawPixel(int x, int y, Color4F color)
+int RasterizationStage::CRasterizer::DrawPixel(int x, int y, Color4F src)
 {
 	if (IsOutSideScreen(x, y))
 		return 0;
 
-	COLOR_BUFFER[y][x] = color;
+	Color4F& dst = COLOR_BUFFER[y][x];
+	COLOR_BUFFER[y][x] = src * src.a + dst * (1.0f - src.a);
 }
 
 void RasterizationStage::FlipDXSurface()
