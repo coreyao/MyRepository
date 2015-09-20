@@ -279,26 +279,28 @@ void RasterizationStage::CRasterizer::DrawBottomTriangle(SVertexRuntime &v1, SVe
 		{
 			int iStep = 1;
 
-			Color4F curColor = leftColor;
-			Vec2 curUV = leftUV;
-			float curInverseZ = fLeftInverseZ;
-			float curZ = fLeftZ;
-
-			Color4F kInverseSlopeColor = (rightColor - leftColor) / iDeltaX;
-			Vec2 kInverseSlopeUV = (rightUV - leftUV) / iDeltaX;
-			float kInverseSlopeInverseZ = (fRightInverseZ - fLeftInverseZ) / iDeltaX;
-			float kInverseSlopeZ = (fRightZ - fLeftZ) / iDeltaX;
+			float fDeltaX = fRightX - fLeftX;
+			Color4F kInverseSlopeColor = (rightColor - leftColor) / fDeltaX;
+			Vec2 kInverseSlopeUV = (rightUV - leftUV) / fDeltaX;
+			float kInverseSlopeInverseZ = (fRightInverseZ - fLeftInverseZ) / fDeltaX;
+			float kInverseSlopeZ = (fRightZ - fLeftZ) / fDeltaX;
+			float fOffsetX = iStartX - fLeftX;
 
 			if (iDeltaX < 0)
 			{
-				iStep = -1;
 				kInverseSlopeColor = kInverseSlopeColor * (-1);
 				kInverseSlopeUV = kInverseSlopeUV * (-1);
 				kInverseSlopeInverseZ = kInverseSlopeInverseZ * (-1);
 				kInverseSlopeZ = kInverseSlopeZ * (-1);
 
+				iStep = -1;
 				iStartX -= 1;
 			}
+
+			Color4F curColor = leftColor + kInverseSlopeColor * fOffsetX;
+			Vec2 curUV = leftUV + kInverseSlopeUV * fOffsetX;
+			float curInverseZ = fLeftInverseZ + kInverseSlopeInverseZ * fOffsetX;
+			float curZ = fLeftZ + kInverseSlopeZ * fOffsetX;
 
 			iDeltaX = abs(iDeltaX);
 			for (int i = 0; i < iDeltaX; ++i)
@@ -389,26 +391,28 @@ void RasterizationStage::CRasterizer::DrawTopTriangle(SVertexRuntime &v1, SVerte
 		{
 			int iStep = 1;
 
-			Color4F curColor = leftColor;
-			Vec2 curUV = leftUV;
-			float curInverseZ = fLeftInverseZ;
-			float curZ = fLeftZ;
-
-			Color4F kInverseSlopeColor = (rightColor - leftColor) / iDeltaX;
-			Vec2 kInverseSlopeUV = (rightUV - leftUV) / iDeltaX;
-			float kInverseSlopeInverseZ = (fRightInverseZ - fLeftInverseZ) / iDeltaX;
-			float kInverseSlopeZ = (fRightZ - fLeftZ) / iDeltaX;
+			float fDeltaX = fRightX - fLeftX;
+			Color4F kInverseSlopeColor = (rightColor - leftColor) / fDeltaX;
+			Vec2 kInverseSlopeUV = (rightUV - leftUV) / fDeltaX;
+			float kInverseSlopeInverseZ = (fRightInverseZ - fLeftInverseZ) / fDeltaX;
+			float kInverseSlopeZ = (fRightZ - fLeftZ) / fDeltaX;
+			float fOffsetX = iStartX - fLeftX;
 
 			if (iDeltaX < 0)
 			{
-				iStep = -1;
 				kInverseSlopeColor = kInverseSlopeColor * (-1);
 				kInverseSlopeUV = kInverseSlopeUV * (-1);
 				kInverseSlopeInverseZ = kInverseSlopeInverseZ * (-1);
 				kInverseSlopeZ = kInverseSlopeZ * (-1);
 
+				iStep = -1;
 				iStartX -= 1;
 			}
+
+			Color4F curColor = leftColor + kInverseSlopeColor * fOffsetX;
+			Vec2 curUV = leftUV + kInverseSlopeUV * fOffsetX;
+			float curInverseZ = fLeftInverseZ + kInverseSlopeInverseZ * fOffsetX;
+			float curZ = fLeftZ + kInverseSlopeZ * fOffsetX;
 
 			iDeltaX = abs(iDeltaX);
 			for (int i = 0; i < iDeltaX; ++i)
@@ -457,7 +461,7 @@ Color4F RasterizationStage::CRasterizer::SampleTexture(int iTextureID, Vec2 uv)
 	}
 	else
 	{
-		return SampleNearset(pTexture, uv);
+		return SampleLinear(pTexture, uv);
 	}
 }
 
@@ -574,11 +578,11 @@ Color4F RasterizationStage::CRasterizer::SampleLinear(const CTexture* pTexture, 
 	float fPercentU = uv.x - int(uv.x);
 	float fPercentV = uv.y - int(uv.y);
 
-	int LU = int(uv.x);
-	int RU = LU + 1;
+	int RU = int(uv.x);
+	int LU = RU - 1;
 
-	int TV = int(uv.y);
-	int BV = TV + 1;
+	int BV = int(uv.y);
+	int TV = BV - 1;
 
 	Helper::Clamp(LU, 0, fWidth);
 	Helper::Clamp(RU, 0, fHeight);
@@ -590,13 +594,13 @@ Color4F RasterizationStage::CRasterizer::SampleLinear(const CTexture* pTexture, 
 	unsigned char* pRightTopColorData = &pData[TV * pTexture->m_iWidth * 4 + RU * 4];
 	unsigned char* pRightBottomColorData = &pData[BV * pTexture->m_iWidth * 4 + RU * 4];
 
-	Color4F c1 = Color4F(pLeftTopColorData[0] / 255.0f, pLeftTopColorData[1] / 255.0f, pLeftTopColorData[2] / 255.0f, pLeftTopColorData[3] / 255.0f) * fPercentU
-		+ Color4F(pRightTopColorData[0] / 255.0f, pRightTopColorData[1] / 255.0f, pRightTopColorData[2] / 255.0f, pRightTopColorData[3] / 255.0f) * (1.0f - fPercentU);
+	Color4F c1 = Color4F(pLeftTopColorData[0] / 255.0f, pLeftTopColorData[1] / 255.0f, pLeftTopColorData[2] / 255.0f, pLeftTopColorData[3] / 255.0f) * (1.0f - fPercentU)
+		+ Color4F(pRightTopColorData[0] / 255.0f, pRightTopColorData[1] / 255.0f, pRightTopColorData[2] / 255.0f, pRightTopColorData[3] / 255.0f) * fPercentU;
 
-	Color4F c2 = Color4F(pLeftBottomColorData[0] / 255.0f, pLeftBottomColorData[1] / 255.0f, pLeftBottomColorData[2] / 255.0f, pLeftBottomColorData[3] / 255.0f) * fPercentU
-		+ Color4F(pRightBottomColorData[0] / 255.0f, pRightBottomColorData[1] / 255.0f, pRightBottomColorData[2] / 255.0f, pRightBottomColorData[3] / 255.0f) * (1.0f - fPercentU);
+	Color4F c2 = Color4F(pLeftBottomColorData[0] / 255.0f, pLeftBottomColorData[1] / 255.0f, pLeftBottomColorData[2] / 255.0f, pLeftBottomColorData[3] / 255.0f) * (1.0f - fPercentU)
+		+ Color4F(pRightBottomColorData[0] / 255.0f, pRightBottomColorData[1] / 255.0f, pRightBottomColorData[2] / 255.0f, pRightBottomColorData[3] / 255.0f) * fPercentU;
 
-	Color4F c3 = c1 * fPercentV + c2 * (1.0f - fPercentV);
+	Color4F c3 = c2 * fPercentV + c1 * (1.0f - fPercentV);
 	return c3;
 }
 

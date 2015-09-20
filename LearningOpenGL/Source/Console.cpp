@@ -122,7 +122,7 @@ void init()
 	planeMesh->m_bEnableCullFace = false;
 	planeMesh->SetLightEnable(true);
 	planeMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh") );
-	g_vMesh.push_back(planeMesh);
+	//g_vMesh.push_back(planeMesh);
 
 	g_pLightMesh = new CMesh;
 	g_pLightMesh->InitFromFile("ball.CSTM");
@@ -136,12 +136,13 @@ void init()
 	g_pLightMesh->m_color = Color4F(1.0f, 1.0f, 1.0f, 1.0f);
 	g_pLightMesh->m_bEnableCullFace = false;
 	g_pLightMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh") );
-	g_vMesh.push_back(g_pLightMesh);
+	//g_vMesh.push_back(g_pLightMesh);
 
 	g_pCharactor = new CMesh;
 	g_pCharactor->InitFromFile("hama.CSTM");
 	g_pCharactor->m_transform.m_scale.set(1, 1, -1);
-	g_pCharactor->m_transform.m_rotation.set(0, 60, 0);
+	g_pCharactor->m_transform.m_rotation.set(0, 0, 0);
+	g_pCharactor->m_transform.m_pos.set(0, 350, 100);
 	g_pCharactor->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("SkinMesh") );
 	//g_pCharactor->PlayAnim(0, 25, true, nullptr);
 	g_pCharactor->SetLightEnable(false);
@@ -300,15 +301,15 @@ void mouse_down( int button, int state, int x, int y )
 		/*	if ( state == GLUT_DOWN )
 		g_pCharactor->PlayAnim(215, 245, false, [](){ g_pCharactor->PlayAnim(10, 25, true, nullptr); });*/
 
-		g_lastMousePos = Vec2(x, y);
-	}
-	else if ( button == GLUT_RIGHT_BUTTON)
-	{
-		if ( state == GLUT_DOWN )
+		if (state == GLUT_DOWN)
 			g_bMouseRightButtonClicked = true;
 		else
 			g_bMouseRightButtonClicked = false;
 
+		g_lastMousePos = Vec2(x, y);
+	}
+	else if ( button == GLUT_RIGHT_BUTTON)
+	{
 		g_lastMousePos = Vec2(x, y);
 	}
 	else if ( button == 3 )   
