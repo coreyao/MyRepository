@@ -33,8 +33,8 @@ void GeometryStage::TransformCameraToScreen(SVertexRuntime& vertex, bool bUseNor
 		clippingPos.z /= clippingPos.w;
 
 		Vec2 screenPos;
-		screenPos.x = (clippingPos.x * 0.5f + 0.5f) * (SCREEN_WIDTH - 1);
-		screenPos.y = (SCREEN_HEIGHT - 1) - (clippingPos.y * 0.5f + 0.5f) * (SCREEN_HEIGHT - 1);
+		screenPos.x = (clippingPos.x * 0.5f + 0.5f) * (SCREEN_WIDTH - 1) - 0.5f;
+		screenPos.y = (SCREEN_HEIGHT - 1) - (clippingPos.y * 0.5f + 0.5f) * (SCREEN_HEIGHT - 1) - 0.5f;
 
 		vertex.m_pos.x = screenPos.x;
 		vertex.m_pos.y = screenPos.y;
