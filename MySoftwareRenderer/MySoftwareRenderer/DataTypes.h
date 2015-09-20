@@ -108,6 +108,7 @@ struct SVertexRuntime : public SVertex
 	}
 
 	float m_inverseZ;
+	Vec3 m_normalizePos;
 };
 
 struct SFaceRuntime
@@ -115,6 +116,7 @@ struct SFaceRuntime
 	SFaceRuntime()
 	: m_pRenderState(nullptr)
 	, m_fAlpha(1.0f)
+	, m_bUseNormalizedPos(false)
 	{
 	}
 
@@ -122,6 +124,7 @@ struct SFaceRuntime
 	SVertexRuntime m_vertex2;
 	SVertexRuntime m_vertex3;
 	float m_fAlpha;
+	bool m_bUseNormalizedPos;
 	SRenderState* m_pRenderState;
 };
 

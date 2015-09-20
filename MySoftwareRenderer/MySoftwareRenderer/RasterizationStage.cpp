@@ -84,7 +84,7 @@ bool RasterizationStage::CRasterizer::OwnershipTest(int x, int y)
 
 int RasterizationStage::CRasterizer::ConvertToPixelPos(float value)
 {
-	return ceil(value);
+	return ceil(value - 0.5f);
 }
 
 void RasterizationStage::CRasterizer::DrawLine(int x1, int y1, int x2, int y2, Color4F color)
@@ -268,8 +268,9 @@ void RasterizationStage::CRasterizer::DrawBottomTriangle(SVertexRuntime &v1, SVe
 	int iStartY = ConvertToPixelPos(v1.m_pos.y);
 	int iEndY = ConvertToPixelPos(v2.m_pos.y);
 
-	fLeftX += kInverseSlopeLeftX * (iStartY - v1.m_pos.y);
-	fRightX += kInverseSlopeRightX * (iStartY - v1.m_pos.y);
+	float fOffsetY = (iStartY - v1.m_pos.y + 0.5f);
+	fLeftX += kInverseSlopeLeftX * fOffsetY;
+	fRightX += kInverseSlopeRightX * fOffsetY;
 
 	for (int y = iStartY; y < iEndY; ++y)
 	{
@@ -380,8 +381,9 @@ void RasterizationStage::CRasterizer::DrawTopTriangle(SVertexRuntime &v1, SVerte
 	int iStartY = ConvertToPixelPos(v1.m_pos.y);
 	int iEndY = ConvertToPixelPos(v3.m_pos.y);
 
-	fLeftX += kInverseSlopeLeftX * (iStartY - v1.m_pos.y);
-	fRightX += kInverseSlopeRightX * (iStartY - v1.m_pos.y);
+	float fOffsetY = (iStartY - v1.m_pos.y + 0.5f);
+	fLeftX += kInverseSlopeLeftX * fOffsetY;
+	fRightX += kInverseSlopeRightX * fOffsetY;
 
 	for (int y = iStartY; y < iEndY; ++y)
 	{
@@ -465,17 +467,8 @@ Color4F RasterizationStage::CRasterizer::SampleTexture(int iTextureID, Vec2 uv)
 		int iU = int(uv.x * (pTexture->m_iWidth - 1) + 0.5f);
 		int iV = int(uv.y * (pTexture->m_iHeight - 1) + 0.5f);
 
-		if (iU > pTexture->m_iWidth)
-			iU = pTexture->m_iWidth;
-
-		if ( iU < 0 )
-			iU = 0;
-
-		if (iV > pTexture->m_iHeight)
-			iV = pTexture->m_iHeight;
-
-		if (iV < 0)
-			iV = 0;
+		Helper::Clamp(iU, 0, pTexture->m_iWidth - 1);
+		Helper::Clamp(iV, 0, pTexture->m_iHeight - 1);
 
 		unsigned char* pColorData = &pData[iV * pTexture->m_iWidth * 4 + iU * 4];
 		return Color4F(pColorData[0] / 255.0f, pColorData[1] / 255.0f, pColorData[2] / 255.0f, pColorData[3] / 255.0f);

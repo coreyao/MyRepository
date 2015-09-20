@@ -25,4 +25,6 @@ public:
 	SMeshData m_meshData;
 
 	std::vector< std::vector<SVertexRuntime> > m_vVertexRunTime;
+
+	bool m_bUseNormalizedPos;
 };

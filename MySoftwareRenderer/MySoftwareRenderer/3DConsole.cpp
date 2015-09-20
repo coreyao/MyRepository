@@ -285,6 +285,12 @@ void InitMesh()
 			}
 		}
 
+	/*	pTriangle->m_vVertexRunTime[0][0].m_normalizePos = Vec3(-0.99, 0.99, 0);
+		pTriangle->m_vVertexRunTime[0][1].m_normalizePos = Vec3(-0.98, 0.99, 0);
+		pTriangle->m_vVertexRunTime[0][2].m_normalizePos = Vec3(-0.98, 0.98, 0);
+		pTriangle->m_vVertexRunTime[0][3].m_normalizePos = Vec3(-0.99, 0.98, 0);
+		pTriangle->m_bUseNormalizedPos = true;*/
+
 		//g_vMesh.push_back(pTriangle);
 	}
 }
@@ -322,7 +328,7 @@ int Game_Main(float dt)
 {
 	for (auto& pMesh : g_vMesh)
 	{
-		pMesh->m_transform.SetRotation(Vec3(0, pMesh->m_transform.GetRotation().y + dt * 30, 0));
+		//pMesh->m_transform.SetRotation(Vec3(0, pMesh->m_transform.GetRotation().y + dt * 30, 0));
 		pMesh->Update(dt);
 		pMesh->Render();
 	}

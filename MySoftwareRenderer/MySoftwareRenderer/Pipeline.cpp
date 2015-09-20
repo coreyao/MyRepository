@@ -12,18 +12,21 @@ void CPipeline::Draw()
 		ApplicationStage::TransformLocalToWorld(*curFace, curFace->m_pRenderState->m_worldTransform);
 		if (!curFace->m_pRenderState->m_bEnableCullFace || !ApplicationStage::IsBackFace(*curFace, curFace->m_pRenderState->m_eVertexOrder))
 		{
-			GeometryStage::TransformWorldToCamera(*curFace);
-
-			bool bAddFace = false;
-			SFaceRuntime newFace;
-			bool bClip = GeometryStage::FrustrumCulling(*curFace, bAddFace, newFace);
-			if (bClip)
-				continue;
-
-			if (bAddFace)
+			if ( !curFace->m_bUseNormalizedPos )
 			{
-				GeometryStage::TransformCameraToScreen(newFace);
-				RasterizationStage::CRasterizer::GetInstance()->DrawAnyTriangle(newFace.m_vertex1, newFace.m_vertex2, newFace.m_vertex3, newFace.m_fAlpha, curFace->m_pRenderState);
+				GeometryStage::TransformWorldToCamera(*curFace);
+
+				bool bAddFace = false;
+				SFaceRuntime newFace;
+				bool bClip = GeometryStage::FrustrumCulling(*curFace, bAddFace, newFace);
+				if (bClip)
+					continue;
+
+				if (bAddFace)
+				{
+					GeometryStage::TransformCameraToScreen(newFace);
+					RasterizationStage::CRasterizer::GetInstance()->DrawAnyTriangle(newFace.m_vertex1, newFace.m_vertex2, newFace.m_vertex3, newFace.m_fAlpha, curFace->m_pRenderState);
+				}
 			}
 
 			GeometryStage::TransformCameraToScreen(*curFace);

@@ -3,16 +3,29 @@
 
 void GeometryStage::TransformCameraToScreen(SFaceRuntime& face)
 {
-	TransformCameraToScreen(face.m_vertex1);
-	TransformCameraToScreen(face.m_vertex2);
-	TransformCameraToScreen(face.m_vertex3);
+	TransformCameraToScreen(face.m_vertex1, face.m_bUseNormalizedPos);
+	TransformCameraToScreen(face.m_vertex2, face.m_bUseNormalizedPos);
+	TransformCameraToScreen(face.m_vertex3, face.m_bUseNormalizedPos);
+
+	//face.m_vertex1.m_pos.x = 0.1f;
+	//face.m_vertex1.m_pos.y = 0.1f;
+
+	//face.m_vertex2.m_pos.x = 1.5f;
+	//face.m_vertex2.m_pos.y = 0.1f;
+
+	//face.m_vertex3.m_pos.x = 0.1f;
+	//face.m_vertex3.m_pos.y = 1.5f;
 }
 
-void GeometryStage::TransformCameraToScreen(SVertexRuntime& vertex)
+void GeometryStage::TransformCameraToScreen(SVertexRuntime& vertex, bool bUseNormalizedPos)
 {
 	const Mat4& rProjMat = CDirector::GetInstance()->GetCurProjectionMat();
+	Vec4 clippingPos;
+	if (!bUseNormalizedPos)
+		clippingPos = rProjMat * Vec4(vertex.m_pos.x, vertex.m_pos.y, vertex.m_pos.z, 1.0f);
+	else
+		clippingPos = Vec4(vertex.m_normalizePos.x, vertex.m_normalizePos.y, vertex.m_normalizePos.z, 1.0f);
 
-	Vec4 clippingPos = rProjMat * Vec4(vertex.m_pos.x, vertex.m_pos.y, vertex.m_pos.z, 1.0f);
 	if (clippingPos.w != 0)
 	{
 		clippingPos.x /= clippingPos.w;

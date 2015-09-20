@@ -35,6 +35,18 @@ namespace Helper
 {
 	template<typename T>
 	void Swap(T& a, T& b);
+
+	template<typename T>
+	void Clamp(T& tval, const T& tmin, const T& tmax);
+}
+
+template<typename T>
+void Helper::Clamp(T& tval, const T& tmin, const T& tmax)
+{
+	if ( tval < tmin )
+		tval = tmin;
+	else if ( tval > tmax )
+		tval = tmax;
 }
 
 template<typename T>

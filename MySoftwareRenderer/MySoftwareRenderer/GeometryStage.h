@@ -8,5 +8,5 @@ namespace GeometryStage
 	bool FrustrumCulling(SFaceRuntime& face, bool& bAddFace, SFaceRuntime& addFace);
 	bool IsVertexInFrustrum(SVertexRuntime& vertex);
 	void TransformCameraToScreen(SFaceRuntime& face);
-	void TransformCameraToScreen(SVertexRuntime& vertex);
+	void TransformCameraToScreen(SVertexRuntime& vertex, bool bUseNormalizedPos);
 }
