@@ -316,8 +316,8 @@ int Game_Init()
 	RasterizationStage::InitDX(g_HInstance, g_WindowHandle, SCREEN_WIDTH, SCREEN_HEIGHT);
 	RasterizationStage::CRasterizer::GetInstance()->Init();
 	
-	CImageManager::GetInstance()->Load("brickwall.png");
 	CImageManager::GetInstance()->Load("Hama.png");
+	CImageManager::GetInstance()->Load("brickwall.png");
 	CImageManager::GetInstance()->Load("HelloWorld.png");
 
 	InitMesh();
