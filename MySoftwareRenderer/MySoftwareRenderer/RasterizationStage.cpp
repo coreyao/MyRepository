@@ -454,7 +454,7 @@ void RasterizationStage::CRasterizer::DrawTopTriangle(SVertexRuntime &v1, SVerte
 
 Color4F RasterizationStage::CRasterizer::SampleTexture(int iTextureID, Vec2 uv)
 {
-	//return Color4F(1.0, 1.0, 1.0, 1.f);
+	return Color4F(1.0, 1.0, 1.0, 1.f);
 
 	const CTexture* pTexture = CImageManager::GetInstance()->FindTexture(iTextureID);
 	if ( !pTexture )
@@ -463,15 +463,7 @@ Color4F RasterizationStage::CRasterizer::SampleTexture(int iTextureID, Vec2 uv)
 	}
 	else
 	{
-		unsigned char* pData = pTexture->m_pData;
-		int iU = int(uv.x * (pTexture->m_iWidth - 1) + 0.5f);
-		int iV = int(uv.y * (pTexture->m_iHeight - 1) + 0.5f);
-
-		Helper::Clamp(iU, 0, pTexture->m_iWidth - 1);
-		Helper::Clamp(iV, 0, pTexture->m_iHeight - 1);
-
-		unsigned char* pColorData = &pData[iV * pTexture->m_iWidth * 4 + iU * 4];
-		return Color4F(pColorData[0] / 255.0f, pColorData[1] / 255.0f, pColorData[2] / 255.0f, pColorData[3] / 255.0f);
+		return SampleNearset(pTexture, uv);
 	}
 }
 
@@ -559,6 +551,59 @@ bool RasterizationStage::CRasterizer::AlphaTest(float fAlpha)
 void RasterizationStage::CRasterizer::Blending(Color4F& src, Color4F& dst)
 {
 	dst = src * src.a + dst * (1.0f - src.a);
+}
+
+Color4F RasterizationStage::CRasterizer::SampleNearset(const CTexture* pTexture, Vec2 &uv)
+{
+	int fWidth = pTexture->m_iWidth - 1;
+	int fHeight = pTexture->m_iHeight - 1;
+
+	unsigned char* pData = pTexture->m_pData;
+	int iU = int(uv.x * fWidth + 0.5f);
+	int iV = int(uv.y * fHeight + 0.5f);
+
+	Helper::Clamp(iU, 0, fWidth);
+	Helper::Clamp(iV, 0, fHeight);
+
+	unsigned char* pColorData = &pData[iV * pTexture->m_iWidth * 4 + iU * 4];
+	return Color4F(pColorData[0] / 255.0f, pColorData[1] / 255.0f, pColorData[2] / 255.0f, pColorData[3] / 255.0f);
+}
+
+Color4F RasterizationStage::CRasterizer::SampleLinear(const CTexture* pTexture, Vec2 &uv)
+{
+	int fWidth = pTexture->m_iWidth - 1;
+	int fHeight = pTexture->m_iHeight - 1;
+	unsigned char* pData = pTexture->m_pData;
+	uv.x *= fWidth;
+	uv.y *= fHeight;
+
+	float fPercentU = uv.x - int(uv.x);
+	float fPercentV = uv.y - int(uv.y);
+
+	int LU = int(uv.x);
+	int RU = LU + 1;
+
+	int TV = int(uv.y);
+	int BV = TV + 1;
+
+	Helper::Clamp(LU, 0, fWidth);
+	Helper::Clamp(RU, 0, fHeight);
+	Helper::Clamp(TV, 0, fWidth);
+	Helper::Clamp(BV, 0, fHeight);
+
+	unsigned char* pLeftTopColorData = &pData[TV * pTexture->m_iWidth * 4 + LU * 4];
+	unsigned char* pLeftBottomColorData = &pData[BV * pTexture->m_iWidth * 4 + LU * 4];
+	unsigned char* pRightTopColorData = &pData[TV * pTexture->m_iWidth * 4 + RU * 4];
+	unsigned char* pRightBottomColorData = &pData[BV * pTexture->m_iWidth * 4 + RU * 4];
+
+	Color4F c1 = Color4F(pLeftTopColorData[0] / 255.0f, pLeftTopColorData[1] / 255.0f, pLeftTopColorData[2] / 255.0f, pLeftTopColorData[3] / 255.0f) * fPercentU
+		+ Color4F(pRightTopColorData[0] / 255.0f, pRightTopColorData[1] / 255.0f, pRightTopColorData[2] / 255.0f, pRightTopColorData[3] / 255.0f) * (1.0f - fPercentU);
+
+	Color4F c2 = Color4F(pLeftBottomColorData[0] / 255.0f, pLeftBottomColorData[1] / 255.0f, pLeftBottomColorData[2] / 255.0f, pLeftBottomColorData[3] / 255.0f) * fPercentU
+		+ Color4F(pRightBottomColorData[0] / 255.0f, pRightBottomColorData[1] / 255.0f, pRightBottomColorData[2] / 255.0f, pRightBottomColorData[3] / 255.0f) * (1.0f - fPercentU);
+
+	Color4F c3 = c1 * fPercentV + c2 * (1.0f - fPercentV);
+	return c3;
 }
 
 RasterizationStage::CRasterizer* RasterizationStage::CRasterizer::s_pInstance;

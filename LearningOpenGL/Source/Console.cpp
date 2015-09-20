@@ -33,7 +33,7 @@ CThirdPersonController* g_pController = nullptr;
 timeval g_fLastTime = {0, 0};
 float g_fDeltaTime = 0.0f;
 float g_fElapsedTime = 0.0f;
-int g_iStepLength = 100;
+int g_iStepLength = 5;
 
 int g_iFrame = 0;
 float g_fAccumulatedTime = 0;
@@ -143,8 +143,8 @@ void init()
 	g_pCharactor->m_transform.m_scale.set(1, 1, -1);
 	g_pCharactor->m_transform.m_rotation.set(0, 60, 0);
 	g_pCharactor->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("SkinMesh") );
-	g_pCharactor->PlayAnim(0, 25, true, nullptr);
-	g_pCharactor->SetLightEnable(true);
+	//g_pCharactor->PlayAnim(0, 25, true, nullptr);
+	g_pCharactor->SetLightEnable(false);
 	g_vMesh.push_back(g_pCharactor);
 
 	g_pTerrain = new CTerrain();
