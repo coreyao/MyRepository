@@ -111,12 +111,13 @@ struct SVertexRuntime : public SVertex
 	Vec3 m_normalizePos;
 };
 
+class SRenderState;
 struct SFaceRuntime
 {
 	SFaceRuntime()
 	: m_pRenderState(nullptr)
-	, m_fAlpha(1.0f)
 	, m_bUseNormalizedPos(false)
+	, m_fAlpha(1.0f)
 	{
 	}
 
@@ -249,4 +250,100 @@ private:
 	Mat4 m_mat;
 
 	bool m_bTransformDirty;
+};
+
+enum EVertexOrder
+{
+	EVertexOrder_ClockWise,
+	EVertexOrder_Counter_ClockWise,
+};
+
+class CMaterial;
+struct SRenderState
+{
+	SRenderState()
+	: m_bEnableCullFace(true)
+	, m_bDrawWireFrame(true)
+	, m_eVertexOrder(EVertexOrder_ClockWise)
+	, m_pMaterial(nullptr)
+	{
+		m_worldTransform = Mat4::IDENTITY;
+	}
+
+	bool m_bEnableCullFace;
+	bool m_bDrawWireFrame;
+	EVertexOrder m_eVertexOrder;
+	Mat4 m_worldTransform;
+	CMaterial* m_pMaterial;
+};
+
+class CRenderObject
+{
+public:
+	virtual void Update(float dt) = 0;
+	virtual void Render() = 0;
+
+	SRenderState m_renderState;
+	STransform m_transform;
+};
+
+typedef shared_ptr<CRenderObject> RenderObjPtr;
+
+class CTexture
+{
+public:
+	CTexture()
+		: m_iWidth(0)
+		, m_iHeight(0)
+		, m_pData(nullptr)
+	{
+	}
+
+	int m_iWidth;
+	int m_iHeight;
+	unsigned char* m_pData;
+};
+
+class CSampler
+{
+public:
+	enum EUVWrapMode
+	{
+		EUVWrapMode_Repeat,
+		EUVWrapMode_Clamp,
+	};
+
+	enum ETextureFilter
+	{
+		ETextureFilter_Nearest,
+		ETextureFilter_Liner,
+	};
+
+	CSampler()
+		: UV_WRAP_S(EUVWrapMode_Clamp)
+		, UV_WRAP_T(EUVWrapMode_Clamp)
+		, TEXTURE_MAG_FILTER(ETextureFilter_Nearest)
+		, TEXTURE_MIN_FILTER(ETextureFilter_Nearest)
+	{
+	}
+
+	EUVWrapMode UV_WRAP_S;
+	EUVWrapMode UV_WRAP_T;
+
+	ETextureFilter TEXTURE_MAG_FILTER;
+	ETextureFilter TEXTURE_MIN_FILTER;
+};
+
+class CMaterial
+{
+public:
+	CMaterial() : m_baseColorTex(0)
+	{
+	}
+
+	int GetBaseColorTex();
+	void SetBaseColorTexture(const std::string& sFileName);
+
+private:
+	int m_baseColorTex;
 };

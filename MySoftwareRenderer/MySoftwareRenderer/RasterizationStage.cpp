@@ -309,7 +309,12 @@ void RasterizationStage::CRasterizer::DrawBottomTriangle(SVertexRuntime &v1, SVe
 				int iPixelY = y;
 				if (CanDrawPixel(iPixelX, iPixelY, curZ))
 				{
-					Color4F finalColor = SampleTexture(1, curUV / curInverseZ) * (curColor / curInverseZ) * fAlpha;
+					Color4F finalColor;
+					if (pRenderState->m_pMaterial)
+						finalColor = SampleTexture(pRenderState->m_pMaterial->GetBaseColorTex(), curUV / curInverseZ) * (curColor / curInverseZ);
+					else
+						finalColor = (curColor / curInverseZ);
+					finalColor = finalColor * fAlpha;
 					if (AlphaTest(finalColor.a))
 						DrawPixel(iPixelX, iPixelY, finalColor);
 				}
@@ -421,7 +426,12 @@ void RasterizationStage::CRasterizer::DrawTopTriangle(SVertexRuntime &v1, SVerte
 				int iPixelY = y;
 				if (CanDrawPixel(iPixelX, iPixelY, curZ))
 				{
-					Color4F finalColor = SampleTexture(1, curUV / curInverseZ) * (curColor / curInverseZ) * fAlpha;
+					Color4F finalColor;
+					if (pRenderState->m_pMaterial)
+						finalColor = SampleTexture(pRenderState->m_pMaterial->GetBaseColorTex(), curUV / curInverseZ) * (curColor / curInverseZ);
+					else
+						finalColor = (curColor / curInverseZ);
+					finalColor = finalColor * fAlpha;
 					if (AlphaTest(finalColor.a))
 						DrawPixel(iPixelX, iPixelY, finalColor);
 				}
@@ -585,8 +595,8 @@ Color4F RasterizationStage::CRasterizer::SampleLinear(const CTexture* pTexture, 
 	int TV = BV - 1;
 
 	Helper::Clamp(LU, 0, fWidth);
-	Helper::Clamp(RU, 0, fHeight);
-	Helper::Clamp(TV, 0, fWidth);
+	Helper::Clamp(RU, 0, fWidth);
+	Helper::Clamp(TV, 0, fHeight);
 	Helper::Clamp(BV, 0, fHeight);
 
 	unsigned char* pLeftTopColorData = &pData[TV * pTexture->m_iWidth * 4 + LU * 4];

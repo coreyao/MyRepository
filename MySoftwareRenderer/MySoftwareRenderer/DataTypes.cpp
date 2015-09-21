@@ -1,4 +1,15 @@
 #include "DataTypes.h"
+#include "Image/ImageManager.h"
+
+int CMaterial::GetBaseColorTex()
+{
+	return m_baseColorTex;
+}
+
+void CMaterial::SetBaseColorTexture(const std::string& sFileName)
+{
+	m_baseColorTex = CImageManager::GetInstance()->Load(sFileName.c_str());
+}
 
 Mat4 STransform::GetRotationMat()
 {

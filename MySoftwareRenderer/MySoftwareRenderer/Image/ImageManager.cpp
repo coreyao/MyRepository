@@ -51,9 +51,19 @@ int CImageManager::Load(const char* pFileName)
 	outTexture.m_iWidth = fOutWidth;
 	outTexture.m_iHeight = fOutHeight;
 
-	int iID = s_iNextID++;
-	m_mAllTexture[iID] = outTexture;
-	return iID;
+	string sName = pFileName;
+	sName = sName.substr(sName.find_last_of('/') + 1);
+	auto it = m_mAllTextureFileName.find(sName);
+	if (it != m_mAllTextureFileName.end())
+	{
+		return it->second;
+	}
+	else
+	{
+		int iID = s_iNextID++;
+		m_mAllTexture[iID] = outTexture;
+		return iID;
+	}
 }
 
 const CTexture* CImageManager::FindTexture(int iID)

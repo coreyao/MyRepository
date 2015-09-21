@@ -146,7 +146,17 @@ void init()
 	g_pCharactor->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("SkinMesh") );
 	//g_pCharactor->PlayAnim(0, 25, true, nullptr);
 	g_pCharactor->SetLightEnable(false);
-	g_vMesh.push_back(g_pCharactor);
+	//g_vMesh.push_back(g_pCharactor);
+
+	CMaterial material1;
+	material1.SetBaseColorTexture("HelloWorld.png");
+	CMesh* pFileCube = new CMesh;
+	pFileCube->InitFromFile("cube.CSTM");
+	pFileCube->SetMaterial(material1, 0);
+	pFileCube->m_transform.m_pos = (Vec3(0, -25, 0));
+	pFileCube->m_transform.m_scale = (Vec3(1, 1, -1));
+	pFileCube->SetGLProgram(CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh"));
+	g_vMesh.push_back(pFileCube);
 
 	g_pTerrain = new CTerrain();
 	g_pTerrain->SetDetailTexture("dirt.png", "Grass2.png", "road.png", "GreenSkin.png");
@@ -416,7 +426,10 @@ void UpdateScene()
 	if ( bDrawMesh )
 	{
 		for (int i = 0; i < g_vMesh.size(); ++i)
+		{
+			g_vMesh[i]->m_transform.m_rotation.set(0, g_vMesh[i]->m_transform.m_rotation.y + 30 * g_fDeltaTime, 0);
 			g_vMesh[i]->Update(g_fDeltaTime);
+		}
 	}
 	//g_pTerrain->Update(g_fDeltaTime);
 	//g_pSkyBox->Update(g_fDeltaTime);

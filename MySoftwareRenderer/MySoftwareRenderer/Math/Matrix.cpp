@@ -234,7 +234,7 @@ Mat4 Mat4::GetInversed()
 	float det = Determinant();
 	if (!NEARLY_EQUAL(det, 0))
 	{
-		float det_inv = 1.0 / det;
+		float det_inv = 1.0f / det;
 
 		ret.m[0] = det_inv * ( m[5] * m[10] - m[9] * m[6] );
 		ret.m[1] = -det_inv * ( m[1] * m[10] - m[9] * m[2] );

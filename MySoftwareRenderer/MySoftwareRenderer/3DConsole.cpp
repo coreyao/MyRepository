@@ -27,201 +27,28 @@ std::vector<CMesh*> g_vMesh;
 
 void InitMesh()
 {
-	SSubMeshData subMeshData;
-
-	{
-		SVertex vertex;
-		vertex.m_pos.set(-10, 10, 10);
-		vertex.m_color.Set(1.0f, 0.0f, 1.0f, 1.0f);
-		vertex.m_UV.set(0, 0);
-		subMeshData.m_vVertex.push_back(vertex);
-	}
-
-	{
-		SVertex vertex;
-		vertex.m_pos.set(10, 10, 10);
-		vertex.m_color.Set(0.0f, 0.0f, 1.0f, 1.0f);
-		vertex.m_UV.set(1, 0);
-		subMeshData.m_vVertex.push_back(vertex);
-	}
-
-	{
-		SVertex vertex;
-		vertex.m_pos.set(10, -10, 10);
-		vertex.m_color.Set(0.0f, 1.0f, 1.0f, 1.0f);
-		vertex.m_UV.set(1, 1);
-		subMeshData.m_vVertex.push_back(vertex);
-	}
-
-	{
-		SVertex vertex;
-		vertex.m_pos.set(-10, -10, 10);
-		vertex.m_color.Set(0.0f, 0.0f, 1.0f, 1.0f);
-		vertex.m_UV.set(0, 1);
-		subMeshData.m_vVertex.push_back(vertex);
-	}
-
-	{
-		SVertex vertex;
-		vertex.m_pos.set(-10, 10, -10);
-		vertex.m_color.Set(1.0f, 1.0f, 1.0f, 1.0f);
-		vertex.m_UV.set(0, 0);
-		subMeshData.m_vVertex.push_back(vertex);
-	}
-
-	{
-		SVertex vertex;
-		vertex.m_pos.set(10, 10, -10);
-		vertex.m_color.Set(0.0f, 0.0f, 1.0f, 1.0f);
-		vertex.m_UV.set(1, 0);
-		subMeshData.m_vVertex.push_back(vertex);
-	}
-
-	{
-		SVertex vertex;
-		vertex.m_pos.set(10, -10, -10);
-		vertex.m_color.Set(0.0f, 0.0f, 1.0f, 1.0f);
-		vertex.m_UV.set(1, 1);
-		subMeshData.m_vVertex.push_back(vertex);
-	}
-
-	{
-		SVertex vertex;
-		vertex.m_pos.set(-10, -10, -10);
-		vertex.m_color.Set(0.0f, 0.0f, 1.0f, 1.0f);
-		vertex.m_UV.set(0, 1);
-		subMeshData.m_vVertex.push_back(vertex);
-	}
-
-	subMeshData.m_MeshMatrix = Mat4::IDENTITY;
-
-	{
-		SFace face;
-		face.m_VertexIndex1 = 0;
-		face.m_VertexIndex2 = 1;
-		face.m_VertexIndex3 = 3;
-		subMeshData.m_vFace.push_back(face);
-	}
-
-	{
-		SFace face;
-		face.m_VertexIndex1 = 1;
-		face.m_VertexIndex2 = 2;
-		face.m_VertexIndex3 = 3;
-		subMeshData.m_vFace.push_back(face);
-	}
-
-	{
-		SFace face;
-		face.m_VertexIndex1 = 4;
-		face.m_VertexIndex2 = 7;
-		face.m_VertexIndex3 = 5;
-		subMeshData.m_vFace.push_back(face);
-	}
-
-	{
-		SFace face;
-		face.m_VertexIndex1 = 5;
-		face.m_VertexIndex2 = 7;
-		face.m_VertexIndex3 = 6;
-		subMeshData.m_vFace.push_back(face);
-	}
-
-	{
-		SFace face;
-		face.m_VertexIndex1 = 4;
-		face.m_VertexIndex2 = 5;
-		face.m_VertexIndex3 = 0;
-		subMeshData.m_vFace.push_back(face);
-	}
-
-	{
-		SFace face;
-		face.m_VertexIndex1 = 5;
-		face.m_VertexIndex2 = 1;
-		face.m_VertexIndex3 = 0;
-		subMeshData.m_vFace.push_back(face);
-	}
-
-	{
-		SFace face;
-		face.m_VertexIndex1 = 7;
-		face.m_VertexIndex2 = 3;
-		face.m_VertexIndex3 = 6;
-		subMeshData.m_vFace.push_back(face);
-	}
-
-	{
-		SFace face;
-		face.m_VertexIndex1 = 6;
-		face.m_VertexIndex2 = 3;
-		face.m_VertexIndex3 = 2;
-		subMeshData.m_vFace.push_back(face);
-	}
-
-	{
-		SFace face;
-		face.m_VertexIndex1 = 0;
-		face.m_VertexIndex2 = 3;
-		face.m_VertexIndex3 = 4;
-		subMeshData.m_vFace.push_back(face);
-	}
-
-	{
-		SFace face;
-		face.m_VertexIndex1 = 4;
-		face.m_VertexIndex2 = 3;
-		face.m_VertexIndex3 = 7;
-		subMeshData.m_vFace.push_back(face);
-	}
-
-	{
-		SFace face;
-		face.m_VertexIndex1 = 1;
-		face.m_VertexIndex2 = 5;
-		face.m_VertexIndex3 = 2;
-		subMeshData.m_vFace.push_back(face);
-	}
-
-	{
-		SFace face;
-		face.m_VertexIndex1 = 5;
-		face.m_VertexIndex2 = 6;
-		face.m_VertexIndex3 = 2;
-		subMeshData.m_vFace.push_back(face);
-	}
-	
-	CMesh* pCube = new CMesh;
-	pCube->m_meshData.m_vSubMesh.push_back(subMeshData);
-	pCube->m_vVertexRunTime.resize(1);
-	for (int i = 0; i < pCube->m_meshData.m_vSubMesh.size(); ++i)
-	{
-		auto& rSubMesh = pCube->m_meshData.m_vSubMesh[i];
-		for (auto& rVertex : rSubMesh.m_vVertex)
-		{
-			SVertexRuntime v;
-			memcpy((void*)&v, (void*)&rVertex, sizeof(SVertex));
-			v.m_inverseZ = 0;
-			pCube->m_vVertexRunTime[i].push_back(v);
-		}
-	}
-	//g_vMesh.push_back(pCube);
-
+	CMaterial material1;
+	material1.SetBaseColorTexture("HelloWorld.png");
 	CMesh* pFileCube = new CMesh;
 	pFileCube->InitFromFile("cube.CSTM");
-	pFileCube->m_transform.SetPosition(Vec3(0, -25, 0));
+	pFileCube->SetMaterial(material1, 0);
+	pFileCube->m_transform.SetPosition(Vec3(100, -25, 0));
 	pFileCube->m_transform.SetScale(Vec3(1, 1, -1));
 	pFileCube->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
 	//g_vMesh.push_back(pFileCube);
 
+	CMaterial material;
+	material.SetBaseColorTexture("Hama.png");
 	CMesh* g_pCharactor = new CMesh;
 	g_pCharactor->InitFromFile("hama.CSTM");
+	g_pCharactor->SetMaterial(material, 0);
 	g_pCharactor->m_transform.SetScale(Vec3(1, 1, -1));
 	g_pCharactor->m_transform.SetPosition(Vec3(0, -100, 0));
 	g_pCharactor->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
 	g_vMesh.push_back(g_pCharactor);
 
 	{
+		SMeshData meshData;
 		SSubMeshData subMeshData1;
 		{
 			SVertex vertex;
@@ -269,27 +96,10 @@ void InitMesh()
 		}
 
 		subMeshData1.m_MeshMatrix = Mat4::IDENTITY;
+		meshData.m_vSubMesh.push_back(subMeshData1);
 		CMesh* pTriangle = new CMesh;
-		pTriangle->m_meshData.m_vSubMesh.push_back(subMeshData1);
 		pTriangle->m_renderState.m_bEnableCullFace = false;
-		pTriangle->m_vVertexRunTime.resize(1);
-		for (int i = 0; i < pTriangle->m_meshData.m_vSubMesh.size(); ++i)
-		{
-			auto& rSubMesh = pTriangle->m_meshData.m_vSubMesh[i];
-			for (auto& rVertex : rSubMesh.m_vVertex)
-			{
-				SVertexRuntime v;
-				memcpy((void*)&v, (void*)&rVertex, sizeof(SVertex));
-				v.m_inverseZ = 0;
-				pTriangle->m_vVertexRunTime[i].push_back(v);
-			}
-		}
-
-	/*	pTriangle->m_vVertexRunTime[0][0].m_normalizePos = Vec3(-0.99, 0.99, 0);
-		pTriangle->m_vVertexRunTime[0][1].m_normalizePos = Vec3(-0.98, 0.99, 0);
-		pTriangle->m_vVertexRunTime[0][2].m_normalizePos = Vec3(-0.98, 0.98, 0);
-		pTriangle->m_vVertexRunTime[0][3].m_normalizePos = Vec3(-0.99, 0.98, 0);
-		pTriangle->m_bUseNormalizedPos = true;*/
+		pTriangle->InitFromData(&meshData);
 
 		//g_vMesh.push_back(pTriangle);
 	}
@@ -315,16 +125,12 @@ int Game_Init()
 {
 	RasterizationStage::InitDX(g_HInstance, g_WindowHandle, SCREEN_WIDTH, SCREEN_HEIGHT);
 	RasterizationStage::CRasterizer::GetInstance()->Init();
-	
-	CImageManager::GetInstance()->Load("Hama.png");
-	CImageManager::GetInstance()->Load("brickwall.png");
-	CImageManager::GetInstance()->Load("HelloWorld.png");
 
 	InitMesh();
 	return 1;
 }
 
-int Game_Main(float dt)
+int Game_Update(float dt)
 {
 	for (auto& pMesh : g_vMesh)
 	{
@@ -519,7 +325,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 				DispatchMessage(&msg);
 			}
 
-			Game_Main(g_deltaTime / 1000.0f);
+			Game_Update(g_deltaTime / 1000.0f);
 		}
 
 		g_deltaTime = GetClock() - g_Clock;

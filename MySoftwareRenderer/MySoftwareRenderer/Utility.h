@@ -20,8 +20,8 @@ using namespace std;
 #define NEARLY_EQUAL(x,y) (fabs((x) - (y)) <= EPSILON)
 #define ARGB(a, r, g, b) ((b) + ((g) << 8) + ((r) << 16) + ((a) << 24))
 
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 600
+#define SCREEN_WIDTH 1024
+#define SCREEN_HEIGHT 768
 
 #ifndef MESH_FILE_DIR
 #define MESH_FILE_DIR std::string("./Resource/Mesh/")
@@ -56,93 +56,3 @@ void Helper::Swap(T& a, T& b)
 	a = b;
 	b = temp;
 }
-
-enum EVertexOrder
-{
-	EVertexOrder_ClockWise,
-	EVertexOrder_Counter_ClockWise,
-};
-
-struct SRenderState
-{
-	SRenderState()
-	: m_bEnableCullFace(true)
-	, m_bDrawWireFrame(true)
-	, m_eVertexOrder(EVertexOrder_ClockWise)
-	{
-		m_worldTransform = Mat4::IDENTITY;
-	}
-
-	bool m_bEnableCullFace;
-	bool m_bDrawWireFrame;
-	EVertexOrder m_eVertexOrder;
-	Mat4 m_worldTransform;
-};
-
-class CRenderObject
-{
-public:
-	virtual void Update(float dt) = 0;
-	virtual void Render() = 0;
-
-	SRenderState m_renderState;
-};
-
-typedef shared_ptr<CRenderObject> RenderObjPtr;
-
-class CTexture
-{
-public:
-	CTexture()
-		: m_iWidth(0)
-		, m_iHeight(0)
-		, m_pData(nullptr)
-	{
-	}
-
-	int m_iWidth;
-	int m_iHeight;
-	unsigned char* m_pData;
-};
-
-class CSampler
-{
-public:
-	enum EUVWrapMode
-	{
-		EUVWrapMode_Repeat,
-		EUVWrapMode_Clamp,
-	};
-
-	enum ETextureFilter
-	{
-		ETextureFilter_Nearest,
-		ETextureFilter_Liner,
-	};
-
-	CSampler()
-		: UV_WRAP_S(EUVWrapMode_Clamp)
-		, UV_WRAP_T(EUVWrapMode_Clamp)
-		, TEXTURE_MAG_FILTER(ETextureFilter_Nearest)
-		, TEXTURE_MIN_FILTER(ETextureFilter_Nearest)
-	{
-	}
-
-	EUVWrapMode UV_WRAP_S;
-	EUVWrapMode UV_WRAP_T;
-
-	ETextureFilter TEXTURE_MAG_FILTER;
-	ETextureFilter TEXTURE_MIN_FILTER;
-};
-
-class CMaterial
-{
-public:
-	CMaterial();
-
-	int GetBaseColorTex();
-	void SetBaseColorTexture(const std::string& sFileName);
-
-private:
-	int m_baseColorTex;
-};

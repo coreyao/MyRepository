@@ -2,6 +2,28 @@
 
 #include "DataTypes.h"
 
+class CMesh;
+class CSubMesh
+{
+public:
+	CSubMesh()
+		: m_bSubMeshVisibility(true)
+		, m_bUseNormalizedPos(false)
+		, m_pParent(nullptr)
+	{
+	}
+
+	CMesh* m_pParent;
+
+	Mat4 m_meshMat;
+	CMaterial m_material;
+	bool m_bSubMeshVisibility;
+	bool m_bUseNormalizedPos;
+	std::vector<SVertexRuntime> m_vVertexRunTime;
+	std::vector<SFaceRuntime> m_vFaceRunTime;
+	std::vector<SFaceRuntime> m_vFaceRunTimeOrigin;
+};
+
 class CMesh : public CRenderObject
 {
 public:
@@ -12,19 +34,13 @@ public:
 	virtual void Render();
 
 	void InitFromFile(const char* pMeshFileName);
+	void InitFromData(SMeshData* pMeshData);
+	void InitRuntimeData();
+
 	void SetMaterial(const CMaterial& rMaterial, int iIndex);
 	void SetVisible(bool bVisible, const std::string& sSubMeshName);
 
-	std::vector<Mat4> m_MV;
-	std::vector<CMaterial> m_vMaterial;
-
-	STransform m_transform;
-	Color4F m_color;
-
-	std::vector<bool> m_vSubMeshVisibility;
 	SMeshData m_meshData;
-
-	std::vector< std::vector<SVertexRuntime> > m_vVertexRunTime;
-
-	bool m_bUseNormalizedPos;
+	Color4F m_color;
+	std::vector<CSubMesh*> m_vSubMesh;
 };

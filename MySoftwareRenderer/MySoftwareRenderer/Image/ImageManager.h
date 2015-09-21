@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Utility.h"
+#include "../DataTypes.h"
 
 class CImageManager
 {
@@ -14,4 +15,5 @@ private:
 	static int s_iNextID;
 
 	map<int, CTexture> m_mAllTexture;
+	map<string, int> m_mAllTextureFileName;
 };

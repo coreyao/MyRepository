@@ -3,40 +3,38 @@
 #include "Director.h"
 
 CMesh::CMesh()
-: m_bUseNormalizedPos(false)
 {
 }
 
 CMesh::~CMesh()
 {
+	for (auto& pSubMesh : m_vSubMesh)
+		delete pSubMesh;
 }
 
 void CMesh::Update(float dt)
 {
-	if ( m_transform.IsTransformDirty() )
+	if (m_transform.IsTransformDirty())
 	{
-		for (int i = 0; i < m_meshData.m_vSubMesh.size(); ++i)
-		{
-			auto& rSubMesh = m_meshData.m_vSubMesh[i];
-			m_renderState.m_worldTransform = m_transform.GetTransformMat() * rSubMesh.m_MeshMatrix;
-		}
+		for (auto& rSubmesh : m_vSubMesh)
+			m_renderState.m_worldTransform = m_transform.GetTransformMat() * rSubmesh->m_meshMat;
 	}
 }
 
 void CMesh::Render()
 {
-	for (int i = 0; i < m_meshData.m_vSubMesh.size(); ++i)
+	for (int i = 0; i < m_vSubMesh.size(); ++i)
 	{
-		auto& rSubMesh = m_meshData.m_vSubMesh[i];
-		for (auto& rFace : rSubMesh.m_vFace)
+		CSubMesh* rSubmesh = m_vSubMesh[i];
+		for (int j = 0; j < rSubmesh->m_vFaceRunTimeOrigin.size(); ++j)
 		{
-			SFaceRuntime* curFace = new SFaceRuntime;
-			curFace->m_vertex1 = m_vVertexRunTime[i][rFace.m_VertexIndex1];
-			curFace->m_vertex2 = m_vVertexRunTime[i][rFace.m_VertexIndex2];
-			curFace->m_vertex3 = m_vVertexRunTime[i][rFace.m_VertexIndex3];
-			curFace->m_pRenderState = &m_renderState;
-			curFace->m_bUseNormalizedPos = m_bUseNormalizedPos;
-			CPipeline::GetInstance()->AddFace(curFace);
+			SFaceRuntime* rFace = &rSubmesh->m_vFaceRunTime[j];
+			rFace->m_vertex1 = rSubmesh->m_vFaceRunTimeOrigin[j].m_vertex1;
+			rFace->m_vertex2 = rSubmesh->m_vFaceRunTimeOrigin[j].m_vertex2;
+			rFace->m_vertex3 = rSubmesh->m_vFaceRunTimeOrigin[j].m_vertex3;
+
+			rFace->m_pRenderState->m_pMaterial = &rSubmesh->m_material;
+			CPipeline::GetInstance()->AddFace(rFace);
 		}
 	}
 }
@@ -48,27 +46,64 @@ void CMesh::InitFromFile(const char* pMeshFileName)
 		return;
 
 	m_meshData.ReadFromFile(pMeshFile);
-	m_vSubMeshVisibility.resize(m_meshData.m_vSubMesh.size(), true);
-	m_MV.resize(m_meshData.m_vSubMesh.size());
-	m_vVertexRunTime.resize(m_meshData.m_vSubMesh.size());
+	InitRuntimeData();
+}
+
+void CMesh::InitFromData(SMeshData* pMeshData)
+{
+	m_meshData = *pMeshData;
+	InitRuntimeData();
+}
+
+void CMesh::SetMaterial(const CMaterial& rMaterial, int iIndex)
+{
+	m_vSubMesh[iIndex]->m_material = rMaterial;
+}
+
+void CMesh::SetVisible(bool bVisible, const std::string& sSubMeshName)
+{
+	for (int i = 0; i < m_meshData.m_vSubMesh.size(); ++i)
+	{
+		if ( m_meshData.m_vSubMesh[i].m_MeshName == sSubMeshName )
+		{
+			m_vSubMesh[i]->m_bSubMeshVisibility = bVisible;
+			break;
+		}
+	}
+}
+
+void CMesh::InitRuntimeData()
+{
 	for (int i = 0; i < m_meshData.m_vSubMesh.size(); ++i)
 	{
 		auto& rSubMesh = m_meshData.m_vSubMesh[i];
+
+		CSubMesh* subMesh = new CSubMesh;
+		subMesh->m_bSubMeshVisibility = true;
+		subMesh->m_meshMat = rSubMesh.m_MeshMatrix;
+		subMesh->m_pParent = this;
+
 		for (auto& rVertex : rSubMesh.m_vVertex)
 		{
 			SVertexRuntime v;
 			memcpy((void*)&v, (void*)&rVertex, sizeof(SVertex));
 			v.m_inverseZ = 0;
-			m_vVertexRunTime[i].push_back(v);
+			subMesh->m_vVertexRunTime.push_back(v);
 		}
+
+		for (auto& rFace : rSubMesh.m_vFace)
+		{
+			SFaceRuntime curFace;
+			curFace.m_vertex1 = subMesh->m_vVertexRunTime[rFace.m_VertexIndex1];
+			curFace.m_vertex2 = subMesh->m_vVertexRunTime[rFace.m_VertexIndex2];
+			curFace.m_vertex3 = subMesh->m_vVertexRunTime[rFace.m_VertexIndex3];
+			curFace.m_pRenderState = &m_renderState;
+			curFace.m_bUseNormalizedPos = subMesh->m_bUseNormalizedPos;
+			subMesh->m_vFaceRunTimeOrigin.push_back(curFace);
+		}
+
+		subMesh->m_vFaceRunTime = subMesh->m_vFaceRunTimeOrigin;
+
+		m_vSubMesh.push_back(subMesh);
 	}
 }
-
-void CMesh::SetMaterial(const CMaterial& rMaterial, int iIndex)
-{
-}
-
-void CMesh::SetVisible(bool bVisible, const std::string& sSubMeshName)
-{
-}
-
