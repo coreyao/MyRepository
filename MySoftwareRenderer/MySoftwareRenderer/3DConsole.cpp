@@ -34,7 +34,7 @@ void InitMesh()
 	pFileCube->SetMaterial(material1, 0);
 	pFileCube->m_transform.SetPosition(Vec3(0, -25, 0));
 	pFileCube->m_transform.SetScale(Vec3(1, 1, -1));
-	pFileCube->m_transform.SetRotation(Vec3(0, 60, 0));
+	pFileCube->m_transform.SetRotation(Vec3(0, 30, 0));
 	pFileCube->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
 	g_vMesh.push_back(pFileCube);
 
@@ -99,8 +99,14 @@ void InitMesh()
 		subMeshData1.m_MeshMatrix = Mat4::IDENTITY;
 		meshData.m_vSubMesh.push_back(subMeshData1);
 		CMesh* pTriangle = new CMesh;
+		CMaterial material1;
+		material1.SetBaseColorTexture("HelloWorld.png");
 		pTriangle->m_renderState.m_bEnableCullFace = false;
 		pTriangle->InitFromData(&meshData);
+		pTriangle->SetMaterial(material1, 0);
+		pTriangle->m_transform.SetPosition(Vec3(0, -25, 0));
+		pTriangle->m_transform.SetScale(Vec3(1, 1, 1));
+		pTriangle->m_transform.SetRotation(Vec3(0, 60, 0));
 
 		//g_vMesh.push_back(pTriangle);
 	}

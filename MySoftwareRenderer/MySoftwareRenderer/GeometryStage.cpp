@@ -44,7 +44,6 @@ void GeometryStage::TransformCameraToScreen(SVertexRuntime& vertex, bool bUseNor
 
 		vertex.m_UV.x *= vertex.m_inverseZ;
 		vertex.m_UV.y *= vertex.m_inverseZ;
-
 		vertex.m_color *= vertex.m_inverseZ;
 	}
 }
