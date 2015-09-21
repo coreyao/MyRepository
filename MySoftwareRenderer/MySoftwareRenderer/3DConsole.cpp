@@ -32,10 +32,11 @@ void InitMesh()
 	CMesh* pFileCube = new CMesh;
 	pFileCube->InitFromFile("cube.CSTM");
 	pFileCube->SetMaterial(material1, 0);
-	pFileCube->m_transform.SetPosition(Vec3(100, -25, 0));
+	pFileCube->m_transform.SetPosition(Vec3(0, -25, 0));
 	pFileCube->m_transform.SetScale(Vec3(1, 1, -1));
+	pFileCube->m_transform.SetRotation(Vec3(0, 60, 0));
 	pFileCube->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
-	//g_vMesh.push_back(pFileCube);
+	g_vMesh.push_back(pFileCube);
 
 	CMaterial material;
 	material.SetBaseColorTexture("Hama.png");
@@ -45,7 +46,7 @@ void InitMesh()
 	g_pCharactor->m_transform.SetScale(Vec3(1, 1, -1));
 	g_pCharactor->m_transform.SetPosition(Vec3(0, -100, 0));
 	g_pCharactor->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
-	g_vMesh.push_back(g_pCharactor);
+	//g_vMesh.push_back(g_pCharactor);
 
 	{
 		SMeshData meshData;
@@ -134,7 +135,7 @@ int Game_Update(float dt)
 {
 	for (auto& pMesh : g_vMesh)
 	{
-		pMesh->m_transform.SetRotation(Vec3(0, pMesh->m_transform.GetRotation().y + dt * 30, 0));
+		//pMesh->m_transform.SetRotation(Vec3(0, pMesh->m_transform.GetRotation().y + dt * 30, 0));
 		pMesh->Update(dt);
 		pMesh->Render();
 	}
