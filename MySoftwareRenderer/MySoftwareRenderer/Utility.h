@@ -20,8 +20,8 @@ using namespace std;
 #define NEARLY_EQUAL(x,y) (fabs((x) - (y)) <= EPSILON)
 #define ARGB(a, r, g, b) ((b) + ((g) << 8) + ((r) << 16) + ((a) << 24))
 
-#define SCREEN_WIDTH 1024
-#define SCREEN_HEIGHT 768
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 600
 
 #ifndef MESH_FILE_DIR
 #define MESH_FILE_DIR std::string("./Resource/Mesh/")

@@ -559,11 +559,11 @@ Color4F RasterizationStage::CRasterizer::SampleNearset(const CTexture* pTexture,
 	int fHeight = pTexture->m_iHeight - 1;
 
 	unsigned char* pData = pTexture->m_pData;
-	int iU = int(uv.x * fWidth);
-	int iV = int(uv.y * fHeight);
+	int iU = int(uv.x * fWidth + 0.5f);
+	int iV = int(uv.y * fHeight + 0.5f);
 
-	Helper::Clamp(iU, 0, fWidth);
-	Helper::Clamp(iV, 0, fHeight);
+	//Helper::Clamp(iU, 0, fWidth);
+	//Helper::Clamp(iV, 0, fHeight);
 
 	unsigned char* pColorData = &pData[iV * pTexture->m_iWidth * 4 + iU * 4];
 	return Color4F(pColorData[0] / 255.0f, pColorData[1] / 255.0f, pColorData[2] / 255.0f, pColorData[3] / 255.0f);
