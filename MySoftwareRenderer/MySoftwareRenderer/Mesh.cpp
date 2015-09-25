@@ -33,7 +33,7 @@ void CMesh::Render()
 			rFace->m_vertex2 = rSubmesh->m_vFaceRunTimeOrigin[j].m_vertex2;
 			rFace->m_vertex3 = rSubmesh->m_vFaceRunTimeOrigin[j].m_vertex3;
 			rFace->m_pRenderState = &m_renderState;
-			//rFace->m_fAlpha = 0.5f;
+			rFace->m_fAlpha = 0.5f;
 			rFace->m_pRenderState->m_pMaterial = &rSubmesh->m_material;
 			CPipeline::GetInstance()->AddFace(rFace);
 		}

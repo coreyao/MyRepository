@@ -36,7 +36,7 @@ void InitMesh()
 	pFileCube->m_transform.SetScale(Vec3(1, 1, -1));
 	pFileCube->m_transform.SetRotation(Vec3(0, 60, 0));
 	pFileCube->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
-	//g_vMesh.push_back(pFileCube);
+	g_vMesh.push_back(pFileCube);
 
 	CMaterial material;
 	material.SetBaseColorTexture("Hama.png");
@@ -53,21 +53,21 @@ void InitMesh()
 		SSubMeshData subMeshData1;
 		{
 			SVertex vertex;
-			vertex.m_pos.set(-1, 1, 1);
+			vertex.m_pos.set(-10, 10, 1);
 			vertex.m_UV.set(0, 0);
 			subMeshData1.m_vVertex.push_back(vertex);
 		}
 
 		{
 			SVertex vertex;
-			vertex.m_pos.set(-1, -1, 1);
+			vertex.m_pos.set(-10, -10, 1);
 			vertex.m_UV.set(0, 1);
 			subMeshData1.m_vVertex.push_back(vertex);
 		}
 
 		{
 			SVertex vertex;
-			vertex.m_pos.set(1, -1, 1);
+			vertex.m_pos.set(10, -10, 1);
 			vertex.m_UV.set(1, 1);
 			subMeshData1.m_vVertex.push_back(vertex);
 		}
@@ -75,7 +75,7 @@ void InitMesh()
 
 		{
 			SVertex vertex;
-			vertex.m_pos.set(1, 1, 1);
+			vertex.m_pos.set(10, 10, 1);
 			vertex.m_UV.set(1, 0);
 			subMeshData1.m_vVertex.push_back(vertex);
 		}
@@ -108,7 +108,7 @@ void InitMesh()
 		pTriangle->m_transform.SetScale(Vec3(1, 1, 1));
 		pTriangle->m_transform.SetRotation(Vec3(0, -30, 0));
 
-		g_vMesh.push_back(pTriangle);
+		//g_vMesh.push_back(pTriangle);
 	}
 }
 
