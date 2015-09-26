@@ -34,8 +34,8 @@ void GeometryStage::TransformCameraToScreen(SVertexRuntime& vertex, bool bUseNor
 		clippingPos.z *= rhw;
 
 		Vec2 screenPos;
-		screenPos.x = (clippingPos.x * 0.5f + 0.5f) * (SCREEN_WIDTH - 1) - 0.5f;
-		screenPos.y = (-clippingPos.y * 0.5f + 0.5f) * (SCREEN_HEIGHT - 1) - 0.5f;
+		screenPos.x = (clippingPos.x * 0.5f + 0.5f) * (SCREEN_WIDTH - 1);
+		screenPos.y = (-clippingPos.y * 0.5f + 0.5f) * (SCREEN_HEIGHT - 1);
 
 		vertex.m_pos.x = screenPos.x;
 		vertex.m_pos.y = screenPos.y;
@@ -113,6 +113,7 @@ bool GeometryStage::FrustrumCulling(SFaceRuntime& face, bool& bAddFace, SFaceRun
 
 				face.m_vertex2 = newVertex1;
 				face.m_vertex3 = newVertex2;
+				face.m_fAlpha = face.m_fAlpha;
 			}
 			else if ( iCount == 2 )
 			{

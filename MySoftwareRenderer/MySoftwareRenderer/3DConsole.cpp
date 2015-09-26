@@ -141,7 +141,7 @@ int Game_Update(float dt)
 {
 	for (auto& pMesh : g_vMesh)
 	{
-		//pMesh->m_transform.SetRotation(Vec3(0, pMesh->m_transform.GetRotation().y + dt * 5, 0));
+		pMesh->m_transform.SetRotation(Vec3(0, pMesh->m_transform.GetRotation().y + dt *30, 0));
 		pMesh->Update(dt);
 		pMesh->Render();
 	}

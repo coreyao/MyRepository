@@ -242,8 +242,8 @@ void RasterizationStage::CRasterizer::DrawBottomTriangle(SVertexRuntime &v1, SVe
 
 	for (int y = iStartY; y < iEndY; ++y)
 	{
-		int iStartX = ConvertToPixelPos(fLeftX);
-		int iEndX = ConvertToPixelPos(fRightX);
+		int iStartX = ceil(fLeftX);
+		int iEndX = ceil(fRightX);
 		if (iEndX > iStartX)
 		{
 			float fDeltaX = fRightX - fLeftX;
@@ -339,8 +339,8 @@ void RasterizationStage::CRasterizer::DrawTopTriangle(SVertexRuntime &v1, SVerte
 	
 	for (int y = iStartY; y < iEndY; ++y)
 	{
-		int iStartX = ConvertToPixelPos(fLeftX);
-		int iEndX = ConvertToPixelPos(fRightX);
+		int iStartX = ceil(fLeftX);
+		int iEndX = ceil(fRightX);
 		if (iEndX > iStartX)
 		{
 			float fDeltaX = fRightX - fLeftX;
