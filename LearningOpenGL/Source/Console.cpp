@@ -155,7 +155,7 @@ void init()
 	pFileCube->SetMaterial(material1, 0);
 	pFileCube->m_transform.m_pos = (Vec3(0, -25, 0));
 	pFileCube->m_transform.m_scale = (Vec3(1, 1, -1));
-	pFileCube->m_transform.m_rotation = (Vec3(0, 30, 0));
+	pFileCube->m_transform.m_rotation = (Vec3(0, 60, 0));
 	pFileCube->SetGLProgram(CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh"));
 	g_vMesh.push_back(pFileCube);
 

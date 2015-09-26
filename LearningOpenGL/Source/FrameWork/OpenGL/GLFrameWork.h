@@ -8,8 +8,8 @@
 #include <map>
 #include <algorithm>
 
-#define RESOLUTION_WIDTH 1024
-#define RESOLUTION_HEIGHT 768
+#define RESOLUTION_WIDTH 800
+#define RESOLUTION_HEIGHT 600
 
 void init();
 void display();
