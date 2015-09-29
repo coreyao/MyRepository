@@ -221,8 +221,8 @@ void RasterizationStage::CRasterizer::DrawBottomTriangle(SVertexRuntime &v1, SVe
 	float kInverseSlopeLeftZ = (v2.m_pos.z - v1.m_pos.z) / fDY1;
 	float kInverseSlopeRightZ = (v3.m_pos.z - v1.m_pos.z) / fDY2;
 
-	int iStartY = ConvertToPixelPos(v1.m_pos.y);
-	int iEndY = ConvertToPixelPos(v2.m_pos.y);
+	int iStartY = ceil(v1.m_pos.y);
+	int iEndY = ceil(v2.m_pos.y);
 	float fOffsetY = (iStartY - v1.m_pos.y);
 
 	float fLeftX = v1.m_pos.x + kInverseSlopeLeftX * fOffsetY;
@@ -318,8 +318,8 @@ void RasterizationStage::CRasterizer::DrawTopTriangle(SVertexRuntime &v1, SVerte
 	float kInverseSlopeLeftZ = (v3.m_pos.z - v1.m_pos.z) / fDY1;
 	float kInverseSlopeRightZ = (v3.m_pos.z - v2.m_pos.z) / fDY2;
 
-	int iStartY = ConvertToPixelPos(v1.m_pos.y);
-	int iEndY = ConvertToPixelPos(v3.m_pos.y);
+	int iStartY = ceil(v1.m_pos.y);
+	int iEndY = ceil(v3.m_pos.y);
 	float fOffsetY = (iStartY - v1.m_pos.y);
 
 	float fLeftX = v1.m_pos.x + kInverseSlopeLeftX * fOffsetY;

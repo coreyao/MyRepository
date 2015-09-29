@@ -10,6 +10,7 @@
 #include "Math/Vector.h"
 #include "Math/Matrix.h"
 #include "Math/Quaternion.h"
+#include "Math/fixedpoint.h"
 
 using namespace std;
 
@@ -30,6 +31,8 @@ using namespace std;
 #ifndef IMAGE_FILE_DIR
 #define IMAGE_FILE_DIR std::string("./Resource/Images/")
 #endif
+
+typedef double fixed21_t;
 
 namespace Helper
 {
