@@ -157,238 +157,246 @@ void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVerte
 	{
 		if (v1.m_pos.y > v2.m_pos.y)
 			Helper::Swap(v1, v2);
-
 		if (v1.m_pos.y > v3.m_pos.y)
 			Helper::Swap(v1, v3);
-
 		if (v2.m_pos.y > v3.m_pos.y)
 			Helper::Swap(v2, v3);
 
-		if (v1.m_pos.y == v2.m_pos.y && v2.m_pos.y == v3.m_pos.y
-			|| v1.m_pos.x == v2.m_pos.x && v2.m_pos.x == v3.m_pos.x)
+		if (v1.m_pos.y == v3.m_pos.y || ( v1.m_pos.x == v2.m_pos.x && v2.m_pos.x == v3.m_pos.x ) )
 			return;
 
 		if (v2.m_pos.y == v3.m_pos.y)
 		{
-			DrawBottomTriangle(v1, v2, v3, fAlpha, pRenderState);
+			if (v2.m_pos.x > v3.m_pos.x)
+				Helper::Swap(v2, v3);
+
+			HighPrecision fpScreenX1(v1.m_pos.x);
+			assert(float(fpScreenX1) == v1.m_pos.x);
+			HighPrecision fpScreenY1(v1.m_pos.y);
+			assert(float(fpScreenY1) == v1.m_pos.y);
+			HighPrecision fpScreenX2(v2.m_pos.x);
+			assert(float(fpScreenX2) == v2.m_pos.x);
+			HighPrecision fpScreenY2(v2.m_pos.y);
+			assert(float(fpScreenY2) == v2.m_pos.y);
+			HighPrecision fpScreenX3(v3.m_pos.x);
+			assert(float(fpScreenX3) == v3.m_pos.x);
+			HighPrecision fpScreenY3(v3.m_pos.y);
+			assert(float(fpScreenY3) == v3.m_pos.y);
+
+			auto fDY1 = fpScreenY2 - fpScreenY1;
+			auto fDY2 = fpScreenY3 - fpScreenY1;
+
+			auto kInverseSlopeLeftX = (fpScreenX2 - fpScreenX1) / fDY1;
+			auto kInverseSlopeRightX = (fpScreenX3 - fpScreenX1) / fDY2;
+
+			Color4F kInverseSlopeLeftColor = (v2.m_color - v1.m_color) / (float)fDY1;
+			Color4F kInverseSlopeRightColor = (v3.m_color - v1.m_color) / (float)fDY2;
+
+			Vec2 kInverseSlopeLeftUV = (v2.m_UV - v1.m_UV) / (float)fDY1;
+			Vec2 kInverseSlopeRightUV = (v3.m_UV - v1.m_UV) / (float)fDY2;
+
+			float kInverseSlopeLeftInverseZ = (v2.m_inverseZ - v1.m_inverseZ) / (float)fDY1;
+			float kInverseSlopeRightInverseZ = (v3.m_inverseZ - v1.m_inverseZ) / (float)fDY2;
+
+			float kInverseSlopeLeftZ = (v2.m_pos.z - v1.m_pos.z) / (float)fDY1;
+			float kInverseSlopeRightZ = (v3.m_pos.z - v1.m_pos.z) / (float)fDY2;
+
+			Helper::Clamp(fpScreenY1, HighPrecision(-0.5f), HighPrecision(SCREEN_HEIGHT - 0.5f));
+			Helper::Clamp(fpScreenY2, HighPrecision(-0.5f), HighPrecision(SCREEN_HEIGHT - 0.5f));
+			fpScreenY3 = fpScreenY2;
+
+			int iStartY = ceil(fpScreenY1);
+			int iEndY = ceil(fpScreenY2);
+			if ( iStartY >= iEndY )
+				return;
+			
+			auto fOffsetY = (HighPrecision(iStartY) - HighPrecision(v1.m_pos.y));
+			auto fLeftX = fpScreenX1 + kInverseSlopeLeftX * fOffsetY;
+			auto fRightX = fpScreenX1 + kInverseSlopeRightX * fOffsetY;
+
+			Color4F leftColor = v1.m_color + kInverseSlopeLeftColor * (float)fOffsetY;
+			Color4F rightColor = v1.m_color + kInverseSlopeRightColor * (float)fOffsetY;
+
+			Vec2 leftUV = v1.m_UV + kInverseSlopeLeftUV * (float)fOffsetY;
+			Vec2 rightUV = v1.m_UV + kInverseSlopeRightUV * (float)fOffsetY;
+
+			float fLeftInverseZ = v1.m_inverseZ + kInverseSlopeLeftInverseZ * (float)fOffsetY;
+			float fRightInverseZ = v1.m_inverseZ + kInverseSlopeRightInverseZ * (float)fOffsetY;
+
+			float fLeftZ = v1.m_pos.z + kInverseSlopeLeftZ * (float)fOffsetY;
+			float fRightZ = v1.m_pos.z + kInverseSlopeRightZ * (float)fOffsetY;
+
+			for (int y = iStartY; y < iEndY; ++y)
+			{
+				DrawScanline(fLeftX, fRightX, rightColor, leftColor, rightUV, leftUV, fRightInverseZ, fLeftInverseZ, fRightZ, fLeftZ, y, fAlpha, pRenderState);
+
+				fLeftX += kInverseSlopeLeftX;
+				fRightX += kInverseSlopeRightX;
+
+				leftColor += kInverseSlopeLeftColor;
+				rightColor += kInverseSlopeRightColor;
+
+				leftUV += kInverseSlopeLeftUV;
+				rightUV += kInverseSlopeRightUV;
+
+				fLeftInverseZ += kInverseSlopeLeftInverseZ;
+				fRightInverseZ += kInverseSlopeRightInverseZ;
+
+				fLeftZ += kInverseSlopeLeftZ;
+				fRightZ += kInverseSlopeRightZ;
+			}
 		}
 		else if (v1.m_pos.y == v2.m_pos.y)
 		{
-			DrawTopTriangle(v1, v2, v3, fAlpha, pRenderState);
+			if (v1.m_pos.x > v2.m_pos.x)
+				Helper::Swap(v1, v2);
+
+			HighPrecision fpScreenX1(v1.m_pos.x);
+			assert(float(fpScreenX1) == v1.m_pos.x);
+			HighPrecision fpScreenY1(v1.m_pos.y);
+			assert(float(fpScreenY1) == v1.m_pos.y);
+			HighPrecision fpScreenX2(v2.m_pos.x);
+			assert(float(fpScreenX2) == v2.m_pos.x);
+			HighPrecision fpScreenY2(v2.m_pos.y);
+			assert(float(fpScreenY2) == v2.m_pos.y);
+			HighPrecision fpScreenX3(v3.m_pos.x);
+			assert(float(fpScreenX3) == v3.m_pos.x);
+			HighPrecision fpScreenY3(v3.m_pos.y);
+			assert(float(fpScreenY3) == v3.m_pos.y);
+
+			auto fDY1 = fpScreenY3 - fpScreenY1;
+
+			auto kInverseSlopeLeftX = (fpScreenX3 - fpScreenX1) / fDY1;
+			auto kInverseSlopeRightX = (fpScreenX3 - fpScreenX2) / fDY1;
+
+			Color4F kInverseSlopeLeftColor = (v3.m_color - v1.m_color) / (float)fDY1;
+			Color4F kInverseSlopeRightColor = (v3.m_color - v2.m_color) / (float)fDY1;
+
+			Vec2 kInverseSlopeLeftUV = (v3.m_UV - v1.m_UV) / (float)fDY1;
+			Vec2 kInverseSlopeRightUV = (v3.m_UV - v2.m_UV) / (float)fDY1;
+
+			float kInverseSlopeLeftInverseZ = (v3.m_inverseZ - v1.m_inverseZ) / (float)fDY1;
+			float kInverseSlopeRightInverseZ = (v3.m_inverseZ - v2.m_inverseZ) / (float)fDY1;
+
+			float kInverseSlopeLeftZ = (v3.m_pos.z - v1.m_pos.z) / (float)fDY1;
+			float kInverseSlopeRightZ = (v3.m_pos.z - v2.m_pos.z) / (float)fDY1;
+
+			Helper::Clamp(fpScreenY1, HighPrecision(-0.5f), HighPrecision(SCREEN_HEIGHT - 0.5f));
+			Helper::Clamp(fpScreenY3, HighPrecision(-0.5f), HighPrecision(SCREEN_HEIGHT - 0.5f));
+			fpScreenY2 = fpScreenY1;
+
+			int iStartY = ceil(fpScreenY1);
+			int iEndY = ceil(fpScreenY3);
+			if (iStartY >= iEndY)
+				return;
+
+			auto fOffsetY = (HighPrecision(iStartY) - HighPrecision(v1.m_pos.y));
+			auto fLeftX = fpScreenX1 + kInverseSlopeLeftX * fOffsetY;
+			auto fRightX = fpScreenX2 + kInverseSlopeRightX * fOffsetY;
+
+			Color4F leftColor = v1.m_color + kInverseSlopeLeftColor * (float)fOffsetY;
+			Color4F rightColor = v2.m_color + kInverseSlopeRightColor * (float)fOffsetY;
+
+			Vec2 leftUV = v1.m_UV + kInverseSlopeLeftUV * (float)fOffsetY;
+			Vec2 rightUV = v2.m_UV + kInverseSlopeRightUV * (float)fOffsetY;
+
+			float fLeftInverseZ = v1.m_inverseZ + kInverseSlopeLeftInverseZ * (float)fOffsetY;
+			float fRightInverseZ = v2.m_inverseZ + kInverseSlopeRightInverseZ * (float)fOffsetY;
+
+			float fLeftZ = v1.m_pos.z + kInverseSlopeLeftZ * (float)fOffsetY;
+			float fRightZ = v2.m_pos.z + kInverseSlopeRightZ * (float)fOffsetY;
+
+			for (int y = iStartY; y < iEndY; ++y)
+			{
+				DrawScanline(fLeftX, fRightX, rightColor, leftColor, rightUV, leftUV, fRightInverseZ, fLeftInverseZ, fRightZ, fLeftZ, y, fAlpha, pRenderState);
+
+				fLeftX += kInverseSlopeLeftX;
+				fRightX += kInverseSlopeRightX;
+
+				leftColor += kInverseSlopeLeftColor;
+				rightColor += kInverseSlopeRightColor;
+
+				leftUV += kInverseSlopeLeftUV;
+				rightUV += kInverseSlopeRightUV;
+
+				fLeftInverseZ += kInverseSlopeLeftInverseZ;
+				fRightInverseZ += kInverseSlopeRightInverseZ;
+
+				fLeftZ += kInverseSlopeLeftZ;
+				fRightZ += kInverseSlopeRightZ;
+			}
 		}
 		else
 		{
-			float fDY = v3.m_pos.y - v1.m_pos.y;
+			HighPrecision fpScreenX1(v1.m_pos.x);
+			assert(float(fpScreenX1) == v1.m_pos.x);
+			HighPrecision fpScreenY1(v1.m_pos.y);
+			assert(float(fpScreenY1) == v1.m_pos.y);
+			HighPrecision fpScreenX2(v2.m_pos.x);
+			assert(float(fpScreenX2) == v2.m_pos.x);
+			HighPrecision fpScreenY2(v2.m_pos.y);
+			assert(float(fpScreenY2) == v2.m_pos.y);
+			HighPrecision fpScreenX3(v3.m_pos.x);
+			assert(float(fpScreenX3) == v3.m_pos.x);
+			HighPrecision fpScreenY3(v3.m_pos.y);
+			assert(float(fpScreenY3) == v3.m_pos.y);
 
-			float kInverseSlopeRightX = (v3.m_pos.x - v1.m_pos.x) / fDY;
-			float kInverseSlopeRightZ = (v3.m_pos.z - v1.m_pos.z) / fDY;
-			Color4F kInverseSlopeRightColor = (v3.m_color - v1.m_color) / fDY;
-			Vec2 kInverseSlopeRightUV = (v3.m_UV - v1.m_UV) / fDY;
-			float kInverseSlopeRightInverseZ = (v3.m_inverseZ - v1.m_inverseZ) / fDY;
+			auto fDY = fpScreenY3 - fpScreenY1;
+
+			auto kInverseSlopeRightX = (fpScreenX3 - fpScreenX1) / fDY;
+			float kInverseSlopeRightZ = (v3.m_pos.z - v1.m_pos.z) / (float)fDY;
+			Color4F kInverseSlopeRightColor = (v3.m_color - v1.m_color) / (float)fDY;
+			Vec2 kInverseSlopeRightUV = (v3.m_UV - v1.m_UV) / (float)fDY;
+			float kInverseSlopeRightInverseZ = (v3.m_inverseZ - v1.m_inverseZ) / (float)fDY;
 
 			SVertexRuntime newVertex;
-			float fDY2 = v2.m_pos.y - v1.m_pos.y;
-			newVertex.m_pos.set(v1.m_pos.x + fDY2 * kInverseSlopeRightX, v2.m_pos.y, v1.m_pos.z + fDY2 * kInverseSlopeRightZ);
-			newVertex.m_color = (v1.m_color + kInverseSlopeRightColor * fDY2);
-			newVertex.m_UV = v1.m_UV + kInverseSlopeRightUV * fDY2;
-			newVertex.m_inverseZ = v1.m_inverseZ + kInverseSlopeRightInverseZ * fDY2;
+			auto fDY2 = fpScreenY2 - fpScreenY1;
+			newVertex.m_pos.set(fpScreenX1 + fDY2 * kInverseSlopeRightX, v2.m_pos.y, v1.m_pos.z + (float)fDY2 * kInverseSlopeRightZ);
+			newVertex.m_color = (v1.m_color + kInverseSlopeRightColor * (float)fDY2);
+			newVertex.m_UV = v1.m_UV + kInverseSlopeRightUV * (float)fDY2;
+			newVertex.m_inverseZ = v1.m_inverseZ + kInverseSlopeRightInverseZ * (float)fDY2;
 			DrawAnyTriangle(v1, v2, newVertex, fAlpha, pRenderState);
 			DrawAnyTriangle(v2, newVertex, v3, fAlpha, pRenderState);
 		}
 	}
 }
 
-void RasterizationStage::CRasterizer::DrawBottomTriangle(SVertexRuntime &v1, SVertexRuntime &v2, SVertexRuntime &v3, float fAlpha, SRenderState* pRenderState)
+void RasterizationStage::CRasterizer::DrawScanline(HighPrecision fLeftX, HighPrecision fRightX, Color4F rightColor, Color4F leftColor, Vec2 rightUV, Vec2 leftUV, float fRightInverseZ, float fLeftInverseZ, float fRightZ, float fLeftZ, int y, float fAlpha, SRenderState* pRenderState)
 {
-	if (v2.m_pos.x > v3.m_pos.x)
-		Helper::Swap(v2, v3);
-
-	float fDY1 = v2.m_pos.y - v1.m_pos.y;
-	float fDY2 = v3.m_pos.y - v1.m_pos.y;
-
-	float kInverseSlopeLeftX = (v2.m_pos.x - v1.m_pos.x) / fDY1;
-	float kInverseSlopeRightX = (v3.m_pos.x - v1.m_pos.x) / fDY2;
-
-	Color4F kInverseSlopeLeftColor = (v2.m_color - v1.m_color) / fDY1;
-	Color4F kInverseSlopeRightColor = (v3.m_color - v1.m_color) / fDY2;
-
-	Vec2 kInverseSlopeLeftUV = (v2.m_UV - v1.m_UV) / fDY1;
-	Vec2 kInverseSlopeRightUV = (v3.m_UV - v1.m_UV) / fDY2;
-
-	float kInverseSlopeLeftInverseZ = (v2.m_inverseZ - v1.m_inverseZ) / fDY1;
-	float kInverseSlopeRightInverseZ = (v3.m_inverseZ - v1.m_inverseZ) / fDY2;
-
-	float kInverseSlopeLeftZ = (v2.m_pos.z - v1.m_pos.z) / fDY1;
-	float kInverseSlopeRightZ = (v3.m_pos.z - v1.m_pos.z) / fDY2;
-
-	int iStartY = ceil(v1.m_pos.y);
-	int iEndY = ceil(v2.m_pos.y);
-	float fOffsetY = (iStartY - v1.m_pos.y);
-
-	float fLeftX = v1.m_pos.x + kInverseSlopeLeftX * fOffsetY;
-	float fRightX = v1.m_pos.x + kInverseSlopeRightX * fOffsetY;
-
-	Color4F leftColor = v1.m_color + kInverseSlopeLeftColor * fOffsetY;
-	Color4F rightColor = v1.m_color + kInverseSlopeRightColor * fOffsetY;
-
-	Vec2 leftUV = v1.m_UV + kInverseSlopeLeftUV * fOffsetY;
-	Vec2 rightUV = v1.m_UV + kInverseSlopeRightUV * fOffsetY;
-
-	float fLeftInverseZ = v1.m_inverseZ + kInverseSlopeLeftInverseZ * fOffsetY;
-	float fRightInverseZ = v1.m_inverseZ + kInverseSlopeRightInverseZ * fOffsetY;
-
-	float fLeftZ = v1.m_pos.z + kInverseSlopeLeftZ * fOffsetY;
-	float fRightZ = v1.m_pos.z + kInverseSlopeRightZ * fOffsetY;
-
-	for (int y = iStartY; y < iEndY; ++y)
+	int iStartX = ceil(fLeftX);
+	int iEndX = ceil(fRightX);
+	if (iEndX > iStartX)
 	{
-		int iStartX = ceil(fLeftX);
-		int iEndX = ceil(fRightX);
-		if (iEndX > iStartX)
+		auto fDeltaX = fRightX - fLeftX;
+		Color4F kInverseSlopeColor = (rightColor - leftColor) / (float)fDeltaX;
+		Vec2 kInverseSlopeUV = (rightUV - leftUV) / (float)fDeltaX;
+		float kInverseSlopeInverseZ = (fRightInverseZ - fLeftInverseZ) / (float)fDeltaX;
+		float kInverseSlopeZ = (fRightZ - fLeftZ) / (float)fDeltaX;
+		auto fOffsetX = iStartX - fLeftX;
+
+		Color4F curColor = leftColor + kInverseSlopeColor * (float)fOffsetX;
+		Vec2 curUV = leftUV + kInverseSlopeUV * (float)fOffsetX;
+		float curInverseZ = fLeftInverseZ + kInverseSlopeInverseZ * (float)fOffsetX;
+		float curZ = fLeftZ + kInverseSlopeZ * (float)fOffsetX;
+
+		for (int i = iStartX; i < iEndX; ++i)
 		{
-			float fDeltaX = fRightX - fLeftX;
-			Color4F kInverseSlopeColor = (rightColor - leftColor) / fDeltaX;
-			Vec2 kInverseSlopeUV = (rightUV - leftUV) / fDeltaX;
-			float kInverseSlopeInverseZ = (fRightInverseZ - fLeftInverseZ) / fDeltaX;
-			float kInverseSlopeZ = (fRightZ - fLeftZ) / fDeltaX;
-			float fOffsetX = iStartX - fLeftX;
-
-			Color4F curColor = leftColor + kInverseSlopeColor * fOffsetX;
-			Vec2 curUV = leftUV + kInverseSlopeUV * fOffsetX;
-			float curInverseZ = fLeftInverseZ + kInverseSlopeInverseZ * fOffsetX;
-			float curZ = fLeftZ + kInverseSlopeZ * fOffsetX;
-
-			for (int i = iStartX; i < iEndX; ++i)
+			int iPixelX = i;
+			int iPixelY = y;
+			if (CanDrawPixel(iPixelX, iPixelY, curZ))
 			{
-				int iPixelX = i;
-				int iPixelY = y;
-				if (CanDrawPixel(iPixelX, iPixelY, curZ))
-				{
-					Color4F finalColor = curColor / curInverseZ * fAlpha;
-					if (pRenderState->m_pMaterial)
-						finalColor = SampleTexture(pRenderState->m_pMaterial->GetBaseColorTex(), curUV / curInverseZ) * finalColor;
-					if (AlphaTest(finalColor.a))
-						DrawPixel(iPixelX, iPixelY, finalColor);
-				}
-
-				curColor += kInverseSlopeColor;
-				curUV += kInverseSlopeUV;
-				curInverseZ += kInverseSlopeInverseZ;
-				curZ += kInverseSlopeZ;
+				Color4F finalColor = curColor / curInverseZ * fAlpha;
+				if (pRenderState->m_pMaterial)
+					finalColor = SampleTexture(pRenderState->m_pMaterial->GetBaseColorTex(), curUV / curInverseZ) * finalColor;
+				if (AlphaTest(finalColor.a))
+					DrawPixel(iPixelX, iPixelY, finalColor);
 			}
+
+			curColor += kInverseSlopeColor;
+			curUV += kInverseSlopeUV;
+			curInverseZ += kInverseSlopeInverseZ;
+			curZ += kInverseSlopeZ;
 		}
-
-		fLeftX += kInverseSlopeLeftX;
-		fRightX += kInverseSlopeRightX;
-
-		leftColor += kInverseSlopeLeftColor;
-		rightColor += kInverseSlopeRightColor;
-
-		leftUV += kInverseSlopeLeftUV;
-		rightUV += kInverseSlopeRightUV;
-
-		fLeftInverseZ += kInverseSlopeLeftInverseZ;
-		fRightInverseZ += kInverseSlopeRightInverseZ;
-
-		fLeftZ += kInverseSlopeLeftZ;
-		fRightZ += kInverseSlopeRightZ;
-	}
-}
-
-void RasterizationStage::CRasterizer::DrawTopTriangle(SVertexRuntime &v1, SVertexRuntime &v2, SVertexRuntime &v3, float fAlpha, SRenderState* pRenderState)
-{
-	if (v1.m_pos.x > v2.m_pos.x)
-		Helper::Swap(v1, v2);
-
-	float fDY1 = v3.m_pos.y - v1.m_pos.y;
-	float fDY2 = v3.m_pos.y - v2.m_pos.y;
-
-	float kInverseSlopeLeftX = (v3.m_pos.x - v1.m_pos.x) / fDY1;
-	float kInverseSlopeRightX = (v3.m_pos.x - v2.m_pos.x) / fDY2;
-
-	Color4F kInverseSlopeLeftColor = (v3.m_color - v1.m_color) / fDY1;
-	Color4F kInverseSlopeRightColor = (v3.m_color - v2.m_color) / fDY2;
-
-	Vec2 kInverseSlopeLeftUV = (v3.m_UV - v1.m_UV) / fDY1;
-	Vec2 kInverseSlopeRightUV = (v3.m_UV - v2.m_UV) / fDY2;
-
-	float kInverseSlopeLeftInverseZ = (v3.m_inverseZ - v1.m_inverseZ) / fDY1;
-	float kInverseSlopeRightInverseZ = (v3.m_inverseZ - v2.m_inverseZ) / fDY2;
-
-	float kInverseSlopeLeftZ = (v3.m_pos.z - v1.m_pos.z) / fDY1;
-	float kInverseSlopeRightZ = (v3.m_pos.z - v2.m_pos.z) / fDY2;
-
-	int iStartY = ceil(v1.m_pos.y);
-	int iEndY = ceil(v3.m_pos.y);
-	float fOffsetY = (iStartY - v1.m_pos.y);
-
-	float fLeftX = v1.m_pos.x + kInverseSlopeLeftX * fOffsetY;
-	float fRightX = v2.m_pos.x + kInverseSlopeRightX * fOffsetY;
-
-	Color4F leftColor = v1.m_color + kInverseSlopeLeftColor * fOffsetY;
-	Color4F rightColor = v2.m_color + kInverseSlopeRightColor * fOffsetY;
-
-	Vec2 leftUV = v1.m_UV + kInverseSlopeLeftUV * fOffsetY;
-	Vec2 rightUV = v2.m_UV + kInverseSlopeRightUV * fOffsetY;
-
-	float fLeftInverseZ = v1.m_inverseZ + kInverseSlopeLeftInverseZ * fOffsetY;
-	float fRightInverseZ = v2.m_inverseZ + kInverseSlopeRightInverseZ * fOffsetY;
-
-	float fLeftZ = v1.m_pos.z + kInverseSlopeLeftZ * fOffsetY;
-	float fRightZ = v2.m_pos.z + kInverseSlopeRightZ * fOffsetY;
-	
-	for (int y = iStartY; y < iEndY; ++y)
-	{
-		int iStartX = ceil(fLeftX);
-		int iEndX = ceil(fRightX);
-		if (iEndX > iStartX)
-		{
-			float fDeltaX = fRightX - fLeftX;
-			Color4F kInverseSlopeColor = (rightColor - leftColor) / fDeltaX;
-			Vec2 kInverseSlopeUV = (rightUV - leftUV) / fDeltaX;
-			float kInverseSlopeInverseZ = (fRightInverseZ - fLeftInverseZ) / fDeltaX;
-			float kInverseSlopeZ = (fRightZ - fLeftZ) / fDeltaX;
-			float fOffsetX = iStartX - fLeftX;
-
-			Color4F curColor = leftColor + kInverseSlopeColor * fOffsetX;
-			Vec2 curUV = leftUV + kInverseSlopeUV * fOffsetX;
-			float curInverseZ = fLeftInverseZ + kInverseSlopeInverseZ * fOffsetX;
-			float curZ = fLeftZ + kInverseSlopeZ * fOffsetX;
-
-			for (int i = iStartX; i < iEndX; ++i)
-			{
-				int iPixelX = i;
-				int iPixelY = y;
-				if (CanDrawPixel(i, y, curZ))
-				{
-					Color4F finalColor = curColor / curInverseZ * fAlpha;
-					if (pRenderState->m_pMaterial)
-						finalColor = SampleTexture(pRenderState->m_pMaterial->GetBaseColorTex(), curUV / curInverseZ) * finalColor;
-					if (AlphaTest(finalColor.a))
-						DrawPixel(iPixelX, iPixelY, finalColor);
-				}
-
-				curColor += kInverseSlopeColor;
-				curUV += kInverseSlopeUV;
-				curInverseZ += kInverseSlopeInverseZ;
-				curZ += kInverseSlopeZ;
-			}
-		}
-
-		fLeftX += kInverseSlopeLeftX;
-		fRightX += kInverseSlopeRightX;
-
-		leftColor += kInverseSlopeLeftColor;
-		rightColor += kInverseSlopeRightColor;
-
-		leftUV += kInverseSlopeLeftUV;
-		rightUV += kInverseSlopeRightUV;
-
-		fLeftInverseZ += kInverseSlopeLeftInverseZ;
-		fRightInverseZ += kInverseSlopeRightInverseZ;
-
-		fLeftZ += kInverseSlopeLeftZ;
-		fRightZ += kInverseSlopeRightZ;
 	}
 }
 
@@ -490,7 +498,7 @@ bool RasterizationStage::CRasterizer::AlphaTest(float fAlpha)
 
 void RasterizationStage::CRasterizer::Blending(Color4F& src, Color4F& dst)
 {
-	dst = src * src.a + dst * (1.0f - src.a);
+	dst = src;//src * src.a + dst * (1.0f - src.a);
 }
 
 Color4F RasterizationStage::CRasterizer::SampleNearset(const CTexture* pTexture, Vec2 &uv)

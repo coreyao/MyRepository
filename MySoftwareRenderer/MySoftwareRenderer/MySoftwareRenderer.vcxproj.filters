@@ -121,5 +121,8 @@
     <ClInclude Include="Image\ImageReader.h">
       <Filter>Source\Image</Filter>
     </ClInclude>
+    <ClInclude Include="Math\fixedpoint.h">
+      <Filter>Source\Math</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

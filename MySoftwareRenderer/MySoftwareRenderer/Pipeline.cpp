@@ -18,8 +18,7 @@ void CPipeline::Draw()
 
 				bool bAddFace = false;
 				SFaceRuntime newFace;
-				bool bClip = GeometryStage::FrustrumCulling(*curFace, bAddFace, newFace);
-				if (bClip)
+				if (GeometryStage::NearPlaneCulling(*curFace, bAddFace, newFace))
 					continue;
 
 				if (bAddFace)
@@ -29,11 +28,11 @@ void CPipeline::Draw()
 				}
 			}
 
-			GeometryStage::TransformCameraToScreen(*curFace);
-			RasterizationStage::CRasterizer::GetInstance()->DrawAnyTriangle(curFace->m_vertex1, curFace->m_vertex2, curFace->m_vertex3, curFace->m_fAlpha, curFace->m_pRenderState);
+			if (GeometryStage::TransformCameraToScreen(*curFace))
+				RasterizationStage::CRasterizer::GetInstance()->DrawAnyTriangle(curFace->m_vertex1, curFace->m_vertex2, curFace->m_vertex3, curFace->m_fAlpha, curFace->m_pRenderState);
 		}
 
-		delete curFace;
+		//delete curFace;
 	}
 
 	m_vRenderList.clear();

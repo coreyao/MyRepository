@@ -37,6 +37,7 @@
     <ClInclude Include="Image\ImageReader.h" />
     <ClInclude Include="Image\PNGReader.h" />
     <ClInclude Include="Image\TGAReader.h" />
+    <ClInclude Include="Math\fixedpoint.h" />
     <ClInclude Include="Math\Quaternion.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Pipeline.h" />

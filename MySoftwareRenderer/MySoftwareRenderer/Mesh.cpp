@@ -28,7 +28,7 @@ void CMesh::Render()
 		CSubMesh* rSubmesh = m_vSubMesh[i];
 		for (int j = 0; j < rSubmesh->m_vFaceRunTimeOrigin.size(); ++j)
 		{
-			SFaceRuntime* rFace = new SFaceRuntime; // &rSubmesh->m_vFaceRunTime[j];
+			SFaceRuntime* rFace = &rSubmesh->m_vFaceRunTime[j];
 			rFace->m_vertex1 = rSubmesh->m_vFaceRunTimeOrigin[j].m_vertex1;
 			rFace->m_vertex2 = rSubmesh->m_vFaceRunTimeOrigin[j].m_vertex2;
 			rFace->m_vertex3 = rSubmesh->m_vFaceRunTimeOrigin[j].m_vertex3;

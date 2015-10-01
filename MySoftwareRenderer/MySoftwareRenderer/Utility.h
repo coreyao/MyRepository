@@ -6,6 +6,7 @@
 #include <memory>
 #include <map>
 #include <list>
+#include <cassert>
 
 #include "Math/Vector.h"
 #include "Math/Matrix.h"
@@ -21,8 +22,8 @@ using namespace std;
 #define NEARLY_EQUAL(x,y) (fabs((x) - (y)) <= EPSILON)
 #define ARGB(a, r, g, b) ((b) + ((g) << 8) + ((r) << 16) + ((a) << 24))
 
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 600
+#define SCREEN_WIDTH 480
+#define SCREEN_HEIGHT 320
 
 #ifndef MESH_FILE_DIR
 #define MESH_FILE_DIR std::string("./Resource/Mesh/")
@@ -32,7 +33,7 @@ using namespace std;
 #define IMAGE_FILE_DIR std::string("./Resource/Images/")
 #endif
 
-typedef double fixed21_t;
+typedef double HighPrecision;
 
 namespace Helper
 {
