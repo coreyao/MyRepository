@@ -498,7 +498,7 @@ bool RasterizationStage::CRasterizer::AlphaTest(float fAlpha)
 
 void RasterizationStage::CRasterizer::Blending(Color4F& src, Color4F& dst)
 {
-	dst = src;//src * src.a + dst * (1.0f - src.a);
+	dst = src * src.a + dst * (1.0f - src.a);
 }
 
 Color4F RasterizationStage::CRasterizer::SampleNearset(const CTexture* pTexture, Vec2 &uv)

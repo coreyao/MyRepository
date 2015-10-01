@@ -46,7 +46,7 @@ void InitMesh()
 	g_pCharactor->m_transform.SetScale(Vec3(1, 1, -1));
 	g_pCharactor->m_transform.SetPosition(Vec3(0, -100, -200));
 	g_pCharactor->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
-	//g_vMesh.push_back(g_pCharactor);
+	g_vMesh.push_back(g_pCharactor);
 
 	{
 		SMeshData meshData;
