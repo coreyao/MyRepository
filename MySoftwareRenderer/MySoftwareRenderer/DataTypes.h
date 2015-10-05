@@ -100,14 +100,15 @@ struct SVertex
 	Vec4 m_blendWeight;
 };
 
-struct SVertexRuntime : public SVertex
+struct SVertexRuntime
 {
-	SVertexRuntime()
-	: m_inverseZ(0)
-	{
-	}
-
-	float m_inverseZ;
+	Vec4 m_pos;
+	Vec3 m_normal;
+	Vec3 m_tangent;
+	Vec2 m_UV;
+	Color4F m_color;
+	Vec4 m_boneIndex;
+	Vec4 m_blendWeight;
 	Vec3 m_normalizePos;
 };
 

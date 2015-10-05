@@ -1,43 +1,10 @@
 #include "GeometryStage.h"
 #include "Director.h"
 
-bool GeometryStage::TransformCameraToScreen(SFaceRuntime& face)
+void GeometryStage::TransformCameraToScreen(SFaceRuntime& face)
 {
-	bool bInFrustrum1 = TransformCameraToScreen(face.m_vertex1, face.m_bUseNormalizedPos);
-	bool bInFrustrum2 = TransformCameraToScreen(face.m_vertex2, face.m_bUseNormalizedPos);
-	bool bInFrustrum3 = TransformCameraToScreen(face.m_vertex3, face.m_bUseNormalizedPos);
-	if (!bInFrustrum1 && !bInFrustrum2 && !bInFrustrum3)
-		return false;
-
-	return true;
-}
-
-bool GeometryStage::TransformCameraToScreen(SVertexRuntime& vertex, bool bUseNormalizedPos)
-{
-	const Mat4& rProjMat = CDirector::GetInstance()->GetCurProjectionMat();
-	Vec4 clippingPos;
-	if (!bUseNormalizedPos)
-		clippingPos = rProjMat * Vec4(vertex.m_pos.x, vertex.m_pos.y, vertex.m_pos.z, 1.0f);
-	else
-		clippingPos = Vec4(vertex.m_normalizePos.x, vertex.m_normalizePos.y, vertex.m_normalizePos.z, 1.0f);
-
-	float rhw = 1.0f / clippingPos.w;
-	clippingPos.x *= rhw;
-	clippingPos.y *= rhw;
-	clippingPos.z *= rhw;
-
-	vertex.m_pos.x = (clippingPos.x * 0.5f + 0.5f) * (SCREEN_WIDTH)-0.5f;
-	vertex.m_pos.y = (-clippingPos.y * 0.5f + 0.5f) * (SCREEN_HEIGHT)-0.5f;
-	vertex.m_pos.z = clippingPos.z;
-	vertex.m_inverseZ = rhw;
-	vertex.m_UV.x *= vertex.m_inverseZ;
-	vertex.m_UV.y *= vertex.m_inverseZ;
-	vertex.m_color *= vertex.m_inverseZ;
-
-	if (!IsVertexInFrustrum(clippingPos))
-		return false;
-
-	return true;
+	TransformCameraToClip(face);
+	TransformClipToScreen(face);
 }
 
 void GeometryStage::TransformWorldToCamera(SFaceRuntime& face)
@@ -45,16 +12,16 @@ void GeometryStage::TransformWorldToCamera(SFaceRuntime& face)
 	const Mat4& rViewMat = CDirector::GetInstance()->GetCurViewMat();
 
 	Vec4 cameraPos = rViewMat * Vec4(face.m_vertex1.m_pos.x, face.m_vertex1.m_pos.y, face.m_vertex1.m_pos.z, 1.0f);
-	face.m_vertex1.m_pos = Vec3(cameraPos.x, cameraPos.y, cameraPos.z);
+	face.m_vertex1.m_pos = Vec4(cameraPos.x, cameraPos.y, cameraPos.z, 1.0f);
 
 	cameraPos = rViewMat * Vec4(face.m_vertex2.m_pos.x, face.m_vertex2.m_pos.y, face.m_vertex2.m_pos.z, 1.0f);
-	face.m_vertex2.m_pos = Vec3(cameraPos.x, cameraPos.y, cameraPos.z);
+	face.m_vertex2.m_pos = Vec4(cameraPos.x, cameraPos.y, cameraPos.z, 1.0f);
 
 	cameraPos = rViewMat * Vec4(face.m_vertex3.m_pos.x, face.m_vertex3.m_pos.y, face.m_vertex3.m_pos.z, 1.0f);
-	face.m_vertex3.m_pos = Vec3(cameraPos.x, cameraPos.y, cameraPos.z);
+	face.m_vertex3.m_pos = Vec4(cameraPos.x, cameraPos.y, cameraPos.z, 1.0f);
 }
 
-bool GeometryStage::NearPlaneCulling(SFaceRuntime& face, bool& bAddFace, SFaceRuntime& addFace)
+bool GeometryStage::CameraNearPlaneCulling(SFaceRuntime& face, bool& bAddFace, SFaceRuntime& addFace)
 {
 	float fNear = -CDirector::GetInstance()->GetPerspectiveCamera()->GetNearZ();
 
@@ -102,6 +69,7 @@ bool GeometryStage::NearPlaneCulling(SFaceRuntime& face, bool& bAddFace, SFaceRu
 			addFace.m_vertex2 = face.m_vertex2;
 			addFace.m_vertex3 = newVertex2;
 			addFace.m_fAlpha = face.m_fAlpha;
+			addFace.m_pRenderState = face.m_pRenderState;
 
 			face.m_vertex2 = newVertex1;
 			face.m_vertex3 = newVertex2;
@@ -128,6 +96,66 @@ bool GeometryStage::NearPlaneCulling(SFaceRuntime& face, bool& bAddFace, SFaceRu
 	else
 	{
 		return true;
+	}
+}
+
+void GeometryStage::TransformCameraToClip(SFaceRuntime& face)
+{
+	const Mat4& rProjMat = CDirector::GetInstance()->GetCurProjectionMat();
+	if (!face.m_bUseNormalizedPos)
+	{
+		face.m_vertex1.m_pos = rProjMat * face.m_vertex1.m_pos;
+		face.m_vertex2.m_pos = rProjMat * face.m_vertex2.m_pos;
+		face.m_vertex3.m_pos = rProjMat * face.m_vertex3.m_pos;
+	}
+}
+
+bool GeometryStage::DoClipInClipSpaceWithoutNear(SFaceRuntime& face)
+{
+	return !IsVertexInFrustrum(face.m_vertex1.m_pos)
+		&& !IsVertexInFrustrum(face.m_vertex2.m_pos)
+		&& !IsVertexInFrustrum(face.m_vertex3.m_pos);
+}
+
+void GeometryStage::TransformClipToScreen(SFaceRuntime& face)
+{
+	if (!face.m_bUseNormalizedPos)
+	{
+		{
+			SVertexRuntime& vertex = face.m_vertex1;
+			float rhw = 1.0f / vertex.m_pos.w;
+			vertex.m_pos *= rhw;
+			vertex.m_pos.x = (vertex.m_pos.x * 0.5f + 0.5f) * (SCREEN_WIDTH)-0.5f;
+			vertex.m_pos.y = (-vertex.m_pos.y * 0.5f + 0.5f) * (SCREEN_HEIGHT)-0.5f;
+			vertex.m_pos.w = rhw;
+			vertex.m_UV.x *= rhw;
+			vertex.m_UV.y *= rhw;
+			vertex.m_color *= rhw;
+		}
+
+		{
+			SVertexRuntime& vertex = face.m_vertex2;
+			float rhw = 1.0f / vertex.m_pos.w;
+			vertex.m_pos *= rhw;
+			vertex.m_pos.x = (vertex.m_pos.x * 0.5f + 0.5f) * (SCREEN_WIDTH)-0.5f;
+			vertex.m_pos.y = (-vertex.m_pos.y * 0.5f + 0.5f) * (SCREEN_HEIGHT)-0.5f;
+			vertex.m_pos.w = rhw;
+			vertex.m_UV.x *= rhw;
+			vertex.m_UV.y *= rhw;
+			vertex.m_color *= rhw;
+		}
+
+		{
+			SVertexRuntime& vertex = face.m_vertex3;
+			float rhw = 1.0f / vertex.m_pos.w;
+			vertex.m_pos *= rhw;
+			vertex.m_pos.x = (vertex.m_pos.x * 0.5f + 0.5f) * (SCREEN_WIDTH)-0.5f;
+			vertex.m_pos.y = (-vertex.m_pos.y * 0.5f + 0.5f) * (SCREEN_HEIGHT)-0.5f;
+			vertex.m_pos.w = rhw;
+			vertex.m_UV.x *= rhw;
+			vertex.m_UV.y *= rhw;
+			vertex.m_color *= rhw;
+		}
 	}
 }
 

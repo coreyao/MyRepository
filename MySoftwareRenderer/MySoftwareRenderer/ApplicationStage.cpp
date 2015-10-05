@@ -4,13 +4,13 @@
 void ApplicationStage::TransformLocalToWorld(SFaceRuntime& face, const Mat4& worldTransform)
 {
 	Vec4 worldPos = worldTransform * Vec4(face.m_vertex1.m_pos.x, face.m_vertex1.m_pos.y, face.m_vertex1.m_pos.z, 1.0f);
-	face.m_vertex1.m_pos = Vec3(worldPos.x, worldPos.y, worldPos.z);
+	face.m_vertex1.m_pos = Vec4(worldPos.x, worldPos.y, worldPos.z, 1.0f);
 
 	worldPos = worldTransform * Vec4(face.m_vertex2.m_pos.x, face.m_vertex2.m_pos.y, face.m_vertex2.m_pos.z, 1.0f);
-	face.m_vertex2.m_pos = Vec3(worldPos.x, worldPos.y, worldPos.z);
+	face.m_vertex2.m_pos = Vec4(worldPos.x, worldPos.y, worldPos.z, 1.0f);
 
 	worldPos = worldTransform * Vec4(face.m_vertex3.m_pos.x, face.m_vertex3.m_pos.y, face.m_vertex3.m_pos.z, 1.0f);
-	face.m_vertex3.m_pos = Vec3(worldPos.x, worldPos.y, worldPos.z);
+	face.m_vertex3.m_pos = Vec4(worldPos.x, worldPos.y, worldPos.z, 1.0f);
 }
 
 bool ApplicationStage::IsBackFace(SFaceRuntime& face, EVertexOrder eOrder /*= EVertexOrder_ClockWise*/)
@@ -19,14 +19,14 @@ bool ApplicationStage::IsBackFace(SFaceRuntime& face, EVertexOrder eOrder /*= EV
 	Vec3 normal;
 	if ( eOrder == EVertexOrder_ClockWise )
 	{
-		Vec3 p1 = face.m_vertex1.m_pos - face.m_vertex2.m_pos;
-		Vec3 p2 = face.m_vertex3.m_pos - face.m_vertex2.m_pos;
+		Vec3 p1 = Vec3(face.m_vertex1.m_pos) - Vec3(face.m_vertex2.m_pos);
+		Vec3 p2 = Vec3(face.m_vertex3.m_pos) - Vec3(face.m_vertex2.m_pos);
 		normal = p1.Cross(p2);
 	}
 	else if ( eOrder == EVertexOrder_Counter_ClockWise )
 	{
-		Vec3 p1 = face.m_vertex1.m_pos - face.m_vertex3.m_pos;
-		Vec3 p2 = face.m_vertex2.m_pos - face.m_vertex3.m_pos;
+		Vec3 p1 = Vec3(face.m_vertex1.m_pos) - Vec3(face.m_vertex3.m_pos);
+		Vec3 p2 = Vec3(face.m_vertex2.m_pos) - Vec3(face.m_vertex3.m_pos);
 		normal = p1.Cross(p2);
 	}
 

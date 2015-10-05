@@ -87,8 +87,13 @@ void CMesh::InitRuntimeData()
 		for (auto& rVertex : rSubMesh.m_vVertex)
 		{
 			SVertexRuntime v;
-			memcpy((void*)&v, (void*)&rVertex, sizeof(SVertex));
-			v.m_inverseZ = 0;
+			v.m_pos = Vec4(rVertex.m_pos.x, rVertex.m_pos.y, rVertex.m_pos.z, 1.0f);
+			v.m_normal = rVertex.m_normal;
+			v.m_tangent = rVertex.m_tangent;
+			v.m_UV = rVertex.m_UV;
+			v.m_color = rVertex.m_color;
+			v.m_boneIndex = v.m_boneIndex;
+			v.m_blendWeight = v.m_blendWeight;
 			subMesh->m_vVertexRunTime.push_back(v);
 		}
 
