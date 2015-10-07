@@ -1,5 +1,7 @@
 #pragma once
 
+#define USE_SIMD 1;
+
 #include <cmath>
 #include <string>
 #include <vector>
@@ -12,6 +14,8 @@
 #include "Math/Matrix.h"
 #include "Math/Quaternion.h"
 #include "Math/fixedpoint.h"
+
+#include <emmintrin.h>
 
 using namespace std;
 
@@ -32,6 +36,7 @@ using namespace std;
 #ifndef IMAGE_FILE_DIR
 #define IMAGE_FILE_DIR std::string("./Resource/Images/")
 #endif
+
 
 typedef double HighPrecision;
 

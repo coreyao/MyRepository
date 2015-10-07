@@ -195,8 +195,8 @@ void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVerte
 			Vec2 kInverseSlopeLeftUV = (v2.m_UV - v1.m_UV) / (float)fDY1;
 			Vec2 kInverseSlopeRightUV = (v3.m_UV - v1.m_UV) / (float)fDY2;
 
-			float kInverseSlopeLeftInverseZ = (v2.m_inverseZ - v1.m_inverseZ) / (float)fDY1;
-			float kInverseSlopeRightInverseZ = (v3.m_inverseZ - v1.m_inverseZ) / (float)fDY2;
+			float kInverseSlopeLeftInverseZ = (v2.m_pos.w - v1.m_pos.w) / (float)fDY1;
+			float kInverseSlopeRightInverseZ = (v3.m_pos.w - v1.m_pos.w) / (float)fDY2;
 
 			float kInverseSlopeLeftZ = (v2.m_pos.z - v1.m_pos.z) / (float)fDY1;
 			float kInverseSlopeRightZ = (v3.m_pos.z - v1.m_pos.z) / (float)fDY2;
@@ -220,8 +220,8 @@ void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVerte
 			Vec2 leftUV = v1.m_UV + kInverseSlopeLeftUV * (float)fOffsetY;
 			Vec2 rightUV = v1.m_UV + kInverseSlopeRightUV * (float)fOffsetY;
 
-			float fLeftInverseZ = v1.m_inverseZ + kInverseSlopeLeftInverseZ * (float)fOffsetY;
-			float fRightInverseZ = v1.m_inverseZ + kInverseSlopeRightInverseZ * (float)fOffsetY;
+			float fLeftInverseZ = v1.m_pos.w + kInverseSlopeLeftInverseZ * (float)fOffsetY;
+			float fRightInverseZ = v1.m_pos.w + kInverseSlopeRightInverseZ * (float)fOffsetY;
 
 			float fLeftZ = v1.m_pos.z + kInverseSlopeLeftZ * (float)fOffsetY;
 			float fRightZ = v1.m_pos.z + kInverseSlopeRightZ * (float)fOffsetY;
@@ -275,8 +275,8 @@ void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVerte
 			Vec2 kInverseSlopeLeftUV = (v3.m_UV - v1.m_UV) / (float)fDY1;
 			Vec2 kInverseSlopeRightUV = (v3.m_UV - v2.m_UV) / (float)fDY1;
 
-			float kInverseSlopeLeftInverseZ = (v3.m_inverseZ - v1.m_inverseZ) / (float)fDY1;
-			float kInverseSlopeRightInverseZ = (v3.m_inverseZ - v2.m_inverseZ) / (float)fDY1;
+			float kInverseSlopeLeftInverseZ = (v3.m_pos.w - v1.m_pos.w) / (float)fDY1;
+			float kInverseSlopeRightInverseZ = (v3.m_pos.w - v2.m_pos.w) / (float)fDY1;
 
 			float kInverseSlopeLeftZ = (v3.m_pos.z - v1.m_pos.z) / (float)fDY1;
 			float kInverseSlopeRightZ = (v3.m_pos.z - v2.m_pos.z) / (float)fDY1;
@@ -300,8 +300,8 @@ void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVerte
 			Vec2 leftUV = v1.m_UV + kInverseSlopeLeftUV * (float)fOffsetY;
 			Vec2 rightUV = v2.m_UV + kInverseSlopeRightUV * (float)fOffsetY;
 
-			float fLeftInverseZ = v1.m_inverseZ + kInverseSlopeLeftInverseZ * (float)fOffsetY;
-			float fRightInverseZ = v2.m_inverseZ + kInverseSlopeRightInverseZ * (float)fOffsetY;
+			float fLeftInverseZ = v1.m_pos.w + kInverseSlopeLeftInverseZ * (float)fOffsetY;
+			float fRightInverseZ = v2.m_pos.w + kInverseSlopeRightInverseZ * (float)fOffsetY;
 
 			float fLeftZ = v1.m_pos.z + kInverseSlopeLeftZ * (float)fOffsetY;
 			float fRightZ = v2.m_pos.z + kInverseSlopeRightZ * (float)fOffsetY;
@@ -347,14 +347,14 @@ void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVerte
 			float kInverseSlopeRightZ = (v3.m_pos.z - v1.m_pos.z) / (float)fDY;
 			Color4F kInverseSlopeRightColor = (v3.m_color - v1.m_color) / (float)fDY;
 			Vec2 kInverseSlopeRightUV = (v3.m_UV - v1.m_UV) / (float)fDY;
-			float kInverseSlopeRightInverseZ = (v3.m_inverseZ - v1.m_inverseZ) / (float)fDY;
+			float kInverseSlopeRightInverseZ = (v3.m_pos.w - v1.m_pos.w) / (float)fDY;
 
 			SVertexRuntime newVertex;
 			auto fDY2 = fpScreenY2 - fpScreenY1;
-			newVertex.m_pos.set(fpScreenX1 + fDY2 * kInverseSlopeRightX, v2.m_pos.y, v1.m_pos.z + (float)fDY2 * kInverseSlopeRightZ);
+			newVertex.m_pos.set(fpScreenX1 + fDY2 * kInverseSlopeRightX, v2.m_pos.y, v1.m_pos.z + (float)fDY2 * kInverseSlopeRightZ,
+				v1.m_pos.w + kInverseSlopeRightInverseZ * (float)fDY2);
 			newVertex.m_color = (v1.m_color + kInverseSlopeRightColor * (float)fDY2);
 			newVertex.m_UV = v1.m_UV + kInverseSlopeRightUV * (float)fDY2;
-			newVertex.m_inverseZ = v1.m_inverseZ + kInverseSlopeRightInverseZ * (float)fDY2;
 			DrawAnyTriangle(v1, v2, newVertex, fAlpha, pRenderState);
 			DrawAnyTriangle(v2, newVertex, v3, fAlpha, pRenderState);
 		}

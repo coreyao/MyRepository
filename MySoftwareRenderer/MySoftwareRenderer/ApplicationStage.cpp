@@ -3,14 +3,9 @@
 
 void ApplicationStage::TransformLocalToWorld(SFaceRuntime& face, const Mat4& worldTransform)
 {
-	Vec4 worldPos = worldTransform * Vec4(face.m_vertex1.m_pos.x, face.m_vertex1.m_pos.y, face.m_vertex1.m_pos.z, 1.0f);
-	face.m_vertex1.m_pos = Vec4(worldPos.x, worldPos.y, worldPos.z, 1.0f);
-
-	worldPos = worldTransform * Vec4(face.m_vertex2.m_pos.x, face.m_vertex2.m_pos.y, face.m_vertex2.m_pos.z, 1.0f);
-	face.m_vertex2.m_pos = Vec4(worldPos.x, worldPos.y, worldPos.z, 1.0f);
-
-	worldPos = worldTransform * Vec4(face.m_vertex3.m_pos.x, face.m_vertex3.m_pos.y, face.m_vertex3.m_pos.z, 1.0f);
-	face.m_vertex3.m_pos = Vec4(worldPos.x, worldPos.y, worldPos.z, 1.0f);
+	face.m_vertex1.m_pos = worldTransform * face.m_vertex1.m_pos;
+	face.m_vertex2.m_pos = worldTransform * face.m_vertex2.m_pos;
+	face.m_vertex3.m_pos = worldTransform * face.m_vertex3.m_pos;
 }
 
 bool ApplicationStage::IsBackFace(SFaceRuntime& face, EVertexOrder eOrder /*= EVertexOrder_ClockWise*/)

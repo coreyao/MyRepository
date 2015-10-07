@@ -123,3 +123,27 @@ void Vec2::set(float _x, float _y)
 	x = _x;
 	y = _y;
 }
+
+void Vec4::operator/=(float fScalar)
+{
+	this->x /= fScalar;
+	this->y /= fScalar;
+	this->z /= fScalar;
+	this->w /= fScalar;
+}
+
+void Vec4::operator*=(float fScalar)
+{
+	this->x *= fScalar;
+	this->y *= fScalar;
+	this->z *= fScalar;
+	this->w *= fScalar;
+}
+
+void Vec4::set(float _x, float _y, float _z, float _w)
+{
+	x = _x;
+	y = _y;
+	z = _z;
+	w = _w;
+}

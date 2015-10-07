@@ -11,14 +11,9 @@ void GeometryStage::TransformWorldToCamera(SFaceRuntime& face)
 {
 	const Mat4& rViewMat = CDirector::GetInstance()->GetCurViewMat();
 
-	Vec4 cameraPos = rViewMat * Vec4(face.m_vertex1.m_pos.x, face.m_vertex1.m_pos.y, face.m_vertex1.m_pos.z, 1.0f);
-	face.m_vertex1.m_pos = Vec4(cameraPos.x, cameraPos.y, cameraPos.z, 1.0f);
-
-	cameraPos = rViewMat * Vec4(face.m_vertex2.m_pos.x, face.m_vertex2.m_pos.y, face.m_vertex2.m_pos.z, 1.0f);
-	face.m_vertex2.m_pos = Vec4(cameraPos.x, cameraPos.y, cameraPos.z, 1.0f);
-
-	cameraPos = rViewMat * Vec4(face.m_vertex3.m_pos.x, face.m_vertex3.m_pos.y, face.m_vertex3.m_pos.z, 1.0f);
-	face.m_vertex3.m_pos = Vec4(cameraPos.x, cameraPos.y, cameraPos.z, 1.0f);
+	face.m_vertex1.m_pos = rViewMat * face.m_vertex1.m_pos;
+	face.m_vertex2.m_pos = rViewMat * face.m_vertex2.m_pos;
+	face.m_vertex3.m_pos = rViewMat * face.m_vertex3.m_pos;
 }
 
 bool GeometryStage::CameraNearPlaneCulling(SFaceRuntime& face, bool& bAddFace, SFaceRuntime& addFace)
