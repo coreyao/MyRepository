@@ -1,6 +1,10 @@
 #pragma once
 
+#ifdef _DEBUG
 #define USE_SIMD 1;
+#else
+#define USE_SIMD 0;
+#endif
 #define SIMD_ALIGN __declspec(align(16))
 #include <emmintrin.h>
 

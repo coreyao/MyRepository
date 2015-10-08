@@ -23,18 +23,14 @@ void CPipeline::Draw()
 					continue;
 
 				if (bAddFace)
-				{
 					tempRenderList.push_back(newFace);
-				}
-				else
-				{
-					GeometryStage::TransformCameraToClip(*curFace);
-					if ( GeometryStage::DoClipInClipSpaceWithoutNear(*curFace) )
-						continue;
 
-					GeometryStage::TransformClipToScreen(*curFace);
-					RasterizationStage::CRasterizer::GetInstance()->DrawAnyTriangle(curFace->m_vertex1, curFace->m_vertex2, curFace->m_vertex3, curFace->m_fAlpha, curFace->m_pRenderState);
-				}
+				GeometryStage::TransformCameraToClip(*curFace);
+				if (GeometryStage::DoClipInClipSpaceWithoutNear(*curFace))
+					continue;
+
+				GeometryStage::TransformClipToScreen(*curFace);
+				RasterizationStage::CRasterizer::GetInstance()->DrawAnyTriangle(curFace->m_vertex1, curFace->m_vertex2, curFace->m_vertex3, curFace->m_fAlpha, curFace->m_pRenderState);
 			}
 		}
 	}

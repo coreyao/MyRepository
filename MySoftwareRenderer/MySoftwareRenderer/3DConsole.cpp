@@ -38,6 +38,7 @@ void InitMesh()
 	pFileCube->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
 	g_vMesh.push_back(pFileCube);
 
+
 	CMaterial material;
 	material.SetBaseColorTexture("Boss_Niumowang_B.png");
 	CMesh* g_pCharactor = new CMesh;

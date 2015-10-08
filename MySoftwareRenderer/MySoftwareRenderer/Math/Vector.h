@@ -37,11 +37,8 @@ public:
 	union
 	{
 		struct { float x, y, z, w; };
-		struct { float r, g, b, a; };
 		__m128 simd_data;
 	};
-
-	//float x, y, z, w;
 };
 
 class Vec3

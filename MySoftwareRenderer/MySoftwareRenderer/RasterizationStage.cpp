@@ -171,17 +171,11 @@ void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVerte
 				Helper::Swap(v2, v3);
 
 			HighPrecision fpScreenX1(v1.m_pos.x);
-			assert(float(fpScreenX1) == v1.m_pos.x);
 			HighPrecision fpScreenY1(v1.m_pos.y);
-			assert(float(fpScreenY1) == v1.m_pos.y);
 			HighPrecision fpScreenX2(v2.m_pos.x);
-			assert(float(fpScreenX2) == v2.m_pos.x);
 			HighPrecision fpScreenY2(v2.m_pos.y);
-			assert(float(fpScreenY2) == v2.m_pos.y);
 			HighPrecision fpScreenX3(v3.m_pos.x);
-			assert(float(fpScreenX3) == v3.m_pos.x);
 			HighPrecision fpScreenY3(v3.m_pos.y);
-			assert(float(fpScreenY3) == v3.m_pos.y);
 
 			auto fDY1 = fpScreenY2 - fpScreenY1;
 			auto fDY2 = fpScreenY3 - fpScreenY1;
@@ -252,17 +246,11 @@ void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVerte
 				Helper::Swap(v1, v2);
 
 			HighPrecision fpScreenX1(v1.m_pos.x);
-			assert(float(fpScreenX1) == v1.m_pos.x);
 			HighPrecision fpScreenY1(v1.m_pos.y);
-			assert(float(fpScreenY1) == v1.m_pos.y);
 			HighPrecision fpScreenX2(v2.m_pos.x);
-			assert(float(fpScreenX2) == v2.m_pos.x);
 			HighPrecision fpScreenY2(v2.m_pos.y);
-			assert(float(fpScreenY2) == v2.m_pos.y);
 			HighPrecision fpScreenX3(v3.m_pos.x);
-			assert(float(fpScreenX3) == v3.m_pos.x);
 			HighPrecision fpScreenY3(v3.m_pos.y);
-			assert(float(fpScreenY3) == v3.m_pos.y);
 
 			auto fDY1 = fpScreenY3 - fpScreenY1;
 
@@ -329,17 +317,11 @@ void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVerte
 		else
 		{
 			HighPrecision fpScreenX1(v1.m_pos.x);
-			assert(float(fpScreenX1) == v1.m_pos.x);
 			HighPrecision fpScreenY1(v1.m_pos.y);
-			assert(float(fpScreenY1) == v1.m_pos.y);
 			HighPrecision fpScreenX2(v2.m_pos.x);
-			assert(float(fpScreenX2) == v2.m_pos.x);
 			HighPrecision fpScreenY2(v2.m_pos.y);
-			assert(float(fpScreenY2) == v2.m_pos.y);
 			HighPrecision fpScreenX3(v3.m_pos.x);
-			assert(float(fpScreenX3) == v3.m_pos.x);
 			HighPrecision fpScreenY3(v3.m_pos.y);
-			assert(float(fpScreenY3) == v3.m_pos.y);
 
 			auto fDY = fpScreenY3 - fpScreenY1;
 
