@@ -124,26 +124,58 @@ void Vec2::set(float _x, float _y)
 	y = _y;
 }
 
-void Vec4::operator/=(float fScalar)
+Vec4::Vec4()
 {
-	this->x /= fScalar;
-	this->y /= fScalar;
-	this->z /= fScalar;
-	this->w /= fScalar;
+#if USE_SIMD
+	simd_data = _mm_setzero_ps();
+#else
+	x = y = z = w = 0;
+#endif
 }
 
-void Vec4::operator*=(float fScalar)
+Vec4::Vec4(float _x, float _y, float _z, float _w)
 {
-	this->x *= fScalar;
-	this->y *= fScalar;
-	this->z *= fScalar;
-	this->w *= fScalar;
-}
-
-void Vec4::set(float _x, float _y, float _z, float _w)
-{
+#if USE_SIMD
+	simd_data = _mm_setr_ps(_x, _y, _z, _w);
+#else
 	x = _x;
 	y = _y;
 	z = _z;
 	w = _w;
+#endif
+}
+
+void Vec4::operator/=(float fScalar)
+{
+#if USE_SIMD
+	simd_data = _mm_div_ps( simd_data, _mm_set1_ps(fScalar) );
+#else
+	this->x /= fScalar;
+	this->y /= fScalar;
+	this->z /= fScalar;
+	this->w /= fScalar;
+#endif
+}
+
+void Vec4::operator*=(float fScalar)
+{
+#if USE_SIMD
+	simd_data = _mm_mul_ps( simd_data, _mm_set1_ps(fScalar) );
+#else
+	this->x *= fScalar;
+	this->y *= fScalar;
+	this->z *= fScalar;
+	this->w *= fScalar;
+#endif
+}
+
+void Vec4::set(float _x, float _y, float _z, float _w)
+{
+#if USE_SIMD
+#else
+	x = _x;
+	y = _y;
+	z = _z;
+	w = _w;
+#endif
 }

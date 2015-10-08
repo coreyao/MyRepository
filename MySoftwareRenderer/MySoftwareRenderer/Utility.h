@@ -15,8 +15,6 @@
 #include "Math/Quaternion.h"
 #include "Math/fixedpoint.h"
 
-#include <emmintrin.h>
-
 using namespace std;
 
 #define PI 3.141592f
