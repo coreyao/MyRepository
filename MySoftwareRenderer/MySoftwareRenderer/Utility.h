@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef _DEBUG
-#define USE_SIMD 1;
+#define USE_SIMD 0;
 #else
 #define USE_SIMD 0;
 #endif

@@ -30,24 +30,13 @@ void InitMesh()
 	CMaterial material1;
 	material1.SetBaseColorTexture("HelloWorld.png");
 	CMesh* pFileCube = new CMesh;
-	pFileCube->InitFromFile("cube.CSTM");
+	pFileCube->InitFromFile("testanim.CSTM");
 	pFileCube->SetMaterial(material1, 0);
 	pFileCube->m_transform.SetPosition(Vec3(0, -25, -100));
 	pFileCube->m_transform.SetScale(Vec3(1, 1, -1));
 	pFileCube->m_transform.SetRotation(Vec3(0, 60, 0));
 	pFileCube->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
 	g_vMesh.push_back(pFileCube);
-
-
-	CMaterial material;
-	material.SetBaseColorTexture("Boss_Niumowang_B.png");
-	CMesh* g_pCharactor = new CMesh;
-	g_pCharactor->InitFromFile("niumowang.CSTM");
-	g_pCharactor->SetMaterial(material, 0);
-	g_pCharactor->m_transform.SetScale(Vec3(1, 1, -1));
-	g_pCharactor->m_transform.SetPosition(Vec3(0, -100, -200));
-	g_pCharactor->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
-	//g_vMesh.push_back(g_pCharactor);
 
 	{
 		SMeshData meshData;
@@ -142,7 +131,7 @@ int Game_Update(float dt)
 {
 	for (auto& pMesh : g_vMesh)
 	{
-		//pMesh->m_transform.SetRotation(Vec3(0, pMesh->m_transform.GetRotation().y + dt *10, 0));
+		pMesh->m_transform.SetRotation(Vec3(0, pMesh->m_transform.GetRotation().y + dt *30, 0));
 		pMesh->Update(dt);
 		pMesh->Render();
 	}
