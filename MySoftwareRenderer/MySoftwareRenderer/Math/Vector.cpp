@@ -172,6 +172,7 @@ void Vec4::operator*=(float fScalar)
 void Vec4::set(float _x, float _y, float _z, float _w)
 {
 #if USE_SIMD
+	simd_data = _mm_setr_ps(_x, _y, _z, _w);
 #else
 	x = _x;
 	y = _y;

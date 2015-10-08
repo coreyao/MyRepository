@@ -1,6 +1,8 @@
 #pragma once
 
 #define USE_SIMD 1;
+#define SIMD_ALIGN __declspec(align(16))
+#include <emmintrin.h>
 
 #include <cmath>
 #include <string>
