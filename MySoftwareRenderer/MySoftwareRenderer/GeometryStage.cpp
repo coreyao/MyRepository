@@ -1,12 +1,6 @@
 #include "GeometryStage.h"
 #include "Director.h"
 
-void GeometryStage::TransformCameraToScreen(SFaceRuntime& face)
-{
-	TransformCameraToClip(face);
-	TransformClipToScreen(face);
-}
-
 void GeometryStage::TransformWorldToCamera(SFaceRuntime& face)
 {
 	const Mat4& rViewMat = CDirector::GetInstance()->GetCurViewMat();
@@ -14,84 +8,6 @@ void GeometryStage::TransformWorldToCamera(SFaceRuntime& face)
 	face.m_vertex1.m_pos = rViewMat * face.m_vertex1.m_pos;
 	face.m_vertex2.m_pos = rViewMat * face.m_vertex2.m_pos;
 	face.m_vertex3.m_pos = rViewMat * face.m_vertex3.m_pos;
-}
-
-bool GeometryStage::CameraNearPlaneCulling(SFaceRuntime& face, bool& bAddFace, SFaceRuntime& addFace)
-{
-	float fNear = -CDirector::GetInstance()->GetPerspectiveCamera()->GetNearZ();
-
-	int iCount = 0;
-	if (face.m_vertex1.m_pos.z > fNear)
-		++iCount;
-	if (face.m_vertex2.m_pos.z > fNear)
-		++iCount;
-	if (face.m_vertex3.m_pos.z > fNear)
-		++iCount;
-
-	if ( iCount == 0 )
-	{
-		return false;
-	}
-	else if (iCount < 3)
-	{
-		if (face.m_vertex1.m_pos.z > face.m_vertex2.m_pos.z)
-			Helper::Swap(face.m_vertex1, face.m_vertex2);
-		if (face.m_vertex1.m_pos.z > face.m_vertex3.m_pos.z)
-			Helper::Swap(face.m_vertex1, face.m_vertex3);
-		if (face.m_vertex2.m_pos.z > face.m_vertex3.m_pos.z)
-			Helper::Swap(face.m_vertex2, face.m_vertex3);
-
-		if (iCount == 1)
-		{
-			SVertexRuntime newVertex1;
-			float t = (fNear - face.m_vertex1.m_pos.z) / (face.m_vertex3.m_pos.z - face.m_vertex1.m_pos.z);
-			newVertex1.m_pos.x = face.m_vertex1.m_pos.x + t * (face.m_vertex3.m_pos.x - face.m_vertex1.m_pos.x);
-			newVertex1.m_pos.y = face.m_vertex1.m_pos.y + t * (face.m_vertex3.m_pos.y - face.m_vertex1.m_pos.y);
-			newVertex1.m_pos.z = fNear;
-			newVertex1.m_UV = face.m_vertex1.m_UV + (face.m_vertex3.m_UV - face.m_vertex1.m_UV) * t;
-			newVertex1.m_color = face.m_vertex1.m_color + (face.m_vertex3.m_color - face.m_vertex1.m_color) * t;
-
-			SVertexRuntime newVertex2;
-			t = (fNear - face.m_vertex2.m_pos.z) / (face.m_vertex3.m_pos.z - face.m_vertex2.m_pos.z);
-			newVertex2.m_pos.x = face.m_vertex2.m_pos.x + t * (face.m_vertex3.m_pos.x - face.m_vertex2.m_pos.x);
-			newVertex2.m_pos.y = face.m_vertex2.m_pos.y + t * (face.m_vertex3.m_pos.y - face.m_vertex2.m_pos.y);
-			newVertex2.m_pos.z = fNear;
-			newVertex2.m_UV = face.m_vertex2.m_UV + (face.m_vertex3.m_UV - face.m_vertex2.m_UV) * t;
-			newVertex2.m_color = face.m_vertex2.m_color + (face.m_vertex3.m_color - face.m_vertex2.m_color) * t;
-
-			bAddFace = true;
-			addFace.m_vertex1 = face.m_vertex1;
-			addFace.m_vertex2 = face.m_vertex2;
-			addFace.m_vertex3 = newVertex2;
-			addFace.m_fAlpha = face.m_fAlpha;
-			addFace.m_pRenderState = face.m_pRenderState;
-
-			face.m_vertex2 = newVertex1;
-			face.m_vertex3 = newVertex2;
-		}
-		else if (iCount == 2)
-		{
-			float t = (fNear - face.m_vertex1.m_pos.z) / (face.m_vertex2.m_pos.z - face.m_vertex1.m_pos.z);
-			face.m_vertex2.m_pos.x = face.m_vertex1.m_pos.x + (face.m_vertex2.m_pos.x - face.m_vertex1.m_pos.x) * t;
-			face.m_vertex2.m_pos.y = face.m_vertex1.m_pos.y + (face.m_vertex2.m_pos.y - face.m_vertex1.m_pos.y) * t;
-			face.m_vertex2.m_pos.z = fNear;
-			face.m_vertex2.m_UV = face.m_vertex1.m_UV + (face.m_vertex2.m_UV - face.m_vertex1.m_UV) * t;
-			face.m_vertex2.m_color = face.m_vertex1.m_color + (face.m_vertex2.m_color - face.m_vertex1.m_color) * t;
-
-			t = (fNear - face.m_vertex1.m_pos.z) / (face.m_vertex3.m_pos.z - face.m_vertex1.m_pos.z);
-			face.m_vertex3.m_pos.x = face.m_vertex1.m_pos.x + t * (face.m_vertex3.m_pos.x - face.m_vertex1.m_pos.x);
-			face.m_vertex3.m_pos.y = face.m_vertex1.m_pos.y + t * (face.m_vertex3.m_pos.y - face.m_vertex1.m_pos.y);
-			face.m_vertex3.m_pos.z = fNear;
-			face.m_vertex3.m_UV = face.m_vertex1.m_UV + (face.m_vertex3.m_UV - face.m_vertex1.m_UV) * t;
-			face.m_vertex3.m_color = face.m_vertex1.m_color + (face.m_vertex3.m_color - face.m_vertex1.m_color) * t;
-		}
-
-		return false;
-	}
-	else
-	{
-		return true;
-	}
 }
 
 void GeometryStage::TransformCameraToClip(SFaceRuntime& face)
@@ -105,11 +21,99 @@ void GeometryStage::TransformCameraToClip(SFaceRuntime& face)
 	}
 }
 
-bool GeometryStage::DoClipInClipSpaceWithoutNear(SFaceRuntime& face)
+bool GeometryStage::DoClipInClipSpace(SFaceRuntime& face, bool& bAddFace, SFaceRuntime& addFace)
 {
-	return !IsVertexInFrustrum(face.m_vertex1.m_pos)
-		&& !IsVertexInFrustrum(face.m_vertex2.m_pos)
-		&& !IsVertexInFrustrum(face.m_vertex3.m_pos);
+	if (!IsVertexInCVV(face.m_vertex1.m_pos)
+		&& !IsVertexInCVV(face.m_vertex2.m_pos)
+		&& !IsVertexInCVV(face.m_vertex3.m_pos))
+	{
+		bAddFace = false;
+		return true;
+	}
+	else
+	{
+		float fNear = -CDirector::GetInstance()->GetPerspectiveCamera()->GetNearZ();
+
+		int iCount = 0;
+		if (-face.m_vertex1.m_pos.w > fNear)
+			++iCount;
+		if (-face.m_vertex2.m_pos.w > fNear)
+			++iCount;
+		if (-face.m_vertex3.m_pos.w > fNear)
+			++iCount;
+
+		if (iCount == 0)
+		{
+			bAddFace = false;
+			return false;
+		}
+		else if (iCount < 3)
+		{
+			if (face.m_vertex1.m_pos.w < face.m_vertex2.m_pos.w)
+				Helper::Swap(face.m_vertex1, face.m_vertex2);
+			if (face.m_vertex1.m_pos.w < face.m_vertex3.m_pos.w)
+				Helper::Swap(face.m_vertex1, face.m_vertex3);
+			if (face.m_vertex2.m_pos.w < face.m_vertex3.m_pos.w)
+				Helper::Swap(face.m_vertex2, face.m_vertex3);
+
+			if (iCount == 1)
+			{
+				SVertexRuntime newVertex1;
+				float t = (fNear - (-face.m_vertex1.m_pos.w)) / ((-face.m_vertex3.m_pos.w) - (-face.m_vertex1.m_pos.w));
+				newVertex1.m_pos.x = face.m_vertex1.m_pos.x + t * (face.m_vertex3.m_pos.x - face.m_vertex1.m_pos.x);
+				newVertex1.m_pos.y = face.m_vertex1.m_pos.y + t * (face.m_vertex3.m_pos.y - face.m_vertex1.m_pos.y);
+				newVertex1.m_pos.z = face.m_vertex1.m_pos.z + t * (face.m_vertex3.m_pos.z - face.m_vertex1.m_pos.z);
+				newVertex1.m_pos.w = face.m_vertex1.m_pos.w + t * (face.m_vertex3.m_pos.w - face.m_vertex1.m_pos.w);
+				newVertex1.m_UV = face.m_vertex1.m_UV + (face.m_vertex3.m_UV - face.m_vertex1.m_UV) * t;
+				newVertex1.m_color = face.m_vertex1.m_color + (face.m_vertex3.m_color - face.m_vertex1.m_color) * t;
+
+				SVertexRuntime newVertex2;
+				t = (fNear - (-face.m_vertex2.m_pos.w)) / ((-face.m_vertex3.m_pos.w) - (-face.m_vertex2.m_pos.w));
+				newVertex2.m_pos.x = face.m_vertex2.m_pos.x + t * (face.m_vertex3.m_pos.x - face.m_vertex2.m_pos.x);
+				newVertex2.m_pos.y = face.m_vertex2.m_pos.y + t * (face.m_vertex3.m_pos.y - face.m_vertex2.m_pos.y);
+				newVertex2.m_pos.z = face.m_vertex2.m_pos.z + t * (face.m_vertex3.m_pos.z - face.m_vertex2.m_pos.z);
+				newVertex2.m_pos.w = face.m_vertex2.m_pos.w + t * (face.m_vertex3.m_pos.w - face.m_vertex2.m_pos.w);
+				newVertex2.m_UV = face.m_vertex2.m_UV + (face.m_vertex3.m_UV - face.m_vertex2.m_UV) * t;
+				newVertex2.m_color = face.m_vertex2.m_color + (face.m_vertex3.m_color - face.m_vertex2.m_color) * t;
+
+				bAddFace = true;
+				addFace.m_vertex1 = face.m_vertex1;
+				addFace.m_vertex2 = face.m_vertex2;
+				addFace.m_vertex3 = newVertex2;
+				addFace.m_fAlpha = face.m_fAlpha;
+				addFace.m_pRenderState = face.m_pRenderState;
+
+				face.m_vertex2 = newVertex1;
+				face.m_vertex3 = newVertex2;
+			}
+			else if (iCount == 2)
+			{
+				float t = (fNear - (-face.m_vertex1.m_pos.w)) / ((-face.m_vertex2.m_pos.w) - (-face.m_vertex1.m_pos.w));
+				face.m_vertex2.m_pos.x = face.m_vertex1.m_pos.x + (face.m_vertex2.m_pos.x - face.m_vertex1.m_pos.x) * t;
+				face.m_vertex2.m_pos.y = face.m_vertex1.m_pos.y + (face.m_vertex2.m_pos.y - face.m_vertex1.m_pos.y) * t;
+				face.m_vertex2.m_pos.z = face.m_vertex1.m_pos.z + (face.m_vertex2.m_pos.z - face.m_vertex1.m_pos.z) * t;
+				face.m_vertex2.m_pos.w = face.m_vertex1.m_pos.w + (face.m_vertex2.m_pos.w - face.m_vertex1.m_pos.w) * t;
+				face.m_vertex2.m_UV = face.m_vertex1.m_UV + (face.m_vertex2.m_UV - face.m_vertex1.m_UV) * t;
+				face.m_vertex2.m_color = face.m_vertex1.m_color + (face.m_vertex2.m_color - face.m_vertex1.m_color) * t;
+
+				t = (fNear - (-face.m_vertex1.m_pos.w)) / ((-face.m_vertex3.m_pos.w) - (-face.m_vertex1.m_pos.w));
+				face.m_vertex3.m_pos.x = face.m_vertex1.m_pos.x + t * (face.m_vertex3.m_pos.x - face.m_vertex1.m_pos.x);
+				face.m_vertex3.m_pos.y = face.m_vertex1.m_pos.y + t * (face.m_vertex3.m_pos.y - face.m_vertex1.m_pos.y);
+				face.m_vertex3.m_pos.z = face.m_vertex1.m_pos.z + t * (face.m_vertex3.m_pos.z - face.m_vertex1.m_pos.z);
+				face.m_vertex3.m_pos.w = face.m_vertex1.m_pos.w + t * (face.m_vertex3.m_pos.w - face.m_vertex1.m_pos.w);
+				face.m_vertex3.m_UV = face.m_vertex1.m_UV + (face.m_vertex3.m_UV - face.m_vertex1.m_UV) * t;
+				face.m_vertex3.m_color = face.m_vertex1.m_color + (face.m_vertex3.m_color - face.m_vertex1.m_color) * t;
+
+				bAddFace = false;
+			}
+
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
 }
 
 void GeometryStage::TransformClipToScreen(SFaceRuntime& face)
@@ -154,8 +158,17 @@ void GeometryStage::TransformClipToScreen(SFaceRuntime& face)
 	}
 }
 
-bool GeometryStage::IsVertexInFrustrum(const Vec4& pos)
+bool GeometryStage::IsVertexInCVV(const Vec4& pos)
 {
+	if (pos.x <= -pos.w || pos.x >= pos.w
+		|| pos.y <= -pos.w || pos.y >= pos.w
+		|| pos.z <= -pos.w || pos.z >= pos.w)
+	{
+		return false;
+	}
+
+	return true;
+
 	//float fFOV = DEG_TO_RAD(CDirector::GetInstance()->GetPerspectiveCamera()->GetFOV() / 2);
 	//float fAspectRatio = CDirector::GetInstance()->GetPerspectiveCamera()->GetAspectRatio();
 	//float fNear = -CDirector::GetInstance()->GetPerspectiveCamera()->GetNearZ();
@@ -174,14 +187,5 @@ bool GeometryStage::IsVertexInFrustrum(const Vec4& pos)
 	//	return false;
 	//
 	//return true;
-
-	if (   pos.x <= -pos.w || pos.x >= pos.w
-		|| pos.y <= -pos.w || pos.y >= pos.w
-		|| pos.z <= -pos.w || pos.z >= pos.w )
-	{
-		return false;
-	}
-
-	return true;
 }
 

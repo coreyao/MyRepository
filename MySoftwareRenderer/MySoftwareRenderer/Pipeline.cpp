@@ -16,18 +16,15 @@ void CPipeline::Draw()
 			if ( !curFace->m_bUseNormalizedPos )
 			{
 				GeometryStage::TransformWorldToCamera(*curFace);
+				GeometryStage::TransformCameraToClip(*curFace);
 
 				bool bAddFace = false;
 				SFaceRuntime newFace;
-				if (GeometryStage::CameraNearPlaneCulling(*curFace, bAddFace, newFace))
+				if (GeometryStage::DoClipInClipSpace(*curFace, bAddFace, newFace))
 					continue;
 
 				if (bAddFace)
 					tempRenderList.push_back(newFace);
-
-				GeometryStage::TransformCameraToClip(*curFace);
-				if (GeometryStage::DoClipInClipSpaceWithoutNear(*curFace))
-					continue;
 
 				GeometryStage::TransformClipToScreen(*curFace);
 				RasterizationStage::CRasterizer::GetInstance()->DrawAnyTriangle(curFace->m_vertex1, curFace->m_vertex2, curFace->m_vertex3, curFace->m_fAlpha, curFace->m_pRenderState);
@@ -37,7 +34,7 @@ void CPipeline::Draw()
 
 	for (auto& curFace : tempRenderList)
 	{
-		GeometryStage::TransformCameraToScreen(curFace);
+		GeometryStage::TransformClipToScreen(curFace);
 		RasterizationStage::CRasterizer::GetInstance()->DrawAnyTriangle(curFace.m_vertex1, curFace.m_vertex2, curFace.m_vertex3, curFace.m_fAlpha, curFace.m_pRenderState);
 	}
 

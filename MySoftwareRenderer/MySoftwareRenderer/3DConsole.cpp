@@ -78,13 +78,13 @@ void InitMesh()
 			subMeshData1.m_vFace.push_back(face);
 		}
 
-		{
+	/*	{
 			SFace face;
 			face.m_VertexIndex1 = 3;
 			face.m_VertexIndex2 = 0;
 			face.m_VertexIndex3 = 2;
 			subMeshData1.m_vFace.push_back(face);
-		}
+		}*/
 
 		subMeshData1.m_MeshMatrix = Mat4::IDENTITY;
 		meshData.m_vSubMesh.push_back(subMeshData1);
@@ -131,7 +131,7 @@ int Game_Update(float dt)
 {
 	for (auto& pMesh : g_vMesh)
 	{
-		pMesh->m_transform.SetRotation(Vec3(0, pMesh->m_transform.GetRotation().y + dt *30, 0));
+		//pMesh->m_transform.SetRotation(Vec3(0, pMesh->m_transform.GetRotation().y + dt *30, 0));
 		pMesh->Update(dt);
 		pMesh->Render();
 	}
