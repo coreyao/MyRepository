@@ -51,6 +51,15 @@ namespace Helper
 
 	template<typename T>
 	void Clamp(T& tval, const T& tmin, const T& tmax);
+
+	template<typename T>
+	T Lerp(const T& lVal, const T& rVal, float fRatio);
+}
+
+template<typename T>
+T Helper::Lerp(const T& lVal, const T& rVal, float fRatio)
+{
+	return lVal * (1.0f - fRatio) + rVal * fRatio;
 }
 
 template<typename T>
@@ -69,3 +78,4 @@ void Helper::Swap(T& a, T& b)
 	a = b;
 	b = temp;
 }
+

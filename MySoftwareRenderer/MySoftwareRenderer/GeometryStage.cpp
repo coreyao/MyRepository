@@ -65,30 +65,21 @@ bool GeometryStage::DoClipInClipSpace(SFaceRuntime& face, bool& bAddFace, SFaceR
 				if ( bOut[0] )
 				{
 					float t = (fNear - (-tempFace.m_vertex1.m_pos.w)) / ((-tempFace.m_vertex2.m_pos.w) - (-tempFace.m_vertex1.m_pos.w));
-					tempFace.m_vertex1.m_pos.x = tempFace.m_vertex1.m_pos.x + (tempFace.m_vertex2.m_pos.x - tempFace.m_vertex1.m_pos.x) * t;
-					tempFace.m_vertex1.m_pos.y = tempFace.m_vertex1.m_pos.y + (tempFace.m_vertex2.m_pos.y - tempFace.m_vertex1.m_pos.y) * t;
-					tempFace.m_vertex1.m_pos.w = tempFace.m_vertex1.m_pos.w + (tempFace.m_vertex2.m_pos.w - tempFace.m_vertex1.m_pos.w) * t;
-
+					tempFace.m_vertex1.m_pos = Helper::Lerp(tempFace.m_vertex1.m_pos, tempFace.m_vertex2.m_pos, t);
 					if (tempFace.m_pRenderState->m_bEnableCullFace && IsBackFace(tempFace, tempFace.m_pRenderState->m_eVertexOrder))
 						return true;
 
 					SVertexRuntime newVertex1;
 					t = (fNear - (-face.m_vertex1.m_pos.w)) / ((-face.m_vertex3.m_pos.w) - (-face.m_vertex1.m_pos.w));
-					newVertex1.m_pos.x = face.m_vertex1.m_pos.x + t * (face.m_vertex3.m_pos.x - face.m_vertex1.m_pos.x);
-					newVertex1.m_pos.y = face.m_vertex1.m_pos.y + t * (face.m_vertex3.m_pos.y - face.m_vertex1.m_pos.y);
-					newVertex1.m_pos.z = face.m_vertex1.m_pos.z + t * (face.m_vertex3.m_pos.z - face.m_vertex1.m_pos.z);
-					newVertex1.m_pos.w = face.m_vertex1.m_pos.w + t * (face.m_vertex3.m_pos.w - face.m_vertex1.m_pos.w);
-					newVertex1.m_UV = face.m_vertex1.m_UV + (face.m_vertex3.m_UV - face.m_vertex1.m_UV) * t;
-					newVertex1.m_color = face.m_vertex1.m_color + (face.m_vertex3.m_color - face.m_vertex1.m_color) * t;
+					newVertex1.m_pos = Helper::Lerp(face.m_vertex1.m_pos, face.m_vertex3.m_pos, t);
+					newVertex1.m_UV = Helper::Lerp(face.m_vertex1.m_UV, face.m_vertex3.m_UV, t);
+					newVertex1.m_color = Helper::Lerp(face.m_vertex1.m_color, face.m_vertex3.m_color, t);
 
 					SVertexRuntime newVertex2;
 					t = (fNear - (-face.m_vertex1.m_pos.w)) / ((-face.m_vertex2.m_pos.w) - (-face.m_vertex1.m_pos.w));
-					newVertex2.m_pos.x = face.m_vertex1.m_pos.x + t * (face.m_vertex2.m_pos.x - face.m_vertex1.m_pos.x);
-					newVertex2.m_pos.y = face.m_vertex1.m_pos.y + t * (face.m_vertex2.m_pos.y - face.m_vertex1.m_pos.y);
-					newVertex2.m_pos.z = face.m_vertex1.m_pos.z + t * (face.m_vertex2.m_pos.z - face.m_vertex1.m_pos.z);
-					newVertex2.m_pos.w = face.m_vertex1.m_pos.w + t * (face.m_vertex2.m_pos.w - face.m_vertex1.m_pos.w);
-					newVertex2.m_UV = face.m_vertex1.m_UV + (face.m_vertex2.m_UV - face.m_vertex1.m_UV) * t;
-					newVertex2.m_color = face.m_vertex1.m_color + (face.m_vertex2.m_color - face.m_vertex1.m_color) * t;
+					newVertex2.m_pos = Helper::Lerp(face.m_vertex1.m_pos, face.m_vertex2.m_pos, t);
+					newVertex2.m_UV = Helper::Lerp(face.m_vertex1.m_UV, face.m_vertex2.m_UV, t);
+					newVertex2.m_color = Helper::Lerp(face.m_vertex1.m_color, face.m_vertex2.m_color, t);
 
 					if (face.m_pRenderState->m_eVertexOrder == EVertexOrder_Counter_ClockWise)
 					{
@@ -114,30 +105,21 @@ bool GeometryStage::DoClipInClipSpace(SFaceRuntime& face, bool& bAddFace, SFaceR
 				else if ( bOut[1] )
 				{
 					float t = (fNear - (-tempFace.m_vertex1.m_pos.w)) / ((-tempFace.m_vertex2.m_pos.w) - (-tempFace.m_vertex1.m_pos.w));
-					tempFace.m_vertex2.m_pos.x = tempFace.m_vertex1.m_pos.x + (tempFace.m_vertex2.m_pos.x - tempFace.m_vertex1.m_pos.x) * t;
-					tempFace.m_vertex2.m_pos.y = tempFace.m_vertex1.m_pos.y + (tempFace.m_vertex2.m_pos.y - tempFace.m_vertex1.m_pos.y) * t;
-					tempFace.m_vertex2.m_pos.w = tempFace.m_vertex1.m_pos.w + (tempFace.m_vertex2.m_pos.w - tempFace.m_vertex1.m_pos.w) * t;
-
+					tempFace.m_vertex2.m_pos = Helper::Lerp(tempFace.m_vertex1.m_pos, tempFace.m_vertex2.m_pos, t);
 					if (tempFace.m_pRenderState->m_bEnableCullFace && IsBackFace(tempFace, tempFace.m_pRenderState->m_eVertexOrder))
 						return true;
 
 					SVertexRuntime newVertex1;
 					t = (fNear - (-face.m_vertex2.m_pos.w)) / ((-face.m_vertex3.m_pos.w) - (-face.m_vertex2.m_pos.w));
-					newVertex1.m_pos.x = face.m_vertex2.m_pos.x + t * (face.m_vertex3.m_pos.x - face.m_vertex2.m_pos.x);
-					newVertex1.m_pos.y = face.m_vertex2.m_pos.y + t * (face.m_vertex3.m_pos.y - face.m_vertex2.m_pos.y);
-					newVertex1.m_pos.z = face.m_vertex2.m_pos.z + t * (face.m_vertex3.m_pos.z - face.m_vertex2.m_pos.z);
-					newVertex1.m_pos.w = face.m_vertex2.m_pos.w + t * (face.m_vertex3.m_pos.w - face.m_vertex2.m_pos.w);
-					newVertex1.m_UV = face.m_vertex2.m_UV + (face.m_vertex3.m_UV - face.m_vertex2.m_UV) * t;
-					newVertex1.m_color = face.m_vertex2.m_color + (face.m_vertex3.m_color - face.m_vertex2.m_color) * t;
+					newVertex1.m_pos = Helper::Lerp(face.m_vertex2.m_pos, face.m_vertex3.m_pos, t);
+					newVertex1.m_UV = Helper::Lerp(face.m_vertex2.m_UV, face.m_vertex3.m_UV, t);
+					newVertex1.m_color = Helper::Lerp(face.m_vertex2.m_color, face.m_vertex3.m_color, t);
 
 					SVertexRuntime newVertex2;
 					t = (fNear - (-face.m_vertex2.m_pos.w)) / ((-face.m_vertex1.m_pos.w) - (-face.m_vertex2.m_pos.w));
-					newVertex2.m_pos.x = face.m_vertex2.m_pos.x + t * (face.m_vertex1.m_pos.x - face.m_vertex2.m_pos.x);
-					newVertex2.m_pos.y = face.m_vertex2.m_pos.y + t * (face.m_vertex1.m_pos.y - face.m_vertex2.m_pos.y);
-					newVertex2.m_pos.z = face.m_vertex2.m_pos.z + t * (face.m_vertex1.m_pos.z - face.m_vertex2.m_pos.z);
-					newVertex2.m_pos.w = face.m_vertex2.m_pos.w + t * (face.m_vertex1.m_pos.w - face.m_vertex2.m_pos.w);
-					newVertex2.m_UV = face.m_vertex2.m_UV + (face.m_vertex1.m_UV - face.m_vertex2.m_UV) * t;
-					newVertex2.m_color = face.m_vertex2.m_color + (face.m_vertex1.m_color - face.m_vertex2.m_color) * t;
+					newVertex2.m_pos = Helper::Lerp(face.m_vertex1.m_pos, face.m_vertex2.m_pos, t);
+					newVertex2.m_UV = Helper::Lerp(face.m_vertex1.m_UV, face.m_vertex2.m_UV, t);
+					newVertex2.m_color = Helper::Lerp(face.m_vertex1.m_color, face.m_vertex2.m_color, t);
 
 					if (face.m_pRenderState->m_eVertexOrder == EVertexOrder_Counter_ClockWise)
 					{
@@ -163,30 +145,21 @@ bool GeometryStage::DoClipInClipSpace(SFaceRuntime& face, bool& bAddFace, SFaceR
 				else if (bOut[2])
 				{
 					float t = (fNear - (-tempFace.m_vertex1.m_pos.w)) / ((-tempFace.m_vertex3.m_pos.w) - (-tempFace.m_vertex1.m_pos.w));
-					tempFace.m_vertex3.m_pos.x = tempFace.m_vertex1.m_pos.x + (tempFace.m_vertex3.m_pos.x - tempFace.m_vertex1.m_pos.x) * t;
-					tempFace.m_vertex3.m_pos.y = tempFace.m_vertex1.m_pos.y + (tempFace.m_vertex3.m_pos.y - tempFace.m_vertex1.m_pos.y) * t;
-					tempFace.m_vertex3.m_pos.w = tempFace.m_vertex1.m_pos.w + (tempFace.m_vertex3.m_pos.w - tempFace.m_vertex1.m_pos.w) * t;
-
+					tempFace.m_vertex3.m_pos = Helper::Lerp(tempFace.m_vertex1.m_pos, tempFace.m_vertex3.m_pos, t);
 					if (tempFace.m_pRenderState->m_bEnableCullFace && IsBackFace(tempFace, tempFace.m_pRenderState->m_eVertexOrder))
 						return true;
 
 					SVertexRuntime newVertex1;
 					t = (fNear - (-face.m_vertex3.m_pos.w)) / ((-face.m_vertex2.m_pos.w) - (-face.m_vertex3.m_pos.w));
-					newVertex1.m_pos.x = face.m_vertex3.m_pos.x + t * (face.m_vertex2.m_pos.x - face.m_vertex3.m_pos.x);
-					newVertex1.m_pos.y = face.m_vertex3.m_pos.y + t * (face.m_vertex2.m_pos.y - face.m_vertex3.m_pos.y);
-					newVertex1.m_pos.z = face.m_vertex3.m_pos.z + t * (face.m_vertex2.m_pos.z - face.m_vertex3.m_pos.z);
-					newVertex1.m_pos.w = face.m_vertex3.m_pos.w + t * (face.m_vertex2.m_pos.w - face.m_vertex3.m_pos.w);
-					newVertex1.m_UV = face.m_vertex3.m_UV + (face.m_vertex2.m_UV - face.m_vertex3.m_UV) * t;
-					newVertex1.m_color = face.m_vertex3.m_color + (face.m_vertex2.m_color - face.m_vertex3.m_color) * t;
+					newVertex1.m_pos = Helper::Lerp(face.m_vertex3.m_pos, face.m_vertex2.m_pos, t);
+					newVertex1.m_UV = Helper::Lerp(face.m_vertex3.m_UV, face.m_vertex2.m_UV, t);
+					newVertex1.m_color = Helper::Lerp(face.m_vertex3.m_color, face.m_vertex2.m_color, t);
 
 					SVertexRuntime newVertex2;
 					t = (fNear - (-face.m_vertex3.m_pos.w)) / ((-face.m_vertex1.m_pos.w) - (-face.m_vertex3.m_pos.w));
-					newVertex2.m_pos.x = face.m_vertex3.m_pos.x + t * (face.m_vertex1.m_pos.x - face.m_vertex3.m_pos.x);
-					newVertex2.m_pos.y = face.m_vertex3.m_pos.y + t * (face.m_vertex1.m_pos.y - face.m_vertex3.m_pos.y);
-					newVertex2.m_pos.z = face.m_vertex3.m_pos.z + t * (face.m_vertex1.m_pos.z - face.m_vertex3.m_pos.z);
-					newVertex2.m_pos.w = face.m_vertex3.m_pos.w + t * (face.m_vertex1.m_pos.w - face.m_vertex3.m_pos.w);
-					newVertex2.m_UV = face.m_vertex3.m_UV + (face.m_vertex1.m_UV - face.m_vertex3.m_UV) * t;
-					newVertex2.m_color = face.m_vertex3.m_color + (face.m_vertex1.m_color - face.m_vertex3.m_color) * t;
+					newVertex2.m_pos = Helper::Lerp(face.m_vertex3.m_pos, face.m_vertex1.m_pos, t);
+					newVertex2.m_UV = Helper::Lerp(face.m_vertex3.m_UV, face.m_vertex1.m_UV, t);
+					newVertex2.m_color = Helper::Lerp(face.m_vertex3.m_color, face.m_vertex1.m_color, t);
 
 					if (face.m_pRenderState->m_eVertexOrder == EVertexOrder_Counter_ClockWise)
 					{

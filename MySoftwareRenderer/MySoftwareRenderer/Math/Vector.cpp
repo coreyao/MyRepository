@@ -92,22 +92,22 @@ float Vec3::GetLength()
 	return sqrt(x * x + y * y + z * z);
 }
 
-Vec2 Vec2::operator-(const Vec2& rh)
-{
+Vec2 Vec2::operator-(const Vec2& rh)const
+{ 
 	return Vec2( this->x - rh.x, this->y - rh.y );
 }
 
-Vec2 Vec2::operator+(const Vec2& rh)
+Vec2 Vec2::operator+(const Vec2& rh) const
 {
 	return Vec2(this->x + rh.x, this->y + rh.y);
 }
 
-Vec2 Vec2::operator/(float fScalar)
+Vec2 Vec2::operator/(float fScalar)const
 {
 	return Vec2( this->x / fScalar, this->y / fScalar );
 }
 
-Vec2 Vec2::operator*(float fScalar)
+Vec2 Vec2::operator*(float fScalar)const
 {
 	return Vec2(this->x * fScalar, this->y * fScalar);
 }
@@ -179,4 +179,14 @@ void Vec4::set(float _x, float _y, float _z, float _w)
 	z = _z;
 	w = _w;
 #endif
+}
+
+Vec4 Vec4::operator*(float fScalar) const
+{
+	return Vec4(x * fScalar, y * fScalar, z * fScalar, w * fScalar);
+}
+
+Vec4 Vec4::operator+(const Vec4& rh) const
+{
+	return Vec4(x + rh.x, y + rh.y, z + rh.z, w + rh.w);
 }

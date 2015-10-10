@@ -347,6 +347,8 @@ void RasterizationStage::CRasterizer::DrawScanline(HighPrecision fLeftX, HighPre
 {
 	int iStartX = ceil(fLeftX);
 	int iEndX = ceil(fRightX);
+	Helper::Clamp(iStartX, 0, SCREEN_WIDTH - 1);
+	Helper::Clamp(iEndX, 0, SCREEN_WIDTH - 1);
 	if (iEndX > iStartX)
 	{
 		auto fDeltaX = fRightX - fLeftX;

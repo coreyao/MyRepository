@@ -12,10 +12,10 @@ public:
 	{
 	}
 
-	Vec2 operator-(const Vec2& rh);
-	Vec2 operator+(const Vec2& rh);
-	Vec2 operator/(float fScalar);
-	Vec2 operator*(float fScalar);
+	Vec2 operator-(const Vec2& rh) const;
+	Vec2 operator+(const Vec2& rh) const;
+	Vec2 operator/(float fScalar) const;
+	Vec2 operator*(float fScalar) const;
 	void operator+=(const Vec2& rh);
 
 	void set(float _x, float _y);
@@ -31,8 +31,12 @@ public:
 	Vec4(float _x, float _y, float _z, float _w);
 
 	void set(float _x, float _y, float _z, float _w);
+
 	void operator*=(float fScalar);
 	void operator/=(float fScalar);
+
+	Vec4 operator*(float fScalar) const;
+	Vec4 operator+(const Vec4& rh) const;
 
 	union
 	{

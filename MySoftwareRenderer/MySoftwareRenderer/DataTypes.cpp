@@ -122,7 +122,7 @@ Color3B Color3B::operator*=(const Color3B& rh)
 	return *this;
 }
 
-Color4F Color4F::operator*(const Color4F& rh)
+Color4F Color4F::operator*(const Color4F& rh) const
 {
 	return Color4F(r * rh.r, g * rh.g, b * rh.b, a * rh.a);
 }
@@ -160,17 +160,17 @@ void Color4F::operator+=(const Color4F& rh)
 	this->b += rh.b;
 }
 
-Color4F Color4F::operator-(const Color4F& rh)
+Color4F Color4F::operator-(const Color4F& rh) const
 {
 	return Color4F(r - rh.r, g - rh.g, b - rh.b, a - rh.a);
 }
 
-Color4F Color4F::operator/(float fScalar)
+Color4F Color4F::operator/(float fScalar) const
 {
 	return Color4F(r / fScalar, g / fScalar, b / fScalar, a / fScalar);
 }
 
-Color4F Color4F::operator*(float fScalar)
+Color4F Color4F::operator*(float fScalar) const
 {
 	return Color4F(r * fScalar, g * fScalar, b * fScalar, a * fScalar);
 }
@@ -183,7 +183,7 @@ void Color4F::Set(float _r, float _g, float _b, float _a)
 	a = _a;
 }
 
-Color4F Color4F::operator+(const Color4F& rh)
+Color4F Color4F::operator+(const Color4F& rh) const
 {
 	return Color4F(this->r + rh.r, this->g + rh.g, this->b + rh.b, this->a + rh.a);
 }

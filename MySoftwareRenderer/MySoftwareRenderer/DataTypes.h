@@ -53,12 +53,12 @@ struct Color4F
 		a = _a;
 	}
 
-	Color4F operator*(const Color4F& rh);
-	Color4F operator-(const Color4F& rh);
-	Color4F operator/(float fScalar);
-	Color4F operator*(float fScalar);
+	Color4F operator*(const Color4F& rh) const;
+	Color4F operator-(const Color4F& rh) const;
+	Color4F operator/(float fScalar) const;
+	Color4F operator*(float fScalar) const;
 	void operator+=(const Color4F& rh);
-	Color4F operator+(const Color4F& rh);
+	Color4F operator+(const Color4F& rh) const;
 
 	void operator*=(float fScalar);
 
