@@ -11,24 +11,24 @@ void CPipeline::Draw()
 	for (auto& curFace : m_vRenderList)
 	{
 		ApplicationStage::TransformLocalToWorld(*curFace, curFace->m_pRenderState->m_worldTransform);
-		if (!curFace->m_pRenderState->m_bEnableCullFace || !ApplicationStage::IsBackFace(*curFace, curFace->m_pRenderState->m_eVertexOrder))
+		if (!curFace->m_bUseNormalizedPos)
 		{
-			if ( !curFace->m_bUseNormalizedPos )
-			{
-				GeometryStage::TransformWorldToCamera(*curFace);
-				GeometryStage::TransformCameraToClip(*curFace);
+			GeometryStage::TransformWorldToCamera(*curFace);
+			GeometryStage::TransformCameraToClip(*curFace);
 
-				bool bAddFace = false;
-				SFaceRuntime newFace;
-				if (GeometryStage::DoClipInClipSpace(*curFace, bAddFace, newFace))
-					continue;
+			bool bAddFace = false;
+			SFaceRuntime newFace;
+			if (GeometryStage::DoClipInClipSpace(*curFace, bAddFace, newFace))
+				continue;
 
-				if (bAddFace)
-					tempRenderList.push_back(newFace);
+			if (curFace->m_pRenderState->m_bEnableCullFace && GeometryStage::IsBackFace(*curFace, curFace->m_pRenderState->m_eVertexOrder))
+				continue;
+			
+			if (bAddFace)
+				tempRenderList.push_back(newFace);
 
-				GeometryStage::TransformClipToScreen(*curFace);
-				RasterizationStage::CRasterizer::GetInstance()->DrawAnyTriangle(curFace->m_vertex1, curFace->m_vertex2, curFace->m_vertex3, curFace->m_fAlpha, curFace->m_pRenderState);
-			}
+			GeometryStage::TransformClipToScreen(*curFace);
+			RasterizationStage::CRasterizer::GetInstance()->DrawAnyTriangle(curFace->m_vertex1, curFace->m_vertex2, curFace->m_vertex3, curFace->m_fAlpha, curFace->m_pRenderState);
 		}
 	}
 
