@@ -395,7 +395,7 @@ Color4F RasterizationStage::CRasterizer::SampleTexture(int iTextureID, Vec2 uv)
 	}
 	else
 	{
-		return SampleNearset(pTexture, uv);
+		return SampleLinear(pTexture, uv);
 	}
 }
 
