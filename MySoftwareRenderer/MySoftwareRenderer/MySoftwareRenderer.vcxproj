@@ -44,6 +44,7 @@
     <ClInclude Include="RasterizationStage.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="DataTypes.h" />
+    <ClInclude Include="ShaderBase.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="Math\Matrix.h" />
     <ClInclude Include="Math\Vector.h" />

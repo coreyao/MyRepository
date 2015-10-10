@@ -18,6 +18,9 @@
     <Filter Include="Source\Image">
       <UniqueIdentifier>{9447ce13-7b7f-4155-b28d-9a344318137d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Shader">
+      <UniqueIdentifier>{a6eb5f45-be43-4fa6-94fb-a2190edad593}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3DConsole.cpp">
@@ -123,6 +126,9 @@
     </ClInclude>
     <ClInclude Include="Math\fixedpoint.h">
       <Filter>Source\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderBase.h">
+      <Filter>Source\Shader</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
