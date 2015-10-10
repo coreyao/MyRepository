@@ -69,7 +69,7 @@ bool GeometryStage::DoClipInClipSpace(SFaceRuntime& face, bool& bAddFace, SFaceR
 					tempFace.m_vertex1.m_pos.y = tempFace.m_vertex1.m_pos.y + (tempFace.m_vertex2.m_pos.y - tempFace.m_vertex1.m_pos.y) * t;
 					tempFace.m_vertex1.m_pos.w = tempFace.m_vertex1.m_pos.w + (tempFace.m_vertex2.m_pos.w - tempFace.m_vertex1.m_pos.w) * t;
 
-					if (tempFace.m_pRenderState->m_bEnableCullFace && IsBackFace(tempFace))
+					if (tempFace.m_pRenderState->m_bEnableCullFace && IsBackFace(tempFace, tempFace.m_pRenderState->m_eVertexOrder))
 						return true;
 
 					SVertexRuntime newVertex1;
@@ -118,7 +118,7 @@ bool GeometryStage::DoClipInClipSpace(SFaceRuntime& face, bool& bAddFace, SFaceR
 					tempFace.m_vertex2.m_pos.y = tempFace.m_vertex1.m_pos.y + (tempFace.m_vertex2.m_pos.y - tempFace.m_vertex1.m_pos.y) * t;
 					tempFace.m_vertex2.m_pos.w = tempFace.m_vertex1.m_pos.w + (tempFace.m_vertex2.m_pos.w - tempFace.m_vertex1.m_pos.w) * t;
 
-					if (tempFace.m_pRenderState->m_bEnableCullFace && IsBackFace(tempFace))
+					if (tempFace.m_pRenderState->m_bEnableCullFace && IsBackFace(tempFace, tempFace.m_pRenderState->m_eVertexOrder))
 						return true;
 
 					SVertexRuntime newVertex1;
@@ -167,7 +167,7 @@ bool GeometryStage::DoClipInClipSpace(SFaceRuntime& face, bool& bAddFace, SFaceR
 					tempFace.m_vertex3.m_pos.y = tempFace.m_vertex1.m_pos.y + (tempFace.m_vertex3.m_pos.y - tempFace.m_vertex1.m_pos.y) * t;
 					tempFace.m_vertex3.m_pos.w = tempFace.m_vertex1.m_pos.w + (tempFace.m_vertex3.m_pos.w - tempFace.m_vertex1.m_pos.w) * t;
 
-					if (tempFace.m_pRenderState->m_bEnableCullFace && IsBackFace(tempFace))
+					if (tempFace.m_pRenderState->m_bEnableCullFace && IsBackFace(tempFace, tempFace.m_pRenderState->m_eVertexOrder))
 						return true;
 
 					SVertexRuntime newVertex1;
