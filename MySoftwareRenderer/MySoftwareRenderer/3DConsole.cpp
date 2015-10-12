@@ -34,7 +34,7 @@ void InitMesh()
 	pFileCube->SetMaterial(material1, 0);
 	pFileCube->m_transform.SetPosition(Vec3(0, -25, -100));
 	pFileCube->m_transform.SetScale(Vec3(1, 1, -1));
-	pFileCube->m_transform.SetRotation(Vec3(0, 60, 0));
+	//pFileCube->m_transform.SetRotation(Vec3(0, 60, 0));
 	pFileCube->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
 	g_vMesh.push_back(pFileCube);
 
@@ -209,7 +209,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				pMesh->m_renderState.m_bDrawWireFrame = !pMesh->m_renderState.m_bDrawWireFrame;
 			}
 		}
-		else if (KEY_DOWN('C'))
+		else if (KEY_DOWN('F'))
 		{
 			for (auto& pMesh : g_vMesh)
 			{
