@@ -190,3 +190,16 @@ Vec4 Vec4::operator+(const Vec4& rh) const
 {
 	return Vec4(x + rh.x, y + rh.y, z + rh.z, w + rh.w);
 }
+
+void Vec4::operator+=(const Vec4& rh)
+{
+	x += rh.x;
+	y += rh.y;
+	z += rh.z;
+	w += rh.w;
+}
+
+float Vec4::Dot(const Vec4& rh) const
+{
+	return x * rh.x + y * rh.y + z * rh.z + w * rh.w;
+}

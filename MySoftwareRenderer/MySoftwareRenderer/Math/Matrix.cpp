@@ -131,6 +131,11 @@ Mat4 Mat4::CreateRotationMat(float x, float y, float z)
 	return rotateYMat * rotateXMat * rotateZMat;
 }
 
+Mat4 Mat4::CreateRotationMat(const Quaternion& quat)
+{
+	return Mat4::IDENTITY;
+}
+
 Mat4 Mat4::CreateScaleMat(float x, float y, float z)
 {
 	Mat4 ret = IDENTITY;

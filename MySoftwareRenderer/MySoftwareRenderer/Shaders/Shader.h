@@ -21,6 +21,8 @@ class CFragmentShaderBase : public CShaderBase
 {
 public:
 	virtual Color4F ProcessFragment(SFragment* pFragment) = 0;
+
+	vector<CMaterial*> m_vMaterial;
 };
 
 class CMeshVertexShader : public CVertexShaderBase
@@ -33,4 +35,12 @@ class CMeshFragmentShader : public CFragmentShaderBase
 {
 public:
 	virtual Color4F ProcessFragment(SFragment* pFragment) override;
+};
+
+class CSkinMeshVertexShader : public CVertexShaderBase
+{
+public:
+	virtual void ProcessVertex(SVertexRuntime* pVertex) override;
+
+	Vec4* m_vMatrixPallet;
 };

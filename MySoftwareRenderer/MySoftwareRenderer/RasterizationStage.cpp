@@ -392,13 +392,13 @@ Color4F RasterizationStage::CRasterizer::SampleTexture(int iTextureID, Vec2 uv)
 	//return Color4F(1.0, 1.0, 1.0, 1.f);
 
 	const CTexture* pTexture = CImageManager::GetInstance()->FindTexture(iTextureID);
-	if ( !pTexture )
+	if (!pTexture)
 	{
 		return Color4F::WHITE;
 	}
 	else
 	{
-		return SampleLinear(pTexture, uv);
+		return SampleNearset(pTexture, uv);
 	}
 }
 

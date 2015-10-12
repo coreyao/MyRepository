@@ -1,12 +1,14 @@
 #pragma once
 
 #include "Vector.h"
+#include "Quaternion.h"
 
 class Mat4
 {
 public:
 	static Mat4 CreateTranslationMat(float x, float y, float z);
 	static Mat4 CreateRotationMat(float x, float y, float z);
+	static Mat4 CreateRotationMat(const Quaternion& quat);
 	static Mat4 CreateScaleMat(float x, float y, float z);
 	static Mat4 CreatePerspectiveMat(float fVerticleFov, float whRatio, float n, float f);
 	static Mat4 CreateOrthegraphicsMat(float l, float r, float t, float b, float n, float f);

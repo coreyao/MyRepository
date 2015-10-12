@@ -15,6 +15,7 @@
 #include <map>
 #include <list>
 #include <cassert>
+#include <functional>
 
 #include "Math/Vector.h"
 #include "Math/Matrix.h"

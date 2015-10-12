@@ -274,7 +274,6 @@ struct SRenderState
 	: m_bEnableCullFace(true)
 	, m_bDrawWireFrame(true)
 	, m_eVertexOrder(EVertexOrder_ClockWise)
-	, m_pMaterial(nullptr)
 	, m_pVertexShader(nullptr)
 	, m_pFragmentShader(nullptr)
 	{
@@ -283,7 +282,6 @@ struct SRenderState
 	bool m_bEnableCullFace;
 	bool m_bDrawWireFrame;
 	EVertexOrder m_eVertexOrder;
-	CMaterial* m_pMaterial;
 	CVertexShaderBase* m_pVertexShader;
 	CFragmentShaderBase* m_pFragmentShader;
 };
@@ -300,8 +298,8 @@ public:
 
 	CVertexShaderBase* m_pVertexShader;
 	CFragmentShaderBase* m_pFragmentShader;
-	SRenderState m_renderState;
 	STransform m_transform;
+	SRenderState m_renderState;
 };
 
 typedef shared_ptr<CRenderObject> RenderObjPtr;

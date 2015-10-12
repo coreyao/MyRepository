@@ -30,7 +30,7 @@ void InitMesh()
 	CMaterial material1;
 	material1.SetBaseColorTexture("HelloWorld.png");
 	CMesh* pFileCube = new CMesh;
-	pFileCube->InitFromFile("cube.CSTM");
+	pFileCube->InitFromFile("testanim.CSTM");
 	pFileCube->SetMaterial(material1, 0);
 	pFileCube->m_transform.SetPosition(Vec3(0, -25, -100));
 	pFileCube->m_transform.SetScale(Vec3(1, 1, -1));
