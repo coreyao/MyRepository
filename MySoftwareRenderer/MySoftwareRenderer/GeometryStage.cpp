@@ -13,12 +13,9 @@ void GeometryStage::TransformWorldToCamera(SFaceRuntime& face)
 void GeometryStage::TransformCameraToClip(SFaceRuntime& face)
 {
 	const Mat4& rProjMat = CDirector::GetInstance()->GetCurProjectionMat();
-	if (!face.m_bUseNormalizedPos)
-	{
-		face.m_vertex1.m_pos = rProjMat * face.m_vertex1.m_pos;
-		face.m_vertex2.m_pos = rProjMat * face.m_vertex2.m_pos;
-		face.m_vertex3.m_pos = rProjMat * face.m_vertex3.m_pos;
-	}
+	face.m_vertex1.m_pos = rProjMat * face.m_vertex1.m_pos;
+	face.m_vertex2.m_pos = rProjMat * face.m_vertex2.m_pos;
+	face.m_vertex3.m_pos = rProjMat * face.m_vertex3.m_pos;
 }
 
 bool GeometryStage::DoClipInClipSpace(SFaceRuntime& face, bool& bAddFace, SFaceRuntime& addFace)
@@ -55,7 +52,7 @@ bool GeometryStage::DoClipInClipSpace(SFaceRuntime& face, bool& bAddFace, SFaceR
 		if (iCount == 0)
 		{
 			bAddFace = false;
-			return false;
+			return GeometryStage::IsBackFace(face, face.m_pRenderState->m_eVertexOrder);
 		}
 		else if (iCount < 3)
 		{
@@ -66,7 +63,7 @@ bool GeometryStage::DoClipInClipSpace(SFaceRuntime& face, bool& bAddFace, SFaceR
 				{
 					float t = (fNear - (-tempFace.m_vertex1.m_pos.w)) / ((-tempFace.m_vertex2.m_pos.w) - (-tempFace.m_vertex1.m_pos.w));
 					tempFace.m_vertex1.m_pos = Helper::Lerp(tempFace.m_vertex1.m_pos, tempFace.m_vertex2.m_pos, t);
-					if (tempFace.m_pRenderState->m_bEnableCullFace && IsBackFace(tempFace, tempFace.m_pRenderState->m_eVertexOrder))
+					if (IsBackFace(tempFace, tempFace.m_pRenderState->m_eVertexOrder))
 						return true;
 
 					SVertexRuntime newVertex1;
@@ -106,7 +103,7 @@ bool GeometryStage::DoClipInClipSpace(SFaceRuntime& face, bool& bAddFace, SFaceR
 				{
 					float t = (fNear - (-tempFace.m_vertex1.m_pos.w)) / ((-tempFace.m_vertex2.m_pos.w) - (-tempFace.m_vertex1.m_pos.w));
 					tempFace.m_vertex2.m_pos = Helper::Lerp(tempFace.m_vertex1.m_pos, tempFace.m_vertex2.m_pos, t);
-					if (tempFace.m_pRenderState->m_bEnableCullFace && IsBackFace(tempFace, tempFace.m_pRenderState->m_eVertexOrder))
+					if (IsBackFace(tempFace, tempFace.m_pRenderState->m_eVertexOrder))
 						return true;
 
 					SVertexRuntime newVertex1;
@@ -146,7 +143,7 @@ bool GeometryStage::DoClipInClipSpace(SFaceRuntime& face, bool& bAddFace, SFaceR
 				{
 					float t = (fNear - (-tempFace.m_vertex1.m_pos.w)) / ((-tempFace.m_vertex3.m_pos.w) - (-tempFace.m_vertex1.m_pos.w));
 					tempFace.m_vertex3.m_pos = Helper::Lerp(tempFace.m_vertex1.m_pos, tempFace.m_vertex3.m_pos, t);
-					if (tempFace.m_pRenderState->m_bEnableCullFace && IsBackFace(tempFace, tempFace.m_pRenderState->m_eVertexOrder))
+					if (IsBackFace(tempFace, tempFace.m_pRenderState->m_eVertexOrder))
 						return true;
 
 					SVertexRuntime newVertex1;
@@ -242,43 +239,40 @@ bool GeometryStage::DoClipInClipSpace(SFaceRuntime& face, bool& bAddFace, SFaceR
 
 void GeometryStage::TransformClipToScreen(SFaceRuntime& face)
 {
-	if (!face.m_bUseNormalizedPos)
 	{
-		{
-			SVertexRuntime& vertex = face.m_vertex1;
-			float rhw = 1.0f / vertex.m_pos.w;
-			vertex.m_pos *= rhw;
-			vertex.m_pos.x = (vertex.m_pos.x * 0.5f + 0.5f) * (SCREEN_WIDTH)-0.5f;
-			vertex.m_pos.y = (-vertex.m_pos.y * 0.5f + 0.5f) * (SCREEN_HEIGHT)-0.5f;
-			vertex.m_pos.w = rhw;
-			vertex.m_UV.x *= rhw;
-			vertex.m_UV.y *= rhw;
-			vertex.m_color *= rhw;
-		}
+		SVertexRuntime& vertex = face.m_vertex1;
+		float rhw = 1.0f / vertex.m_pos.w;
+		vertex.m_pos *= rhw;
+		vertex.m_pos.x = (vertex.m_pos.x * 0.5f + 0.5f) * (SCREEN_WIDTH)-0.5f;
+		vertex.m_pos.y = (-vertex.m_pos.y * 0.5f + 0.5f) * (SCREEN_HEIGHT)-0.5f;
+		vertex.m_pos.w = rhw;
+		vertex.m_UV.x *= rhw;
+		vertex.m_UV.y *= rhw;
+		vertex.m_color *= rhw;
+	}
 
-		{
-			SVertexRuntime& vertex = face.m_vertex2;
-			float rhw = 1.0f / vertex.m_pos.w;
-			vertex.m_pos *= rhw;
-			vertex.m_pos.x = (vertex.m_pos.x * 0.5f + 0.5f) * (SCREEN_WIDTH)-0.5f;
-			vertex.m_pos.y = (-vertex.m_pos.y * 0.5f + 0.5f) * (SCREEN_HEIGHT)-0.5f;
-			vertex.m_pos.w = rhw;
-			vertex.m_UV.x *= rhw;
-			vertex.m_UV.y *= rhw;
-			vertex.m_color *= rhw;
-		}
+	{
+		SVertexRuntime& vertex = face.m_vertex2;
+		float rhw = 1.0f / vertex.m_pos.w;
+		vertex.m_pos *= rhw;
+		vertex.m_pos.x = (vertex.m_pos.x * 0.5f + 0.5f) * (SCREEN_WIDTH)-0.5f;
+		vertex.m_pos.y = (-vertex.m_pos.y * 0.5f + 0.5f) * (SCREEN_HEIGHT)-0.5f;
+		vertex.m_pos.w = rhw;
+		vertex.m_UV.x *= rhw;
+		vertex.m_UV.y *= rhw;
+		vertex.m_color *= rhw;
+	}
 
-		{
-			SVertexRuntime& vertex = face.m_vertex3;
-			float rhw = 1.0f / vertex.m_pos.w;
-			vertex.m_pos *= rhw;
-			vertex.m_pos.x = (vertex.m_pos.x * 0.5f + 0.5f) * (SCREEN_WIDTH)-0.5f;
-			vertex.m_pos.y = (-vertex.m_pos.y * 0.5f + 0.5f) * (SCREEN_HEIGHT)-0.5f;
-			vertex.m_pos.w = rhw;
-			vertex.m_UV.x *= rhw;
-			vertex.m_UV.y *= rhw;
-			vertex.m_color *= rhw;
-		}
+	{
+		SVertexRuntime& vertex = face.m_vertex3;
+		float rhw = 1.0f / vertex.m_pos.w;
+		vertex.m_pos *= rhw;
+		vertex.m_pos.x = (vertex.m_pos.x * 0.5f + 0.5f) * (SCREEN_WIDTH)-0.5f;
+		vertex.m_pos.y = (-vertex.m_pos.y * 0.5f + 0.5f) * (SCREEN_HEIGHT)-0.5f;
+		vertex.m_pos.w = rhw;
+		vertex.m_UV.x *= rhw;
+		vertex.m_UV.y *= rhw;
+		vertex.m_color *= rhw;
 	}
 }
 
@@ -315,6 +309,9 @@ bool GeometryStage::IsVertexInCVV(const Vec4& pos)
 
 bool GeometryStage::IsBackFace(SFaceRuntime& face, EVertexOrder eOrder /*= EVertexOrder_ClockWise*/)
 {
+	if (!face.m_pRenderState->m_bEnableCullFace)
+		return false;
+
 	Vec3 p1;
 	Vec3 p2;
 	if (eOrder == EVertexOrder_ClockWise)

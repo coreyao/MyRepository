@@ -14,7 +14,7 @@ public:
 
 	Mat4(const Vec3& xAxis, const Vec3& yAxis, const Vec3& zAxis, const Vec3& origin);
 
-	Mat4 operator*(const Mat4& rh);
+	Mat4 operator*(const Mat4& rh) const;
 	void operator*=(const Mat4& rh);
 
 	Mat4 operator*(float fScalar);

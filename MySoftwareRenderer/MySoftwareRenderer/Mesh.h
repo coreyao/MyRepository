@@ -36,6 +36,7 @@ public:
 	void InitFromFile(const char* pMeshFileName);
 	void InitFromData(SMeshData* pMeshData);
 	void InitRuntimeData();
+	void InitShader();
 
 	void SetMaterial(const CMaterial& rMaterial, int iIndex);
 	void SetVisible(bool bVisible, const std::string& sSubMeshName);

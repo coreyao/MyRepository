@@ -109,7 +109,15 @@ struct SVertexRuntime
 	Color4F m_color;
 	Vec4 m_boneIndex;
 	Vec4 m_blendWeight;
-	Vec3 m_normalizePos;
+};
+
+struct SFragment
+{
+	Vec4 m_pos;
+	Vec3 m_normal;
+	Vec3 m_tangent;
+	Vec2 m_UV;
+	Color4F m_color;
 };
 
 class SRenderState;
@@ -117,7 +125,6 @@ struct SFaceRuntime
 {
 	SFaceRuntime()
 	: m_pRenderState(nullptr)
-	, m_bUseNormalizedPos(false)
 	, m_fAlpha(1.0f)
 	{
 	}
@@ -126,7 +133,6 @@ struct SFaceRuntime
 	SVertexRuntime m_vertex2;
 	SVertexRuntime m_vertex3;
 	float m_fAlpha;
-	bool m_bUseNormalizedPos;
 	SRenderState* m_pRenderState;
 };
 
@@ -259,6 +265,8 @@ enum EVertexOrder
 	EVertexOrder_Counter_ClockWise,
 };
 
+class CVertexShaderBase;
+class CFragmentShaderBase;
 class CMaterial;
 struct SRenderState
 {
@@ -267,23 +275,31 @@ struct SRenderState
 	, m_bDrawWireFrame(true)
 	, m_eVertexOrder(EVertexOrder_ClockWise)
 	, m_pMaterial(nullptr)
+	, m_pVertexShader(nullptr)
+	, m_pFragmentShader(nullptr)
 	{
-		m_worldTransform = Mat4::IDENTITY;
 	}
 
 	bool m_bEnableCullFace;
 	bool m_bDrawWireFrame;
 	EVertexOrder m_eVertexOrder;
-	Mat4 m_worldTransform;
 	CMaterial* m_pMaterial;
+	CVertexShaderBase* m_pVertexShader;
+	CFragmentShaderBase* m_pFragmentShader;
 };
 
 class CRenderObject
 {
 public:
+	CRenderObject() : m_pVertexShader(nullptr), m_pFragmentShader(nullptr) 
+	{
+	}
+
 	virtual void Update(float dt) = 0;
 	virtual void Render() = 0;
 
+	CVertexShaderBase* m_pVertexShader;
+	CFragmentShaderBase* m_pFragmentShader;
 	SRenderState m_renderState;
 	STransform m_transform;
 };

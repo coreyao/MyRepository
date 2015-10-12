@@ -25,6 +25,7 @@
     <ClCompile Include="RasterizationStage.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DataTypes.cpp" />
+    <ClCompile Include="Shaders\Shader.cpp" />
     <ClCompile Include="Utility.cpp" />
     <ClCompile Include="Math\Matrix.cpp" />
     <ClCompile Include="Math\Vector.cpp" />
@@ -44,7 +45,7 @@
     <ClInclude Include="RasterizationStage.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="DataTypes.h" />
-    <ClInclude Include="ShaderBase.h" />
+    <ClInclude Include="Shaders\Shader.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="Math\Matrix.h" />
     <ClInclude Include="Math\Vector.h" />

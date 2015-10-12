@@ -1,6 +1,7 @@
 #include "Mesh.h"
 #include "Pipeline.h"
 #include "Director.h"
+#include "Shaders/Shader.h"
 
 CMesh::CMesh()
 {
@@ -14,11 +15,6 @@ CMesh::~CMesh()
 
 void CMesh::Update(float dt)
 {
-	if (m_transform.IsTransformDirty())
-	{
-		for (auto& rSubmesh : m_vSubMesh)
-			m_renderState.m_worldTransform = m_transform.GetTransformMat() * rSubmesh->m_meshMat;
-	}
 }
 
 void CMesh::Render()
@@ -26,6 +22,11 @@ void CMesh::Render()
 	for (int i = 0; i < m_vSubMesh.size(); ++i)
 	{
 		CSubMesh* rSubmesh = m_vSubMesh[i];
+		if (m_transform.IsTransformDirty())
+		{
+			m_pVertexShader->ModelMat = m_transform.GetTransformMat() * rSubmesh->m_meshMat;
+		}
+
 		for (int j = 0; j < rSubmesh->m_vFaceRunTimeOrigin.size(); ++j)
 		{
 			SFaceRuntime* rFace = &rSubmesh->m_vFaceRunTime[j];
@@ -104,7 +105,6 @@ void CMesh::InitRuntimeData()
 			curFace.m_vertex2 = subMesh->m_vVertexRunTime[rFace.m_VertexIndex2];
 			curFace.m_vertex3 = subMesh->m_vVertexRunTime[rFace.m_VertexIndex3];
 			curFace.m_pRenderState = &m_renderState;
-			curFace.m_bUseNormalizedPos = subMesh->m_bUseNormalizedPos;
 			subMesh->m_vFaceRunTimeOrigin.push_back(curFace);
 		}
 
@@ -112,4 +112,15 @@ void CMesh::InitRuntimeData()
 
 		m_vSubMesh.push_back(subMesh);
 	}
+
+	InitShader();
+}
+
+void CMesh::InitShader()
+{
+	m_pVertexShader = new CMeshVertexShader;
+	m_pFragmentShader = new CMeshFragmentShader;
+
+	m_renderState.m_pVertexShader = m_pVertexShader;
+	m_renderState.m_pFragmentShader = m_pFragmentShader;
 }

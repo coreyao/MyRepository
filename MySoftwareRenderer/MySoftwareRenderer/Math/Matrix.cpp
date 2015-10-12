@@ -1,7 +1,7 @@
 #include "Matrix.h"
 #include "../Utility.h"
 
-Mat4 Mat4::operator*(const Mat4& rh)
+Mat4 Mat4::operator*(const Mat4& rh) const
 {
 	Mat4 ret;
 	ret.m[0] = m[0] * rh.m[0] + m[4] * rh.m[1] + m[8] * rh.m[2] + m[12] * rh.m[3];

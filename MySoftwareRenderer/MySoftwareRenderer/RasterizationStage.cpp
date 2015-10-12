@@ -1,5 +1,6 @@
 #include "RasterizationStage.h"
 #include "Image/ImageManager.h"
+#include "Shaders/Shader.h"
 
 bool RasterizationStage::InitDX(HINSTANCE hInstance, HWND hWnd, int width, int height)
 {
@@ -369,9 +370,11 @@ void RasterizationStage::CRasterizer::DrawScanline(HighPrecision fLeftX, HighPre
 			int iPixelY = y;
 			if (CanDrawPixel(iPixelX, iPixelY, curZ))
 			{
-				Color4F finalColor = curColor / curInverseZ * fAlpha;
-				if (pRenderState->m_pMaterial)
-					finalColor = SampleTexture(pRenderState->m_pMaterial->GetBaseColorTex(), curUV / curInverseZ) * finalColor;
+				SFragment frag;
+				frag.m_pos = Vec4(i, iPixelY, curZ, 1.0f);
+				frag.m_color = curColor / curInverseZ * fAlpha;
+				frag.m_UV = curUV / curInverseZ;
+				Color4F finalColor = pRenderState->m_pFragmentShader->ProcessFragment(&frag);
 				if (AlphaTest(finalColor.a))
 					DrawPixel(iPixelX, iPixelY, finalColor);
 			}
