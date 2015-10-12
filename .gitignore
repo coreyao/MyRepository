@@ -43,6 +43,7 @@ local.properties
 *.log
 *.tlog
 *.exe
+*.idb
 
 # Build results
 

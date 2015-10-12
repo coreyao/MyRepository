@@ -38,6 +38,8 @@ void InitMesh()
 	pFileCube->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
 	g_vMesh.push_back(pFileCube);
 
+	pFileCube->m_animator.PlayAnim(0, 29, true, nullptr);
+
 	{
 		SMeshData meshData;
 		SSubMeshData subMeshData1;

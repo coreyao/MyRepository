@@ -163,6 +163,8 @@ CMesh::~CMesh()
 
 void CMesh::Update(float dt)
 {
+	m_animator.Update(dt);
+
 	if (CSkinMeshVertexShader* pVS = dynamic_cast<CSkinMeshVertexShader*>(m_pVertexShader))
 	{
 		pVS->m_vMatrixPallet = m_skeleton.GetMatrixPalette();
