@@ -13,7 +13,14 @@ void CMaterial::SetBaseColorTexture(const std::string& sFileName)
 
 Mat4 STransform::GetRotationMat()
 {
-	return Mat4::CreateRotationMat(m_rotation.x, m_rotation.y, m_rotation.z);
+	if (m_bUseQuaternion)
+	{
+		return Mat4::CreateRotationMat(m_quat);
+	}
+	else
+	{
+		return Mat4::CreateRotationMat(m_rotation.x, m_rotation.y, m_rotation.z);
+	}
 }
 
 void STransform::Reset()
@@ -58,6 +65,12 @@ void STransform::SetRotation(const Vec3& rot)
 	m_bTransformDirty = true;
 }
 
+void STransform::SetRotation(const Quaternion& rot)
+{
+	m_quat = rot;
+	m_bTransformDirty = true;
+}
+
 bool STransform::IsTransformDirty()
 {
 	return m_bTransformDirty;
@@ -76,6 +89,11 @@ const Vec3& STransform::GetRotation() const
 const Vec3& STransform::GetScale() const
 {
 	return m_scale;
+}
+
+void STransform::SetUseQuaternion(bool bVal)
+{
+	m_bUseQuaternion = bVal;
 }
 
 const Color4F Color4F::WHITE(1.0f, 1.0f, 1.0f, 1.0f);

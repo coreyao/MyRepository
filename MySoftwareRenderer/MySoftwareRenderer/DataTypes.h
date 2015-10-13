@@ -232,6 +232,7 @@ public:
 		m_mat = Mat4::IDENTITY;
 		m_scale.set(1.0f, 1.0f, 1.0f);
 		m_bTransformDirty = true;
+		m_bUseQuaternion = false;
 	}
 
 	Mat4 GetTransformMat();
@@ -243,20 +244,24 @@ public:
 
 	const Vec3& GetRotation() const;
 	void SetRotation(const Vec3& rot);
+	void SetRotation(const Quaternion& rot);
 
 	const Vec3& GetScale() const;
 	void SetScale(const Vec3& scale);
 
 	bool IsTransformDirty();
+	void SetUseQuaternion(bool bVal);
 
 private:
 	Vec3 m_pos;
 	Vec3 m_rotation;
+	Quaternion m_quat;
 	Vec3 m_scale;
 
 	Mat4 m_mat;
 
 	bool m_bTransformDirty;
+	bool m_bUseQuaternion;
 };
 
 enum EVertexOrder

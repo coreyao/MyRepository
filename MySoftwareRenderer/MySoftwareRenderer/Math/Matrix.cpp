@@ -133,7 +133,16 @@ Mat4 Mat4::CreateRotationMat(float x, float y, float z)
 
 Mat4 Mat4::CreateRotationMat(const Quaternion& quat)
 {
-	return Mat4::IDENTITY;
+	const float& w = quat.w;
+	const float& x = quat.x;
+	const float& y = quat.y;
+	const float& z = quat.z;
+
+	return Mat4(
+		Vec3(1 - 2 * y*y - 2 * z*z, 2 * x*y + 2 * w*z, 2 * x*z - 2 * w*y)
+		, Vec3(2 * x*y - 2 * w*z, 1 - 2 * x*x - 2 * z*z, 2 * y*z + 2 * w*x)
+		, Vec3(2 * x*z + 2 * w*y, 2 * y*z - 2 * w*x, 1 - 2 * x*x - 2 * y*y)
+		, Vec3());
 }
 
 Mat4 Mat4::CreateScaleMat(float x, float y, float z)

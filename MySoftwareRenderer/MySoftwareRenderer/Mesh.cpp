@@ -109,8 +109,7 @@ void CSkeletonAnimator::Update(float fDeltaTime)
 			{
 				Vec3 finalPos = pCurFrame->m_vKey[iKeyIdx].m_translation + (pNextFrame->m_vKey[iKeyIdx].m_translation - pCurFrame->m_vKey[iKeyIdx].m_translation) * fElapsedPercent;
 				Vec3 finalScale = pCurFrame->m_vKey[iKeyIdx].m_scale + (pNextFrame->m_vKey[iKeyIdx].m_scale - pCurFrame->m_vKey[iKeyIdx].m_scale) * fElapsedPercent;
-				Quaternion finalRotation;
-				//Quaternion::slerp(pCurFrame->m_vKey[iKeyIdx].m_rotation, pNextFrame->m_vKey[iKeyIdx].m_rotation, fElapsedPercent, &finalRotation);
+				Quaternion finalRotation = Quaternion::Slerp(pCurFrame->m_vKey[iKeyIdx].m_rotation, pNextFrame->m_vKey[iKeyIdx].m_rotation, fElapsedPercent);
 
 				Mat4 translationMatrix = Mat4::CreateTranslationMat(finalPos.x, finalPos.y, finalPos.z);
 				Mat4 scaleMatrix = Mat4::CreateScaleMat(finalScale.x, finalScale.y, finalScale.z);
