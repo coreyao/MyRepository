@@ -151,6 +151,7 @@ void CSkeletonAnimator::PlayAnim(int iStartFrameIndex, int iEndFrameIndex, bool 
 }
 
 CMesh::CMesh()
+: m_bSkinMesh(false)
 {
 }
 
@@ -275,7 +276,11 @@ void CMesh::InitRuntimeData()
 
 void CMesh::InitShader()
 {
-	m_pVertexShader = new CSkinMeshVertexShader;
+	if (m_bSkinMesh)
+		m_pVertexShader = new CSkinMeshVertexShader;
+	else
+		m_pVertexShader = new CMeshVertexShader;
+
 	m_pFragmentShader = new CMeshFragmentShader;
 
 	m_renderState.m_pVertexShader = m_pVertexShader;

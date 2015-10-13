@@ -101,4 +101,6 @@ public:
 
 	CSkeleton m_skeleton;
 	CSkeletonAnimator m_animator;
+
+	bool m_bSkinMesh;
 };
