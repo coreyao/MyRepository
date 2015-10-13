@@ -198,13 +198,14 @@ void CMesh::Render()
 	}
 }
 
-void CMesh::InitFromFile(const char* pMeshFileName)
+void CMesh::InitFromFile(const char* pMeshFileName, bool bSkinMesh)
 {
 	FILE* pMeshFile = fopen((MESH_FILE_DIR + pMeshFileName).c_str(), "rb");
 	if (!pMeshFile)
 		return;
 
 	m_meshData.ReadFromFile(pMeshFile);
+	m_bSkinMesh = bSkinMesh;
 	InitRuntimeData();
 }
 

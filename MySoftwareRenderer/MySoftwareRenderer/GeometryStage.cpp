@@ -114,9 +114,9 @@ bool GeometryStage::DoClipInClipSpace(SFaceRuntime& face, bool& bAddFace, SFaceR
 
 					SVertexRuntime newVertex2;
 					t = (fNear - (-face.m_vertex2.m_pos.w)) / ((-face.m_vertex1.m_pos.w) - (-face.m_vertex2.m_pos.w));
-					newVertex2.m_pos = Helper::Lerp(face.m_vertex1.m_pos, face.m_vertex2.m_pos, t);
-					newVertex2.m_UV = Helper::Lerp(face.m_vertex1.m_UV, face.m_vertex2.m_UV, t);
-					newVertex2.m_color = Helper::Lerp(face.m_vertex1.m_color, face.m_vertex2.m_color, t);
+					newVertex2.m_pos = Helper::Lerp(face.m_vertex2.m_pos, face.m_vertex1.m_pos, t);
+					newVertex2.m_UV = Helper::Lerp(face.m_vertex2.m_UV, face.m_vertex1.m_UV, t);
+					newVertex2.m_color = Helper::Lerp(face.m_vertex2.m_color, face.m_vertex1.m_color, t);
 
 					if (face.m_pRenderState->m_eVertexOrder == EVertexOrder_Counter_ClockWise)
 					{
@@ -210,20 +210,14 @@ bool GeometryStage::DoClipInClipSpace(SFaceRuntime& face, bool& bAddFace, SFaceR
 				}
 
 				float t = (fNear - (-pIn->m_pos.w)) / ((-pOut1->m_pos.w) - (-pIn->m_pos.w));
-				pOut1->m_pos.x = pIn->m_pos.x + (pOut1->m_pos.x - pIn->m_pos.x) * t;
-				pOut1->m_pos.y = pIn->m_pos.y + (pOut1->m_pos.y - pIn->m_pos.y) * t;
-				pOut1->m_pos.z = pIn->m_pos.z + (pOut1->m_pos.z - pIn->m_pos.z) * t;
-				pOut1->m_pos.w = pIn->m_pos.w + (pOut1->m_pos.w - pIn->m_pos.w) * t;
-				pOut1->m_UV = pIn->m_UV + (pOut1->m_UV - pIn->m_UV) * t;
-				pOut1->m_color = pIn->m_color + (pOut1->m_color - pIn->m_color) * t;
+				pOut1->m_pos = Helper::Lerp(pIn->m_pos, pOut1->m_pos, t);
+				pOut1->m_UV = Helper::Lerp(pIn->m_UV, pOut1->m_UV, t);
+				pOut1->m_color = Helper::Lerp(pIn->m_color, pOut1->m_color, t);
 
 				t = (fNear - (-pIn->m_pos.w)) / ((-pOut2->m_pos.w) - (-pIn->m_pos.w));
-				pOut2->m_pos.x = pIn->m_pos.x + (pOut2->m_pos.x - pIn->m_pos.x) * t;
-				pOut2->m_pos.y = pIn->m_pos.y + (pOut2->m_pos.y - pIn->m_pos.y) * t;
-				pOut2->m_pos.z = pIn->m_pos.z + (pOut2->m_pos.z - pIn->m_pos.z) * t;
-				pOut2->m_pos.w = pIn->m_pos.w + (pOut2->m_pos.w - pIn->m_pos.w) * t;
-				pOut2->m_UV = pIn->m_UV + (pOut2->m_UV - pIn->m_UV) * t;
-				pOut2->m_color = pIn->m_color + (pOut2->m_color - pIn->m_color) * t;
+				pOut2->m_pos = Helper::Lerp(pIn->m_pos, pOut2->m_pos, t);
+				pOut2->m_UV = Helper::Lerp(pIn->m_UV, pOut2->m_UV, t);
+				pOut2->m_color = Helper::Lerp(pIn->m_color, pOut2->m_color, t);
 
 				bAddFace = false;
 			}

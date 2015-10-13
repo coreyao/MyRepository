@@ -86,7 +86,7 @@ public:
 	virtual void Update(float dt);
 	virtual void Render();
 
-	void InitFromFile(const char* pMeshFileName);
+	void InitFromFile(const char* pMeshFileName, bool bSkinMesh);
 	void InitFromData(SMeshData* pMeshData);
 	void InitRuntimeData();
 	void InitShader();
