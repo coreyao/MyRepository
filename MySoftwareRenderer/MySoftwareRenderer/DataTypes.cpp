@@ -237,12 +237,12 @@ void SSubMeshData::WriteToFile(FILE* hFile)
 
 	if (iVertexCount > 0)
 	{
-		fwrite(&m_vVertex.front(), sizeof(SVertex), m_vVertex.size(), hFile);
+		fwrite(&m_vVertex.front(), sizeof(SVertexData), m_vVertex.size(), hFile);
 	}
 
 	if (iIndexCount > 0)
 	{
-		fwrite(&m_vFace.front(), sizeof(SFace), m_vFace.size(), hFile);
+		fwrite(&m_vFace.front(), sizeof(SFaceData), m_vFace.size(), hFile);
 	}
 
 	fwrite(&m_MeshMatrix, sizeof(m_MeshMatrix), 1, hFile);
@@ -280,13 +280,13 @@ void SSubMeshData::ReadFromFile(FILE* hFile)
 	if (iVertexCount > 0)
 	{
 		m_vVertex.resize(iVertexCount);
-		fread(&m_vVertex.front(), sizeof(SVertex), iVertexCount, hFile);
+		fread(&m_vVertex.front(), sizeof(SVertexData), iVertexCount, hFile);
 	}
 
 	if (iIndexCount > 0)
 	{
 		m_vFace.resize(iIndexCount);
-		fread(&m_vFace.front(), sizeof(SFace), iIndexCount, hFile);
+		fread(&m_vFace.front(), sizeof(SFaceData), iIndexCount, hFile);
 	}
 
 	fread(&m_MeshMatrix, sizeof(m_MeshMatrix), 1, hFile);
@@ -433,4 +433,18 @@ void SMeshData::ReadFromFile(FILE* hFile)
 			m_skeleton.m_vFrame[i].ReadFromFile(hFile);
 		}
 	}
+}
+
+SVariable SVariable::operator*(float fScalar) const
+{
+	SVariable ret;
+	ret.v4 = this->v4 * fScalar;
+	return ret;
+}
+
+SVariable SVariable::operator+(const SVariable& rh) const
+{
+	SVariable ret;
+	ret.v4 = this->v4 + rh.v4;
+	return ret;
 }

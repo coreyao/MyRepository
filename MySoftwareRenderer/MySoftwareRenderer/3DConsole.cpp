@@ -27,19 +27,19 @@ std::vector<CMesh*> g_vMesh;
 
 void InitMesh()
 {
-	CMaterial material1;
-	material1.SetBaseColorTexture("hama.png");
-	CMesh* pFileCube = new CMesh;
-	pFileCube->InitFromFile("hama.CSTM", true);
-	pFileCube->SetMaterial(material1, 0);
-	pFileCube->m_transform.SetPosition(Vec3(0, -25, -100));
-	pFileCube->m_transform.SetScale(Vec3(1, 1, -1));
-	//pFileCube->m_transform.SetUseQuaternion(true);
-	//pFileCube->m_transform.SetRotation(Quaternion(60, Vec3(0, 1, 0)));
-	//pFileCube->m_transform.SetRotation(Vec3(0, 60, 0));
-	pFileCube->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
-	g_vMesh.push_back(pFileCube);
-	pFileCube->m_animator.PlayAnim(0, 369, true, nullptr);
+	//CMaterial material1;
+	//material1.SetBaseColorTexture("hama.png");
+	//CMesh* pFileCube = new CMesh;
+	//pFileCube->InitFromFile("hama.CSTM", true);
+	//pFileCube->SetMaterial(material1, 0);
+	//pFileCube->m_transform.SetPosition(Vec3(0, -25, -100));
+	//pFileCube->m_transform.SetScale(Vec3(1, 1, -1));
+	////pFileCube->m_transform.SetUseQuaternion(true);
+	////pFileCube->m_transform.SetRotation(Quaternion(60, Vec3(0, 1, 0)));
+	////pFileCube->m_transform.SetRotation(Vec3(0, 60, 0));
+	//pFileCube->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
+	//g_vMesh.push_back(pFileCube);
+	//pFileCube->m_animator.PlayAnim(0, 369, true, nullptr);
 
 	CMaterial material2;
 	material2.SetBaseColorTexture("brickwall.png");
@@ -56,21 +56,21 @@ void InitMesh()
 		SMeshData meshData;
 		SSubMeshData subMeshData1;
 		{
-			SVertex vertex;
+			SVertexData vertex;
 			vertex.m_pos.set(-10, 10, 1);
 			vertex.m_UV.set(0, 0);
 			subMeshData1.m_vVertex.push_back(vertex);
 		}
 
 		{
-			SVertex vertex;
+			SVertexData vertex;
 			vertex.m_pos.set(-10, -10, 1);
 			vertex.m_UV.set(0, 1);
 			subMeshData1.m_vVertex.push_back(vertex);
 		}
 
 		{
-			SVertex vertex;
+			SVertexData vertex;
 			vertex.m_pos.set(10, -10, 1);
 			vertex.m_UV.set(1, 1);
 			subMeshData1.m_vVertex.push_back(vertex);
@@ -78,14 +78,14 @@ void InitMesh()
 
 
 		{
-			SVertex vertex;
+			SVertexData vertex;
 			vertex.m_pos.set(10, 10, 1);
 			vertex.m_UV.set(1, 0);
 			subMeshData1.m_vVertex.push_back(vertex);
 		}
 
 		{
-			SFace face;
+			SFaceData face;
 			face.m_VertexIndex1 = 0;
 			face.m_VertexIndex2 = 1;
 			face.m_VertexIndex3 = 2;
@@ -93,7 +93,7 @@ void InitMesh()
 		}
 
 		{
-			SFace face;
+			SFaceData face;
 			face.m_VertexIndex1 = 3;
 			face.m_VertexIndex2 = 0;
 			face.m_VertexIndex3 = 2;

@@ -75,9 +75,9 @@ struct Color4F
 	static const Color4F BLACK;
 };
 
-struct SFace
+struct SFaceData
 {
-	SFace()
+	SFaceData()
 	: m_VertexIndex1(0)
 	, m_VertexIndex2(0)
 	, m_VertexIndex3(0)
@@ -89,7 +89,7 @@ struct SFace
 	int m_VertexIndex3;
 };
 
-struct SVertex
+struct SVertexData
 {
 	Vec3 m_pos;
 	Vec3 m_normal;
@@ -100,15 +100,33 @@ struct SVertex
 	Vec4 m_blendWeight;
 };
 
+struct SVariable
+{
+	union
+	{
+		float ft;
+		struct{ Vec2 v2; };
+		struct{ Vec3 v3; };
+		struct{ Vec4 v4; };
+		struct{ Color4F color; };
+	};
+
+	SVariable operator*(float fScalar) const;
+	SVariable operator+(const SVariable& rh) const;
+};
+
 struct SVertexRuntime
 {
 	Vec4 m_pos;
-	Vec3 m_normal;
-	Vec3 m_tangent;
-	Vec2 m_UV;
-	Color4F m_color;
 	Vec4 m_boneIndex;
 	Vec4 m_blendWeight;
+	//Vec3 m_normal;
+	//Vec3 m_tangent;
+	//Vec2 m_UV;
+	//Color4F m_color;
+
+	vector<SVariable> m_vVertexAttributeVar;
+	vector<SVariable> m_vCustomVariable;
 };
 
 struct SFragment
@@ -118,9 +136,11 @@ struct SFragment
 	Vec3 m_tangent;
 	Vec2 m_UV;
 	Color4F m_color;
+
+	vector<SVariable> m_vVariable;
 };
 
-class SRenderState;
+struct SRenderState;
 struct SFaceRuntime
 {
 	SFaceRuntime()
@@ -210,8 +230,8 @@ struct SSubMeshData
 
 	std::string				m_MeshName;
 	Mat4					m_MeshMatrix;
-	std::vector<SFace>		m_vFace;
-	std::vector<SVertex>	m_vVertex;
+	std::vector<SFaceData>		m_vFace;
+	std::vector<SVertexData>	m_vVertex;
 	SMaterialData			m_cMaterial;
 };
 

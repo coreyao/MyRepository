@@ -71,13 +71,18 @@ bool GeometryStage::DoClipInClipSpace(SFaceRuntime& face, bool& bAddFace, SFaceR
 					newVertex1.m_pos = Helper::Lerp(face.m_vertex1.m_pos, face.m_vertex3.m_pos, t);
 					newVertex1.m_UV = Helper::Lerp(face.m_vertex1.m_UV, face.m_vertex3.m_UV, t);
 					newVertex1.m_color = Helper::Lerp(face.m_vertex1.m_color, face.m_vertex3.m_color, t);
-
+					newVertex1.m_vCustomVariable.resize(face.m_vertex1.m_vCustomVariable.size());
+					/*for (unsigned int i = 0; i < face.m_vertex1.m_vVariable.size(); ++i)
+						newVertex1.m_vVariable[i] = Helper::Lerp(face.m_vertex1.m_vVariable[i], face.m_vertex3.m_vVariable[i], t);
+						*/
 					SVertexRuntime newVertex2;
 					t = (fNear - (-face.m_vertex1.m_pos.w)) / ((-face.m_vertex2.m_pos.w) - (-face.m_vertex1.m_pos.w));
 					newVertex2.m_pos = Helper::Lerp(face.m_vertex1.m_pos, face.m_vertex2.m_pos, t);
 					newVertex2.m_UV = Helper::Lerp(face.m_vertex1.m_UV, face.m_vertex2.m_UV, t);
 					newVertex2.m_color = Helper::Lerp(face.m_vertex1.m_color, face.m_vertex2.m_color, t);
-
+					/*for (unsigned int i = 0; i < face.m_vertex1.m_vVariable.size(); ++i)
+						newVertex2.m_vVariable[i] = Helper::Lerp(face.m_vertex1.m_vVariable[i], face.m_vertex2.m_vVariable[i], t);
+						*/
 					if (face.m_pRenderState->m_eVertexOrder == EVertexOrder_Counter_ClockWise)
 					{
 						addFace.m_vertex1 = face.m_vertex2;
@@ -243,6 +248,9 @@ void GeometryStage::TransformClipToScreen(SFaceRuntime& face)
 		vertex.m_UV.x *= rhw;
 		vertex.m_UV.y *= rhw;
 		vertex.m_color *= rhw;
+		for (unsigned int i = 0; i < vertex.m_vCustomVariable.size(); ++i)
+			vertex.m_vCustomVariable[i] = vertex.m_vCustomVariable[i] * rhw;
+
 	}
 
 	{
@@ -255,6 +263,8 @@ void GeometryStage::TransformClipToScreen(SFaceRuntime& face)
 		vertex.m_UV.x *= rhw;
 		vertex.m_UV.y *= rhw;
 		vertex.m_color *= rhw;
+		for (unsigned int i = 0; i < vertex.m_vCustomVariable.size(); ++i)
+			vertex.m_vCustomVariable[i] = vertex.m_vCustomVariable[i] * rhw;
 	}
 
 	{
@@ -267,6 +277,8 @@ void GeometryStage::TransformClipToScreen(SFaceRuntime& face)
 		vertex.m_UV.x *= rhw;
 		vertex.m_UV.y *= rhw;
 		vertex.m_color *= rhw;
+		for (unsigned int i = 0; i < vertex.m_vCustomVariable.size(); ++i)
+			vertex.m_vCustomVariable[i] = vertex.m_vCustomVariable[i] * rhw;
 	}
 }
 
