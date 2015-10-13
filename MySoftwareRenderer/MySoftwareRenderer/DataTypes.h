@@ -115,6 +115,14 @@ struct SVariable
 	SVariable operator+(const SVariable& rh) const;
 };
 
+enum EVertexAttributeVar
+{
+	EVertexAttributeVar_Normal,
+	EVertexAttributeVar_tangent,
+	EVertexAttributeVar_UV,
+	EVertexAttributeVar_Color,
+};
+
 struct SVertexRuntime
 {
 	Vec4 m_pos;
@@ -125,19 +133,20 @@ struct SVertexRuntime
 	//Vec2 m_UV;
 	//Color4F m_color;
 
-	vector<SVariable> m_vVertexAttributeVar;
-	vector<SVariable> m_vCustomVariable;
+	map<EVertexAttributeVar, SVariable> m_vVertexAttributeVar;
+	map<int, SVariable> m_vCustomVariable;
 };
 
 struct SFragment
 {
 	Vec4 m_pos;
-	Vec3 m_normal;
+	/*Vec3 m_normal;
 	Vec3 m_tangent;
 	Vec2 m_UV;
-	Color4F m_color;
+	Color4F m_color;*/
 
-	vector<SVariable> m_vVariable;
+	map<EVertexAttributeVar, SVariable> m_vVertexAttributeVar;
+	map<int, SVariable> m_vCustomVariable;
 };
 
 struct SRenderState;
