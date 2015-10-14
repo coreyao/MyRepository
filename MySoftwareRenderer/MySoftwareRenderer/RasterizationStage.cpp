@@ -160,45 +160,51 @@ void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVerte
 	}
 	else
 	{
-		if (v1.m_pos.y > v2.m_pos.y)
+		if (outPos1.y > outPos2.y)
 			Helper::Swap(v1, v2);
-		if (v1.m_pos.y > v3.m_pos.y)
+		if (outPos1.y > outPos3.y)
 			Helper::Swap(v1, v3);
-		if (v2.m_pos.y > v3.m_pos.y)
+		if (outPos2.y > outPos3.y)
 			Helper::Swap(v2, v3);
 
-		if (v1.m_pos.y == v3.m_pos.y || ( v1.m_pos.x == v2.m_pos.x && v2.m_pos.x == v3.m_pos.x ) )
+		if (outPos1.y == outPos3.y || (outPos1.x == outPos2.x && outPos2.x == outPos3.x))
 			return;
 
-		if (v2.m_pos.y == v3.m_pos.y)
+		if (outPos2.y == outPos3.y)
 		{
-			if (v2.m_pos.x > v3.m_pos.x)
+			if (outPos2.x > outPos3.x)
 				Helper::Swap(v2, v3);
 
-			HighPrecision fpScreenX1(v1.m_pos.x);
-			HighPrecision fpScreenY1(v1.m_pos.y);
-			HighPrecision fpScreenX2(v2.m_pos.x);
-			HighPrecision fpScreenY2(v2.m_pos.y);
-			HighPrecision fpScreenX3(v3.m_pos.x);
-			HighPrecision fpScreenY3(v3.m_pos.y);
+			HighPrecision fpScreenX1(outPos1.x);
+			HighPrecision fpScreenY1(outPos1.y);
+			HighPrecision fpScreenX2(outPos2.x);
+			HighPrecision fpScreenY2(outPos2.y);
+			HighPrecision fpScreenX3(outPos3.x);
+			HighPrecision fpScreenY3(outPos3.y);
 
-			auto fDY1 = fpScreenY2 - fpScreenY1;
-			auto fDY2 = fpScreenY3 - fpScreenY1;
+			auto fDY1 = 1.0f / (fpScreenY2 - fpScreenY1);
+			auto fDY2 = 1.0f / (fpScreenY3 - fpScreenY1);
 
-			auto kInverseSlopeLeftX = (fpScreenX2 - fpScreenX1) / fDY1;
-			auto kInverseSlopeRightX = (fpScreenX3 - fpScreenX1) / fDY2;
+			auto kInverseSlopeLeftX = (fpScreenX2 - fpScreenX1) * fDY1;
+			auto kInverseSlopeRightX = (fpScreenX3 - fpScreenX1) * fDY2;
 
-			Color4F kInverseSlopeLeftColor = (v2.m_color - v1.m_color) / (float)fDY1;
-			Color4F kInverseSlopeRightColor = (v3.m_color - v1.m_color) / (float)fDY2;
+			map<EVertexAttributeVar, SVariable> kInverseSlopeVertexAttributeLeft;
+			map<EVertexAttributeVar, SVariable> kInverseSlopeVertexAttributeRight;
+			for (auto& pVertexAttrPair : v1.m_vVertexAttributeVar)
+			{
+				kInverseSlopeVertexAttributeLeft[pVertexAttrPair.first] 
+					= (v2.m_vVertexAttributeVar[pVertexAttrPair.first] - v1.m_vVertexAttributeVar[pVertexAttrPair.first]) * (float)fDY1;
+				kInverseSlopeVertexAttributeRight[pVertexAttrPair.first] 
+					= (v3.m_vVertexAttributeVar[pVertexAttrPair.first] - v1.m_vVertexAttributeVar[pVertexAttrPair.first]) * (float)fDY2;
+			}
 
-			Vec2 kInverseSlopeLeftUV = (v2.m_UV - v1.m_UV) / (float)fDY1;
-			Vec2 kInverseSlopeRightUV = (v3.m_UV - v1.m_UV) / (float)fDY2;
-
-			float kInverseSlopeLeftInverseZ = (v2.m_pos.w - v1.m_pos.w) / (float)fDY1;
-			float kInverseSlopeRightInverseZ = (v3.m_pos.w - v1.m_pos.w) / (float)fDY2;
-
-			float kInverseSlopeLeftZ = (v2.m_pos.z - v1.m_pos.z) / (float)fDY1;
-			float kInverseSlopeRightZ = (v3.m_pos.z - v1.m_pos.z) / (float)fDY2;
+			vector<SVariable> kInverseSlopeCustomVarLeft;
+			vector<SVariable> kInverseSlopeCustomVarRight;
+			for (unsigned int i = 0; i < v1.m_vCustomVariable.size(); ++i)
+			{
+				kInverseSlopeCustomVarLeft[i] = (v2.m_vCustomVariable[i] - v1.m_vCustomVariable[i]) * (float)fDY1;
+				kInverseSlopeCustomVarRight[i] = (v3.m_vCustomVariable[i] - v1.m_vCustomVariable[i]) * (float)fDY2;
+			}
 
 			Helper::Clamp(fpScreenY1, HighPrecision(-0.5f), HighPrecision(SCREEN_HEIGHT - 0.5f));
 			Helper::Clamp(fpScreenY2, HighPrecision(-0.5f), HighPrecision(SCREEN_HEIGHT - 0.5f));

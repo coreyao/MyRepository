@@ -448,3 +448,10 @@ SVariable SVariable::operator+(const SVariable& rh) const
 	ret.v4 = this->v4 + rh.v4;
 	return ret;
 }
+
+SVariable SVariable::operator-(const SVariable& rh) const
+{
+	SVariable ret;
+	ret.v4 = this->v4 - rh.v4;
+	return ret;
+}

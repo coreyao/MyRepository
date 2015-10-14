@@ -113,6 +113,7 @@ struct SVariable
 
 	SVariable operator*(float fScalar) const;
 	SVariable operator+(const SVariable& rh) const;
+	SVariable operator-(const SVariable& rh) const;
 };
 
 enum EVertexAttributeVar

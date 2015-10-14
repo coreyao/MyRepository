@@ -38,6 +38,7 @@ public:
 
 	Vec4 operator*(float fScalar) const;
 	Vec4 operator+(const Vec4& rh) const;
+	Vec4 operator-(const Vec4& rh) const;
 
 	float Dot(const Vec4& rh) const;
 
