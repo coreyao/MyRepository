@@ -6,11 +6,8 @@ void CMeshVertexShader::ProcessVertex(SVertexRuntime* pVertex)
 {
 	const Mat4& viewMat = CDirector::GetInstance()->GetPerspectiveCamera()->GetViewMat();
 	const Mat4& projMat = CDirector::GetInstance()->GetPerspectiveCamera()->GetProjMat();
-	pVertex->m_pos =  projMat * viewMat * ModelMat * pVertex->m_pos;
-
-	SVariable variable;
-	variable.v4 = pVertex->m_pos;
-	pVertex->m_vCustomVariable.push_back(variable);
+	auto& outPos = pVertex->m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position];
+	outPos.v4 = projMat * viewMat * ModelMat * outPos.v4;
 }
 
 Color4F CMeshFragmentShader::ProcessFragment(SFragment* pFragment)

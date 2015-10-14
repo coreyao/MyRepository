@@ -117,6 +117,7 @@ struct SVariable
 
 enum EVertexAttributeVar
 {
+	EVertexAttributeVar_Position,
 	EVertexAttributeVar_Normal,
 	EVertexAttributeVar_tangent,
 	EVertexAttributeVar_UV,
@@ -125,26 +126,15 @@ enum EVertexAttributeVar
 
 struct SVertexRuntime
 {
-	Vec4 m_pos;
 	Vec4 m_boneIndex;
 	Vec4 m_blendWeight;
-	//Vec3 m_normal;
-	//Vec3 m_tangent;
-	//Vec2 m_UV;
-	//Color4F m_color;
 
 	map<EVertexAttributeVar, SVariable> m_vVertexAttributeVar;
-	map<int, SVariable> m_vCustomVariable;
+	vector<SVariable> m_vCustomVariable;
 };
 
 struct SFragment
 {
-	Vec4 m_pos;
-	/*Vec3 m_normal;
-	Vec3 m_tangent;
-	Vec2 m_UV;
-	Color4F m_color;*/
-
 	map<EVertexAttributeVar, SVariable> m_vVertexAttributeVar;
 	map<int, SVariable> m_vCustomVariable;
 };

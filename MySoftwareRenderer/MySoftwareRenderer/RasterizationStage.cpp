@@ -148,11 +148,15 @@ void RasterizationStage::CRasterizer::DrawLine(int x1, int y1, int x2, int y2, C
 
 void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVertexRuntime& v2, SVertexRuntime& v3, float fAlpha, SRenderState* pRenderState)
 {
+	auto& outPos1 = v1.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4;
+	auto& outPos2 = v2.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4;
+	auto& outPos3 = v3.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4;
+
 	if (pRenderState->m_bDrawWireFrame)
 	{
-		DrawLine(v1.m_pos.x, v1.m_pos.y, v2.m_pos.x, v2.m_pos.y, Color4F::WHITE);
-		DrawLine(v2.m_pos.x, v2.m_pos.y, v3.m_pos.x, v3.m_pos.y, Color4F::WHITE);
-		DrawLine(v1.m_pos.x, v1.m_pos.y, v3.m_pos.x, v3.m_pos.y, Color4F::WHITE);
+		DrawLine(outPos1.x, outPos1.y, outPos2.x, outPos2.y, Color4F::WHITE);
+		DrawLine(outPos2.x, outPos2.y, outPos3.x, outPos3.y, Color4F::WHITE);
+		DrawLine(outPos1.x, outPos1.y, outPos3.x, outPos3.y, Color4F::WHITE);
 	}
 	else
 	{
