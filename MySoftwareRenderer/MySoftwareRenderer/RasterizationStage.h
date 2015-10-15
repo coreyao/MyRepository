@@ -38,7 +38,7 @@ namespace RasterizationStage
 		void DrawLine(int x1, int y1, int x2, int y2, Color4F color);
 		void DrawAnyTriangle(SVertexRuntime& v1, SVertexRuntime& v2, SVertexRuntime& v3, float fAlpha, SRenderState* pRenderState);
 
-		void DrawScanline(HighPrecision fLeftX, HighPrecision fRightX, Color4F rightColor, Color4F leftColor, Vec2 rightUV, Vec2 leftUV, float fRightInverseZ, float fLeftInverseZ, float fRightZ, float fLeftZ, int y, float fAlpha, SRenderState* pRenderState);
+		void DrawScanline(HighPrecision fLeftX, HighPrecision fRightX, map<EVertexAttributeVar, SVariable>& leftVal, map<EVertexAttributeVar, SVariable>& rightVal, int y, float fAlpha, SRenderState* pRenderState);
 
 		void DrawTopTriangle(SVertexRuntime &v1, SVertexRuntime &v2, SVertexRuntime &v3, float fAlpha, SRenderState* pRenderState);
 		void DrawBottomTriangle(SVertexRuntime &v1, SVertexRuntime &v2, SVertexRuntime &v3, float fAlpha, SRenderState* pRenderState);

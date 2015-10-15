@@ -215,70 +215,71 @@ void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVerte
 			if ( iStartY >= iEndY )
 				return;
 			
-			auto fOffsetY = (HighPrecision(iStartY) - HighPrecision(v1.m_pos.y));
+			auto fOffsetY = (HighPrecision(iStartY) - HighPrecision(v1.m_vVertexAttributeVar[EVertexAttributeVar_Position].v4.y));
 			auto fLeftX = fpScreenX1 + kInverseSlopeLeftX * fOffsetY;
 			auto fRightX = fpScreenX1 + kInverseSlopeRightX * fOffsetY;
 
-			Color4F leftColor = v1.m_color + kInverseSlopeLeftColor * (float)fOffsetY;
-			Color4F rightColor = v1.m_color + kInverseSlopeRightColor * (float)fOffsetY;
+			map<EVertexAttributeVar, SVariable> kVertexAttributeLeft;
+			map<EVertexAttributeVar, SVariable> kVertexAttributeRight;
+			for (auto& pVertexAttrPair : v1.m_vVertexAttributeVar)
+			{
+				kVertexAttributeLeft[pVertexAttrPair.first]
+					= v1.m_vVertexAttributeVar[pVertexAttrPair.first] + kInverseSlopeVertexAttributeLeft[pVertexAttrPair.first] * (float)fOffsetY;
+				kVertexAttributeRight[pVertexAttrPair.first]
+					= v1.m_vVertexAttributeVar[pVertexAttrPair.first] + kInverseSlopeVertexAttributeRight[pVertexAttrPair.first] * (float)fOffsetY;
+			}
 
-			Vec2 leftUV = v1.m_UV + kInverseSlopeLeftUV * (float)fOffsetY;
-			Vec2 rightUV = v1.m_UV + kInverseSlopeRightUV * (float)fOffsetY;
-
-			float fLeftInverseZ = v1.m_pos.w + kInverseSlopeLeftInverseZ * (float)fOffsetY;
-			float fRightInverseZ = v1.m_pos.w + kInverseSlopeRightInverseZ * (float)fOffsetY;
-
-			float fLeftZ = v1.m_pos.z + kInverseSlopeLeftZ * (float)fOffsetY;
-			float fRightZ = v1.m_pos.z + kInverseSlopeRightZ * (float)fOffsetY;
+			// - TODO
+			// - Interpolate custom variables
 
 			for (int y = iStartY; y < iEndY; ++y)
 			{
-				DrawScanline(fLeftX, fRightX, rightColor, leftColor, rightUV, leftUV, fRightInverseZ, fLeftInverseZ, fRightZ, fLeftZ, y, fAlpha, pRenderState);
+				DrawScanline(fLeftX, fRightX, kVertexAttributeLeft, kVertexAttributeRight, y, fAlpha, pRenderState);
 
 				fLeftX += kInverseSlopeLeftX;
 				fRightX += kInverseSlopeRightX;
 
-				leftColor += kInverseSlopeLeftColor;
-				rightColor += kInverseSlopeRightColor;
-
-				leftUV += kInverseSlopeLeftUV;
-				rightUV += kInverseSlopeRightUV;
-
-				fLeftInverseZ += kInverseSlopeLeftInverseZ;
-				fRightInverseZ += kInverseSlopeRightInverseZ;
-
-				fLeftZ += kInverseSlopeLeftZ;
-				fRightZ += kInverseSlopeRightZ;
+				for (auto& pVertexAttrPair : v1.m_vVertexAttributeVar)
+				{
+					kVertexAttributeLeft[pVertexAttrPair.first] += kInverseSlopeVertexAttributeLeft[pVertexAttrPair.first];
+					kVertexAttributeRight[pVertexAttrPair.first] += kInverseSlopeVertexAttributeRight[pVertexAttrPair.first];
+				}
 			}
 		}
-		else if (v1.m_pos.y == v2.m_pos.y)
+		else if (outPos1.y == outPos2.y)
 		{
-			if (v1.m_pos.x > v2.m_pos.x)
+			if (outPos1.x > outPos2.x)
 				Helper::Swap(v1, v2);
 
-			HighPrecision fpScreenX1(v1.m_pos.x);
-			HighPrecision fpScreenY1(v1.m_pos.y);
-			HighPrecision fpScreenX2(v2.m_pos.x);
-			HighPrecision fpScreenY2(v2.m_pos.y);
-			HighPrecision fpScreenX3(v3.m_pos.x);
-			HighPrecision fpScreenY3(v3.m_pos.y);
+			HighPrecision fpScreenX1(outPos1.x);
+			HighPrecision fpScreenY1(outPos1.y);
+			HighPrecision fpScreenX2(outPos2.x);
+			HighPrecision fpScreenY2(outPos2.y);
+			HighPrecision fpScreenX3(outPos3.x);
+			HighPrecision fpScreenY3(outPos3.y);
 
 			auto fDY1 = fpScreenY3 - fpScreenY1;
 
 			auto kInverseSlopeLeftX = (fpScreenX3 - fpScreenX1) / fDY1;
 			auto kInverseSlopeRightX = (fpScreenX3 - fpScreenX2) / fDY1;
 
-			Color4F kInverseSlopeLeftColor = (v3.m_color - v1.m_color) / (float)fDY1;
-			Color4F kInverseSlopeRightColor = (v3.m_color - v2.m_color) / (float)fDY1;
+			map<EVertexAttributeVar, SVariable> kInverseSlopeVertexAttributeLeft;
+			map<EVertexAttributeVar, SVariable> kInverseSlopeVertexAttributeRight;
+			for (auto& pVertexAttrPair : v1.m_vVertexAttributeVar)
+			{
+				kInverseSlopeVertexAttributeLeft[pVertexAttrPair.first]
+					= (v3.m_vVertexAttributeVar[pVertexAttrPair.first] - v1.m_vVertexAttributeVar[pVertexAttrPair.first]) * (float)fDY1;
+				kInverseSlopeVertexAttributeRight[pVertexAttrPair.first]
+					= (v3.m_vVertexAttributeVar[pVertexAttrPair.first] - v2.m_vVertexAttributeVar[pVertexAttrPair.first]) * (float)fDY1;
+			}
 
-			Vec2 kInverseSlopeLeftUV = (v3.m_UV - v1.m_UV) / (float)fDY1;
-			Vec2 kInverseSlopeRightUV = (v3.m_UV - v2.m_UV) / (float)fDY1;
-
-			float kInverseSlopeLeftInverseZ = (v3.m_pos.w - v1.m_pos.w) / (float)fDY1;
-			float kInverseSlopeRightInverseZ = (v3.m_pos.w - v2.m_pos.w) / (float)fDY1;
-
-			float kInverseSlopeLeftZ = (v3.m_pos.z - v1.m_pos.z) / (float)fDY1;
-			float kInverseSlopeRightZ = (v3.m_pos.z - v2.m_pos.z) / (float)fDY1;
+			vector<SVariable> kInverseSlopeCustomVarLeft;
+			vector<SVariable> kInverseSlopeCustomVarRight;
+			for (unsigned int i = 0; i < v1.m_vCustomVariable.size(); ++i)
+			{
+				kInverseSlopeCustomVarLeft[i] = (v3.m_vCustomVariable[i] - v1.m_vCustomVariable[i]) * (float)fDY1;
+				kInverseSlopeCustomVarRight[i] = (v3.m_vCustomVariable[i] - v2.m_vCustomVariable[i]) * (float)fDY1;
+			}
 
 			Helper::Clamp(fpScreenY1, HighPrecision(-0.5f), HighPrecision(SCREEN_HEIGHT - 0.5f));
 			Helper::Clamp(fpScreenY3, HighPrecision(-0.5f), HighPrecision(SCREEN_HEIGHT - 0.5f));
@@ -293,36 +294,28 @@ void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVerte
 			auto fLeftX = fpScreenX1 + kInverseSlopeLeftX * fOffsetY;
 			auto fRightX = fpScreenX2 + kInverseSlopeRightX * fOffsetY;
 
-			Color4F leftColor = v1.m_color + kInverseSlopeLeftColor * (float)fOffsetY;
-			Color4F rightColor = v2.m_color + kInverseSlopeRightColor * (float)fOffsetY;
-
-			Vec2 leftUV = v1.m_UV + kInverseSlopeLeftUV * (float)fOffsetY;
-			Vec2 rightUV = v2.m_UV + kInverseSlopeRightUV * (float)fOffsetY;
-
-			float fLeftInverseZ = v1.m_pos.w + kInverseSlopeLeftInverseZ * (float)fOffsetY;
-			float fRightInverseZ = v2.m_pos.w + kInverseSlopeRightInverseZ * (float)fOffsetY;
-
-			float fLeftZ = v1.m_pos.z + kInverseSlopeLeftZ * (float)fOffsetY;
-			float fRightZ = v2.m_pos.z + kInverseSlopeRightZ * (float)fOffsetY;
+			map<EVertexAttributeVar, SVariable> kVertexAttributeLeft;
+			map<EVertexAttributeVar, SVariable> kVertexAttributeRight;
+			for (auto& pVertexAttrPair : v1.m_vVertexAttributeVar)
+			{
+				kVertexAttributeLeft[pVertexAttrPair.first]
+					= v1.m_vVertexAttributeVar[pVertexAttrPair.first] + kInverseSlopeVertexAttributeLeft[pVertexAttrPair.first] * (float)fOffsetY;
+				kVertexAttributeRight[pVertexAttrPair.first]
+					= v1.m_vVertexAttributeVar[pVertexAttrPair.first] + kInverseSlopeVertexAttributeRight[pVertexAttrPair.first] * (float)fOffsetY;
+			}
 
 			for (int y = iStartY; y < iEndY; ++y)
 			{
-				DrawScanline(fLeftX, fRightX, rightColor, leftColor, rightUV, leftUV, fRightInverseZ, fLeftInverseZ, fRightZ, fLeftZ, y, fAlpha, pRenderState);
+				DrawScanline(fLeftX, fRightX, kVertexAttributeLeft, kVertexAttributeRight, y, fAlpha, pRenderState);
 
 				fLeftX += kInverseSlopeLeftX;
 				fRightX += kInverseSlopeRightX;
 
-				leftColor += kInverseSlopeLeftColor;
-				rightColor += kInverseSlopeRightColor;
-
-				leftUV += kInverseSlopeLeftUV;
-				rightUV += kInverseSlopeRightUV;
-
-				fLeftInverseZ += kInverseSlopeLeftInverseZ;
-				fRightInverseZ += kInverseSlopeRightInverseZ;
-
-				fLeftZ += kInverseSlopeLeftZ;
-				fRightZ += kInverseSlopeRightZ;
+				for (auto& pVertexAttrPair : v1.m_vVertexAttributeVar)
+				{
+					kVertexAttributeLeft[pVertexAttrPair.first] += kInverseSlopeVertexAttributeLeft[pVertexAttrPair.first];
+					kVertexAttributeRight[pVertexAttrPair.first] += kInverseSlopeVertexAttributeRight[pVertexAttrPair.first];
+				}
 			}
 		}
 		else
@@ -354,7 +347,7 @@ void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVerte
 	}
 }
 
-void RasterizationStage::CRasterizer::DrawScanline(HighPrecision fLeftX, HighPrecision fRightX, Color4F rightColor, Color4F leftColor, Vec2 rightUV, Vec2 leftUV, float fRightInverseZ, float fLeftInverseZ, float fRightZ, float fLeftZ, int y, float fAlpha, SRenderState* pRenderState)
+void RasterizationStage::CRasterizer::DrawScanline(HighPrecision fLeftX, HighPrecision fRightX, map<EVertexAttributeVar, SVariable>& leftVal, map<EVertexAttributeVar, SVariable>& rightVal, int y, float fAlpha, SRenderState* pRenderState)
 {
 	int iStartX = ceil(fLeftX);
 	int iEndX = ceil(fRightX);

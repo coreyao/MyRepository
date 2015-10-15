@@ -455,3 +455,8 @@ SVariable SVariable::operator-(const SVariable& rh) const
 	ret.v4 = this->v4 - rh.v4;
 	return ret;
 }
+
+void SVariable::operator+=(const SVariable& rh)
+{
+	this->v4 += rh.v4;
+}
