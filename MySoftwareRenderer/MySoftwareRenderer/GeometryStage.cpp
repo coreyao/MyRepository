@@ -57,11 +57,11 @@ bool GeometryStage::DoClipInClipSpace(SFaceRuntime& face, bool& bAddFace, SFaceR
 
 					SVertexRuntime newVertex1;
 					t = (fNear - (-outPos1.w)) / ((-outPos3.w) - (-outPos1.w));
-					LerpVertex(&face.m_vertex1, &face.m_vertex3, t, &newVertex1);
+					Helper::LerpVertex(&face.m_vertex1, &face.m_vertex3, t, &newVertex1);
 
 					SVertexRuntime newVertex2;
 					t = (fNear - (-outPos1.w)) / ((-outPos2.w) - (-outPos1.w));
-					LerpVertex(&face.m_vertex1, &face.m_vertex2, t, &newVertex2);
+					Helper::LerpVertex(&face.m_vertex1, &face.m_vertex2, t, &newVertex2);
 					
 					if (face.m_pRenderState->m_eVertexOrder == EVertexOrder_Counter_ClockWise)
 					{
@@ -95,11 +95,11 @@ bool GeometryStage::DoClipInClipSpace(SFaceRuntime& face, bool& bAddFace, SFaceR
 
 					SVertexRuntime newVertex1;
 					t = (fNear - (-outPos2.w)) / ((-outPos3.w) - (-outPos2.w));
-					LerpVertex(&face.m_vertex2, &face.m_vertex3, t, &newVertex1);
+					Helper::LerpVertex(&face.m_vertex2, &face.m_vertex3, t, &newVertex1);
 
 					SVertexRuntime newVertex2;
 					t = (fNear - (-outPos2.w)) / ((-outPos1.w) - (-outPos2.w));
-					LerpVertex(&face.m_vertex2, &face.m_vertex1, t, &newVertex2);
+					Helper::LerpVertex(&face.m_vertex2, &face.m_vertex1, t, &newVertex2);
 
 					if (face.m_pRenderState->m_eVertexOrder == EVertexOrder_Counter_ClockWise)
 					{
@@ -133,11 +133,11 @@ bool GeometryStage::DoClipInClipSpace(SFaceRuntime& face, bool& bAddFace, SFaceR
 
 					SVertexRuntime newVertex1;
 					t = (fNear - (-outPos3.w)) / ((-outPos2.w) - (-outPos3.w));
-					LerpVertex(&face.m_vertex3, &face.m_vertex2, t, &newVertex1);
+					Helper::LerpVertex(&face.m_vertex3, &face.m_vertex2, t, &newVertex1);
 
 					SVertexRuntime newVertex2;
 					t = (fNear - (-outPos3.w)) / ((-outPos1.w) - (-outPos3.w));
-					LerpVertex(&face.m_vertex3, &face.m_vertex1, t, &newVertex1);
+					Helper::LerpVertex(&face.m_vertex3, &face.m_vertex1, t, &newVertex1);
 				
 					if (face.m_pRenderState->m_eVertexOrder == EVertexOrder_Counter_ClockWise)
 					{
@@ -192,11 +192,11 @@ bool GeometryStage::DoClipInClipSpace(SFaceRuntime& face, bool& bAddFace, SFaceR
 
 				float t = (fNear - (-pIn->m_vVertexAttributeVar[EVertexAttributeVar_Position].v4.w)) / 
 					((-pOut1->m_vVertexAttributeVar[EVertexAttributeVar_Position].v4.w) - (-pIn->m_vVertexAttributeVar[EVertexAttributeVar_Position].v4.w));
-				LerpVertex(pIn, pOut1, t, pOut1);
+				Helper::LerpVertex(pIn, pOut1, t, pOut1);
 
 				t = (fNear - (-pIn->m_vVertexAttributeVar[EVertexAttributeVar_Position].v4.w)) / 
 					((-pOut2->m_vVertexAttributeVar[EVertexAttributeVar_Position].v4.w) - (-pIn->m_vVertexAttributeVar[EVertexAttributeVar_Position].v4.w));
-				LerpVertex(pIn, pOut2, t, pOut2);
+				Helper::LerpVertex(pIn, pOut2, t, pOut2);
 
 				bAddFace = false;
 			}
@@ -320,17 +320,3 @@ bool GeometryStage::IsBackFace(SFaceRuntime& face, EVertexOrder eOrder /*= EVert
 	Vec3 v = p1.Cross(p2);
 	return v.z < 0;
 }
-
-void GeometryStage::LerpVertex(SVertexRuntime* pVertex1, SVertexRuntime* pVertex2, float t, SVertexRuntime* pVertexOut)
-{
-	for (auto& pVertexAttrPair : pVertex1->m_vVertexAttributeVar)
-	{
-		pVertexOut->m_vVertexAttributeVar[pVertexAttrPair.first]
-			= Helper::Lerp(pVertex1->m_vVertexAttributeVar[pVertexAttrPair.first], pVertex2->m_vVertexAttributeVar[pVertexAttrPair.first], t);
-	}
-	for (unsigned int i = 0; i < pVertex1->m_vCustomVariable.size(); ++i)
-	{
-		pVertexOut->m_vCustomVariable[i] = Helper::Lerp(pVertex1->m_vCustomVariable[i], pVertex2->m_vCustomVariable[i], t);
-	}
-}
-

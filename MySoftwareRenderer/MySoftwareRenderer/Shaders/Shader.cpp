@@ -12,8 +12,8 @@ void CMeshVertexShader::ProcessVertex(SVertexRuntime* pVertex)
 
 Color4F CMeshFragmentShader::ProcessFragment(SFragment* pFragment)
 {
-	Color4F finalColor = RasterizationStage::CRasterizer::GetInstance()->SampleTexture(m_vMaterial[0]->GetBaseColorTex(), pFragment->m_UV);
-	finalColor = finalColor * pFragment->m_color;
+	Color4F finalColor = RasterizationStage::CRasterizer::GetInstance()->SampleTexture(m_vMaterial[0]->GetBaseColorTex(), pFragment->m_vVertexAttributeVar[EVertexAttributeVar_UV].v2);
+	finalColor = finalColor * pFragment->m_vVertexAttributeVar[EVertexAttributeVar_Color].color;
 	return finalColor;
 }
 
@@ -65,14 +65,15 @@ void CSkinMeshVertexShader::ProcessVertex(SVertexRuntime* pVertex)
 			matrixPalette3 += m_vMatrixPallet[matrixIndex + 2] * blendWeight;
 		}
 
-		Vec4 _skinnedposition;
-		_skinnedposition.x = pVertex->m_pos.Dot(matrixPalette1);
-		_skinnedposition.y = pVertex->m_pos.Dot(matrixPalette2);
-		_skinnedposition.z = pVertex->m_pos.Dot(matrixPalette3);
-		_skinnedposition.w = pVertex->m_pos.w;
+		auto& outPos = pVertex->m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4;
+		Vec4 skinnedPos;
+		skinnedPos.x = outPos.Dot(matrixPalette1);
+		skinnedPos.y = outPos.Dot(matrixPalette2);
+		skinnedPos.z = outPos.Dot(matrixPalette3);
+		skinnedPos.w = outPos.w;
 
 		const Mat4& viewMat = CDirector::GetInstance()->GetPerspectiveCamera()->GetViewMat();
 		const Mat4& projMat = CDirector::GetInstance()->GetPerspectiveCamera()->GetProjMat();
-		pVertex->m_pos = projMat * viewMat * ModelMat * _skinnedposition;
+		outPos = projMat * viewMat * ModelMat * skinnedPos;
 	}
 }

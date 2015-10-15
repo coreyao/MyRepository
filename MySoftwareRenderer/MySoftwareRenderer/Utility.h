@@ -45,6 +45,7 @@ using namespace std;
 
 typedef double HighPrecision;
 
+class SVertexRuntime;
 namespace Helper
 {
 	template<typename T>
@@ -55,6 +56,8 @@ namespace Helper
 
 	template<typename T>
 	T Lerp(const T& lVal, const T& rVal, float fRatio);
+
+	void LerpVertex(SVertexRuntime* pVertex1, SVertexRuntime* pVertex2, float t, SVertexRuntime* pVertexOut);
 }
 
 template<typename T>

@@ -1,12 +1,12 @@
 #include "ApplicationStage.h"
 #include "Director.h"
 
-void ApplicationStage::TransformLocalToWorld(SFaceRuntime& face, const Mat4& worldTransform)
-{
-	face.m_vertex1.m_pos = worldTransform * face.m_vertex1.m_pos;
-	face.m_vertex2.m_pos = worldTransform * face.m_vertex2.m_pos;
-	face.m_vertex3.m_pos = worldTransform * face.m_vertex3.m_pos;
-}
+//void ApplicationStage::TransformLocalToWorld(SFaceRuntime& face, const Mat4& worldTransform)
+//{
+//	face.m_vertex1.m_pos = worldTransform * face.m_vertex1.m_pos;
+//	face.m_vertex2.m_pos = worldTransform * face.m_vertex2.m_pos;
+//	face.m_vertex3.m_pos = worldTransform * face.m_vertex3.m_pos;
+//}
 
 //bool ApplicationStage::IsBackFace(SFaceRuntime& face, EVertexOrder eOrder /*= EVertexOrder_ClockWise*/)
 //{

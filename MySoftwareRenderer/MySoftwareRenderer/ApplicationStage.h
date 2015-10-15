@@ -4,5 +4,5 @@
 
 namespace ApplicationStage
 {
-	void TransformLocalToWorld(SFaceRuntime& face, const Mat4& worldTransform);
+	//void TransformLocalToWorld(SFaceRuntime& face, const Mat4& worldTransform);
 }

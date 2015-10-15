@@ -246,11 +246,11 @@ void CMesh::InitRuntimeData()
 		for (auto& rVertex : rSubMesh.m_vVertex)
 		{
 			SVertexRuntime v;
-			v.m_pos = Vec4(rVertex.m_pos.x, rVertex.m_pos.y, rVertex.m_pos.z, 1.0f);
-			v.m_normal = rVertex.m_normal;
-			v.m_tangent = rVertex.m_tangent;
-			v.m_UV = rVertex.m_UV;
-			v.m_color = rVertex.m_color;
+			v.m_vVertexAttributeVar[EVertexAttributeVar_Position].v4 = Vec4(rVertex.m_pos.x, rVertex.m_pos.y, rVertex.m_pos.z, 1.0f);
+			v.m_vVertexAttributeVar[EVertexAttributeVar_Normal].v3 = rVertex.m_normal;
+			v.m_vVertexAttributeVar[EVertexAttributeVar_tangent].v3 = rVertex.m_tangent;
+			v.m_vVertexAttributeVar[EVertexAttributeVar_UV].v2 = rVertex.m_UV;
+			v.m_vVertexAttributeVar[EVertexAttributeVar_Color].color = rVertex.m_color;
 			v.m_boneIndex = rVertex.m_boneIndex;
 			v.m_blendWeight = rVertex.m_blendWeight;
 			subMesh->m_vVertexRunTime.push_back(v);
