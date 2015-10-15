@@ -49,7 +49,7 @@ void InitMesh()
 	pPlane->m_transform.SetPosition(Vec3(0, -100, 0));
 	pPlane->m_transform.SetScale(Vec3(10, 10, -10));
 	pPlane->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
-	g_vMesh.push_back(pPlane);
+	//g_vMesh.push_back(pPlane);
 
 
 	{
@@ -92,28 +92,27 @@ void InitMesh()
 			subMeshData1.m_vFace.push_back(face);
 		}
 
-		{
+		/*{
 			SFaceData face;
 			face.m_VertexIndex1 = 3;
 			face.m_VertexIndex2 = 0;
 			face.m_VertexIndex3 = 2;
 			subMeshData1.m_vFace.push_back(face);
-		}
+			}*/
 
 		subMeshData1.m_MeshMatrix = Mat4::IDENTITY;
 		meshData.m_vSubMesh.push_back(subMeshData1);
 		CMesh* pTriangle = new CMesh;
 		CMaterial material1;
 		material1.SetBaseColorTexture("HelloWorld.png");
-		//pTriangle->m_renderState.m_bEnableCullFace = false;
+		pTriangle->m_renderState.m_bEnableCullFace = false;
 		pTriangle->InitFromData(&meshData);
 		pTriangle->SetMaterial(material1, 0);
 		pTriangle->m_transform.SetPosition(Vec3(0, 0, 0));
 		pTriangle->m_transform.SetScale(Vec3(1, 1, 1));
-		pTriangle->m_transform.SetRotation(Vec3(0, -30, 0));
 		pTriangle->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
 
-		//g_vMesh.push_back(pTriangle);
+		g_vMesh.push_back(pTriangle);
 	}
 }
 

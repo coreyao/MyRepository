@@ -148,39 +148,41 @@ void RasterizationStage::CRasterizer::DrawLine(int x1, int y1, int x2, int y2, C
 
 void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVertexRuntime& v2, SVertexRuntime& v3, float fAlpha, SRenderState* pRenderState)
 {
-	auto& outPos1 = v1.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4;
-	auto& outPos2 = v2.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4;
-	auto& outPos3 = v3.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4;
-
 	if (pRenderState->m_bDrawWireFrame)
 	{
+		auto& outPos1 = v1.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4;
+		auto& outPos2 = v2.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4;
+		auto& outPos3 = v3.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4;
+
 		DrawLine(outPos1.x, outPos1.y, outPos2.x, outPos2.y, Color4F::WHITE);
 		DrawLine(outPos2.x, outPos2.y, outPos3.x, outPos3.y, Color4F::WHITE);
 		DrawLine(outPos1.x, outPos1.y, outPos3.x, outPos3.y, Color4F::WHITE);
 	}
 	else
 	{
-		if (outPos1.y > outPos2.y)
+		if (v1.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.y > v2.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.y)
 			Helper::Swap(v1, v2);
-		if (outPos1.y > outPos3.y)
+		if (v1.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.y > v3.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.y)
 			Helper::Swap(v1, v3);
-		if (outPos2.y > outPos3.y)
+		if (v2.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.y > v3.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.y)
 			Helper::Swap(v2, v3);
 
-		if (outPos1.y == outPos3.y || (outPos1.x == outPos2.x && outPos2.x == outPos3.x))
+		if (v1.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.y == v3.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.y
+			|| (v1.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.x == v2.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.x 
+			&& v2.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.x == v3.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.x))
 			return;
 
-		if (outPos2.y == outPos3.y)
+		if (v2.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.y == v3.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.y)
 		{
-			if (outPos2.x > outPos3.x)
+			if (v2.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.x > v3.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.x)
 				Helper::Swap(v2, v3);
 
-			HighPrecision fpScreenX1(outPos1.x);
-			HighPrecision fpScreenY1(outPos1.y);
-			HighPrecision fpScreenX2(outPos2.x);
-			HighPrecision fpScreenY2(outPos2.y);
-			HighPrecision fpScreenX3(outPos3.x);
-			HighPrecision fpScreenY3(outPos3.y);
+			HighPrecision fpScreenX1(v1.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.x);
+			HighPrecision fpScreenY1(v1.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.y);
+			HighPrecision fpScreenX2(v2.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.x);
+			HighPrecision fpScreenY2(v2.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.y);
+			HighPrecision fpScreenX3(v3.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.x);
+			HighPrecision fpScreenY3(v3.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.y);
 
 			auto fDY1 = 1.0f / (fpScreenY2 - fpScreenY1);
 			auto fDY2 = 1.0f / (fpScreenY3 - fpScreenY1);
@@ -246,17 +248,17 @@ void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVerte
 				}
 			}
 		}
-		else if (outPos1.y == outPos2.y)
+		else if (v1.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.y == v2.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.y)
 		{
-			if (outPos1.x > outPos2.x)
+			if (v1.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.x > v2.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.x)
 				Helper::Swap(v1, v2);
 
-			HighPrecision fpScreenX1(outPos1.x);
-			HighPrecision fpScreenY1(outPos1.y);
-			HighPrecision fpScreenX2(outPos2.x);
-			HighPrecision fpScreenY2(outPos2.y);
-			HighPrecision fpScreenX3(outPos3.x);
-			HighPrecision fpScreenY3(outPos3.y);
+			HighPrecision fpScreenX1(v1.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.x);
+			HighPrecision fpScreenY1(v1.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.y);
+			HighPrecision fpScreenX2(v2.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.x);
+			HighPrecision fpScreenY2(v2.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.y);
+			HighPrecision fpScreenX3(v3.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.x);
+			HighPrecision fpScreenY3(v3.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.y);
 
 			auto fDY1 = fpScreenY3 - fpScreenY1;
 
@@ -323,12 +325,12 @@ void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVerte
 		}
 		else
 		{
-			HighPrecision fpScreenX1(outPos1.x);
-			HighPrecision fpScreenY1(outPos1.y);
-			HighPrecision fpScreenX2(outPos2.x);
-			HighPrecision fpScreenY2(outPos2.y);
-			HighPrecision fpScreenX3(outPos3.x);
-			HighPrecision fpScreenY3(outPos3.y);
+			HighPrecision fpScreenX1(v1.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.x);
+			HighPrecision fpScreenY1(v1.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.y);
+			HighPrecision fpScreenX2(v2.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.x);
+			HighPrecision fpScreenY2(v2.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.y);
+			HighPrecision fpScreenX3(v3.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.x);
+			HighPrecision fpScreenY3(v3.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.y);
 
 			float t = (fpScreenY2 - fpScreenY1) / (fpScreenY3 - fpScreenY1);
 			SVertexRuntime newVertex;
@@ -350,7 +352,7 @@ void RasterizationStage::CRasterizer::DrawScanline(HighPrecision fLeftX, HighPre
 	Helper::Clamp(iEndX, 0, SCREEN_WIDTH - 1);
 	if (iEndX > iStartX)
 	{
-		auto fDeltaX = fRightX - fLeftX;
+		auto fDeltaX = 1.0f / ( fRightX - fLeftX );
 		auto fOffsetX = iStartX - fLeftX;
 
 		map<EVertexAttributeVar, SVariable> kInverseSlopeVertexAttribute;

@@ -137,7 +137,7 @@ bool GeometryStage::DoClipInClipSpace(SFaceRuntime& face, bool& bAddFace, SFaceR
 
 					SVertexRuntime newVertex2;
 					t = (fNear - (-outPos3.w)) / ((-outPos1.w) - (-outPos3.w));
-					Helper::LerpVertex(&face.m_vertex3, &face.m_vertex1, t, &newVertex1);
+					Helper::LerpVertex(&face.m_vertex3, &face.m_vertex1, t, &newVertex2);
 				
 					if (face.m_pRenderState->m_eVertexOrder == EVertexOrder_Counter_ClockWise)
 					{
@@ -216,13 +216,13 @@ void GeometryStage::TransformClipToScreen(SFaceRuntime& face)
 		SVertexRuntime& vertex = face.m_vertex1;
 		auto& outPos = vertex.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position];
 		float rhw = 1.0f / outPos.v4.w;
-		outPos.v4 *= rhw;
-		outPos.v4.x = (outPos.v4.x * 0.5f + 0.5f) * (SCREEN_WIDTH)-0.5f;
-		outPos.v4.y = (-outPos.v4.y * 0.5f + 0.5f) * (SCREEN_HEIGHT)-0.5f;
-		outPos.v4.w = rhw;
 
 		for (auto& pVertexAttrPair : vertex.m_vVertexAttributeVar)
 			pVertexAttrPair.second = pVertexAttrPair.second * rhw;
+
+		outPos.v4.x = (outPos.v4.x * 0.5f + 0.5f) * (SCREEN_WIDTH)-0.5f;
+		outPos.v4.y = (-outPos.v4.y * 0.5f + 0.5f) * (SCREEN_HEIGHT)-0.5f;
+		outPos.v4.w = rhw;
 
 		for (auto& pCustomVariablePair : vertex.m_vCustomVariable)
 			pCustomVariablePair = pCustomVariablePair * rhw;
@@ -232,13 +232,13 @@ void GeometryStage::TransformClipToScreen(SFaceRuntime& face)
 	SVertexRuntime& vertex = face.m_vertex2;
 	auto& outPos = vertex.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position];
 	float rhw = 1.0f / outPos.v4.w;
-	outPos.v4 *= rhw;
-	outPos.v4.x = (outPos.v4.x * 0.5f + 0.5f) * (SCREEN_WIDTH)-0.5f;
-	outPos.v4.y = (-outPos.v4.y * 0.5f + 0.5f) * (SCREEN_HEIGHT)-0.5f;
-	outPos.v4.w = rhw;
 
 	for (auto& pVertexAttrPair : vertex.m_vVertexAttributeVar)
 		pVertexAttrPair.second = pVertexAttrPair.second * rhw;
+
+	outPos.v4.x = (outPos.v4.x * 0.5f + 0.5f) * (SCREEN_WIDTH)-0.5f;
+	outPos.v4.y = (-outPos.v4.y * 0.5f + 0.5f) * (SCREEN_HEIGHT)-0.5f;
+	outPos.v4.w = rhw;
 
 	for (auto& pCustomVariablePair : vertex.m_vCustomVariable)
 		pCustomVariablePair = pCustomVariablePair * rhw;
@@ -248,13 +248,13 @@ void GeometryStage::TransformClipToScreen(SFaceRuntime& face)
 		SVertexRuntime& vertex = face.m_vertex3;
 		auto& outPos = vertex.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position];
 		float rhw = 1.0f / outPos.v4.w;
-		outPos.v4 *= rhw;
+		
+		for (auto& pVertexAttrPair : vertex.m_vVertexAttributeVar)
+			pVertexAttrPair.second = pVertexAttrPair.second * rhw;
+
 		outPos.v4.x = (outPos.v4.x * 0.5f + 0.5f) * (SCREEN_WIDTH)-0.5f;
 		outPos.v4.y = (-outPos.v4.y * 0.5f + 0.5f) * (SCREEN_HEIGHT)-0.5f;
 		outPos.v4.w = rhw;
-
-		for (auto& pVertexAttrPair : vertex.m_vVertexAttributeVar)
-			pVertexAttrPair.second = pVertexAttrPair.second * rhw;
 
 		for (auto& pCustomVariablePair : vertex.m_vCustomVariable)
 			pCustomVariablePair = pCustomVariablePair * rhw;
