@@ -281,6 +281,9 @@ void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVerte
 				kInverseSlopeCustomVarRight[i] = (v3.m_vCustomVariable[i] - v2.m_vCustomVariable[i]) * (float)fDY1;
 			}
 
+			// - TODO
+			// - Interpolate custom variables
+
 			Helper::Clamp(fpScreenY1, HighPrecision(-0.5f), HighPrecision(SCREEN_HEIGHT - 0.5f));
 			Helper::Clamp(fpScreenY3, HighPrecision(-0.5f), HighPrecision(SCREEN_HEIGHT - 0.5f));
 			fpScreenY2 = fpScreenY1;
@@ -290,7 +293,7 @@ void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVerte
 			if (iStartY >= iEndY)
 				return;
 
-			auto fOffsetY = (HighPrecision(iStartY) - HighPrecision(v1.m_pos.y));
+			auto fOffsetY = (HighPrecision(iStartY) - HighPrecision(v1.m_vVertexAttributeVar[EVertexAttributeVar_Position].v4.y));
 			auto fLeftX = fpScreenX1 + kInverseSlopeLeftX * fOffsetY;
 			auto fRightX = fpScreenX2 + kInverseSlopeRightX * fOffsetY;
 
@@ -320,27 +323,36 @@ void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVerte
 		}
 		else
 		{
-			HighPrecision fpScreenX1(v1.m_pos.x);
-			HighPrecision fpScreenY1(v1.m_pos.y);
-			HighPrecision fpScreenX2(v2.m_pos.x);
-			HighPrecision fpScreenY2(v2.m_pos.y);
-			HighPrecision fpScreenX3(v3.m_pos.x);
-			HighPrecision fpScreenY3(v3.m_pos.y);
+			HighPrecision fpScreenX1(outPos1.x);
+			HighPrecision fpScreenY1(outPos1.y);
+			HighPrecision fpScreenX2(outPos2.x);
+			HighPrecision fpScreenY2(outPos2.y);
+			HighPrecision fpScreenX3(outPos3.x);
+			HighPrecision fpScreenY3(outPos3.y);
 
 			auto fDY = fpScreenY3 - fpScreenY1;
+			auto fDY2 = fpScreenY2 - fpScreenY1;
 
 			auto kInverseSlopeRightX = (fpScreenX3 - fpScreenX1) / fDY;
-			float kInverseSlopeRightZ = (v3.m_pos.z - v1.m_pos.z) / (float)fDY;
-			Color4F kInverseSlopeRightColor = (v3.m_color - v1.m_color) / (float)fDY;
-			Vec2 kInverseSlopeRightUV = (v3.m_UV - v1.m_UV) / (float)fDY;
-			float kInverseSlopeRightInverseZ = (v3.m_pos.w - v1.m_pos.w) / (float)fDY;
+			map<EVertexAttributeVar, SVariable> kInverseSlopeVertexAttribute;
+			for (auto& pVertexAttrPair : v1.m_vVertexAttributeVar)
+			{
+				kInverseSlopeVertexAttribute[pVertexAttrPair.first] = (v3.m_vVertexAttributeVar[pVertexAttrPair.first] - v1.m_vVertexAttributeVar[pVertexAttrPair.first]) * (float)fDY;
+			}
 
 			SVertexRuntime newVertex;
-			auto fDY2 = fpScreenY2 - fpScreenY1;
-			newVertex.m_pos.set(fpScreenX1 + fDY2 * kInverseSlopeRightX, v2.m_pos.y, v1.m_pos.z + (float)fDY2 * kInverseSlopeRightZ,
+			map<EVertexAttributeVar, SVariable> kVertexAttributeLeft;
+			for (auto& pVertexAttrPair : v1.m_vVertexAttributeVar)
+			{
+				kVertexAttributeLeft[pVertexAttrPair.first] = v1.m_vVertexAttributeVar[pVertexAttrPair.first] + kInverseSlopeVertexAttribute[pVertexAttrPair.first] * (float)fDY2;
+			}
+
+			newVertex.m_vVertexAttributeVar[EVertexAttributeVar_Position].v4.x = fpScreenX1 + fDY2 * kInverseSlopeRightX;
+			set(, v2.m_pos.y, v1.m_pos.z + (float)fDY2 * kInverseSlopeRightZ,
 				v1.m_pos.w + kInverseSlopeRightInverseZ * (float)fDY2);
 			newVertex.m_color = (v1.m_color + kInverseSlopeRightColor * (float)fDY2);
 			newVertex.m_UV = v1.m_UV + kInverseSlopeRightUV * (float)fDY2;
+
 			DrawAnyTriangle(v1, v2, newVertex, fAlpha, pRenderState);
 			DrawAnyTriangle(v2, newVertex, v3, fAlpha, pRenderState);
 		}
