@@ -133,19 +133,20 @@ enum EVertexAttributeVar
 	EVertexAttributeVar_Max,
 };
 
+const int conMaxCustomVar = 3;
 struct SVertexRuntime
 {
 	Vec4 m_boneIndex;
 	Vec4 m_blendWeight;
 
-	map<EVertexAttributeVar, SVariable> m_vVertexAttributeVar;
-	vector<SVariable> m_vCustomVariable;
+	SVariable m_vVertexAttributeVar[EVertexAttributeVar_Max];
+	SVariable m_vCustomVariable[conMaxCustomVar];
 };
 
 struct SFragment
 {
-	map<EVertexAttributeVar, SVariable> m_vVertexAttributeVar;
-	map<int, SVariable> m_vCustomVariable;
+	SVariable m_vVertexAttributeVar[EVertexAttributeVar_Max];
+	SVariable m_vCustomVariable[conMaxCustomVar];
 };
 
 struct SRenderState;
