@@ -147,26 +147,10 @@ Color4F Color4F::operator*(const Color4F& rh) const
 
 int Color4F::ToARGB()
 {
-	if ( a < 0 )
-		a = 0;
-	if (a > 1)
-		a = 1;
-
-	if (r < 0)
-		r = 0;
-	if (r > 1)
-		r = 1;
-
-	if (g < 0)
-		g = 0;
-	if (g > 1)
-		g = 1;
-
-	if (b < 0)
-		b = 0;
-	if (b > 1)
-		b = 1;
-
+	Helper::Clamp(a, 0.0f, 1.0f);
+	Helper::Clamp(r, 0.0f, 1.0f);
+	Helper::Clamp(g, 0.0f, 1.0f);
+	Helper::Clamp(b, 0.0f, 1.0f);
 	return ARGB((int)(a * 255) % 256, (int)(r * 255) % 256, (int)(g * 255) % 256, (int)(b * 255) % 256);
 }
 

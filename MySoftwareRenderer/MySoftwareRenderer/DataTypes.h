@@ -130,6 +130,7 @@ enum EVertexAttributeVar
 	EVertexAttributeVar_tangent,
 	EVertexAttributeVar_UV,
 	EVertexAttributeVar_Color,
+	EVertexAttributeVar_Max,
 };
 
 struct SVertexRuntime
