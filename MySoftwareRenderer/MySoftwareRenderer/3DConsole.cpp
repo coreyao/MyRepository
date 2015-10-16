@@ -27,19 +27,19 @@ std::vector<CMesh*> g_vMesh;
 
 void InitMesh()
 {
-	//CMaterial material1;
-	//material1.SetBaseColorTexture("hama.png");
-	//CMesh* pFileCube = new CMesh;
-	//pFileCube->InitFromFile("hama.CSTM", true);
-	//pFileCube->SetMaterial(material1, 0);
-	//pFileCube->m_transform.SetPosition(Vec3(0, -25, -100));
-	//pFileCube->m_transform.SetScale(Vec3(1, 1, -1));
-	////pFileCube->m_transform.SetUseQuaternion(true);
-	////pFileCube->m_transform.SetRotation(Quaternion(60, Vec3(0, 1, 0)));
-	////pFileCube->m_transform.SetRotation(Vec3(0, 60, 0));
-	//pFileCube->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
-	//g_vMesh.push_back(pFileCube);
-	//pFileCube->m_animator.PlayAnim(0, 369, true, nullptr);
+	CMaterial material1;
+	material1.SetBaseColorTexture("hama.png");
+	CMesh* pFileCube = new CMesh;
+	pFileCube->InitFromFile("hama.CSTM", true);
+	pFileCube->SetMaterial(material1, 0);
+	pFileCube->m_transform.SetPosition(Vec3(0, -25, -100));
+	pFileCube->m_transform.SetScale(Vec3(1, 1, -1));
+	//pFileCube->m_transform.SetUseQuaternion(true);
+	//pFileCube->m_transform.SetRotation(Quaternion(60, Vec3(0, 1, 0)));
+	//pFileCube->m_transform.SetRotation(Vec3(0, 60, 0));
+	pFileCube->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
+	g_vMesh.push_back(pFileCube);
+	pFileCube->m_animator.PlayAnim(0, 369, true, nullptr);
 
 	CMaterial material2;
 	material2.SetBaseColorTexture("brickwall.png");
@@ -92,13 +92,13 @@ void InitMesh()
 			subMeshData1.m_vFace.push_back(face);
 		}
 
-		/*{
+		{
 			SFaceData face;
 			face.m_VertexIndex1 = 3;
 			face.m_VertexIndex2 = 0;
 			face.m_VertexIndex3 = 2;
 			subMeshData1.m_vFace.push_back(face);
-			}*/
+			}
 
 		subMeshData1.m_MeshMatrix = Mat4::IDENTITY;
 		meshData.m_vSubMesh.push_back(subMeshData1);
@@ -112,7 +112,7 @@ void InitMesh()
 		pTriangle->m_transform.SetScale(Vec3(1, 1, 1));
 		pTriangle->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
 
-		g_vMesh.push_back(pTriangle);
+		//g_vMesh.push_back(pTriangle);
 	}
 }
 
