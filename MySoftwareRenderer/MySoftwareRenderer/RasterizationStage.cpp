@@ -260,10 +260,10 @@ void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVerte
 			HighPrecision fpScreenX3(v3.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.x);
 			HighPrecision fpScreenY3(v3.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.y);
 
-			auto fDY1 = fpScreenY3 - fpScreenY1;
+			auto fDY1 = 1.0f / (fpScreenY3 - fpScreenY1);
 
-			auto kInverseSlopeLeftX = (fpScreenX3 - fpScreenX1) / fDY1;
-			auto kInverseSlopeRightX = (fpScreenX3 - fpScreenX2) / fDY1;
+			auto kInverseSlopeLeftX = (fpScreenX3 - fpScreenX1) * fDY1;
+			auto kInverseSlopeRightX = (fpScreenX3 - fpScreenX2) * fDY1;
 
 			map<EVertexAttributeVar, SVariable> kInverseSlopeVertexAttributeLeft;
 			map<EVertexAttributeVar, SVariable> kInverseSlopeVertexAttributeRight;
@@ -303,7 +303,7 @@ void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVerte
 				kVertexAttributeLeft[pVertexAttrPair.first]
 					= v1.m_vVertexAttributeVar[pVertexAttrPair.first] + kInverseSlopeVertexAttributeLeft[pVertexAttrPair.first] * (float)fOffsetY;
 				kVertexAttributeRight[pVertexAttrPair.first]
-					= v1.m_vVertexAttributeVar[pVertexAttrPair.first] + kInverseSlopeVertexAttributeRight[pVertexAttrPair.first] * (float)fOffsetY;
+					= v2.m_vVertexAttributeVar[pVertexAttrPair.first] + kInverseSlopeVertexAttributeRight[pVertexAttrPair.first] * (float)fOffsetY;
 			}
 
 			// - TODO
@@ -353,7 +353,6 @@ void RasterizationStage::CRasterizer::DrawScanline(HighPrecision fLeftX, HighPre
 	if (iEndX > iStartX)
 	{
 		auto fDeltaX = 1.0f / ( fRightX - fLeftX );
-		auto fOffsetX = iStartX - fLeftX;
 
 		map<EVertexAttributeVar, SVariable> kInverseSlopeVertexAttribute;
 		for (auto& pVertexAttrPair : leftVal)
@@ -365,6 +364,7 @@ void RasterizationStage::CRasterizer::DrawScanline(HighPrecision fLeftX, HighPre
 		// - TODO
 		// - Interpolate custom variables
 
+		auto fOffsetX = iStartX - fLeftX;
 		map<EVertexAttributeVar, SVariable> kVertexAttribute;
 		for (auto& pVertexAttrPair : leftVal)
 		{
