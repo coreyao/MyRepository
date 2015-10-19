@@ -46,8 +46,9 @@ void InitMesh()
 	CMesh* pCube = new CMesh;
 	pCube->InitFromFile("cube.CSTM", false);
 	pCube->SetMaterial(material1, 0);
-	pCube->m_transform.SetPosition(Vec3(0, 0, 300));
+	pCube->m_transform.SetPosition(Vec3(0, -25, 250));
 	pCube->m_transform.SetScale(Vec3(1, 1, -1));
+	pCube->m_transform.SetRotation(Vec3(0, 60, 0));
 	pCube->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
 	g_vMesh.push_back(pCube);
 
@@ -155,7 +156,7 @@ int Game_Update(float dt)
 {
 	for (auto& pMesh : g_vMesh)
 	{
-		//pMesh->m_transform.SetRotation(Vec3(0, pMesh->m_transform.GetRotation().y + dt *30, 0));
+		//pMesh->m_transform.SetRotation(Vec3(pMesh->m_transform.GetRotation().x + dt * 30, pMesh->m_transform.GetRotation().y + dt * 30, pMesh->m_transform.GetRotation().z + dt * 30));
 		pMesh->Update(dt);
 		pMesh->Render();
 	}
