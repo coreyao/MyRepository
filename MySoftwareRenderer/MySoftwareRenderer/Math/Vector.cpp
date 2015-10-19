@@ -150,10 +150,11 @@ void Vec4::operator/=(float fScalar)
 #if USE_SIMD
 	simd_data = _mm_div_ps( simd_data, _mm_set1_ps(fScalar) );
 #else
-	this->x /= fScalar;
-	this->y /= fScalar;
-	this->z /= fScalar;
-	this->w /= fScalar;
+	float fInv = 1.0f / fScalar;
+	this->x *= fInv;
+	this->y *= fInv;
+	this->z *= fInv;
+	this->w *= fInv;
 #endif
 }
 
@@ -183,28 +184,56 @@ void Vec4::set(float _x, float _y, float _z, float _w)
 
 Vec4 Vec4::operator*(float fScalar) const
 {
+#if USE_SIMD
+	Vec4 ret;
+	ret.simd_data = _mm_mul_ps( simd_data, _mm_set1_ps(fScalar) );
+	return ret;
+#else
 	return Vec4(x * fScalar, y * fScalar, z * fScalar, w * fScalar);
+#endif
 }
 
 Vec4 Vec4::operator+(const Vec4& rh) const
 {
+#if USE_SIMD
+	Vec4 ret;
+	ret.simd_data = _mm_add_ps(simd_data, rh.simd_data);
+	return ret;
+#else
 	return Vec4(x + rh.x, y + rh.y, z + rh.z, w + rh.w);
+#endif
 }
 
 Vec4 Vec4::operator-(const Vec4& rh) const
 {
+#if USE_SIMD
+	Vec4 ret;
+	ret.simd_data = _mm_sub_ps(simd_data, rh.simd_data);
+	return ret;
+#else
 	return Vec4(x - rh.x, y - rh.y, z - rh.z, w - rh.w);
+#endif
 }
 
 void Vec4::operator+=(const Vec4& rh)
 {
+#if USE_SIMD
+	simd_data = _mm_add_ps(simd_data, rh.simd_data);
+#else
 	x += rh.x;
 	y += rh.y;
 	z += rh.z;
 	w += rh.w;
+#endif
 }
 
 float Vec4::Dot(const Vec4& rh) const
 {
+#if USE_SIMD
+	__m128 tmp = _mm_mul_ps(simd_data, rh.simd_data);
+	return tmp.m128_f32[0] + tmp.m128_f32[1] + tmp.m128_f32[2] + tmp.m128_f32[3];
+
+#else
 	return x * rh.x + y * rh.y + z * rh.z + w * rh.w;
+#endif
 }

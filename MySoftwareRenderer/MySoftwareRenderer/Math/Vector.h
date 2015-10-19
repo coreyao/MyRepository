@@ -24,7 +24,7 @@ public:
 	float y;
 };
 
-/*__declspec(align(16))*/ class Vec4
+__declspec(align(16)) class Vec4
 {
 public:
 	Vec4();
@@ -45,7 +45,7 @@ public:
 	union
 	{
 		struct { float x, y, z, w; };
-		//__m128 simd_data;
+		__m128 simd_data;
 	};
 };
 

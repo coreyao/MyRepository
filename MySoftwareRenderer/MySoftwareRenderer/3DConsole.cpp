@@ -27,19 +27,29 @@ std::vector<CMesh*> g_vMesh;
 
 void InitMesh()
 {
+	//CMaterial material10;
+	//material10.SetBaseColorTexture("hama.png");
+	//CMesh* pCharactor = new CMesh;
+	//pCharactor->InitFromFile("warriar.CSTM", true);
+	//pCharactor->SetMaterial(material10, 0);
+	//pCharactor->m_transform.SetPosition(Vec3(0, -25, -100));
+	//pCharactor->m_transform.SetScale(Vec3(1, 1, -1));
+	////pFileCube->m_transform.SetUseQuaternion(true);
+	////pFileCube->m_transform.SetRotation(Quaternion(60, Vec3(0, 1, 0)));
+	////pFileCube->m_transform.SetRotation(Vec3(0, 60, 0));
+	//pCharactor->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
+	//g_vMesh.push_back(pCharactor);
+	//pCharactor->m_animator.PlayAnim(0, 179, true, nullptr);
+
 	CMaterial material1;
-	material1.SetBaseColorTexture("hama.png");
-	CMesh* pFileCube = new CMesh;
-	pFileCube->InitFromFile("hama.CSTM", true);
-	pFileCube->SetMaterial(material1, 0);
-	pFileCube->m_transform.SetPosition(Vec3(0, -25, -100));
-	pFileCube->m_transform.SetScale(Vec3(1, 1, -1));
-	//pFileCube->m_transform.SetUseQuaternion(true);
-	//pFileCube->m_transform.SetRotation(Quaternion(60, Vec3(0, 1, 0)));
-	//pFileCube->m_transform.SetRotation(Vec3(0, 60, 0));
-	pFileCube->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
-	g_vMesh.push_back(pFileCube);
-	pFileCube->m_animator.PlayAnim(0, 369, true, nullptr);
+	material1.SetBaseColorTexture("HelloWorld.png");
+	CMesh* pCube = new CMesh;
+	pCube->InitFromFile("cube.CSTM", false);
+	pCube->SetMaterial(material1, 0);
+	pCube->m_transform.SetPosition(Vec3(0, -25, -100));
+	pCube->m_transform.SetScale(Vec3(1, 1, -1));
+	pCube->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
+	g_vMesh.push_back(pCube);
 
 	CMaterial material2;
 	material2.SetBaseColorTexture("brickwall.png");

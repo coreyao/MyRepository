@@ -157,7 +157,7 @@ struct SFragment
 	CVariable m_vCustomVariable[conMaxCustomVar];
 };
 
-struct CRenderState;
+class CRenderState;
 class CFaceRuntime
 {
 public:
@@ -311,8 +311,9 @@ enum EVertexOrder
 class CVertexShaderBase;
 class CFragmentShaderBase;
 class CMaterial;
-struct CRenderState
+class CRenderState
 {
+public:
 	CRenderState()
 	: m_bEnableCullFace(true)
 	, m_bDrawWireFrame(true)
