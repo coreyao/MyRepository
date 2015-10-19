@@ -136,6 +136,8 @@
     <ClInclude Include="Shaders\Shader.h">
       <Filter>Source\Shader</Filter>
     </ClInclude>
-    <ClInclude Include="Light.h" />
+    <ClInclude Include="Light.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
