@@ -77,6 +77,9 @@
     <ClCompile Include="Shaders\Shader.cpp">
       <Filter>Source\Shader</Filter>
     </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -133,5 +136,6 @@
     <ClInclude Include="Shaders\Shader.h">
       <Filter>Source\Shader</Filter>
     </ClInclude>
+    <ClInclude Include="Light.h" />
   </ItemGroup>
 </Project>

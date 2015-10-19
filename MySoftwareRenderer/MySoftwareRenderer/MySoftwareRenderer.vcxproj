@@ -19,6 +19,7 @@
     <ClCompile Include="Image\ImageReader.cpp" />
     <ClCompile Include="Image\PNGReader.cpp" />
     <ClCompile Include="Image\TGAReader.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="Math\Quaternion.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Pipeline.cpp" />
@@ -38,6 +39,7 @@
     <ClInclude Include="Image\ImageReader.h" />
     <ClInclude Include="Image\PNGReader.h" />
     <ClInclude Include="Image\TGAReader.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="Math\fixedpoint.h" />
     <ClInclude Include="Math\Quaternion.h" />
     <ClInclude Include="Mesh.h" />
