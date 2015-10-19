@@ -146,7 +146,7 @@ void RasterizationStage::CRasterizer::DrawLine(int x1, int y1, int x2, int y2, C
 	}
 }
 
-void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVertexRuntime& v2, SVertexRuntime& v3, float fAlpha, SRenderState* pRenderState)
+void RasterizationStage::CRasterizer::DrawAnyTriangle(CVertexRuntime& v1, CVertexRuntime& v2, CVertexRuntime& v3, float fAlpha, CRenderState* pRenderState)
 {
 	if (pRenderState->m_bDrawWireFrame)
 	{
@@ -190,19 +190,19 @@ void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVerte
 			auto kInverseSlopeLeftX = (fpScreenX2 - fpScreenX1) * fDY1;
 			auto kInverseSlopeRightX = (fpScreenX3 - fpScreenX1) * fDY2;
 
-			map<EVertexAttributeVar, SVariable> kInverseSlopeVertexAttributeLeft;
-			map<EVertexAttributeVar, SVariable> kInverseSlopeVertexAttributeRight;
-			for (auto& pVertexAttrPair : v1.m_vVertexAttributeVar)
+			CVariable kInverseSlopeVertexAttributeLeft[EVertexAttributeVar_Max];
+			CVariable kInverseSlopeVertexAttributeRight[EVertexAttributeVar_Max];
+			for (int eVar = EVertexAttributeVar_Position; eVar < EVertexAttributeVar_Max; ++eVar)
 			{
-				kInverseSlopeVertexAttributeLeft[pVertexAttrPair.first] 
-					= (v2.m_vVertexAttributeVar[pVertexAttrPair.first] - v1.m_vVertexAttributeVar[pVertexAttrPair.first]) * (float)fDY1;
-				kInverseSlopeVertexAttributeRight[pVertexAttrPair.first] 
-					= (v3.m_vVertexAttributeVar[pVertexAttrPair.first] - v1.m_vVertexAttributeVar[pVertexAttrPair.first]) * (float)fDY2;
+				kInverseSlopeVertexAttributeLeft[eVar]
+					= (v2.m_vVertexAttributeVar[eVar] - v1.m_vVertexAttributeVar[eVar]) * (float)fDY1;
+				kInverseSlopeVertexAttributeRight[eVar]
+					= (v3.m_vVertexAttributeVar[eVar] - v1.m_vVertexAttributeVar[eVar]) * (float)fDY2;
 			}
 
-			vector<SVariable> kInverseSlopeCustomVarLeft;
-			vector<SVariable> kInverseSlopeCustomVarRight;
-			for (unsigned int i = 0; i < v1.m_vCustomVariable.size(); ++i)
+			CVariable kInverseSlopeCustomVarLeft[conMaxCustomVar];
+			CVariable kInverseSlopeCustomVarRight[conMaxCustomVar];
+			for (int i = 0; i < conMaxCustomVar; ++i)
 			{
 				kInverseSlopeCustomVarLeft[i] = (v2.m_vCustomVariable[i] - v1.m_vCustomVariable[i]) * (float)fDY1;
 				kInverseSlopeCustomVarRight[i] = (v3.m_vCustomVariable[i] - v1.m_vCustomVariable[i]) * (float)fDY2;
@@ -221,14 +221,14 @@ void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVerte
 			auto fLeftX = fpScreenX1 + kInverseSlopeLeftX * fOffsetY;
 			auto fRightX = fpScreenX1 + kInverseSlopeRightX * fOffsetY;
 
-			map<EVertexAttributeVar, SVariable> kVertexAttributeLeft;
-			map<EVertexAttributeVar, SVariable> kVertexAttributeRight;
-			for (auto& pVertexAttrPair : v1.m_vVertexAttributeVar)
+			CVariable kVertexAttributeLeft[EVertexAttributeVar_Max];
+			CVariable kVertexAttributeRight[EVertexAttributeVar_Max];
+			for (int eVar = EVertexAttributeVar_Position; eVar < EVertexAttributeVar_Max; ++eVar)
 			{
-				kVertexAttributeLeft[pVertexAttrPair.first]
-					= v1.m_vVertexAttributeVar[pVertexAttrPair.first] + kInverseSlopeVertexAttributeLeft[pVertexAttrPair.first] * (float)fOffsetY;
-				kVertexAttributeRight[pVertexAttrPair.first]
-					= v1.m_vVertexAttributeVar[pVertexAttrPair.first] + kInverseSlopeVertexAttributeRight[pVertexAttrPair.first] * (float)fOffsetY;
+				kVertexAttributeLeft[eVar]
+					= v1.m_vVertexAttributeVar[eVar] + kInverseSlopeVertexAttributeLeft[eVar] * (float)fOffsetY;
+				kVertexAttributeRight[eVar]
+					= v1.m_vVertexAttributeVar[eVar] + kInverseSlopeVertexAttributeRight[eVar] * (float)fOffsetY;
 			}
 
 			// - TODO
@@ -241,10 +241,10 @@ void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVerte
 				fLeftX += kInverseSlopeLeftX;
 				fRightX += kInverseSlopeRightX;
 
-				for (auto& pVertexAttrPair : v1.m_vVertexAttributeVar)
+				for (int eVar = EVertexAttributeVar_Position; eVar < EVertexAttributeVar_Max; ++eVar)
 				{
-					kVertexAttributeLeft[pVertexAttrPair.first] += kInverseSlopeVertexAttributeLeft[pVertexAttrPair.first];
-					kVertexAttributeRight[pVertexAttrPair.first] += kInverseSlopeVertexAttributeRight[pVertexAttrPair.first];
+					kVertexAttributeLeft[eVar] += kInverseSlopeVertexAttributeLeft[eVar];
+					kVertexAttributeRight[eVar] += kInverseSlopeVertexAttributeRight[eVar];
 				}
 			}
 		}
@@ -265,19 +265,19 @@ void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVerte
 			auto kInverseSlopeLeftX = (fpScreenX3 - fpScreenX1) * fDY1;
 			auto kInverseSlopeRightX = (fpScreenX3 - fpScreenX2) * fDY1;
 
-			map<EVertexAttributeVar, SVariable> kInverseSlopeVertexAttributeLeft;
-			map<EVertexAttributeVar, SVariable> kInverseSlopeVertexAttributeRight;
-			for (auto& pVertexAttrPair : v1.m_vVertexAttributeVar)
+			CVariable kInverseSlopeVertexAttributeLeft[EVertexAttributeVar_Max];
+			CVariable kInverseSlopeVertexAttributeRight[EVertexAttributeVar_Max];
+			for (int eVar = EVertexAttributeVar_Position; eVar < EVertexAttributeVar_Max; ++eVar)
 			{
-				kInverseSlopeVertexAttributeLeft[pVertexAttrPair.first]
-					= (v3.m_vVertexAttributeVar[pVertexAttrPair.first] - v1.m_vVertexAttributeVar[pVertexAttrPair.first]) * (float)fDY1;
-				kInverseSlopeVertexAttributeRight[pVertexAttrPair.first]
-					= (v3.m_vVertexAttributeVar[pVertexAttrPair.first] - v2.m_vVertexAttributeVar[pVertexAttrPair.first]) * (float)fDY1;
+				kInverseSlopeVertexAttributeLeft[eVar]
+					= (v3.m_vVertexAttributeVar[eVar] - v1.m_vVertexAttributeVar[eVar]) * (float)fDY1;
+				kInverseSlopeVertexAttributeRight[eVar]
+					= (v3.m_vVertexAttributeVar[eVar] - v2.m_vVertexAttributeVar[eVar]) * (float)fDY1;
 			}
 
-			vector<SVariable> kInverseSlopeCustomVarLeft;
-			vector<SVariable> kInverseSlopeCustomVarRight;
-			for (unsigned int i = 0; i < v1.m_vCustomVariable.size(); ++i)
+			CVariable kInverseSlopeCustomVarLeft[conMaxCustomVar];
+			CVariable kInverseSlopeCustomVarRight[conMaxCustomVar];
+			for (int i = 0; i < conMaxCustomVar; ++i)
 			{
 				kInverseSlopeCustomVarLeft[i] = (v3.m_vCustomVariable[i] - v1.m_vCustomVariable[i]) * (float)fDY1;
 				kInverseSlopeCustomVarRight[i] = (v3.m_vCustomVariable[i] - v2.m_vCustomVariable[i]) * (float)fDY1;
@@ -296,14 +296,14 @@ void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVerte
 			auto fLeftX = fpScreenX1 + kInverseSlopeLeftX * fOffsetY;
 			auto fRightX = fpScreenX2 + kInverseSlopeRightX * fOffsetY;
 
-			map<EVertexAttributeVar, SVariable> kVertexAttributeLeft;
-			map<EVertexAttributeVar, SVariable> kVertexAttributeRight;
-			for (auto& pVertexAttrPair : v1.m_vVertexAttributeVar)
+			CVariable kVertexAttributeLeft[EVertexAttributeVar_Max];
+			CVariable kVertexAttributeRight[EVertexAttributeVar_Max];
+			for (int eVar = EVertexAttributeVar_Position; eVar < EVertexAttributeVar_Max; ++eVar)
 			{
-				kVertexAttributeLeft[pVertexAttrPair.first]
-					= v1.m_vVertexAttributeVar[pVertexAttrPair.first] + kInverseSlopeVertexAttributeLeft[pVertexAttrPair.first] * (float)fOffsetY;
-				kVertexAttributeRight[pVertexAttrPair.first]
-					= v2.m_vVertexAttributeVar[pVertexAttrPair.first] + kInverseSlopeVertexAttributeRight[pVertexAttrPair.first] * (float)fOffsetY;
+				kVertexAttributeLeft[eVar]
+					= v1.m_vVertexAttributeVar[eVar] + kInverseSlopeVertexAttributeLeft[eVar] * (float)fOffsetY;
+				kVertexAttributeRight[eVar]
+					= v2.m_vVertexAttributeVar[eVar] + kInverseSlopeVertexAttributeRight[eVar] * (float)fOffsetY;
 			}
 
 			// - TODO
@@ -316,10 +316,10 @@ void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVerte
 				fLeftX += kInverseSlopeLeftX;
 				fRightX += kInverseSlopeRightX;
 
-				for (auto& pVertexAttrPair : v1.m_vVertexAttributeVar)
+				for (int eVar = EVertexAttributeVar_Position; eVar < EVertexAttributeVar_Max; ++eVar)
 				{
-					kVertexAttributeLeft[pVertexAttrPair.first] += kInverseSlopeVertexAttributeLeft[pVertexAttrPair.first];
-					kVertexAttributeRight[pVertexAttrPair.first] += kInverseSlopeVertexAttributeRight[pVertexAttrPair.first];
+					kVertexAttributeLeft[eVar] += kInverseSlopeVertexAttributeLeft[eVar];
+					kVertexAttributeRight[eVar] += kInverseSlopeVertexAttributeRight[eVar];
 				}
 			}
 		}
@@ -333,7 +333,7 @@ void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVerte
 			HighPrecision fpScreenY3(v3.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4.y);
 
 			float t = (fpScreenY2 - fpScreenY1) / (fpScreenY3 - fpScreenY1);
-			SVertexRuntime newVertex;
+			CVertexRuntime newVertex;
 			Helper::LerpVertex(&v1, &v3, t, &newVertex);
 			newVertex.m_vVertexAttributeVar[EVertexAttributeVar_Position].v4.x = fpScreenX1 + (fpScreenX3 - fpScreenX1) * t;
 			newVertex.m_vVertexAttributeVar[EVertexAttributeVar_Position].v4.y = fpScreenY2;
@@ -344,7 +344,7 @@ void RasterizationStage::CRasterizer::DrawAnyTriangle(SVertexRuntime& v1, SVerte
 	}
 }
 
-void RasterizationStage::CRasterizer::DrawScanline(HighPrecision fLeftX, HighPrecision fRightX, map<EVertexAttributeVar, SVariable>& leftVal, map<EVertexAttributeVar, SVariable>& rightVal, int y, float fAlpha, SRenderState* pRenderState)
+void RasterizationStage::CRasterizer::DrawScanline(HighPrecision fLeftX, HighPrecision fRightX, CVariable* leftVal, CVariable* rightVal, int y, float fAlpha, CRenderState* pRenderState)
 {
 	int iStartX = ceil(fLeftX);
 	int iEndX = ceil(fRightX);
@@ -354,22 +354,22 @@ void RasterizationStage::CRasterizer::DrawScanline(HighPrecision fLeftX, HighPre
 	{
 		auto fDeltaX = 1.0f / ( fRightX - fLeftX );
 
-		map<EVertexAttributeVar, SVariable> kInverseSlopeVertexAttribute;
-		for (auto& pVertexAttrPair : leftVal)
+		CVariable kInverseSlopeVertexAttribute[EVertexAttributeVar_Max];
+		for (int eVar = EVertexAttributeVar_Position; eVar < EVertexAttributeVar_Max; ++eVar)
 		{
-			kInverseSlopeVertexAttribute[pVertexAttrPair.first]
-				= (rightVal[pVertexAttrPair.first] - leftVal[pVertexAttrPair.first]) * (float)fDeltaX;
+			kInverseSlopeVertexAttribute[eVar]
+				= (rightVal[eVar] - leftVal[eVar]) * (float)fDeltaX;
 		}
 
 		// - TODO
 		// - Interpolate custom variables
 
 		auto fOffsetX = iStartX - fLeftX;
-		map<EVertexAttributeVar, SVariable> kVertexAttribute;
-		for (auto& pVertexAttrPair : leftVal)
+		CVariable kVertexAttribute[EVertexAttributeVar_Max];
+		for (int eVar = EVertexAttributeVar_Position; eVar < EVertexAttributeVar_Max; ++eVar)
 		{
-			kVertexAttribute[pVertexAttrPair.first]
-				= leftVal[pVertexAttrPair.first] + kInverseSlopeVertexAttribute[pVertexAttrPair.first] * (float)fOffsetX;
+			kVertexAttribute[eVar]
+				= leftVal[eVar] + kInverseSlopeVertexAttribute[eVar] * (float)fOffsetX;
 		}
 
 		for (int i = iStartX; i < iEndX; ++i)
@@ -379,21 +379,18 @@ void RasterizationStage::CRasterizer::DrawScanline(HighPrecision fLeftX, HighPre
 			if (CanDrawPixel(iPixelX, iPixelY, kVertexAttribute[EVertexAttributeVar_Position].v4.z))
 			{
 				SFragment frag;
-				frag.m_vVertexAttributeVar = kVertexAttribute;
-				float w = 1.0f / frag.m_vVertexAttributeVar[EVertexAttributeVar_Position].v4.w;
-				for (auto& pVertexAttrPair : frag.m_vVertexAttributeVar)
-				{
-					pVertexAttrPair.second = pVertexAttrPair.second * w;
-				}
+				float w = 1.0f / kVertexAttribute[EVertexAttributeVar_Position].v4.w;
+				for (int eVar = EVertexAttributeVar_Position; eVar < EVertexAttributeVar_Max; ++eVar)
+					frag.m_vVertexAttributeVar[eVar] = kVertexAttribute[eVar] * w;
 
 				Color4F finalColor = pRenderState->m_pFragmentShader->ProcessFragment(&frag);
 				if (AlphaTest(finalColor.a))
 					DrawPixel(iPixelX, iPixelY, finalColor);
 			}
 
-			for (auto& pVertexAttrPair : leftVal)
+			for (int eVar = EVertexAttributeVar_Position; eVar < EVertexAttributeVar_Max; ++eVar)
 			{
-				kVertexAttribute[pVertexAttrPair.first] += kInverseSlopeVertexAttribute[pVertexAttrPair.first];
+				kVertexAttribute[eVar] += kInverseSlopeVertexAttribute[eVar];
 			}
 		}
 	}

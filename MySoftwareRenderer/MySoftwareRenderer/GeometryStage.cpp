@@ -1,7 +1,7 @@
 #include "GeometryStage.h"
 #include "Director.h"
 
-bool GeometryStage::DoClipInClipSpace(SFaceRuntime& face, bool& bAddFace, SFaceRuntime& addFace)
+bool GeometryStage::DoClipInClipSpace(CFaceRuntime& face, bool& bAddFace, CFaceRuntime& addFace)
 {
 	auto& outPos1 = face.m_vertex1.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4;
 	auto& outPos2 = face.m_vertex2.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4;
@@ -45,7 +45,7 @@ bool GeometryStage::DoClipInClipSpace(SFaceRuntime& face, bool& bAddFace, SFaceR
 		{
 			if (iCount == 1)
 			{
-				SFaceRuntime tempFace = face;
+				CFaceRuntime tempFace = face;
 				if (bOut[0])
 				{
 					auto& outTempPos1 = tempFace.m_vertex1.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4;
@@ -55,11 +55,11 @@ bool GeometryStage::DoClipInClipSpace(SFaceRuntime& face, bool& bAddFace, SFaceR
 					if (IsBackFace(tempFace, tempFace.m_pRenderState->m_eVertexOrder))
 						return true;
 
-					SVertexRuntime newVertex1;
+					CVertexRuntime newVertex1;
 					t = (fNear - (-outPos1.w)) / ((-outPos3.w) - (-outPos1.w));
 					Helper::LerpVertex(&face.m_vertex1, &face.m_vertex3, t, &newVertex1);
 
-					SVertexRuntime newVertex2;
+					CVertexRuntime newVertex2;
 					t = (fNear - (-outPos1.w)) / ((-outPos2.w) - (-outPos1.w));
 					Helper::LerpVertex(&face.m_vertex1, &face.m_vertex2, t, &newVertex2);
 					
@@ -93,11 +93,11 @@ bool GeometryStage::DoClipInClipSpace(SFaceRuntime& face, bool& bAddFace, SFaceR
 					if (IsBackFace(tempFace, tempFace.m_pRenderState->m_eVertexOrder))
 						return true;
 
-					SVertexRuntime newVertex1;
+					CVertexRuntime newVertex1;
 					t = (fNear - (-outPos2.w)) / ((-outPos3.w) - (-outPos2.w));
 					Helper::LerpVertex(&face.m_vertex2, &face.m_vertex3, t, &newVertex1);
 
-					SVertexRuntime newVertex2;
+					CVertexRuntime newVertex2;
 					t = (fNear - (-outPos2.w)) / ((-outPos1.w) - (-outPos2.w));
 					Helper::LerpVertex(&face.m_vertex2, &face.m_vertex1, t, &newVertex2);
 
@@ -131,11 +131,11 @@ bool GeometryStage::DoClipInClipSpace(SFaceRuntime& face, bool& bAddFace, SFaceR
 					if (IsBackFace(tempFace, tempFace.m_pRenderState->m_eVertexOrder))
 						return true;
 
-					SVertexRuntime newVertex1;
+					CVertexRuntime newVertex1;
 					t = (fNear - (-outPos3.w)) / ((-outPos2.w) - (-outPos3.w));
 					Helper::LerpVertex(&face.m_vertex3, &face.m_vertex2, t, &newVertex1);
 
-					SVertexRuntime newVertex2;
+					CVertexRuntime newVertex2;
 					t = (fNear - (-outPos3.w)) / ((-outPos1.w) - (-outPos3.w));
 					Helper::LerpVertex(&face.m_vertex3, &face.m_vertex1, t, &newVertex2);
 				
@@ -167,9 +167,9 @@ bool GeometryStage::DoClipInClipSpace(SFaceRuntime& face, bool& bAddFace, SFaceR
 			}
 			else if (iCount == 2)
 			{
-				SVertexRuntime* pIn = nullptr;
-				SVertexRuntime* pOut1 = nullptr;
-				SVertexRuntime* pOut2 = nullptr;
+				CVertexRuntime* pIn = nullptr;
+				CVertexRuntime* pOut1 = nullptr;
+				CVertexRuntime* pOut2 = nullptr;
 
 				if ( !bOut[0] )
 				{
@@ -210,54 +210,54 @@ bool GeometryStage::DoClipInClipSpace(SFaceRuntime& face, bool& bAddFace, SFaceR
 	}
 }
 
-void GeometryStage::TransformClipToScreen(SFaceRuntime& face)
+void GeometryStage::TransformClipToScreen(CFaceRuntime& face)
 {
 	{
-		SVertexRuntime& vertex = face.m_vertex1;
+		CVertexRuntime& vertex = face.m_vertex1;
 		auto& outPos = vertex.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position];
 		float rhw = 1.0f / outPos.v4.w;
 
-		for (auto& pVertexAttrPair : vertex.m_vVertexAttributeVar)
-			pVertexAttrPair.second = pVertexAttrPair.second * rhw;
+		for (int eVar = EVertexAttributeVar_Position; eVar < EVertexAttributeVar_Max; ++eVar)
+			vertex.m_vVertexAttributeVar[eVar] *= rhw;
 
 		outPos.v4.x = (outPos.v4.x * 0.5f + 0.5f) * (SCREEN_WIDTH)-0.5f;
 		outPos.v4.y = (-outPos.v4.y * 0.5f + 0.5f) * (SCREEN_HEIGHT)-0.5f;
 		outPos.v4.w = rhw;
 
-		for (auto& pCustomVariablePair : vertex.m_vCustomVariable)
-			pCustomVariablePair = pCustomVariablePair * rhw;
+		for (int i = 0; i < conMaxCustomVar; ++i)
+			vertex.m_vCustomVariable[i] *= rhw;
 	}
 
 	{
-	SVertexRuntime& vertex = face.m_vertex2;
+	CVertexRuntime& vertex = face.m_vertex2;
 	auto& outPos = vertex.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position];
 	float rhw = 1.0f / outPos.v4.w;
 
-	for (auto& pVertexAttrPair : vertex.m_vVertexAttributeVar)
-		pVertexAttrPair.second = pVertexAttrPair.second * rhw;
+	for (int eVar = EVertexAttributeVar_Position; eVar < EVertexAttributeVar_Max; ++eVar)
+		vertex.m_vVertexAttributeVar[eVar] *= rhw;
 
 	outPos.v4.x = (outPos.v4.x * 0.5f + 0.5f) * (SCREEN_WIDTH)-0.5f;
 	outPos.v4.y = (-outPos.v4.y * 0.5f + 0.5f) * (SCREEN_HEIGHT)-0.5f;
 	outPos.v4.w = rhw;
 
-	for (auto& pCustomVariablePair : vertex.m_vCustomVariable)
-		pCustomVariablePair = pCustomVariablePair * rhw;
+	for (int i = 0; i < conMaxCustomVar; ++i)
+		vertex.m_vCustomVariable[i] *= rhw;
 	}
 
 	{
-		SVertexRuntime& vertex = face.m_vertex3;
+		CVertexRuntime& vertex = face.m_vertex3;
 		auto& outPos = vertex.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position];
 		float rhw = 1.0f / outPos.v4.w;
-		
-		for (auto& pVertexAttrPair : vertex.m_vVertexAttributeVar)
-			pVertexAttrPair.second = pVertexAttrPair.second * rhw;
+
+		for (int eVar = EVertexAttributeVar_Position; eVar < EVertexAttributeVar_Max; ++eVar)
+			vertex.m_vVertexAttributeVar[eVar] *= rhw;
 
 		outPos.v4.x = (outPos.v4.x * 0.5f + 0.5f) * (SCREEN_WIDTH)-0.5f;
 		outPos.v4.y = (-outPos.v4.y * 0.5f + 0.5f) * (SCREEN_HEIGHT)-0.5f;
 		outPos.v4.w = rhw;
 
-		for (auto& pCustomVariablePair : vertex.m_vCustomVariable)
-			pCustomVariablePair = pCustomVariablePair * rhw;
+		for (int i = 0; i < conMaxCustomVar; ++i)
+			vertex.m_vCustomVariable[i] *= rhw;
 	}
 }
 
@@ -292,7 +292,7 @@ bool GeometryStage::IsVertexInCVV(const Vec4& pos)
 	//return true;
 }
 
-bool GeometryStage::IsBackFace(SFaceRuntime& face, EVertexOrder eOrder /*= EVertexOrder_ClockWise*/)
+bool GeometryStage::IsBackFace(CFaceRuntime& face, EVertexOrder eOrder /*= EVertexOrder_ClockWise*/)
 {
 	if (!face.m_pRenderState->m_bEnableCullFace)
 		return false;

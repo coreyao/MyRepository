@@ -183,7 +183,7 @@ void CMesh::Render()
 
 		for (int j = 0; j < rSubmesh->m_vFaceRunTimeOrigin.size(); ++j)
 		{
-			SFaceRuntime* rFace = &rSubmesh->m_vFaceRunTime[j];
+			CFaceRuntime* rFace = &rSubmesh->m_vFaceRunTime[j];
 			rFace->m_vertex1 = rSubmesh->m_vFaceRunTimeOrigin[j].m_vertex1;
 			rFace->m_vertex2 = rSubmesh->m_vFaceRunTimeOrigin[j].m_vertex2;
 			rFace->m_vertex3 = rSubmesh->m_vFaceRunTimeOrigin[j].m_vertex3;
@@ -245,7 +245,7 @@ void CMesh::InitRuntimeData()
 
 		for (auto& rVertex : rSubMesh.m_vVertex)
 		{
-			SVertexRuntime v;
+			CVertexRuntime v;
 			v.m_vVertexAttributeVar[EVertexAttributeVar_Position].v4 = Vec4(rVertex.m_pos.x, rVertex.m_pos.y, rVertex.m_pos.z, 1.0f);
 			v.m_vVertexAttributeVar[EVertexAttributeVar_Normal].v3 = rVertex.m_normal;
 			v.m_vVertexAttributeVar[EVertexAttributeVar_tangent].v3 = rVertex.m_tangent;
@@ -258,7 +258,7 @@ void CMesh::InitRuntimeData()
 
 		for (auto& rFace : rSubMesh.m_vFace)
 		{
-			SFaceRuntime curFace;
+			CFaceRuntime curFace;
 			curFace.m_vertex1 = subMesh->m_vVertexRunTime[rFace.m_VertexIndex1];
 			curFace.m_vertex2 = subMesh->m_vVertexRunTime[rFace.m_VertexIndex2];
 			curFace.m_vertex3 = subMesh->m_vVertexRunTime[rFace.m_VertexIndex3];

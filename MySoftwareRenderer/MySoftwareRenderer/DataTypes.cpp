@@ -419,28 +419,51 @@ void SMeshData::ReadFromFile(FILE* hFile)
 	}
 }
 
-SVariable SVariable::operator*(float fScalar) const
+CVariable CVariable::operator*(float fScalar) const
 {
-	SVariable ret;
+	CVariable ret;
 	ret.v4 = this->v4 * fScalar;
 	return ret;
 }
 
-SVariable SVariable::operator+(const SVariable& rh) const
+CVariable CVariable::operator+(const CVariable& rh) const
 {
-	SVariable ret;
+	CVariable ret;
 	ret.v4 = this->v4 + rh.v4;
 	return ret;
 }
 
-SVariable SVariable::operator-(const SVariable& rh) const
+CVariable CVariable::operator-(const CVariable& rh) const
 {
-	SVariable ret;
+	CVariable ret;
 	ret.v4 = this->v4 - rh.v4;
 	return ret;
 }
 
-void SVariable::operator+=(const SVariable& rh)
+void CVariable::operator*=(float fScalar)
+{
+	v4 *= fScalar;
+}
+
+void CVariable::operator+=(const CVariable& rh)
 {
 	this->v4 += rh.v4;
+}
+
+void CVertexRuntime::operator=(const CVertexRuntime& rh)
+{
+	m_boneIndex = rh.m_boneIndex;
+	m_blendWeight = rh.m_blendWeight;
+
+	for (int eVar = EVertexAttributeVar_Position; eVar < EVertexAttributeVar_Max; ++eVar)
+		m_vVertexAttributeVar[eVar] = rh.m_vVertexAttributeVar[eVar];
+}
+
+CVertexRuntime::CVertexRuntime(const CVertexRuntime& rh)
+{
+	m_boneIndex = rh.m_boneIndex;
+	m_blendWeight = rh.m_blendWeight;
+
+	for (int eVar = EVertexAttributeVar_Position; eVar < EVertexAttributeVar_Max; ++eVar)
+		m_vVertexAttributeVar[eVar] = rh.m_vVertexAttributeVar[eVar];
 }

@@ -72,9 +72,9 @@ public:
 	CMaterial m_material;
 	bool m_bSubMeshVisibility;
 	bool m_bUseNormalizedPos;
-	std::vector<SVertexRuntime> m_vVertexRunTime;
-	std::vector<SFaceRuntime> m_vFaceRunTime;
-	std::vector<SFaceRuntime> m_vFaceRunTimeOrigin;
+	std::vector<CVertexRuntime> m_vVertexRunTime;
+	std::vector<CFaceRuntime> m_vFaceRunTime;
+	std::vector<CFaceRuntime> m_vFaceRunTimeOrigin;
 };
 
 class CMesh : public CRenderObject

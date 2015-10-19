@@ -49,7 +49,7 @@ void InitMesh()
 	pPlane->m_transform.SetPosition(Vec3(0, -100, 0));
 	pPlane->m_transform.SetScale(Vec3(10, 10, -10));
 	pPlane->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
-	//g_vMesh.push_back(pPlane);
+	g_vMesh.push_back(pPlane);
 
 
 	{

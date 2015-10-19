@@ -36,12 +36,12 @@ namespace RasterizationStage
 
 		void DrawPixel(int x, int y, Color4F src);
 		void DrawLine(int x1, int y1, int x2, int y2, Color4F color);
-		void DrawAnyTriangle(SVertexRuntime& v1, SVertexRuntime& v2, SVertexRuntime& v3, float fAlpha, SRenderState* pRenderState);
+		void DrawAnyTriangle(CVertexRuntime& v1, CVertexRuntime& v2, CVertexRuntime& v3, float fAlpha, CRenderState* pRenderState);
 
-		void DrawScanline(HighPrecision fLeftX, HighPrecision fRightX, map<EVertexAttributeVar, SVariable>& leftVal, map<EVertexAttributeVar, SVariable>& rightVal, int y, float fAlpha, SRenderState* pRenderState);
+		void DrawScanline(HighPrecision fLeftX, HighPrecision fRightX, CVariable* leftVal, CVariable* rightVal, int y, float fAlpha, CRenderState* pRenderState);
 
-		void DrawTopTriangle(SVertexRuntime &v1, SVertexRuntime &v2, SVertexRuntime &v3, float fAlpha, SRenderState* pRenderState);
-		void DrawBottomTriangle(SVertexRuntime &v1, SVertexRuntime &v2, SVertexRuntime &v3, float fAlpha, SRenderState* pRenderState);
+		void DrawTopTriangle(CVertexRuntime &v1, CVertexRuntime &v2, CVertexRuntime &v3, float fAlpha, CRenderState* pRenderState);
+		void DrawBottomTriangle(CVertexRuntime &v1, CVertexRuntime &v2, CVertexRuntime &v3, float fAlpha, CRenderState* pRenderState);
 
 		Color4F SampleTexture(int iTextureID, Vec2 uv);
 		Color4F SampleNearset(const CTexture* pTexture, Vec2 &uv);

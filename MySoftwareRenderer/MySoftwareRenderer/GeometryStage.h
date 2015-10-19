@@ -4,9 +4,9 @@
 
 namespace GeometryStage
 {
-	bool DoClipInClipSpace(SFaceRuntime& face, bool& bAddFace, SFaceRuntime& addFace);
-	void TransformClipToScreen(SFaceRuntime& face);
+	bool DoClipInClipSpace(CFaceRuntime& face, bool& bAddFace, CFaceRuntime& addFace);
+	void TransformClipToScreen(CFaceRuntime& face);
 
-	bool IsBackFace(SFaceRuntime& face, EVertexOrder eOrder = EVertexOrder_ClockWise);
+	bool IsBackFace(CFaceRuntime& face, EVertexOrder eOrder = EVertexOrder_ClockWise);
 	bool IsVertexInCVV(const Vec4& pos);
 }

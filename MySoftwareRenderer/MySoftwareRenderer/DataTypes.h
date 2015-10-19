@@ -100,8 +100,9 @@ struct SVertexData
 	Vec4 m_blendWeight;
 };
 
-struct SVariable
+class CVariable
 {
+public:
 	union
 	{
 		float ft;
@@ -111,16 +112,17 @@ struct SVariable
 		struct{ Color4F color; };
 	};
 
-	SVariable()
+	CVariable()
 	{
-		memset(this, 0, sizeof(SVariable));
+		memset(this, 0, sizeof(CVariable));
 	}
 
-	SVariable operator*(float fScalar) const;
-	SVariable operator+(const SVariable& rh) const;
-	SVariable operator-(const SVariable& rh) const;
+	CVariable operator*(float fScalar) const;
+	CVariable operator+(const CVariable& rh) const;
+	CVariable operator-(const CVariable& rh) const;
 
-	void operator+=(const SVariable& rh);
+	void operator+=(const CVariable& rh);
+	void operator*=(float fScalar);
 };
 
 enum EVertexAttributeVar
@@ -134,35 +136,42 @@ enum EVertexAttributeVar
 };
 
 const int conMaxCustomVar = 3;
-struct SVertexRuntime
+class CVertexRuntime
 {
+public:
 	Vec4 m_boneIndex;
 	Vec4 m_blendWeight;
 
-	SVariable m_vVertexAttributeVar[EVertexAttributeVar_Max];
-	SVariable m_vCustomVariable[conMaxCustomVar];
+	CVariable m_vVertexAttributeVar[EVertexAttributeVar_Max];
+	CVariable m_vCustomVariable[conMaxCustomVar];
+
+	CVertexRuntime(){}
+
+	CVertexRuntime(const CVertexRuntime& rh);
+	void operator=(const CVertexRuntime& rh);
 };
 
 struct SFragment
 {
-	SVariable m_vVertexAttributeVar[EVertexAttributeVar_Max];
-	SVariable m_vCustomVariable[conMaxCustomVar];
+	CVariable m_vVertexAttributeVar[EVertexAttributeVar_Max];
+	CVariable m_vCustomVariable[conMaxCustomVar];
 };
 
-struct SRenderState;
-struct SFaceRuntime
+struct CRenderState;
+class CFaceRuntime
 {
-	SFaceRuntime()
+public:
+	CFaceRuntime()
 	: m_pRenderState(nullptr)
 	, m_fAlpha(1.0f)
 	{
 	}
 
-	SVertexRuntime m_vertex1;
-	SVertexRuntime m_vertex2;
-	SVertexRuntime m_vertex3;
+	CVertexRuntime m_vertex1;
+	CVertexRuntime m_vertex2;
+	CVertexRuntime m_vertex3;
 	float m_fAlpha;
-	SRenderState* m_pRenderState;
+	CRenderState* m_pRenderState;
 };
 
 struct STextureData
@@ -302,9 +311,9 @@ enum EVertexOrder
 class CVertexShaderBase;
 class CFragmentShaderBase;
 class CMaterial;
-struct SRenderState
+struct CRenderState
 {
-	SRenderState()
+	CRenderState()
 	: m_bEnableCullFace(true)
 	, m_bDrawWireFrame(true)
 	, m_eVertexOrder(EVertexOrder_ClockWise)
@@ -333,7 +342,7 @@ public:
 	CVertexShaderBase* m_pVertexShader;
 	CFragmentShaderBase* m_pFragmentShader;
 	STransform m_transform;
-	SRenderState m_renderState;
+	CRenderState m_renderState;
 };
 
 typedef shared_ptr<CRenderObject> RenderObjPtr;

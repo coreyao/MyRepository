@@ -9,10 +9,10 @@ class CPipeline
 {
 public:
 	void Draw();
-	void AddFace(SFaceRuntime* rFace);
+	void AddFace(CFaceRuntime* rFace);
 
 	static CPipeline* GetInstance();
 private:
 	static CPipeline* s_pInstance;
-	list<SFaceRuntime*> m_vRenderList;
+	list<CFaceRuntime*> m_vRenderList;
 };

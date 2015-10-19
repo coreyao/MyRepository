@@ -2,7 +2,7 @@
 #include "../Director.h"
 #include "../RasterizationStage.h"
 
-void CMeshVertexShader::ProcessVertex(SVertexRuntime* pVertex)
+void CMeshVertexShader::ProcessVertex(CVertexRuntime* pVertex)
 {
 	const Mat4& viewMat = CDirector::GetInstance()->GetPerspectiveCamera()->GetViewMat();
 	const Mat4& projMat = CDirector::GetInstance()->GetPerspectiveCamera()->GetProjMat();
@@ -17,7 +17,7 @@ Color4F CMeshFragmentShader::ProcessFragment(SFragment* pFragment)
 	return finalColor;
 }
 
-void CSkinMeshVertexShader::ProcessVertex(SVertexRuntime* pVertex)
+void CSkinMeshVertexShader::ProcessVertex(CVertexRuntime* pVertex)
 {
 	int matrixIndex = 0;
 	Vec4 matrixPalette1 = Vec4(0.0, 0.0, 0.0, 0.0);

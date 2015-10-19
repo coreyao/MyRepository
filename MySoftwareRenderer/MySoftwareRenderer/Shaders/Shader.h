@@ -13,7 +13,7 @@ class CVertexShaderBase : public CShaderBase
 public:
 	Mat4 ModelMat;
 
-	virtual void ProcessVertex(SVertexRuntime* pVertex) = 0;
+	virtual void ProcessVertex(CVertexRuntime* pVertex) = 0;
 
 };
 
@@ -28,7 +28,7 @@ public:
 class CMeshVertexShader : public CVertexShaderBase
 {
 public:
-	virtual void ProcessVertex(SVertexRuntime* pVertex) override;
+	virtual void ProcessVertex(CVertexRuntime* pVertex) override;
 };
 
 class CMeshFragmentShader : public CFragmentShaderBase
@@ -40,7 +40,7 @@ public:
 class CSkinMeshVertexShader : public CVertexShaderBase
 {
 public:
-	virtual void ProcessVertex(SVertexRuntime* pVertex) override;
+	virtual void ProcessVertex(CVertexRuntime* pVertex) override;
 
 	Vec4* m_vMatrixPallet;
 };
