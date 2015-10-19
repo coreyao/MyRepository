@@ -199,6 +199,9 @@ bool GeometryStage::DoClipInClipSpace(CFaceRuntime& face, bool& bAddFace, CFaceR
 				Helper::LerpVertex(pIn, pOut2, t, pOut2);
 
 				bAddFace = false;
+
+				if (IsBackFace(face, face.m_pRenderState->m_eVertexOrder))
+					return true;
 			}
 
 			return false;

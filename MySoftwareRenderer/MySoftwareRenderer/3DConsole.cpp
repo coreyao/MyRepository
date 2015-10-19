@@ -46,7 +46,7 @@ void InitMesh()
 	CMesh* pCube = new CMesh;
 	pCube->InitFromFile("cube.CSTM", false);
 	pCube->SetMaterial(material1, 0);
-	pCube->m_transform.SetPosition(Vec3(0, -25, -100));
+	pCube->m_transform.SetPosition(Vec3(0, 0, 300));
 	pCube->m_transform.SetScale(Vec3(1, 1, -1));
 	pCube->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
 	g_vMesh.push_back(pCube);
@@ -57,9 +57,9 @@ void InitMesh()
 	pPlane->InitFromFile("plane.CSTM", false);
 	pPlane->SetMaterial(material2, 0);
 	pPlane->m_transform.SetPosition(Vec3(0, -100, 0));
-	pPlane->m_transform.SetScale(Vec3(10, 10, -10));
+	pPlane->m_transform.SetScale(Vec3(30, 30, -30));
 	pPlane->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
-	g_vMesh.push_back(pPlane);
+	//g_vMesh.push_back(pPlane);
 
 
 	{
