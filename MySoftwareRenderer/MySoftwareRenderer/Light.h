@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Utility.h"
+#include "DataTypes.h"
 
 enum ELightType
 {
@@ -15,9 +16,9 @@ class CLightBase
 public:
 	ELightType m_eLightType;
 
-	Vec3 m_ambientColor;
-	Vec3 m_diffuseColor;
-	Vec3 m_specularColor;
+	Color4F m_ambientColor;
+	Color4F m_diffuseColor;
+	Color4F m_specularColor;
 
 	Vec3 m_lightDir;
 	Vec3 m_lightPos;

@@ -5,7 +5,13 @@
 
 class CShaderBase
 {
+public:
+	CShaderBase()
+		: EnableLight(true)
+	{
+	}
 
+	bool EnableLight;
 };
 
 class CVertexShaderBase : public CShaderBase

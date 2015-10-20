@@ -7,6 +7,7 @@
 #include "Mesh.h"
 #include "Director.h"
 #include "Pipeline.h"
+#include "Light.h"
 
 // ∫Í∂®“Â
 #define WINDOW_CLASS_NAME TEXT("MySoftwareRenderer")
@@ -27,6 +28,14 @@ std::vector<CMesh*> g_vMesh;
 
 void InitMesh()
 {
+	CDirectionalLight* pDirectionalLight = new CDirectionalLight;
+	pDirectionalLight->m_ambientColor = Color4F(0.5f, 0.5f, 0.1f, 0.0f);
+	pDirectionalLight->m_diffuseColor = Color4F(1.0f, 1.0f, 1.0f, 0.0f);
+	pDirectionalLight->m_specularColor = Color4F(1.0f, 1.0f, 1.0f, 0.0f);
+	pDirectionalLight->m_lightDir = Vec3(1, 1, 1);
+	pDirectionalLight->m_lightDir.Normalize();
+	CLightManager::GetInstance()->AddLight(pDirectionalLight);
+
 	//CMaterial material10;
 	//material10.SetBaseColorTexture("hama.png");
 	//CMesh* pCharactor = new CMesh;

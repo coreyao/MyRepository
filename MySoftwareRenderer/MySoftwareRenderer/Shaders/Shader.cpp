@@ -1,6 +1,7 @@
 #include "Shader.h"
 #include "../Director.h"
 #include "../RasterizationStage.h"
+#include "../Light.h"
 
 void CMeshVertexShader::ProcessVertex(CVertexRuntime* pVertex)
 {
@@ -12,8 +13,20 @@ void CMeshVertexShader::ProcessVertex(CVertexRuntime* pVertex)
 
 Color4F CMeshFragmentShader::ProcessFragment(SFragment* pFragment)
 {
-	Color4F finalColor = RasterizationStage::CRasterizer::GetInstance()->SampleTexture(m_vMaterial[0]->GetBaseColorTex(), pFragment->m_vVertexAttributeVar[EVertexAttributeVar_UV].v2);
-	finalColor = finalColor * pFragment->m_vVertexAttributeVar[EVertexAttributeVar_Color].color;
+	Color4F lightColor = Color4F(0, 0, 0, 1.0f);
+	Color4F texColor = RasterizationStage::CRasterizer::GetInstance()->SampleTexture(m_vMaterial[0]->GetBaseColorTex(), pFragment->m_vVertexAttributeVar[EVertexAttributeVar_UV].v2);
+	if (EnableLight)
+	{
+		const std::vector<CDirectionalLight>& vDirLights = CLightManager::GetInstance()->GetAllDirectionalLights();
+		for (int i = 0; i < vDirLights.size(); ++i)
+		{
+			const CDirectionalLight& rLight = vDirLights[i];
+			lightColor += rLight.m_ambientColor;
+		}
+	}
+
+	Color4F& rVertexColor = pFragment->m_vVertexAttributeVar[EVertexAttributeVar_Color].color;
+	Color4F finalColor = texColor * rVertexColor * lightColor;
 	return finalColor;
 }
 
