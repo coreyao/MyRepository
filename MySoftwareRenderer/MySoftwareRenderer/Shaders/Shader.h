@@ -12,15 +12,13 @@ public:
 	}
 
 	bool EnableLight;
+	Mat4 ModelMat;
 };
 
 class CVertexShaderBase : public CShaderBase
 {
 public:
-	Mat4 ModelMat;
-
 	virtual void ProcessVertex(CVertexRuntime* pVertex) = 0;
-
 };
 
 class CFragmentShaderBase : public CShaderBase

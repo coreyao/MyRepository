@@ -24,11 +24,13 @@ public:
 	float y;
 };
 
+class Vec3;
 __declspec(align(16)) class Vec4
 {
 public:
 	Vec4();
 	Vec4(float _x, float _y, float _z, float _w);
+	Vec4(const Vec3& rh, float _w);
 
 	void set(float _x, float _y, float _z, float _w);
 

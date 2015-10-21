@@ -76,21 +76,12 @@ public:
 	const std::vector<CPointLight>& GetAllPointLights();
 	const std::vector<CSpotLight>& GetAllSpotLights();
 
-	static const int conMaxDirectionalLightNum = 5;
-	static const int conMaxPointLightNum = 5;
-	static const int conMaxSpotLightNum = 5;
-
 private:
 	static CLightManager* s_pInstance;
 
 	CLightManager();
 
-	int m_iCurDirectionalLightNum;
 	std::vector<CDirectionalLight> m_vAllDirectionalLight;
-
-	int m_iCurPointLightNum;
 	std::vector<CPointLight> m_vAllPointLight;
-
-	int m_iCurSpotLightNum;
 	std::vector<CSpotLight> m_vAllSpotLight;
 };

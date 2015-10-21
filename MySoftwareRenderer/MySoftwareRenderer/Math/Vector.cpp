@@ -145,6 +145,14 @@ Vec4::Vec4(float _x, float _y, float _z, float _w)
 #endif
 }
 
+Vec4::Vec4(const Vec3& rh, float _w)
+{
+	this->x = rh.x;
+	this->y = rh.y;
+	this->z = rh.z;
+	this->w = _w;
+}
+
 void Vec4::operator/=(float fScalar)
 {
 #if USE_SIMD

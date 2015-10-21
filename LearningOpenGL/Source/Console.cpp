@@ -33,7 +33,7 @@ CThirdPersonController* g_pController = nullptr;
 timeval g_fLastTime = {0, 0};
 float g_fDeltaTime = 0.0f;
 float g_fElapsedTime = 0.0f;
-int g_iStepLength = 5;
+int g_iStepLength = 20;
 
 int g_iFrame = 0;
 float g_fAccumulatedTime = 0;
@@ -108,7 +108,7 @@ void init()
 
 	CMesh* planeMesh = new CMesh;
 	planeMesh->InitFromFile("plane.CSTM");
-	planeMesh->m_transform.m_scale.set(50, 50, -50);
+	planeMesh->m_transform.m_scale.set(10, 10, -10);
 	planeMesh->m_transform.m_pos.set(0, -30, -100);
 	for ( int i = 0; i < planeMesh->GetMeshData().m_vSubMesh.size(); ++i )
 	{
@@ -122,7 +122,7 @@ void init()
 	planeMesh->m_bEnableCullFace = false;
 	planeMesh->SetLightEnable(true);
 	planeMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh") );
-	//g_vMesh.push_back(planeMesh);
+	g_vMesh.push_back(planeMesh);
 
 	g_pLightMesh = new CMesh;
 	g_pLightMesh->InitFromFile("ball.CSTM");
@@ -157,7 +157,7 @@ void init()
 	pFileCube->m_transform.m_scale = (Vec3(1, 1, -1));
 	pFileCube->m_transform.m_rotation = (Vec3(0, 60, 0));
 	pFileCube->SetGLProgram(CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh"));
-	g_vMesh.push_back(pFileCube);
+	//g_vMesh.push_back(pFileCube);
 
 	g_pTerrain = new CTerrain();
 	g_pTerrain->SetDetailTexture("dirt.png", "Grass2.png", "road.png", "GreenSkin.png");

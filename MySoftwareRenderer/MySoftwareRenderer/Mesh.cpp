@@ -179,6 +179,7 @@ void CMesh::Render()
 		if (m_transform.IsTransformDirty())
 		{
 			m_pVertexShader->ModelMat = m_transform.GetTransformMat() * rSubmesh->m_meshMat;
+			m_pFragmentShader->ModelMat = m_pVertexShader->ModelMat;
 		}
 
 		for (int j = 0; j < rSubmesh->m_vFaceRunTimeOrigin.size(); ++j)
@@ -247,7 +248,7 @@ void CMesh::InitRuntimeData()
 		{
 			CVertexRuntime v;
 			v.m_vVertexAttributeVar[EVertexAttributeVar_Position].v4 = Vec4(rVertex.m_pos.x, rVertex.m_pos.y, rVertex.m_pos.z, 1.0f);
-			v.m_vVertexAttributeVar[EVertexAttributeVar_Normal].v3 = rVertex.m_normal;
+			v.m_vVertexAttributeVar[EVertexAttributeVar_Normal].v3 = rVertex.m_normal.GetNormalized();
 			v.m_vVertexAttributeVar[EVertexAttributeVar_tangent].v3 = rVertex.m_tangent;
 			v.m_vVertexAttributeVar[EVertexAttributeVar_UV].v2 = rVertex.m_UV;
 			v.m_vVertexAttributeVar[EVertexAttributeVar_Color].color = rVertex.m_color;

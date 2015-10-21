@@ -153,8 +153,11 @@ public:
 
 struct SFragment
 {
+	SFragment() : fAlpha(1.0f){}
+
 	CVariable m_vVertexAttributeVar[EVertexAttributeVar_Max];
 	CVariable m_vCustomVariable[conMaxCustomVar];
+	float fAlpha;
 };
 
 class CRenderState;
@@ -396,13 +399,18 @@ public:
 class CMaterial
 {
 public:
-	CMaterial() : m_baseColorTex(0)
+	CMaterial()
+		: m_baseColorTex(0)
+		, m_fShininess(64.0f)
 	{
 	}
 
 	int GetBaseColorTex();
 	void SetBaseColorTexture(const std::string& sFileName);
+	void SetShininess(float fShininess);
+	float GetShininess();
 
 private:
 	int m_baseColorTex;
+	float m_fShininess;
 };

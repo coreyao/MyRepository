@@ -223,12 +223,12 @@ void GeometryStage::TransformClipToScreen(CFaceRuntime& face)
 		for (int eVar = EVertexAttributeVar_Position; eVar < EVertexAttributeVar_Max; ++eVar)
 			vertex.m_vVertexAttributeVar[eVar] *= rhw;
 
+		for (int i = 0; i < conMaxCustomVar; ++i)
+			vertex.m_vCustomVariable[i] *= rhw;
+
 		outPos.v4.x = (outPos.v4.x * 0.5f + 0.5f) * (SCREEN_WIDTH)-0.5f;
 		outPos.v4.y = (-outPos.v4.y * 0.5f + 0.5f) * (SCREEN_HEIGHT)-0.5f;
 		outPos.v4.w = rhw;
-
-		for (int i = 0; i < conMaxCustomVar; ++i)
-			vertex.m_vCustomVariable[i] *= rhw;
 	}
 
 	{
@@ -239,12 +239,12 @@ void GeometryStage::TransformClipToScreen(CFaceRuntime& face)
 	for (int eVar = EVertexAttributeVar_Position; eVar < EVertexAttributeVar_Max; ++eVar)
 		vertex.m_vVertexAttributeVar[eVar] *= rhw;
 
+	for (int i = 0; i < conMaxCustomVar; ++i)
+		vertex.m_vCustomVariable[i] *= rhw;
+
 	outPos.v4.x = (outPos.v4.x * 0.5f + 0.5f) * (SCREEN_WIDTH)-0.5f;
 	outPos.v4.y = (-outPos.v4.y * 0.5f + 0.5f) * (SCREEN_HEIGHT)-0.5f;
 	outPos.v4.w = rhw;
-
-	for (int i = 0; i < conMaxCustomVar; ++i)
-		vertex.m_vCustomVariable[i] *= rhw;
 	}
 
 	{
@@ -255,12 +255,12 @@ void GeometryStage::TransformClipToScreen(CFaceRuntime& face)
 		for (int eVar = EVertexAttributeVar_Position; eVar < EVertexAttributeVar_Max; ++eVar)
 			vertex.m_vVertexAttributeVar[eVar] *= rhw;
 
+		for (int i = 0; i < conMaxCustomVar; ++i)
+			vertex.m_vCustomVariable[i] *= rhw;
+
 		outPos.v4.x = (outPos.v4.x * 0.5f + 0.5f) * (SCREEN_WIDTH)-0.5f;
 		outPos.v4.y = (-outPos.v4.y * 0.5f + 0.5f) * (SCREEN_HEIGHT)-0.5f;
 		outPos.v4.w = rhw;
-
-		for (int i = 0; i < conMaxCustomVar; ++i)
-			vertex.m_vCustomVariable[i] *= rhw;
 	}
 }
 

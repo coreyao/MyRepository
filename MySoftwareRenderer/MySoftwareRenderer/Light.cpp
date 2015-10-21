@@ -14,9 +14,6 @@ CLightManager* CLightManager::GetInstance()
 	if (!s_pInstance)
 	{
 		s_pInstance = new CLightManager;
-		s_pInstance->m_vAllDirectionalLight.resize(conMaxDirectionalLightNum);
-		s_pInstance->m_vAllPointLight.resize(conMaxPointLightNum);
-		s_pInstance->m_vAllSpotLight.resize(conMaxSpotLightNum);
 	}
 
 	return s_pInstance;
@@ -27,22 +24,13 @@ void CLightManager::AddLight(CLightBase* pLight)
 	switch (pLight->m_eLightType)
 	{
 	case ELightType_DirectionalLight:
-	{
-										if (m_iCurDirectionalLightNum < conMaxDirectionalLightNum)
-											m_vAllDirectionalLight[m_iCurDirectionalLightNum++] = *(CDirectionalLight*)pLight;
-	}
+		m_vAllDirectionalLight.push_back(*(CDirectionalLight*)pLight);
 		break;
 	case ELightType_PointLight:
-	{
-								  if (m_iCurPointLightNum < conMaxDirectionalLightNum)
-									  m_vAllPointLight[m_iCurPointLightNum++] = *(CPointLight*)pLight;
-	}
+		m_vAllPointLight.push_back(*(CPointLight*)pLight);
 		break;
 	case ELightType_SpotLight:
-	{
-								 if (m_iCurSpotLightNum < conMaxSpotLightNum)
-									 m_vAllSpotLight[m_iCurSpotLightNum++] = *(CSpotLight*)pLight;
-	}
+		m_vAllSpotLight.push_back(*(CSpotLight*)pLight);
 		break;
 	default:
 		break;
@@ -65,9 +53,6 @@ const std::vector<CSpotLight>& CLightManager::GetAllSpotLights()
 }
 
 CLightManager::CLightManager()
-: m_iCurDirectionalLightNum(0)
-, m_iCurPointLightNum(0)
-, m_iCurSpotLightNum(0)
 {
 }
 

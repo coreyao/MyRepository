@@ -11,6 +11,16 @@ void CMaterial::SetBaseColorTexture(const std::string& sFileName)
 	m_baseColorTex = CImageManager::GetInstance()->Load(sFileName.c_str());
 }
 
+void CMaterial::SetShininess(float fShininess)
+{
+	m_fShininess = fShininess;
+}
+
+float CMaterial::GetShininess()
+{
+	return m_fShininess;
+}
+
 Mat4 STransform::GetRotationMat()
 {
 	if (m_bUseQuaternion)
@@ -457,6 +467,9 @@ void CVertexRuntime::operator=(const CVertexRuntime& rh)
 
 	for (int eVar = EVertexAttributeVar_Position; eVar < EVertexAttributeVar_Max; ++eVar)
 		m_vVertexAttributeVar[eVar] = rh.m_vVertexAttributeVar[eVar];
+
+	for (int i = 0; i < conMaxCustomVar; ++i)
+		m_vCustomVariable[i] = rh.m_vCustomVariable[i];
 }
 
 CVertexRuntime::CVertexRuntime(const CVertexRuntime& rh)
@@ -466,4 +479,7 @@ CVertexRuntime::CVertexRuntime(const CVertexRuntime& rh)
 
 	for (int eVar = EVertexAttributeVar_Position; eVar < EVertexAttributeVar_Max; ++eVar)
 		m_vVertexAttributeVar[eVar] = rh.m_vVertexAttributeVar[eVar];
+
+	for (int i = 0; i < conMaxCustomVar; ++i)
+		m_vCustomVariable[i] = rh.m_vCustomVariable[i];
 }

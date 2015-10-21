@@ -29,10 +29,10 @@ std::vector<CMesh*> g_vMesh;
 void InitMesh()
 {
 	CDirectionalLight* pDirectionalLight = new CDirectionalLight;
-	pDirectionalLight->m_ambientColor = Color4F(0.5f, 0.5f, 0.1f, 0.0f);
+	pDirectionalLight->m_ambientColor = Color4F(0.1f, 0.1f, 0.1f, 0.0f);
 	pDirectionalLight->m_diffuseColor = Color4F(1.0f, 1.0f, 1.0f, 0.0f);
 	pDirectionalLight->m_specularColor = Color4F(1.0f, 1.0f, 1.0f, 0.0f);
-	pDirectionalLight->m_lightDir = Vec3(1, 1, 1);
+	pDirectionalLight->m_lightDir = Vec3(0, 1, 0);
 	pDirectionalLight->m_lightDir.Normalize();
 	CLightManager::GetInstance()->AddLight(pDirectionalLight);
 
@@ -59,7 +59,7 @@ void InitMesh()
 	pCube->m_transform.SetScale(Vec3(1, 1, -1));
 	pCube->m_transform.SetRotation(Vec3(0, 60, 0));
 	pCube->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
-	g_vMesh.push_back(pCube);
+	//g_vMesh.push_back(pCube);
 
 	CMaterial material2;
 	material2.SetBaseColorTexture("brickwall.png");
@@ -67,9 +67,9 @@ void InitMesh()
 	pPlane->InitFromFile("plane.CSTM", false);
 	pPlane->SetMaterial(material2, 0);
 	pPlane->m_transform.SetPosition(Vec3(0, -100, 0));
-	pPlane->m_transform.SetScale(Vec3(30, 30, -30));
+	pPlane->m_transform.SetScale(Vec3(10, 10, -10));
 	pPlane->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
-	//g_vMesh.push_back(pPlane);
+	g_vMesh.push_back(pPlane);
 
 
 	{
