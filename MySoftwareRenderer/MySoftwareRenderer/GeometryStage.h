@@ -8,5 +8,5 @@ namespace GeometryStage
 	void TransformClipToScreen(CFaceRuntime& face);
 
 	bool IsBackFace(CFaceRuntime& face, EVertexOrder eOrder = EVertexOrder_ClockWise);
-	bool IsVertexInCVV(const Vec4& pos);
+	bool IsFaceInCVV(CFaceRuntime& face);
 }

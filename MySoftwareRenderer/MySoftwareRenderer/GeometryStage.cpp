@@ -7,9 +7,7 @@ bool GeometryStage::DoClipInClipSpace(CFaceRuntime& face, bool& bAddFace, CFaceR
 	auto& outPos2 = face.m_vertex2.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4;
 	auto& outPos3 = face.m_vertex3.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4;
 
-	if (!IsVertexInCVV(outPos1)
-		&& !IsVertexInCVV(outPos2)
-		&& !IsVertexInCVV(outPos3))
+	if (!IsFaceInCVV(face))
 	{
 		bAddFace = false;
 		return true;
@@ -264,11 +262,29 @@ void GeometryStage::TransformClipToScreen(CFaceRuntime& face)
 	}
 }
 
-bool GeometryStage::IsVertexInCVV(const Vec4& pos)
+bool GeometryStage::IsFaceInCVV(CFaceRuntime& face)
 {
-	if (pos.x <= -pos.w || pos.x >= pos.w
-		|| pos.y <= -pos.w || pos.y >= pos.w
-		|| pos.z <= -pos.w || pos.z >= pos.w)
+	auto& outPos1 = face.m_vertex1.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4;
+	auto& outPos2 = face.m_vertex2.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4;
+	auto& outPos3 = face.m_vertex3.m_vVertexAttributeVar[EVertexAttributeVar::EVertexAttributeVar_Position].v4;
+
+	// - Check X Position
+	if ( (outPos1.x < -outPos1.w && outPos2.x < -outPos2.w && outPos3.x < -outPos3.w)
+		|| (outPos1.x > outPos1.w && outPos2.x > outPos2.w && outPos3.x > outPos3.w))
+	{
+		return false;
+	}
+
+	// - Check Y Position
+	if ((outPos1.y < -outPos1.w && outPos2.y < -outPos2.w && outPos3.y < -outPos3.w)
+		|| (outPos1.y > outPos1.w && outPos2.y > outPos2.w && outPos3.y > outPos3.w))
+	{
+		return false;
+	}
+
+	// - Check Z Position
+	if ((outPos1.z < -outPos1.w && outPos2.z < -outPos2.w && outPos3.z < -outPos3.w)
+		|| (outPos1.z > outPos1.w && outPos2.z > outPos2.w && outPos3.z > outPos3.w))
 	{
 		return false;
 	}
