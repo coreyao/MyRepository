@@ -139,11 +139,11 @@ const int conMaxCustomVar = 3;
 class CVertexRuntime
 {
 public:
-	Vec4 m_boneIndex;
-	Vec4 m_blendWeight;
-
 	CVariable m_vVertexAttributeVar[EVertexAttributeVar_Max];
 	CVariable m_vCustomVariable[conMaxCustomVar];
+
+	Vec4 m_boneIndex;
+	Vec4 m_blendWeight;
 
 	CVertexRuntime(){}
 

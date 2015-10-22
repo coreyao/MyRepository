@@ -50,7 +50,7 @@ public:
 	float x, y, z;
 };
 
-class Vec4
+__declspec(align(16)) class Vec4
 {
 public:
 	Vec4()

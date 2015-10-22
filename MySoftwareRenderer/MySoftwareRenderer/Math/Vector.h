@@ -89,7 +89,7 @@ public:
 	Vec3 Cross(const Vec3& rh) const;
 	void Normalize();
 	Vec3 GetNormalized();
-	float GetLength();
+	float GetLength() const;
 
 	float x;
 	float y;

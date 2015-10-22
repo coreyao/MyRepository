@@ -34,7 +34,25 @@ void InitMesh()
 	pDirectionalLight->m_specularColor = Color4F(1.0f, 1.0f, 1.0f, 0.0f);
 	pDirectionalLight->m_lightDir = Vec3(0, 1, 0);
 	pDirectionalLight->m_lightDir.Normalize();
-	CLightManager::GetInstance()->AddLight(pDirectionalLight);
+	//CLightManager::GetInstance()->AddLight(pDirectionalLight);
+
+	CPointLight* pPointLight = new CPointLight;
+	pPointLight->m_ambientColor = Color4F(0.1f, 0.1f, 0.1f, 0.0f);
+	pPointLight->m_diffuseColor = Color4F(1.0f, 1.0f, 1.0f, 0.0f);
+	pPointLight->m_specularColor = Color4F(1.0f, 1.0f, 1.0f, 0.0f);
+	CLightManager::GetInstance()->AddLight(pPointLight);
+
+	CSpotLight* pSpotLight = new CSpotLight;
+	pSpotLight->m_ambientColor = Color4F(0.1f, 0.1f, 0.1f, 0.0f);
+	pSpotLight->m_diffuseColor = Color4F(0.8f, 0.8f, 0.8f, 0.0f);
+	pSpotLight->m_specularColor = Color4F(1.0f, 1.0f, 1.0f, 0.0f);
+	pSpotLight->m_lightDir = Vec3(0, 1, 0);
+	pSpotLight->m_lightDir.Normalize();
+	pSpotLight->fInnerAngle = 30;
+	pSpotLight->fOuterAngle = 60;
+	//pSpotLight->m_attenuation_linear = 0.0009f;
+	//pSpotLight->m_attenuation_quadratic = 0.032f;
+	CLightManager::GetInstance()->AddLight(pSpotLight);
 
 	//CMaterial material10;
 	//material10.SetBaseColorTexture("hama.png");
@@ -66,7 +84,7 @@ void InitMesh()
 	CMesh* pPlane = new CMesh;
 	pPlane->InitFromFile("plane.CSTM", false);
 	pPlane->SetMaterial(material2, 0);
-	pPlane->m_transform.SetPosition(Vec3(0, -100, 0));
+	pPlane->m_transform.SetPosition(Vec3(0, -200, 0));
 	pPlane->m_transform.SetScale(Vec3(10, 10, -10));
 	pPlane->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
 	g_vMesh.push_back(pPlane);

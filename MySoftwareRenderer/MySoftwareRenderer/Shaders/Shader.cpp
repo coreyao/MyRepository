@@ -31,17 +31,75 @@ Color4F CMeshFragmentShader::ProcessFragment(SFragment* pFragment)
 		for (int i = 0; i < vDirLights.size(); ++i)
 		{
 			const CDirectionalLight& rLight = vDirLights[i];
-			
-			lightColor += rLight.m_ambientColor;
+			Color4F DirlightColor = Color4F(0, 0, 0, 1.0f);
+
+			DirlightColor += rLight.m_ambientColor;
 
 			float fCos = rLight.m_lightDir.Dot(Normal);
 			Helper::Clamp(fCos, 0.0f, 1.0f);
-			lightColor += rLight.m_diffuseColor * fCos;
+			DirlightColor += rLight.m_diffuseColor * fCos;
 
 			Vec3 halfDir = (rLight.m_lightDir + FragToEyeDir).GetNormalized();
 			float spec = halfDir.Dot(Normal);
 			Helper::Clamp(spec, 0.0f, 1.0f);
-			lightColor += rLight.m_specularColor * pow(spec, m_vMaterial[0]->GetShininess());
+			DirlightColor += rLight.m_specularColor * pow(spec, m_vMaterial[0]->GetShininess());
+
+			lightColor += DirlightColor;
+		}
+
+		const std::vector<CPointLight>& vPointLights = CLightManager::GetInstance()->GetAllPointLights();
+		for (int i = 0; i < vPointLights.size(); ++i)
+		{
+			const CPointLight& rLight = vPointLights[i];
+			Color4F PointlightColor = Color4F(0, 0, 0, 1.0f);
+
+			Vec3 lightDir = (rLight.m_lightPos - FragPos).GetNormalized();
+			float distance = lightDir.GetLength();
+			lightDir.Normalize();
+			float attenuation = 1.0f / (rLight.m_attenuation_constant + rLight.m_attenuation_linear * distance + rLight.m_attenuation_quadratic * (distance * distance));
+
+			PointlightColor += rLight.m_ambientColor;
+
+			float fCos = lightDir.Dot(Normal);
+			Helper::Clamp(fCos, 0.0f, 1.0f);
+			PointlightColor += rLight.m_diffuseColor * fCos;
+
+			Vec3 halfDir = (lightDir + FragToEyeDir).GetNormalized();
+			float spec = halfDir.Dot(Normal);
+			Helper::Clamp(spec, 0.0f, 1.0f);
+			PointlightColor += rLight.m_specularColor * pow(spec, m_vMaterial[0]->GetShininess());
+
+			lightColor += PointlightColor * attenuation;
+		}
+
+		const std::vector<CSpotLight>& vSpotLights = CLightManager::GetInstance()->GetAllSpotLights();
+		for (int i = 0; i < vSpotLights.size(); ++i)
+		{
+			const CSpotLight& rLight = vSpotLights[i];
+			Color4F SpotlightColor = Color4F(0, 0, 0, 1.0f);
+
+			Vec3 lightDir = (rLight.m_lightPos - FragPos).GetNormalized();
+			float distance = lightDir.GetLength();
+			lightDir.Normalize();
+			float attenuation = 1.0f / (rLight.m_attenuation_constant + rLight.m_attenuation_linear * distance + rLight.m_attenuation_quadratic * (distance * distance));
+
+			float fTheta = RAD_TO_DEG(acosf(lightDir.Dot(rLight.m_lightDir)));
+			float epsilon = rLight.fInnerAngle - rLight.fOuterAngle;
+			float intensity = (fTheta - rLight.fOuterAngle) / epsilon;
+			Helper::Clamp(intensity, 0.0f, 1.0f);
+
+			SpotlightColor += rLight.m_ambientColor;
+
+			float fCos = lightDir.Dot(Normal);
+			Helper::Clamp(fCos, 0.0f, 1.0f);
+			SpotlightColor += rLight.m_diffuseColor * fCos;
+
+			Vec3 halfDir = (lightDir + FragToEyeDir).GetNormalized();
+			float spec = halfDir.Dot(Normal);
+			Helper::Clamp(spec, 0.0f, 1.0f);
+			SpotlightColor += rLight.m_specularColor * pow(spec, m_vMaterial[0]->GetShininess());
+
+			lightColor += SpotlightColor * attenuation * intensity;
 		}
 	}
 

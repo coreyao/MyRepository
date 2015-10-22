@@ -87,7 +87,7 @@ Vec3 Vec3::GetNormalized()
 	return *this * n;
 }
 
-float Vec3::GetLength()
+float Vec3::GetLength() const
 {
 	return sqrt(x * x + y * y + z * z);
 }
