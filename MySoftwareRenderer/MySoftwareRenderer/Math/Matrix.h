@@ -38,6 +38,12 @@ public:
 
 	float Determinant();
 
+	Vec3 ConvertToEuler() const;
+
+	Vec3 GetForward() const;
+	Vec3 GetRight() const;
+	Vec3 GetUp() const;
+
 	Mat4();
 
 	float m[16];

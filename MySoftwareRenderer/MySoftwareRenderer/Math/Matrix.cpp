@@ -281,3 +281,30 @@ float Mat4::Determinant()
 	return m[0] * m[5] * m[10] + m[4] * m[9] * m[2] + m[8] * m[6] * m[1]
 		- m[0] * m[6] * m[9] - m[4] * m[1] * m[10] - m[8] * m[5] * m[2];
 }
+
+Vec3 Mat4::ConvertToEuler() const
+{
+	Vec3 ret;
+
+	ret.x = RAD_TO_DEG(asinf(-m[9]));
+	float fCosX = cosf(ret.x);
+	ret.y = RAD_TO_DEG(asinf(m[8] / fCosX));
+	ret.z = RAD_TO_DEG(asinf(m[1] / fCosX));
+
+	return ret;
+}
+
+Vec3 Mat4::GetForward() const
+{
+	return Vec3(-m[8], -m[9], -m[10]);
+}
+
+Vec3 Mat4::GetRight() const
+{
+	return Vec3(m[0], m[1], m[2]);
+}
+
+Vec3 Mat4::GetUp() const
+{
+	return Vec3(m[4], m[5], m[6]);
+}

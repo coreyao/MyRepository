@@ -52,7 +52,7 @@ void InitMesh()
 	pSpotLight->fOuterAngle = 60;
 	//pSpotLight->m_attenuation_linear = 0.0009f;
 	//pSpotLight->m_attenuation_quadratic = 0.032f;
-	CLightManager::GetInstance()->AddLight(pSpotLight);
+	//CLightManager::GetInstance()->AddLight(pSpotLight);
 
 	//CMaterial material10;
 	//material10.SetBaseColorTexture("hama.png");
@@ -278,7 +278,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			}
 		}
 
-		CDirector::GetInstance()->GetPerspectiveCamera()->Rotate(fPitch, fYaw);
+		//CDirector::GetInstance()->GetPerspectiveCamera()->Rotate(fPitch, fYaw);
 		CDirector::GetInstance()->GetPerspectiveCamera()->Move(iMoveLeftRight, 0, iMoveForwardBack);
 
 		break;

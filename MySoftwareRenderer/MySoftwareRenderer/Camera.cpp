@@ -2,7 +2,7 @@
 
 CCamera::CCamera(Vec3 eyePos, Vec3 lookAtDir, Vec3 upDir, EProjectionMode eMode)
 	: m_fPitch(0)
-	, m_fYaw(90)
+	, m_fYaw(0)
 	, m_fFOV(90)
 	, m_fNearZ(1.0f)
 	, m_fFarZ(1000.0f)
@@ -23,6 +23,11 @@ CCamera::CCamera(Vec3 eyePos, Vec3 lookAtDir, Vec3 upDir, EProjectionMode eMode)
 	}
 
 	UpdateProjectionViewMat();
+
+	const Mat4& rViewMatInv = m_viewMat.GetInversed();
+	Vec3 eulerAngle = rViewMatInv.ConvertToEuler();
+	m_fPitch = eulerAngle.x;
+	m_fYaw = eulerAngle.y;
 }
 
 void CCamera::Move( float leftAndRight, float upAndDown, float forwardAndBackward )
@@ -45,9 +50,8 @@ void CCamera::Rotate( float fPitch, float fYaw )
 	m_fYaw += fYaw;
 	m_fPitch += fPitch;
 
-	m_lookAtDir.x = cosf(DEG_TO_RAD(m_fPitch)) * cosf(DEG_TO_RAD(m_fYaw));
-	m_lookAtDir.y = sinf(DEG_TO_RAD(m_fPitch));
-	m_lookAtDir.z = -cosf(DEG_TO_RAD(m_fPitch)) * sinf(DEG_TO_RAD(m_fYaw));
+	Mat4 rot = Mat4::CreateRotationMat(m_fPitch, m_fYaw, 0);
+	m_lookAtDir = rot.GetForward();
 
 	UpdateProjectionViewMat();
 }
