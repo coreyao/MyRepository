@@ -8,6 +8,7 @@
 #include "Director.h"
 #include "Pipeline.h"
 #include "Light.h"
+#include "Shaders/Shader.h"
 
 // ºê¶¨Òå
 #define WINDOW_CLASS_NAME TEXT("MySoftwareRenderer")
@@ -79,80 +80,101 @@ void InitMesh()
 	pCube->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;*/
 	//g_vMesh.push_back(pCube);
 
-	CMaterial material2;
-	material2.SetBaseColorTexture("brickwall.png");
-	material2.SetNormalMapTexture("brickwall_normal.png");
+	//CMaterial material2;
+	//material2.SetBaseColorTexture("brickwall.png");
+	//material2.SetNormalMapTexture("brickwall_normal.png");
+	//CMesh* pPlane = new CMesh;
+	//pPlane->InitFromFile("plane.CSTM", false);
+	//pPlane->SetMaterial(material2, 0);
+	//pPlane->m_transform.SetPosition(Vec3(0, -200, 0));
+	//pPlane->m_transform.SetScale(Vec3(10, 10, -10));
+	//pPlane->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
+	//g_vMesh.push_back(pPlane);
+
+	CMaterial material;
+	material.SetBaseColorTexture("checker64.png");
 	CMesh* pPlane = new CMesh;
 	pPlane->InitFromFile("plane.CSTM", false);
-	pPlane->SetMaterial(material2, 0);
+	pPlane->SetMaterial(material, 0);
 	pPlane->m_transform.SetPosition(Vec3(0, -200, 0));
 	pPlane->m_transform.SetScale(Vec3(10, 10, -10));
+	pPlane->m_pFragmentShader->EnableLight = false;
 	pPlane->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
 	g_vMesh.push_back(pPlane);
 
-
+	SMeshData meshData;
+	SSubMeshData subMeshData1;
+	for (int z = -30; z < 30; ++z)
 	{
-		SMeshData meshData;
-		SSubMeshData subMeshData1;
+		for (int x = -30; x < 30; ++x)
 		{
-			SVertexData vertex;
-			vertex.m_pos.set(-10, 10, 1);
-			vertex.m_UV.set(0, 0);
-			subMeshData1.m_vVertex.push_back(vertex);
+
 		}
-
-		{
-			SVertexData vertex;
-			vertex.m_pos.set(-10, -10, 1);
-			vertex.m_UV.set(0, 1);
-			subMeshData1.m_vVertex.push_back(vertex);
-		}
-
-		{
-			SVertexData vertex;
-			vertex.m_pos.set(10, -10, 1);
-			vertex.m_UV.set(1, 1);
-			subMeshData1.m_vVertex.push_back(vertex);
-		}
-
-
-		{
-			SVertexData vertex;
-			vertex.m_pos.set(10, 10, 1);
-			vertex.m_UV.set(1, 0);
-			subMeshData1.m_vVertex.push_back(vertex);
-		}
-
-		{
-			SFaceData face;
-			face.m_VertexIndex1 = 0;
-			face.m_VertexIndex2 = 1;
-			face.m_VertexIndex3 = 2;
-			subMeshData1.m_vFace.push_back(face);
-		}
-
-		{
-			SFaceData face;
-			face.m_VertexIndex1 = 3;
-			face.m_VertexIndex2 = 0;
-			face.m_VertexIndex3 = 2;
-			subMeshData1.m_vFace.push_back(face);
-			}
-
-		subMeshData1.m_MeshMatrix = Mat4::IDENTITY;
-		meshData.m_vSubMesh.push_back(subMeshData1);
-		CMesh* pTriangle = new CMesh;
-		CMaterial material1;
-		material1.SetBaseColorTexture("HelloWorld.png");
-		pTriangle->m_renderState.m_bEnableCullFace = false;
-		pTriangle->InitFromData(&meshData);
-		pTriangle->SetMaterial(material1, 0);
-		pTriangle->m_transform.SetPosition(Vec3(0, 0, 0));
-		pTriangle->m_transform.SetScale(Vec3(1, 1, 1));
-		pTriangle->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
-
-		//g_vMesh.push_back(pTriangle);
 	}
+
+
+	//{
+	//	SMeshData meshData;
+	//	SSubMeshData subMeshData1;
+	//	{
+	//		SVertexData vertex;
+	//		vertex.m_pos.set(-10, 10, 1);
+	//		vertex.m_UV.set(0, 0);
+	//		subMeshData1.m_vVertex.push_back(vertex);
+	//	}
+
+	//	{
+	//		SVertexData vertex;
+	//		vertex.m_pos.set(-10, -10, 1);
+	//		vertex.m_UV.set(0, 1);
+	//		subMeshData1.m_vVertex.push_back(vertex);
+	//	}
+
+	//	{
+	//		SVertexData vertex;
+	//		vertex.m_pos.set(10, -10, 1);
+	//		vertex.m_UV.set(1, 1);
+	//		subMeshData1.m_vVertex.push_back(vertex);
+	//	}
+
+
+	//	{
+	//		SVertexData vertex;
+	//		vertex.m_pos.set(10, 10, 1);
+	//		vertex.m_UV.set(1, 0);
+	//		subMeshData1.m_vVertex.push_back(vertex);
+	//	}
+
+	//	{
+	//		SFaceData face;
+	//		face.m_VertexIndex1 = 0;
+	//		face.m_VertexIndex2 = 1;
+	//		face.m_VertexIndex3 = 2;
+	//		subMeshData1.m_vFace.push_back(face);
+	//	}
+
+	//	{
+	//		SFaceData face;
+	//		face.m_VertexIndex1 = 3;
+	//		face.m_VertexIndex2 = 0;
+	//		face.m_VertexIndex3 = 2;
+	//		subMeshData1.m_vFace.push_back(face);
+	//		}
+
+	//	subMeshData1.m_MeshMatrix = Mat4::IDENTITY;
+	//	meshData.m_vSubMesh.push_back(subMeshData1);
+	//	CMesh* pTriangle = new CMesh;
+	//	CMaterial material1;
+	//	material1.SetBaseColorTexture("HelloWorld.png");
+	//	pTriangle->m_renderState.m_bEnableCullFace = false;
+	//	pTriangle->InitFromData(&meshData);
+	//	pTriangle->SetMaterial(material1, 0);
+	//	pTriangle->m_transform.SetPosition(Vec3(0, 0, 0));
+	//	pTriangle->m_transform.SetScale(Vec3(1, 1, 1));
+	//	pTriangle->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
+
+	//	g_vMesh.push_back(pTriangle);
+	//}
 }
 
 bool IsOutSideScreen(int x, int y)

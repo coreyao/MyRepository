@@ -115,6 +115,10 @@ Color4F CMeshFragmentShader::ProcessFragment(SFragment* pFragment)
 			lightColor += SpotlightColor * attenuation * intensity;
 		}
 	}
+	else
+	{
+		lightColor = Color4F::WHITE;
+	}
 
 	Color4F& rVertexColor = pFragment->m_vVertexAttributeVar[EVertexAttributeVar_Color].color;
 	Color4F finalColor = texColor * rVertexColor * lightColor;
