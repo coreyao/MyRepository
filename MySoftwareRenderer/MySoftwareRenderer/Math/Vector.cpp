@@ -1,5 +1,6 @@
 #include "Vector.h"
 #include "../Utility.h"
+#include "../DataTypes.h"
 
 void Vec3::set(float _x, float _y, float _z)
 {
@@ -151,6 +152,14 @@ Vec4::Vec4(const Vec3& rh, float _w)
 	this->y = rh.y;
 	this->z = rh.z;
 	this->w = _w;
+}
+
+Vec4::Vec4(const Color4F& rh)
+{
+	x = rh.r;
+	y = rh.g;
+	z = rh.b;
+	w = rh.a;
 }
 
 void Vec4::operator/=(float fScalar)

@@ -16,10 +16,23 @@ void CMeshVertexShader::ProcessVertex(CVertexRuntime* pVertex)
 Color4F CMeshFragmentShader::ProcessFragment(SFragment* pFragment)
 {
 	Color4F lightColor = Color4F(0, 0, 0, 1.0f);
-	Color4F texColor = RasterizationStage::CRasterizer::GetInstance()->SampleTexture(m_vMaterial[0]->GetBaseColorTex(), pFragment->m_vVertexAttributeVar[EVertexAttributeVar_UV].v2);
+	const Vec2& uv = pFragment->m_vVertexAttributeVar[EVertexAttributeVar_UV].v2;
+	Color4F texColor = RasterizationStage::CRasterizer::GetInstance()->SampleTexture(m_vMaterial[0]->GetBaseColorTex(), uv);
 	if (EnableLight)
 	{
 		Vec3 Normal = pFragment->m_vVertexAttributeVar[EVertexAttributeVar_Normal].v3;
+		if (EnableNormalMap)
+		{
+			Normal.Normalize();
+			Vec3 Tangent = pFragment->m_vVertexAttributeVar[EVertexAttributeVar_Tangent].v3;
+			Tangent = Tangent - Normal * Tangent.Dot(Normal);
+			Tangent.Normalize();
+			Mat4 TBN(Tangent, Tangent.Cross(Normal).GetNormalized(), Normal, Vec3(0, 0, 0));
+			Color4F normalColor = RasterizationStage::CRasterizer::GetInstance()->SampleTexture(m_vMaterial[0]->GetNormalMapTex(), uv);
+			normalColor = normalColor * 2.0f - 1.0f;
+			Normal = TBN * normalColor;
+		}
+
 		Normal = ModelMat * Vec4(Normal, 0.0f);
 		Normal.Normalize();
 

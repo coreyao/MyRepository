@@ -11,6 +11,16 @@ void CMaterial::SetBaseColorTexture(const std::string& sFileName)
 	m_baseColorTex = CImageManager::GetInstance()->Load(sFileName.c_str());
 }
 
+int CMaterial::GetNormalMapTex() const
+{
+	return m_normalMapTex;
+}
+
+void CMaterial::SetNormalMapTexture(const std::string& sFileName)
+{
+	m_normalMapTex = CImageManager::GetInstance()->Load(sFileName.c_str());
+}
+
 void CMaterial::SetShininess(float fShininess)
 {
 	m_fShininess = fShininess;
@@ -175,6 +185,11 @@ void Color4F::operator+=(const Color4F& rh)
 Color4F Color4F::operator-(const Color4F& rh) const
 {
 	return Color4F(r - rh.r, g - rh.g, b - rh.b, a - rh.a);
+}
+
+Color4F Color4F::operator-(float fScalar) const
+{
+	return Color4F(r - fScalar, g - fScalar, b - fScalar, a - fScalar);
 }
 
 Color4F Color4F::operator/(float fScalar) const

@@ -55,6 +55,7 @@ struct Color4F
 
 	Color4F operator*(const Color4F& rh) const;
 	Color4F operator-(const Color4F& rh) const;
+	Color4F operator-(float fScalar) const;
 	Color4F operator/(float fScalar) const;
 	Color4F operator*(float fScalar) const;
 	void operator+=(const Color4F& rh);
@@ -129,7 +130,7 @@ enum EVertexAttributeVar
 {
 	EVertexAttributeVar_Position,
 	EVertexAttributeVar_Normal,
-	EVertexAttributeVar_tangent,
+	EVertexAttributeVar_Tangent,
 	EVertexAttributeVar_UV,
 	EVertexAttributeVar_Color,
 	EVertexAttributeVar_Max,
@@ -401,16 +402,22 @@ class CMaterial
 public:
 	CMaterial()
 		: m_baseColorTex(0)
+		, m_normalMapTex(0)
 		, m_fShininess(64.0f)
 	{
 	}
 
 	int GetBaseColorTex();
 	void SetBaseColorTexture(const std::string& sFileName);
+
+	int GetNormalMapTex() const;
+	void SetNormalMapTexture(const std::string& sFileName);
+
 	void SetShininess(float fShininess);
 	float GetShininess();
 
 private:
 	int m_baseColorTex;
+	int m_normalMapTex;
 	float m_fShininess;
 };

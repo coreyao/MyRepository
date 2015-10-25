@@ -8,10 +8,12 @@ class CShaderBase
 public:
 	CShaderBase()
 		: EnableLight(true)
+		, EnableNormalMap(false)
 	{
 	}
 
 	bool EnableLight;
+	bool EnableNormalMap;
 	Mat4 ModelMat;
 };
 

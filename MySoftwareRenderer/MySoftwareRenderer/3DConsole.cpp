@@ -68,7 +68,7 @@ void InitMesh()
 	//g_vMesh.push_back(pCharactor);
 	//pCharactor->m_animator.PlayAnim(0, 179, true, nullptr);
 
-	CMaterial material1;
+	/*CMaterial material1;
 	material1.SetBaseColorTexture("HelloWorld.png");
 	CMesh* pCube = new CMesh;
 	pCube->InitFromFile("cube.CSTM", false);
@@ -76,11 +76,12 @@ void InitMesh()
 	pCube->m_transform.SetPosition(Vec3(0, -25, 250));
 	pCube->m_transform.SetScale(Vec3(1, 1, -1));
 	pCube->m_transform.SetRotation(Vec3(0, 60, 0));
-	pCube->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
+	pCube->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;*/
 	//g_vMesh.push_back(pCube);
 
 	CMaterial material2;
 	material2.SetBaseColorTexture("brickwall.png");
+	material2.SetNormalMapTexture("brickwall_normal.png");
 	CMesh* pPlane = new CMesh;
 	pPlane->InitFromFile("plane.CSTM", false);
 	pPlane->SetMaterial(material2, 0);

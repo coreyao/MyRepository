@@ -219,6 +219,7 @@ void CMesh::InitFromData(SMeshData* pMeshData)
 void CMesh::SetMaterial(const CMaterial& rMaterial, int iIndex)
 {
 	m_vSubMesh[iIndex]->m_material = rMaterial;
+	m_pFragmentShader->EnableNormalMap = rMaterial.GetNormalMapTex() != 0;
 }
 
 void CMesh::SetVisible(bool bVisible, const std::string& sSubMeshName)
@@ -249,7 +250,7 @@ void CMesh::InitRuntimeData()
 			CVertexRuntime v;
 			v.m_vVertexAttributeVar[EVertexAttributeVar_Position].v4 = Vec4(rVertex.m_pos.x, rVertex.m_pos.y, rVertex.m_pos.z, 1.0f);
 			v.m_vVertexAttributeVar[EVertexAttributeVar_Normal].v3 = rVertex.m_normal.GetNormalized();
-			v.m_vVertexAttributeVar[EVertexAttributeVar_tangent].v3 = rVertex.m_tangent;
+			v.m_vVertexAttributeVar[EVertexAttributeVar_Tangent].v3 = rVertex.m_tangent;
 			v.m_vVertexAttributeVar[EVertexAttributeVar_UV].v2 = rVertex.m_UV;
 			v.m_vVertexAttributeVar[EVertexAttributeVar_Color].color = rVertex.m_color;
 			v.m_boneIndex = rVertex.m_boneIndex;
