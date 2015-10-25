@@ -3,6 +3,7 @@
 #include "Utility.h"
 #include "Math/Vector.h"
 #include "Math/Matrix.h"
+#include "DataTypes.h"
 
 class CCamera
 {
@@ -25,8 +26,7 @@ public:
 	Vec3 GetCameraPos() const;
 	void SetCameraPos(const Vec3& pos);
 
-	Vec3 GetLookAtDir() const;
-	void SetLookAtDir(const Vec3& dir);
+	Vec3 GetLookAtDir();
 
 	float GetNearZ() const;
 	float GetFarZ() const;
@@ -37,17 +37,11 @@ public:
 private:
 	void UpdateProjectionViewMat();
 
-	Vec3 m_eyePos;
-	Vec3 m_lookAtDir;
-	Vec3 m_UpDir;
-
+	STransform m_transform;
 	float m_fNearZ;
 	float m_fFarZ;
 
-	float m_fPitch;
-	float m_fYaw;
 	float m_fFOV;
-
 	float m_aspectRatio;
 
 	Mat4 m_viewMat;
