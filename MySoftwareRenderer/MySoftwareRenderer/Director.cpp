@@ -24,7 +24,7 @@ CDirector::~CDirector()
 
 void CDirector::Init()
 {
-	m_pCameraPerspective = new CCamera(Vec3(0, 20, 50), Vec3(0, -0.3f, -1), Vec3(0, 1, 0), CCamera::EProjectionMode_Perspective);
+	m_pCameraPerspective = new CCamera(Vec3(30, 20, 100), Vec3(0, -0.2f, -1), Vec3(0, 1, 0), CCamera::EProjectionMode_Perspective);
 	m_pCameraOrthographic = new CCamera(Vec3(0, 0, 100), Vec3(0, 0, -1), Vec3(0, 1, 0), CCamera::EProjectionMode_Orthographic);
 }
 

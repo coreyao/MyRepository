@@ -24,6 +24,7 @@ DWORD g_deltaTime = 0;
 float g_iStepLength = 5;
 Vec2 g_lastMouseClockPos;
 bool g_bLeftMouseClicked = false;
+float g_elapsedTime = 0;
 
 std::vector<CMesh*> g_vMesh;
 
@@ -147,8 +148,8 @@ void InitMesh()
 	CMesh* pCheckBoard = new CMesh;
 	pCheckBoard->InitFromData(&meshData);
 	pCheckBoard->SetMaterial(materiaCheckBoard, 0);
-	pCheckBoard->m_transform.SetPosition(Vec3(0, 0, 0));
-	pCheckBoard->m_transform.SetScale(Vec3(5, 5, 5));
+	pCheckBoard->m_transform.SetPosition(Vec3(-50, 0, 0));
+	pCheckBoard->m_transform.SetScale(Vec3(50, 1, 50));
 	pCheckBoard->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
 	g_vMesh.push_back(pCheckBoard);
 
@@ -244,9 +245,12 @@ int Game_Init()
  
 int Game_Update(float dt)
 {
+	g_elapsedTime += dt;
 	for (auto& pMesh : g_vMesh)
 	{
+		float sindt = sinf(g_elapsedTime) * 20;
 		//pMesh->m_transform.SetRotation(Vec3(pMesh->m_transform.GetRotation().x + dt * 30, pMesh->m_transform.GetRotation().y + dt * 30, pMesh->m_transform.GetRotation().z + dt * 30));
+		pMesh->m_transform.SetPosition(Vec3(-50, 0, 0) + Vec3(sindt, 0, 0));
 		pMesh->Update(dt);
 		pMesh->Render();
 	}
