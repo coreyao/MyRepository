@@ -81,15 +81,17 @@ void InitMesh()
 	pCube->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;*/
 	//g_vMesh.push_back(pCube);
 
-	//CMaterial material2;
-	//material2.SetBaseColorTexture("brickwall.png");
-	//material2.SetNormalMapTexture("brickwall_normal.png");
-	//CMesh* pPlane = new CMesh;
-	//pPlane->InitFromFile("plane.CSTM", false);
-	//pPlane->SetMaterial(material2, 0);
-	//pPlane->m_transform.SetPosition(Vec3(0, -200, 0));
-	//pPlane->m_transform.SetScale(Vec3(10, 10, -10));
-	//pPlane->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
+	CMaterial material2;
+	material2.SetBaseColorTexture("brickwall.png");
+	material2.SetNormalMapTexture("brickwall_normal.png");
+	CMesh* pPlane = new CMesh;
+	pPlane->InitFromFile("plane.CSTM", false);
+	pPlane->SetMaterial(material2, 0);
+	pPlane->m_transform.SetPosition(Vec3(0, -200, 0));
+	pPlane->m_transform.SetScale(Vec3(10, 10, -10));
+	pPlane->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
+	pPlane->m_renderState.m_pFragmentShader->EnableLight = true;
+	pPlane->m_renderState.m_pFragmentShader->EnableNormalMap = true;
 	//g_vMesh.push_back(pPlane);
 
 	//CMaterial material;
@@ -144,12 +146,12 @@ void InitMesh()
 	meshData.m_vSubMesh.push_back(subMeshData1);
 	CMaterial materiaCheckBoard;
 	materiaCheckBoard.SetBaseColorTexture("checker64.png", CSampler(CSampler::EUVWrapMode_Repeat, CSampler::EUVWrapMode_Repeat
-		, CSampler::ETextureFilter_Liner, CSampler::ETextureFilter_Liner));
+		, CSampler::ETextureFilter_Nearest, CSampler::ETextureFilter_Nearest));
 	CMesh* pCheckBoard = new CMesh;
 	pCheckBoard->InitFromData(&meshData);
 	pCheckBoard->SetMaterial(materiaCheckBoard, 0);
 	pCheckBoard->m_transform.SetPosition(Vec3(-50, 0, 0));
-	pCheckBoard->m_transform.SetScale(Vec3(50, 1, 50));
+	pCheckBoard->m_transform.SetScale(Vec3(30, 1, 30));
 	pCheckBoard->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
 	g_vMesh.push_back(pCheckBoard);
 
@@ -248,9 +250,9 @@ int Game_Update(float dt)
 	g_elapsedTime += dt;
 	for (auto& pMesh : g_vMesh)
 	{
-		float sindt = sinf(g_elapsedTime) * 20;
+		//float sindt = sinf(g_elapsedTime) * 20;
 		//pMesh->m_transform.SetRotation(Vec3(pMesh->m_transform.GetRotation().x + dt * 30, pMesh->m_transform.GetRotation().y + dt * 30, pMesh->m_transform.GetRotation().z + dt * 30));
-		pMesh->m_transform.SetPosition(Vec3(-50, 0, 0) + Vec3(sindt, 0, 0));
+		//pMesh->m_transform.SetPosition(Vec3(-50, 0, 0) + Vec3(sindt, 0, 0));
 		pMesh->Update(dt);
 		pMesh->Render();
 	}

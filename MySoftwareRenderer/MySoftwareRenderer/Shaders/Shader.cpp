@@ -44,7 +44,7 @@ Color4F CMeshFragmentShader::ProcessFragment(SFragment* pFragment)
 		for (int i = 0; i < vDirLights.size(); ++i)
 		{
 			const CDirectionalLight& rLight = vDirLights[i];
-			Color4F DirlightColor = Color4F(0, 0, 0, 1.0f);
+			Color4F DirlightColor = Color4F(0, 0, 0, 0.0f);
 
 			DirlightColor += rLight.m_ambientColor;
 
@@ -64,7 +64,7 @@ Color4F CMeshFragmentShader::ProcessFragment(SFragment* pFragment)
 		for (int i = 0; i < vPointLights.size(); ++i)
 		{
 			const CPointLight& rLight = vPointLights[i];
-			Color4F PointlightColor = Color4F(0, 0, 0, 1.0f);
+			Color4F PointlightColor = Color4F(0, 0, 0, 0.0f);
 
 			Vec3 lightDir = (rLight.m_lightPos - FragPos).GetNormalized();
 			float distance = lightDir.GetLength();
@@ -89,7 +89,7 @@ Color4F CMeshFragmentShader::ProcessFragment(SFragment* pFragment)
 		for (int i = 0; i < vSpotLights.size(); ++i)
 		{
 			const CSpotLight& rLight = vSpotLights[i];
-			Color4F SpotlightColor = Color4F(0, 0, 0, 1.0f);
+			Color4F SpotlightColor = Color4F(0, 0, 0, 0.0f);
 
 			Vec3 lightDir = (rLight.m_lightPos - FragPos).GetNormalized();
 			float distance = lightDir.GetLength();
