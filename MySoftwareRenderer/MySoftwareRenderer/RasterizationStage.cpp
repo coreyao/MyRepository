@@ -438,7 +438,7 @@ Color4F RasterizationStage::CRasterizer::SampleTexture(int iTextureID, Vec2 uv)
 		{
 			return SampleNearset(pTexture, uv);
 		}
-		else if (pTexture->m_sampler.TEXTURE_MIN_FILTER == CSampler::ETextureFilter_Liner)
+		else if (pTexture->m_sampler.TEXTURE_MAG_FILTER == CSampler::ETextureFilter_Liner)
 		{
 			return SampleLinear(pTexture, uv);
 		}

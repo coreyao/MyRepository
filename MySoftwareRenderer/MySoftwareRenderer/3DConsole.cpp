@@ -81,7 +81,7 @@ void InitMesh()
 	pCube->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;*/
 	//g_vMesh.push_back(pCube);
 
-	CMaterial material2;
+	/*CMaterial material2;
 	material2.SetBaseColorTexture("brickwall.png");
 	material2.SetNormalMapTexture("brickwall_normal.png");
 	CMesh* pPlane = new CMesh;
@@ -92,8 +92,8 @@ void InitMesh()
 	pPlane->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
 	pPlane->m_renderState.m_pFragmentShader->EnableLight = true;
 	pPlane->m_renderState.m_pFragmentShader->EnableNormalMap = true;
-	//g_vMesh.push_back(pPlane);
-
+	g_vMesh.push_back(pPlane);
+	*/
 	//CMaterial material;
 	//material.SetBaseColorTexture("checker64.png");
 	//CMesh* pPlane = new CMesh;
@@ -150,7 +150,7 @@ void InitMesh()
 	CMesh* pCheckBoard = new CMesh;
 	pCheckBoard->InitFromData(&meshData);
 	pCheckBoard->SetMaterial(materiaCheckBoard, 0);
-	pCheckBoard->m_transform.SetPosition(Vec3(-50, 0, 0));
+	pCheckBoard->m_transform.SetPosition(Vec3(-300, 0, 0));
 	pCheckBoard->m_transform.SetScale(Vec3(30, 1, 30));
 	pCheckBoard->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
 	g_vMesh.push_back(pCheckBoard);
@@ -331,9 +331,13 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		}
 		else if (KEY_DOWN('F'))
 		{
-			for (auto& pMesh : g_vMesh)
+			if (CImageManager::GetInstance()->FindTexture(1)->m_sampler.TEXTURE_MAG_FILTER == CSampler::ETextureFilter_Nearest)
 			{
-				pMesh->m_renderState.m_bEnableCullFace = !pMesh->m_renderState.m_bEnableCullFace;
+				CImageManager::GetInstance()->FindTexture(1)->m_sampler.TEXTURE_MAG_FILTER = CSampler::ETextureFilter_Liner;
+			}
+			else
+			{
+				CImageManager::GetInstance()->FindTexture(1)->m_sampler.TEXTURE_MAG_FILTER = CSampler::ETextureFilter_Nearest;
 			}
 		}
 		else if (KEY_DOWN('X'))
