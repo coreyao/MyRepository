@@ -91,26 +91,66 @@ void InitMesh()
 	//pPlane->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
 	//g_vMesh.push_back(pPlane);
 
-	CMaterial material;
-	material.SetBaseColorTexture("checker64.png");
-	CMesh* pPlane = new CMesh;
-	pPlane->InitFromFile("plane.CSTM", false);
-	pPlane->SetMaterial(material, 0);
-	pPlane->m_transform.SetPosition(Vec3(0, -200, 0));
-	pPlane->m_transform.SetScale(Vec3(10, 10, -10));
-	pPlane->m_pFragmentShader->EnableLight = false;
-	pPlane->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
-	g_vMesh.push_back(pPlane);
+	//CMaterial material;
+	//material.SetBaseColorTexture("checker64.png");
+	//CMesh* pPlane = new CMesh;
+	//pPlane->InitFromFile("plane.CSTM", false);
+	//pPlane->SetMaterial(material, 0);
+	//pPlane->m_transform.SetPosition(Vec3(0, -200, 0));
+	//pPlane->m_transform.SetScale(Vec3(10, 10, -10));
+	//pPlane->m_pFragmentShader->EnableLight = false;
+	//pPlane->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
+	//g_vMesh.push_back(pPlane);
 
+	const int conVertexCount = 20;
 	SMeshData meshData;
 	SSubMeshData subMeshData1;
-	for (int z = -30; z < 30; ++z)
+	for (int z = 0; z < conVertexCount; ++z)
 	{
-		for (int x = -30; x < 30; ++x)
+		for (int x = 0; x < conVertexCount; ++x)
 		{
-
+			SVertexData vertex;
+			vertex.m_pos.set(x, 0, z);
+			vertex.m_UV.set(x, z);
+			vertex.m_color = Color4F::WHITE;
+			subMeshData1.m_vVertex.push_back(vertex);
 		}
 	}
+
+	for (int i = 1; i <= subMeshData1.m_vVertex.size(); ++i)
+	{
+		if (i % conVertexCount == 0)
+			continue;
+
+		if (i / conVertexCount == (conVertexCount - 1))
+			break;
+
+		int iIndex = i - 1;
+
+		SFaceData face1;
+		face1.m_VertexIndex1 = iIndex;
+		face1.m_VertexIndex2 = iIndex + conVertexCount;
+		face1.m_VertexIndex3 = iIndex + conVertexCount + 1;
+		subMeshData1.m_vFace.push_back(face1);
+
+		SFaceData face2;
+		face2.m_VertexIndex1 = iIndex;
+		face2.m_VertexIndex2 = iIndex + conVertexCount + 1;
+		face2.m_VertexIndex3 = iIndex + 1;
+		subMeshData1.m_vFace.push_back(face2);
+	}
+	subMeshData1.m_MeshMatrix = Mat4::IDENTITY;
+	meshData.m_vSubMesh.push_back(subMeshData1);
+	CMaterial materiaCheckBoard;
+	materiaCheckBoard.SetBaseColorTexture("checker64.png", CSampler(CSampler::EUVWrapMode_Repeat, CSampler::EUVWrapMode_Repeat
+		, CSampler::ETextureFilter_Liner, CSampler::ETextureFilter_Liner));
+	CMesh* pCheckBoard = new CMesh;
+	pCheckBoard->InitFromData(&meshData);
+	pCheckBoard->SetMaterial(materiaCheckBoard, 0);
+	pCheckBoard->m_transform.SetPosition(Vec3(0, 0, 0));
+	pCheckBoard->m_transform.SetScale(Vec3(5, 5, 5));
+	pCheckBoard->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
+	g_vMesh.push_back(pCheckBoard);
 
 
 	//{

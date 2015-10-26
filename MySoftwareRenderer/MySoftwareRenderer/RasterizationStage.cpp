@@ -434,7 +434,14 @@ Color4F RasterizationStage::CRasterizer::SampleTexture(int iTextureID, Vec2 uv)
 	}
 	else
 	{
-		return SampleNearset(pTexture, uv);
+		if (pTexture->m_sampler.TEXTURE_MAG_FILTER == CSampler::ETextureFilter_Nearest)
+		{
+			return SampleNearset(pTexture, uv);
+		}
+		else if (pTexture->m_sampler.TEXTURE_MIN_FILTER == CSampler::ETextureFilter_Liner)
+		{
+			return SampleLinear(pTexture, uv);
+		}
 	}
 }
 
@@ -526,24 +533,48 @@ void RasterizationStage::CRasterizer::Blending(Color4F& src, Color4F& dst)
 
 Color4F RasterizationStage::CRasterizer::SampleNearset(const CTexture* pTexture, Vec2 &uv)
 {
+	bool bClampU = pTexture->m_sampler.UV_WRAP_S == CSampler::EUVWrapMode_Clamp;
+	bool bClampV = pTexture->m_sampler.UV_WRAP_T == CSampler::EUVWrapMode_Clamp;
+	if (bClampU)
+		Helper::Clamp(uv.x, 0.0f, 1.0f);
+	else
+		uv.x = fmod(uv.x, 1.0f);
+
+	if (bClampV)
+		Helper::Clamp(uv.y, 0.0f, 1.0f);
+	else
+		uv.y = fmod(uv.y, 1.0f);
+
 	int fWidth = pTexture->m_iWidth - 1;
 	int fHeight = pTexture->m_iHeight - 1;
 
-	unsigned char* pData = pTexture->m_pData;
 	int iU = int(uv.x * fWidth);
 	int iV = int(uv.y * fHeight);
 
+	unsigned char* pData = pTexture->m_pData;
 	unsigned char* pColorData = &pData[iV * pTexture->m_iWidth * 4 + iU * 4];
 	return Color4F(pColorData[0] / 255.0f, pColorData[1] / 255.0f, pColorData[2] / 255.0f, pColorData[3] / 255.0f);
 }
 
 Color4F RasterizationStage::CRasterizer::SampleLinear(const CTexture* pTexture, Vec2 &uv)
 {
+	bool bClampU = pTexture->m_sampler.UV_WRAP_S == CSampler::EUVWrapMode_Clamp;
+	bool bClampV = pTexture->m_sampler.UV_WRAP_T == CSampler::EUVWrapMode_Clamp;
+	if (bClampU)
+		Helper::Clamp(uv.x, 0.0f, 1.0f);
+	else
+		uv.x = fmod(uv.x, 1.0f);
+
+	if (bClampV)
+		Helper::Clamp(uv.y, 0.0f, 1.0f);
+	else
+		uv.y = fmod(uv.y, 1.0f);
+
 	int fWidth = pTexture->m_iWidth - 1;
 	int fHeight = pTexture->m_iHeight - 1;
 	unsigned char* pData = pTexture->m_pData;
-	uv.x *= fWidth;
-	uv.y *= fHeight;
+	uv.x = uv.x * fWidth;
+	uv.y = uv.y * fHeight;
 
 	float fPercentU = uv.x - int(uv.x);
 	float fPercentV = uv.y - int(uv.y);

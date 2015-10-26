@@ -66,7 +66,7 @@ int CImageManager::Load(const char* pFileName)
 	}
 }
 
-const CTexture* CImageManager::FindTexture(int iID)
+CTexture* CImageManager::FindTexture(int iID)
 {
 	auto it = m_mAllTexture.find(iID);
 	if ( it != m_mAllTexture.end() )

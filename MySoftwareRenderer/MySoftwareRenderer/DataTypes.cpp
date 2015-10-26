@@ -6,9 +6,10 @@ int CMaterial::GetBaseColorTex()
 	return m_baseColorTex;
 }
 
-void CMaterial::SetBaseColorTexture(const std::string& sFileName)
+void CMaterial::SetBaseColorTexture(const std::string& sFileName, CSampler sampler)
 {
 	m_baseColorTex = CImageManager::GetInstance()->Load(sFileName.c_str());
+	CImageManager::GetInstance()->FindTexture(m_baseColorTex)->m_sampler = sampler;
 }
 
 int CMaterial::GetNormalMapTex() const

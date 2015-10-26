@@ -7,7 +7,7 @@ class CShaderBase
 {
 public:
 	CShaderBase()
-		: EnableLight(true)
+		: EnableLight(false)
 		, EnableNormalMap(false)
 	{
 	}

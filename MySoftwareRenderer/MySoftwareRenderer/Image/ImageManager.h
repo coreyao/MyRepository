@@ -7,8 +7,9 @@ class CImageManager
 {
 public:
 	static CImageManager* GetInstance();
+
 	int Load(const char* pFileName);
-	const CTexture* FindTexture(int iID);
+	CTexture* FindTexture(int iID);
 
 private:
 	static CImageManager* s_pInstance;

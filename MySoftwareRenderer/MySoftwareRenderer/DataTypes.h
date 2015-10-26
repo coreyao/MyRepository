@@ -352,20 +352,6 @@ public:
 
 typedef shared_ptr<CRenderObject> RenderObjPtr;
 
-class CTexture
-{
-public:
-	CTexture()
-		: m_iWidth(0)
-		, m_iHeight(0)
-		, m_pData(nullptr)
-	{
-	}
-
-	int m_iWidth;
-	int m_iHeight;
-	unsigned char* m_pData;
-};
 
 class CSampler
 {
@@ -390,11 +376,35 @@ public:
 	{
 	}
 
+	CSampler(EUVWrapMode s, EUVWrapMode t, ETextureFilter mag, ETextureFilter min)
+	{
+		UV_WRAP_S = s;
+		UV_WRAP_T = t;
+		TEXTURE_MAG_FILTER = mag;
+		TEXTURE_MIN_FILTER = min;
+	}
+
 	EUVWrapMode UV_WRAP_S;
 	EUVWrapMode UV_WRAP_T;
 
 	ETextureFilter TEXTURE_MAG_FILTER;
 	ETextureFilter TEXTURE_MIN_FILTER;
+};
+
+class CTexture
+{
+public:
+	CTexture()
+		: m_iWidth(0)
+		, m_iHeight(0)
+		, m_pData(nullptr)
+	{
+	}
+
+	int m_iWidth;
+	int m_iHeight;
+	unsigned char* m_pData;
+	CSampler m_sampler;
 };
 
 class CMaterial
@@ -408,7 +418,7 @@ public:
 	}
 
 	int GetBaseColorTex();
-	void SetBaseColorTexture(const std::string& sFileName);
+	void SetBaseColorTexture(const std::string& sFileName, CSampler sampler = CSampler());
 
 	int GetNormalMapTex() const;
 	void SetNormalMapTexture(const std::string& sFileName);
