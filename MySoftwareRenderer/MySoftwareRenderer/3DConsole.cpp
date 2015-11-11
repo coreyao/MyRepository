@@ -81,8 +81,8 @@ void InitMesh()
 	pCube->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;*/
 	//g_vMesh.push_back(pCube);
 
-	/*CMaterial material2;
-	material2.SetBaseColorTexture("brickwall.png");
+	CMaterial material2;
+	material2.SetBaseColorTexture("brickwall.png", CSampler(CSampler::EUVWrapMode_Clamp, CSampler::EUVWrapMode_Clamp, CSampler::ETextureFilter_Liner, CSampler::ETextureFilter_Liner));
 	material2.SetNormalMapTexture("brickwall_normal.png");
 	CMesh* pPlane = new CMesh;
 	pPlane->InitFromFile("plane.CSTM", false);
@@ -92,8 +92,9 @@ void InitMesh()
 	pPlane->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
 	pPlane->m_renderState.m_pFragmentShader->EnableLight = true;
 	pPlane->m_renderState.m_pFragmentShader->EnableNormalMap = true;
+	pPlane->m_renderState.m_bDrawWireFrame = false;
 	g_vMesh.push_back(pPlane);
-	*/
+
 	//CMaterial material;
 	//material.SetBaseColorTexture("checker64.png");
 	//CMesh* pPlane = new CMesh;
@@ -105,55 +106,55 @@ void InitMesh()
 	//pPlane->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
 	//g_vMesh.push_back(pPlane);
 
-	const int conVertexCount = 20;
-	SMeshData meshData;
-	SSubMeshData subMeshData1;
-	for (int z = 0; z < conVertexCount; ++z)
-	{
-		for (int x = 0; x < conVertexCount; ++x)
-		{
-			SVertexData vertex;
-			vertex.m_pos.set(x, 0, z);
-			vertex.m_UV.set(x, z);
-			vertex.m_color = Color4F::WHITE;
-			subMeshData1.m_vVertex.push_back(vertex);
-		}
-	}
+	//const int conVertexCount = 20;
+	//SMeshData meshData;
+	//SSubMeshData subMeshData1;
+	//for (int z = 0; z < conVertexCount; ++z)
+	//{
+	//	for (int x = 0; x < conVertexCount; ++x)
+	//	{
+	//		SVertexData vertex;
+	//		vertex.m_pos.set(x, 0, z);
+	//		vertex.m_UV.set(x, z);
+	//		vertex.m_color = Color4F::WHITE;
+	//		subMeshData1.m_vVertex.push_back(vertex);
+	//	}
+	//}
 
-	for (int i = 1; i <= subMeshData1.m_vVertex.size(); ++i)
-	{
-		if (i % conVertexCount == 0)
-			continue;
+	//for (int i = 1; i <= subMeshData1.m_vVertex.size(); ++i)
+	//{
+	//	if (i % conVertexCount == 0)
+	//		continue;
 
-		if (i / conVertexCount == (conVertexCount - 1))
-			break;
+	//	if (i / conVertexCount == (conVertexCount - 1))
+	//		break;
 
-		int iIndex = i - 1;
+	//	int iIndex = i - 1;
 
-		SFaceData face1;
-		face1.m_VertexIndex1 = iIndex;
-		face1.m_VertexIndex2 = iIndex + conVertexCount;
-		face1.m_VertexIndex3 = iIndex + conVertexCount + 1;
-		subMeshData1.m_vFace.push_back(face1);
+	//	SFaceData face1;
+	//	face1.m_VertexIndex1 = iIndex;
+	//	face1.m_VertexIndex2 = iIndex + conVertexCount;
+	//	face1.m_VertexIndex3 = iIndex + conVertexCount + 1;
+	//	subMeshData1.m_vFace.push_back(face1);
 
-		SFaceData face2;
-		face2.m_VertexIndex1 = iIndex;
-		face2.m_VertexIndex2 = iIndex + conVertexCount + 1;
-		face2.m_VertexIndex3 = iIndex + 1;
-		subMeshData1.m_vFace.push_back(face2);
-	}
-	subMeshData1.m_MeshMatrix = Mat4::IDENTITY;
-	meshData.m_vSubMesh.push_back(subMeshData1);
-	CMaterial materiaCheckBoard;
-	materiaCheckBoard.SetBaseColorTexture("checker64.png", CSampler(CSampler::EUVWrapMode_Repeat, CSampler::EUVWrapMode_Repeat
-		, CSampler::ETextureFilter_Nearest, CSampler::ETextureFilter_Nearest));
-	CMesh* pCheckBoard = new CMesh;
-	pCheckBoard->InitFromData(&meshData);
-	pCheckBoard->SetMaterial(materiaCheckBoard, 0);
-	pCheckBoard->m_transform.SetPosition(Vec3(-300, 0, 0));
-	pCheckBoard->m_transform.SetScale(Vec3(30, 1, 30));
-	pCheckBoard->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
-	g_vMesh.push_back(pCheckBoard);
+	//	SFaceData face2;
+	//	face2.m_VertexIndex1 = iIndex;
+	//	face2.m_VertexIndex2 = iIndex + conVertexCount + 1;
+	//	face2.m_VertexIndex3 = iIndex + 1;
+	//	subMeshData1.m_vFace.push_back(face2);
+	//}
+	//subMeshData1.m_MeshMatrix = Mat4::IDENTITY;
+	//meshData.m_vSubMesh.push_back(subMeshData1);
+	//CMaterial materiaCheckBoard;
+	//materiaCheckBoard.SetBaseColorTexture("checker64.png", CSampler(CSampler::EUVWrapMode_Repeat, CSampler::EUVWrapMode_Repeat
+	//	, CSampler::ETextureFilter_Nearest, CSampler::ETextureFilter_Nearest));
+	//CMesh* pCheckBoard = new CMesh;
+	//pCheckBoard->InitFromData(&meshData);
+	//pCheckBoard->SetMaterial(materiaCheckBoard, 0);
+	//pCheckBoard->m_transform.SetPosition(Vec3(-300, 0, 0));
+	//pCheckBoard->m_transform.SetScale(Vec3(30, 1, 30));
+	//pCheckBoard->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
+	//g_vMesh.push_back(pCheckBoard);
 
 
 	//{
