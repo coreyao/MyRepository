@@ -13,7 +13,7 @@ void CSkyBox::Init( const std::string& sPositiveX, const std::string& sNegativeX
 
 void CSkyBox::Update( float dt )
 {
-	m_transform.m_pos = CDirector::GetInstance()->GetPerspectiveCamera()->GetCameraPos();
+	m_transform.SetPosition(CDirector::GetInstance()->GetPerspectiveCamera()->GetCameraPos());
 }
 
 void CSkyBox::Render()

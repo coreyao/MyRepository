@@ -44,9 +44,9 @@ CCamera* CDirector::GetOrthographicCamera()
 Vec3 CDirector::Unproject( const Vec2& screenPos )
 {
 	// - Convert to NDC Space
-	Vec3 finalPos( screenPos.x - RESOLUTION_WIDTH / 2, (RESOLUTION_HEIGHT - screenPos.y) - RESOLUTION_HEIGHT / 2, 0.0f );
-	finalPos.x /= RESOLUTION_WIDTH / 2;
-	finalPos.y /= RESOLUTION_HEIGHT / 2;
+	Vec3 finalPos( screenPos.x - SCREEN_WIDTH / 2, (SCREEN_HEIGHT - screenPos.y) - SCREEN_HEIGHT / 2, 0.0f );
+	finalPos.x /= SCREEN_WIDTH / 2;
+	finalPos.y /= SCREEN_HEIGHT / 2;
 
 	// - Convert to View Space
 	finalPos.x /= m_pCameraPerspective->GetProjMat().m[0];

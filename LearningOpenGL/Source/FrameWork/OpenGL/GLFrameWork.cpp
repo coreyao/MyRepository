@@ -106,7 +106,7 @@ int main(int argc, char* argv[])
 {
 	glutInit(&argc, argv);
 	glutInitWindowPosition(100, 100);
-	glutInitWindowSize(RESOLUTION_WIDTH, RESOLUTION_HEIGHT);
+	glutInitWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 	glutInitDisplayMode(GLUT_RGBA);
 
 	glutCreateWindow("opengl");

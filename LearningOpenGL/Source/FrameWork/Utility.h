@@ -5,7 +5,9 @@
 #include <cassert>
 #include <ctime>
 #include <sstream>
+#include <map>
 #include "DataTypes.h"
+#include "OpenGL/GLFrameWork.h"
 
 #ifndef SHADER_FILE_DIR
 #define SHADER_FILE_DIR std::string("../Resource/Shaders/")
@@ -29,8 +31,73 @@
 #define offsetof(s,m)   (size_t)&reinterpret_cast<const volatile char&>((((s *)0)->m))
 #endif
 
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 600
+
+#define PI 3.141592f
+#define DEG_TO_RAD(x) ((PI) * ((x) / (180.0f))) 
+#define RAD_TO_DEG(x) ((180) * ((x) / (PI)) )
+#define EPSILON 0.00001f
+#define NEARLY_EQUAL(x,y) (fabs((x) - (y)) <= EPSILON)
+
 #define RANDOM_0_1() ((float)rand()/RAND_MAX)
 #define RANDOM_MINUS1_1() ((2.0f*((float)rand()/RAND_MAX))-1.0f)
+
+enum EVertexOrder
+{
+	EVertexOrder_ClockWise,
+	EVertexOrder_Counter_ClockWise,
+};
+
+class CRenderState
+{
+public:
+	CRenderState();
+
+	bool m_bEnableCullFace;
+	bool m_bCullBackFace;
+	EVertexOrder m_eVertexOrder;
+
+	bool m_bEnableDepthTest;
+	bool m_bEnableDepthWrite;
+	GLuint m_iDepthFunc;
+
+	GLenum m_iBlendSrc;
+	GLenum m_iBlendDst;
+
+	bool m_bDrawWireFrame;
+	bool m_bEnableLight;
+};
+
+class CMaterial
+{
+public:
+	CMaterial();
+
+	GLuint GetBaseColorTex();
+	GLuint GetNormalMapTex();
+	float GetShininess();
+
+	void SetBaseColorTexture(const std::string& sFileName);
+	void SetNormalMapTexture(const std::string& sFileName);
+	void SetShininess(float fShininess);
+
+private:
+	GLuint m_baseColorTex;
+	float m_fShininess;
+
+	GLuint m_normalMapTex;
+};
+
+class CObject
+{
+public:
+	virtual void Update(float dt);
+	virtual void Render();
+
+	STransform m_transform;
+	CRenderState m_renderState;
+};
 
 struct timezone
 {

@@ -1,179 +1,133 @@
 #include "Quaternion.h"
-#include <cmath>
-#include <cassert>
+#include "../Utility.h"
 
-Quaternion::Quaternion()
-	: w(0), x(0), y(0), z(0)
+Quaternion::Quaternion(float fDeg, const Vec3& Axis)
 {
+	float fAlpha = DEG_TO_RAD(fDeg / 2);
+	w = cosf(fAlpha);
+	x = Axis.x * sinf(fAlpha);
+	y = Axis.y * sinf(fAlpha);
+	z = Axis.z * sinf(fAlpha);
+
+	this->Normalize();
 }
 
-Quaternion::Quaternion( float xx, float yy, float zz, float ww )
+Quaternion::Quaternion(float _w, float _x, float _y, float _z)
 {
-	x = xx; y = yy; z = zz; w = ww;
+	x = _x;
+	y = _y;
+	z = _z;
+	w = _w;
 }
 
-Quaternion::Quaternion( const Vec3& axis, float angle )
+Quaternion Quaternion::operator*(const Quaternion& rh)
 {
-	float halfAngle = angle * 0.5f;
-	float sinHalfAngle = sinf(halfAngle);
+	Quaternion ret;
 
-	Vec3 normal(axis);
-	normal.normalize();
-	x = normal.x * sinHalfAngle;
-	y = normal.y * sinHalfAngle;
-	z = normal.z * sinHalfAngle;
-	w = cosf(halfAngle);
+	Vec3 v1 = Vec3(x, y, z);
+	Vec3 v2 = Vec3(rh.x, rh.y, rh.z);
+
+	ret.w = w * rh.w - v1.Dot(v2);
+
+	Vec3 t = v2 * w + v1 * rh.w + v1.Cross(v2);
+	ret.x = t.x;
+	ret.y = t.y;
+	ret.z = t.z;
+
+	return ret;
 }
 
-void Quaternion::normalize()
+void Quaternion::operator*(float fScalar)
 {
-	float n = x * x + y * y + z * z + w * w;
-	// Already normalized.
-	if (n == 1.0f)
-		return;
-
-	n = sqrt(n);
-	// Too close to zero.
-	if (n < 0.000001f)
-		return;
-
-	n = 1.0f / n;
-	x *= n;
-	y *= n;
-	z *= n;
-	w *= n;
+	w *= fScalar;
+	x *= fScalar;
+	y *= fScalar;
+	z *= fScalar;
 }
 
-void Quaternion::slerp( const Quaternion& q1, const Quaternion& q2, float t, Quaternion* dst )
+Vec3 Quaternion::operator*(const Vec3& rh)
 {
-	slerp(q1.x, q1.y, q1.z, q1.w, q2.x, q2.y, q2.z, q2.w, t, &dst->x, &dst->y, &dst->z, &dst->w);
+	Quaternion q( 0, rh.x, rh.y, rh.z );
+	Quaternion iv = GetInverse();
+	Quaternion ret = (*this) * q * iv;
+	return Vec3(ret.x, ret.y, ret.z);
 }
 
-void Quaternion::slerp( float q1x, float q1y, float q1z, float q1w, float q2x, float q2y, float q2z, float q2w, float t, float* dstx, float* dsty, float* dstz, float* dstw )
+void Quaternion::Normalize()
 {
-	// Fast slerp implementation by kwhatmough:
-	// It contains no division operations, no trig, no inverse trig
-	// and no sqrt. Not only does this code tolerate small constraint
-	// errors in the input quaternions, it actually corrects for them.
-	assert(dstx && dsty && dstz && dstw);
-	assert(!(t < 0.0f || t > 1.0f));
-
-	if (t == 0.0f)
+	float fLen = GetLength();
+	if ( fLen != 0 )
 	{
-		*dstx = q1x;
-		*dsty = q1y;
-		*dstz = q1z;
-		*dstw = q1w;
-		return;
+		fLen = 1.0f / fLen;
+		w *= fLen;
+		x *= fLen;
+		y *= fLen;
+		z *= fLen;
 	}
-	else if (t == 1.0f)
+}
+
+Quaternion Quaternion::Slerp(const Quaternion& v1, const Quaternion& v2, float fRatio)
+{
+	Quaternion ret;
+
+	float w0 = v1.w;
+	float x0 = v1.x;
+	float y0 = v1.y;
+	float z0 = v1.z;
+
+	float w1 = v2.w;
+	float x1 = v2.x;
+	float y1 = v2.y;
+	float z1 = v2.z;
+
+	float fCosOmega = w0 * w1 + x0 * x1 + y0 * y1 + z0 * z1;
+	if ( fCosOmega < 0.0f )
 	{
-		*dstx = q2x;
-		*dsty = q2y;
-		*dstz = q2z;
-		*dstw = q2w;
-		return;
+		w1 = -w1;
+		x1 = -x1;
+		y1 = -y1;
+		z1 = -z1;
+		fCosOmega = -fCosOmega;
 	}
 
-	if (q1x == q2x && q1y == q2y && q1z == q2z && q1w == q2w)
+	float k0, k1;
+	if ( fCosOmega > 0.9999f )
 	{
-		*dstx = q1x;
-		*dsty = q1y;
-		*dstz = q1z;
-		*dstw = q1w;
-		return;
+		k0 = 1.0f - fRatio;
+		k1 = fRatio;
+	}
+	else
+	{
+		float sinOmega = sqrtf( 1.0f - fCosOmega * fCosOmega );
+		float omega = atan2f(sinOmega, fCosOmega);
+		float oneOverSinOmega = 1.0f / sinOmega;
+		k0 = sinf((1.0f - fRatio) * omega) * oneOverSinOmega;
+		k1 = sinf(fRatio * omega) * oneOverSinOmega;
 	}
 
-	float halfY, alpha, beta;
-	float u, f1, f2a, f2b;
-	float ratio1, ratio2;
-	float halfSecHalfTheta, versHalfTheta;
-	float sqNotU, sqU;
+	ret.w = w0 * k0 + w1 * k1;
+	ret.x = x0 * k0 + x1 * k1;
+	ret.y = y0 * k0 + y1 * k1;
+	ret.z = z0 * k0 + z1 * k1;
 
-	float cosTheta = q1w * q2w + q1x * q2x + q1y * q2y + q1z * q2z;
-
-	// As usual in all slerp implementations, we fold theta.
-	alpha = cosTheta >= 0 ? 1.0f : -1.0f;
-	halfY = 1.0f + alpha * cosTheta;
-
-	// Here we bisect the interval, so we need to fold t as well.
-	f2b = t - 0.5f;
-	u = f2b >= 0 ? f2b : -f2b;
-	f2a = u - f2b;
-	f2b += u;
-	u += u;
-	f1 = 1.0f - u;
-
-	// One iteration of Newton to get 1-cos(theta / 2) to good accuracy.
-	halfSecHalfTheta = 1.09f - (0.476537f - 0.0903321f * halfY) * halfY;
-	halfSecHalfTheta *= 1.5f - halfY * halfSecHalfTheta * halfSecHalfTheta;
-	versHalfTheta = 1.0f - halfY * halfSecHalfTheta;
-
-	// Evaluate series expansions of the coefficients.
-	sqNotU = f1 * f1;
-	ratio2 = 0.0000440917108f * versHalfTheta;
-	ratio1 = -0.00158730159f + (sqNotU - 16.0f) * ratio2;
-	ratio1 = 0.0333333333f + ratio1 * (sqNotU - 9.0f) * versHalfTheta;
-	ratio1 = -0.333333333f + ratio1 * (sqNotU - 4.0f) * versHalfTheta;
-	ratio1 = 1.0f + ratio1 * (sqNotU - 1.0f) * versHalfTheta;
-
-	sqU = u * u;
-	ratio2 = -0.00158730159f + (sqU - 16.0f) * ratio2;
-	ratio2 = 0.0333333333f + ratio2 * (sqU - 9.0f) * versHalfTheta;
-	ratio2 = -0.333333333f + ratio2 * (sqU - 4.0f) * versHalfTheta;
-	ratio2 = 1.0f + ratio2 * (sqU - 1.0f) * versHalfTheta;
-
-	// Perform the bisection and resolve the folding done earlier.
-	f1 *= ratio1 * halfSecHalfTheta;
-	f2a *= ratio2;
-	f2b *= ratio2;
-	alpha *= f1 + f2a;
-	beta = f1 + f2b;
-
-	// Apply final coefficients to a and b as usual.
-	float w = alpha * q1w + beta * q2w;
-	float x = alpha * q1x + beta * q2x;
-	float y = alpha * q1y + beta * q2y;
-	float z = alpha * q1z + beta * q2z;
-
-	// This final adjustment to the quaternion's length corrects for
-	// any small constraint error in the inputs q1 and q2 But as you
-	// can see, it comes at the cost of 9 additional multiplication
-	// operations. If this error-correcting feature is not required,
-	// the following code may be removed.
-	f1 = 1.5f - 0.5f * (w * w + x * x + y * y + z * z);
-	*dstw = w * f1;
-	*dstx = x * f1;
-	*dsty = y * f1;
-	*dstz = z * f1;
+	return ret;
 }
 
-Quaternion Quaternion::operator*( float fScale )
+Quaternion Quaternion::GetInverse()
 {
-	return Quaternion(this->x * fScale, this->y * fScale, this->z * fScale, this->w * fScale);
+	float fLen = GetLength();
+	if (fLen != 0)
+	{
+		fLen = 1.0f / fLen;
+		return Quaternion(w * fLen, -x * fLen, -y * fLen, -z * fLen);
+	}
+
+	return Quaternion();
 }
 
-Quaternion Quaternion::operator*( const Quaternion& rh )
+float Quaternion::GetLength()
 {
-	Quaternion dst;
-	Quaternion q1 = *this;
-	Quaternion q2 = rh;
-
-	float x = q1.w * q2.x + q1.x * q2.w + q1.y * q2.z - q1.z * q2.y;
-	float y = q1.w * q2.y - q1.x * q2.z + q1.y * q2.w + q1.z * q2.x;
-	float z = q1.w * q2.z + q1.x * q2.y - q1.y * q2.x + q1.z * q2.w;
-	float w = q1.w * q2.w - q1.x * q2.x - q1.y * q2.y - q1.z * q2.z;
-
-	dst.x = x;
-	dst.y = y;
-	dst.z = z;
-	dst.w = w;
-
-	return dst;
+	return sqrtf(w * w + x * x + y * y + z * z);
 }
 
-Quaternion Quaternion::operator+( const Quaternion& rh )
-{
-	return Quaternion( this->x + rh.x, this->y + rh.y, this->z + rh.z, this->w + rh.w );
-}
-
+Quaternion Quaternion::IDENTITY = Quaternion(1.0f, Vec3(0, 0, 0));

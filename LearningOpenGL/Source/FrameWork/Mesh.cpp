@@ -8,10 +8,156 @@
 
 using namespace std;
 
+Mat4 CBone::UpdateWorldMat()
+{
+	if (m_pParent)
+	{
+		m_worldMat = m_pParent->UpdateWorldMat() * m_localMat;
+	}
+	else
+	{
+		m_worldMat = m_localMat;
+	}
+
+	return m_worldMat;
+}
+
+void CBone::CalcPalette(Vec4* matrixPalette)
+{
+	Mat4 t = UpdateWorldMat() * m_data.m_inverseBindMat;
+
+	matrixPalette[0].set(t.m[0], t.m[4], t.m[8], t.m[12]);
+	matrixPalette[1].set(t.m[1], t.m[5], t.m[9], t.m[13]);
+	matrixPalette[2].set(t.m[2], t.m[6], t.m[10], t.m[14]);
+}
+
+Vec4* CSkeleton::GetMatrixPalette()
+{
+	if (!m_pMatrixPalette)
+	{
+		m_pMatrixPalette = new Vec4[m_vSkinBone.size() * 3];
+	}
+
+	int i = 0;
+	for (auto& cBone : m_vSkinBone)
+	{
+		cBone->CalcPalette(&m_pMatrixPalette[i++ * 3]);
+	}
+
+	return m_pMatrixPalette;
+}
+
+CSkeletonAnimator::CSkeletonAnimator()
+: m_pTarget(nullptr)
+, m_fElapsedTime(0.0f)
+, m_fBlendElapsedTime(0.0f)
+, m_bLoop(true)
+, m_iStartFrameIndex(0)
+, m_iEndFrameIndex(-1)
+{
+}
+
+void CSkeletonAnimator::SetTarget(CMesh* pMesh)
+{
+	m_pTarget = pMesh;
+}
+
+void CSkeletonAnimator::Update(float fDeltaTime)
+{
+	auto FindBoneByName = [this](const std::string& sBoneName)
+	{
+		for (auto& pBone : m_pTarget->m_skeleton.m_vSkinBone)
+		{
+			if (pBone->m_data.m_sName == sBoneName)
+			{
+				return pBone;
+			}
+		}
+
+		return (CBone*)nullptr;
+	};
+
+	if (!m_pTarget || m_iEndFrameIndex < 0)
+		return;
+
+	m_fElapsedTime += fDeltaTime;
+
+	bool bAllFinished = false;
+	for (int i = m_iStartFrameIndex; i < m_iEndFrameIndex; ++i)
+	{
+		const SBoneFrame* pCurFrame = &m_pTarget->m_meshData.m_skeleton.m_vFrame[i];
+		const SBoneFrame* pNextFrame = &m_pTarget->m_meshData.m_skeleton.m_vFrame[i + 1];
+
+		float fStartTime = pCurFrame->m_fTime;
+		float fEndTime = pNextFrame->m_fTime;
+		float fCurTotalTime = fEndTime - fStartTime;
+
+		if (m_fElapsedTime < fStartTime)
+			return;
+
+		if (m_fElapsedTime > fEndTime)
+		{
+			bool bLast = (i == m_iEndFrameIndex - 1);
+			if (bLast)
+			{
+				bAllFinished = true;
+				break;
+			}
+			continue;
+		}
+
+		float fElapsedPercent = (m_fElapsedTime - fStartTime) / fCurTotalTime;
+		for (int iKeyIdx = 0; iKeyIdx < pCurFrame->m_vKey.size(); ++iKeyIdx)
+		{
+			CBone* pBone = FindBoneByName(pCurFrame->m_vKey[iKeyIdx].m_sBoneName);
+			if (pBone)
+			{
+				Vec3 finalPos = pCurFrame->m_vKey[iKeyIdx].m_translation + (pNextFrame->m_vKey[iKeyIdx].m_translation - pCurFrame->m_vKey[iKeyIdx].m_translation) * fElapsedPercent;
+				Vec3 finalScale = pCurFrame->m_vKey[iKeyIdx].m_scale + (pNextFrame->m_vKey[iKeyIdx].m_scale - pCurFrame->m_vKey[iKeyIdx].m_scale) * fElapsedPercent;
+				Quaternion finalRotation = Quaternion::Slerp(pCurFrame->m_vKey[iKeyIdx].m_rotation, pNextFrame->m_vKey[iKeyIdx].m_rotation, fElapsedPercent);
+
+				Mat4 translationMatrix = Mat4::CreateTranslationMat(finalPos.x, finalPos.y, finalPos.z);
+				Mat4 scaleMatrix = Mat4::CreateScaleMat(finalScale.x, finalScale.y, finalScale.z);
+				Mat4 rotationMatrix = Mat4::CreateRotationMat(finalRotation);
+
+				pBone->m_localMat = translationMatrix * scaleMatrix * rotationMatrix;
+			}
+		}
+
+		break;
+	}
+
+	if (bAllFinished)
+	{
+		if (m_callback)
+			m_callback();
+
+		if (m_bLoop)
+		{
+			Reset();
+		}
+	}
+}
+
+void CSkeletonAnimator::Reset()
+{
+	m_fElapsedTime = m_iStartFrameIndex / 30.0f;
+	m_fBlendElapsedTime = 0.0f;
+}
+
+void CSkeletonAnimator::PlayAnim(int iStartFrameIndex, int iEndFrameIndex, bool bLoop, std::function<void(void)> callback)
+{
+	m_iStartFrameIndex = iStartFrameIndex;
+	m_iEndFrameIndex = iEndFrameIndex;
+	m_bLoop = bLoop;
+	m_callback = callback;
+
+	Reset();
+}
+
 CMesh::CMesh()
 	: m_Sampler(0)
 	, m_theProgram(0)
-	, m_bEnableLight(false)
 {
 }
 
@@ -25,14 +171,71 @@ void CMesh::InitFromFile( const char* pMeshFileName )
 	if ( !pMeshFile )
 		return;
 
-	m_data.ReadFromFile(pMeshFile);
-	m_vSubMeshVisibility.resize(m_data.m_vSubMesh.size(), true);
-	m_MV.resize(m_data.m_vSubMesh.size());
+	m_meshData.ReadFromFile(pMeshFile);
 	m_animator.SetTarget(this);
 
-	InitMaterial();
-	InitVBOAndVAO();
+	glGenSamplers(1, &m_Sampler);
+	glSamplerParameteri(m_Sampler, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glSamplerParameteri(m_Sampler, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glSamplerParameteri(m_Sampler, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glSamplerParameteri(m_Sampler, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+	InitSubMesh();
 	InitSkeleton();
+}
+
+void CMesh::InitSubMesh()
+{
+	for (int i = 0; i < m_meshData.m_vSubMesh.size(); ++i)
+	{
+		CSubMesh* pSubMesh = new CSubMesh;
+		pSubMesh->m_iIndex = i;
+		m_vSubMesh.push_back(pSubMesh);
+
+		// - Init material
+		std::string sTextureFile;
+		if (!m_meshData.m_vSubMesh[i].m_cMaterial.m_SubTextureVec.empty())
+			sTextureFile = m_meshData.m_vSubMesh[i].m_cMaterial.m_SubTextureVec[0].m_sFileName;
+
+		if (!sTextureFile.empty())
+		{
+			CMaterial newMaterial;
+			newMaterial.SetBaseColorTexture(sTextureFile);
+
+			pSubMesh->m_material = newMaterial;
+		}
+
+		// - Init VBO & VAO
+		glGenBuffers(1, &pSubMesh->m_vertexDataObj);
+		glBindBuffer(GL_ARRAY_BUFFER, pSubMesh->m_vertexDataObj);
+		glBufferData(GL_ARRAY_BUFFER, m_meshData.m_vSubMesh[i].m_vVectex.size() * sizeof(SSkinMeshVertex), &m_meshData.m_vSubMesh[i].m_vVectex.front(), GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		glGenBuffers(1, &pSubMesh->m_vertexIndexObj);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pSubMesh->m_vertexIndexObj);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_meshData.m_vSubMesh[i].m_vFace.size() * sizeof(SFace), &m_meshData.m_vSubMesh[i].m_vFace.front(), GL_STATIC_DRAW);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+		glGenVertexArrays(1, &pSubMesh->m_vertexAttributeObj);
+		glBindVertexArray(pSubMesh->m_vertexAttributeObj);
+
+		glBindBuffer(GL_ARRAY_BUFFER, pSubMesh->m_vertexDataObj);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(SSkinMeshVertex), (GLvoid*)offsetof(SSkinMeshVertex, m_position));
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(SSkinMeshVertex), (GLvoid*)offsetof(SSkinMeshVertex, m_texCoord));
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(SSkinMeshVertex), (GLvoid*)offsetof(SSkinMeshVertex, m_boneIndex));
+		glEnableVertexAttribArray(3);
+		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(SSkinMeshVertex), (GLvoid*)offsetof(SSkinMeshVertex, m_blendWeight));
+		glEnableVertexAttribArray(4);
+		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(SSkinMeshVertex), (GLvoid*)offsetof(SSkinMeshVertex, m_normal));
+		glEnableVertexAttribArray(5);
+		glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, sizeof(SSkinMeshVertex), (GLvoid*)offsetof(SSkinMeshVertex, m_tangent));
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
 }
 
 void CMesh::InitSkeleton()
@@ -50,7 +253,7 @@ void CMesh::InitSkeleton()
 		return (CBone*)nullptr;
 	};
 
-	for ( auto& rBoneData : m_data.m_skeleton.m_vBone )
+	for ( auto& rBoneData : m_meshData.m_skeleton.m_vBone )
 	{
 		CBone newBone;
 		newBone.m_data = rBoneData;
@@ -79,7 +282,7 @@ void CMesh::InitSkeleton()
 		}
 	}
 
-	for (auto& rBoneIndex : m_data.m_skeleton.m_vSkinBone)
+	for (auto& rBoneIndex : m_meshData.m_skeleton.m_vSkinBone)
 	{
 		CBone* pBoneFound = FindCBoneByIndex(rBoneIndex);
 		if ( pBoneFound )
@@ -87,65 +290,33 @@ void CMesh::InitSkeleton()
 			m_skeleton.m_vSkinBone.push_back(pBoneFound);
 		}
 	}
-
-	STransform temp;
-	temp.m_rotation.y = 180;
-	temp.m_pos.x += 50;
-	temp.m_pos.z -= 80;
-	CMeshSocket sock(this, "b_Missle_L", temp);
-	m_vSocket.push_back(sock);
 }
 
 void CMesh::Update(float dt)
 {
 	m_animator.Update(dt);
-
-	for ( int i = 0; i < m_data.m_vSubMesh.size(); ++i )
-	{
-		m_MV[i] = m_transform.GetTransformMat() * m_data.m_vSubMesh[i].m_MeshMatrix;
-	}
 }
 
 void CMesh::Render()
 {
-	if ( m_bEnableCullFace )
-	{
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
-		glFrontFace(GL_CCW);
-	}
-	else
-	{
-		glDisable(GL_CULL_FACE);
-	}
-
-	if ( m_bDrawWireFrame )
-	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	}
-
-	glEnable(GL_DEPTH_TEST);
-	glDepthMask(GL_TRUE);
-	glDepthFunc(GL_LEQUAL);
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+	CObject::Render();
 
 	glUseProgram(m_theProgram);
 
-	for ( int i = 0; i < m_data.m_vSubMesh.size(); ++i )
+	for ( int i = 0; i < m_vSubMesh.size(); ++i )
 	{
-		if ( !m_vSubMeshVisibility[i] )
+		CSubMesh* pSubMesh = m_vSubMesh[i];
+		if (!pSubMesh->m_bSubMeshVisibility)
 			continue;
 
-		glBindVertexArray(m_vertexAttributeObj[i]);
+		glBindVertexArray(pSubMesh->m_vertexAttributeObj);
 
-		UpdateMaterialUniform(i);
+		UpdateMaterialUniform(pSubMesh);
 		UpdateLightUniform();
 
 		GLint modelMatrixUnif = glGetUniformLocation(m_theProgram, "modelMatrix");
 		if ( modelMatrixUnif >= 0 )
-			glUniformMatrix4fv(modelMatrixUnif, 1, GL_FALSE, m_MV[i].m);
+			glUniformMatrix4fv(modelMatrixUnif, 1, GL_FALSE, (m_transform.GetTransformMat() * pSubMesh->m_meshMat).m);
 
 		Mat4 viewMatrix = CDirector::GetInstance()->GetCurViewMat();
 		GLint viewMatrixUnif = glGetUniformLocation(m_theProgram, "viewMatrix");
@@ -168,16 +339,14 @@ void CMesh::Render()
 		GLint colorUnif = glGetUniformLocation(m_theProgram, "u_color");
 		if ( colorUnif >= 0 )
 		{
-			glUniform4f( colorUnif, m_color.r, m_color.g, m_color.b, m_color.a );
+			glUniform4f( colorUnif, m_color.x, m_color.y, m_color.z, m_color.w );
 		}
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vertexIndexObj[i]);
-		glDrawElements(GL_TRIANGLES, m_data.m_vSubMesh[i].m_vFace.size() * 3, GL_UNSIGNED_INT, 0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pSubMesh->m_vertexIndexObj);
+		glDrawElements(GL_TRIANGLES, m_meshData.m_vSubMesh[i].m_vFace.size() * 3, GL_UNSIGNED_INT, 0);
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glBindVertexArray(0);
-		if ( m_bDrawWireFrame )
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 	
 	glUseProgram(0);
@@ -185,74 +354,7 @@ void CMesh::Render()
 
 void CMesh::SetMaterial( const CMaterial& rMaterial, int iIndex )
 {
-	m_vMaterial[iIndex] = rMaterial;
-}
-
-void CMesh::InitMaterial()
-{
-	int iSubMeshCount = m_data.m_vSubMesh.size();
-	m_vMaterial.resize(iSubMeshCount);
-
-	for ( int i = 0; i < iSubMeshCount; ++i )
-	{
-		std::string sTextureFile;
-		if ( !m_data.m_vSubMesh[i].m_cMaterial.m_SubTextureVec.empty() )
-			sTextureFile = m_data.m_vSubMesh[i].m_cMaterial.m_SubTextureVec[0].m_sFileName;
-
-		if ( !sTextureFile.empty() )
-		{
-			CMaterial newMaterial;
-			newMaterial.SetBaseColorTexture(sTextureFile);
-			SetMaterial(newMaterial, i);
-		}
-	}
-
-	glGenSamplers(1, &m_Sampler);
-	glSamplerParameteri(m_Sampler, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glSamplerParameteri(m_Sampler, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glSamplerParameteri(m_Sampler, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glSamplerParameteri(m_Sampler, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-}
-
-void CMesh::InitVBOAndVAO()
-{
-	int iSubMeshCount = m_data.m_vSubMesh.size();
-	m_vertexDataObj.resize(iSubMeshCount);
-	m_vertexIndexObj.resize(iSubMeshCount);
-	m_vertexAttributeObj.resize(iSubMeshCount);
-
-	for ( int i = 0; i < iSubMeshCount; ++i )
-	{
-		glGenBuffers(1, &m_vertexDataObj[i]);
-		glBindBuffer(GL_ARRAY_BUFFER, m_vertexDataObj[i]);
-		glBufferData(GL_ARRAY_BUFFER, m_data.m_vSubMesh[i].m_vVectex.size() * sizeof(SSkinMeshVertex), &m_data.m_vSubMesh[i].m_vVectex.front(), GL_STATIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-		glGenBuffers(1, &m_vertexIndexObj[i]);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vertexIndexObj[i]);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_data.m_vSubMesh[i].m_vFace.size() * sizeof(SFace), &m_data.m_vSubMesh[i].m_vFace.front(), GL_STATIC_DRAW);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-		glGenVertexArrays(1, &m_vertexAttributeObj[i]);
-		glBindVertexArray(m_vertexAttributeObj[i]);
-
-		glBindBuffer(GL_ARRAY_BUFFER, m_vertexDataObj[i]);
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(SSkinMeshVertex), (GLvoid*) offsetof(SSkinMeshVertex, m_position));
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(SSkinMeshVertex), (GLvoid*) offsetof(SSkinMeshVertex, m_texCoord));
-		glEnableVertexAttribArray(2);
-		glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(SSkinMeshVertex), (GLvoid*) offsetof(SSkinMeshVertex, m_boneIndex));
-		glEnableVertexAttribArray(3);
-		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(SSkinMeshVertex), (GLvoid*) offsetof(SSkinMeshVertex, m_blendWeight));
-		glEnableVertexAttribArray(4);
-		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(SSkinMeshVertex), (GLvoid*) offsetof(SSkinMeshVertex, m_normal));
-		glEnableVertexAttribArray(5);
-		glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, sizeof(SSkinMeshVertex), (GLvoid*) offsetof(SSkinMeshVertex, m_tangent));
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindVertexArray(0);
-	}
+	m_vSubMesh[iIndex]->m_material = rMaterial;
 }
 
 void CMesh::SetGLProgram( GLuint theProgram )
@@ -263,9 +365,9 @@ void CMesh::SetGLProgram( GLuint theProgram )
 void CMesh::SetVisible(bool bVisible, const std::string& sSubMeshName)
 {
 	int iIndex = -1;
-	for (int i = 0; i < m_data.m_vSubMesh.size(); ++i)
+	for (int i = 0; i < m_meshData.m_vSubMesh.size(); ++i)
 	{
-		if ( m_data.m_vSubMesh[i].m_MeshName == sSubMeshName )
+		if (m_meshData.m_vSubMesh[i].m_MeshName == sSubMeshName)
 		{
 			iIndex = i;
 			break;
@@ -274,7 +376,7 @@ void CMesh::SetVisible(bool bVisible, const std::string& sSubMeshName)
 
 	if ( iIndex >= 0 )
 	{
-		m_vSubMeshVisibility[iIndex] = bVisible;
+		m_vSubMesh[iIndex]->m_bSubMeshVisibility = bVisible;
 	}
 }
 
@@ -285,7 +387,7 @@ void CMesh::PlayAnim( int iStartFrameIndex, int iEndFrameIndex, bool bLoop, std:
 
 void CMesh::SetLightEnable( bool bEnable )
 {
-	m_bEnableLight = bEnable;
+	m_renderState.m_bEnableLight = bEnable;
 }
 
 void CMesh::UpdateLightUniform()
@@ -293,10 +395,10 @@ void CMesh::UpdateLightUniform()
 	GLint enableLightUnif = glGetUniformLocation(m_theProgram, "u_enableLight");
 	if ( enableLightUnif >= 0 )
 	{
-		glUniform1i(enableLightUnif, m_bEnableLight);
+		glUniform1i(enableLightUnif, m_renderState.m_bEnableLight);
 	}
 
-	if ( m_bEnableLight )
+	if (m_renderState.m_bEnableLight)
 	{
 		GLint eyePosUnif = glGetUniformLocation(m_theProgram, "u_eyePos");
 		if ( eyePosUnif >= 0 )
@@ -316,7 +418,7 @@ void CMesh::UpdateLightUniform()
 			{
 				if ( pDirLight->m_pDebugMesh )
 				{
-					pDirLight->m_lightDir = -pDirLight->m_pDebugMesh->m_transform.m_pos;
+					pDirLight->m_lightDir = -pDirLight->m_pDebugMesh->m_transform.GetPosition();
 				}
 				glUniform3f(unif, pDirLight->m_lightDir.x, pDirLight->m_lightDir.y, pDirLight->m_lightDir.z);
 			}
@@ -345,7 +447,7 @@ void CMesh::UpdateLightUniform()
 			{
 				if ( pPointLight->m_pDebugMesh )
 				{
-					pPointLight->m_lightPos = pPointLight->m_pDebugMesh->m_transform.m_pos;
+					pPointLight->m_lightPos = pPointLight->m_pDebugMesh->m_transform.GetPosition();
 				}
 				glUniform3f(unif, pPointLight->m_lightPos.x, pPointLight->m_lightPos.y, pPointLight->m_lightPos.z);
 			}
@@ -386,7 +488,7 @@ void CMesh::UpdateLightUniform()
 			{
 				if ( pSpotLight->m_pDebugMesh )
 				{
-					pSpotLight->m_lightPos = pSpotLight->m_pDebugMesh->m_transform.m_pos;
+					pSpotLight->m_lightPos = pSpotLight->m_pDebugMesh->m_transform.GetPosition();
 				}
 				glUniform3f(unif, pSpotLight->m_lightPos.x, pSpotLight->m_lightPos.y, pSpotLight->m_lightPos.z);
 			}
@@ -423,11 +525,11 @@ void CMesh::UpdateLightUniform()
 
 			unif = glGetUniformLocation(m_theProgram, (oss.str() + ".innerCutoff").c_str());
 			if ( unif >= 0 )
-				glUniform1f(unif, DEGREES_TO_RADIANS(pSpotLight->fInnerAngle));
+				glUniform1f(unif, DEG_TO_RAD(pSpotLight->fInnerAngle));
 
 			unif = glGetUniformLocation(m_theProgram, (oss.str() + ".outerCutoff").c_str());
 			if ( unif >= 0 )
-				glUniform1f(unif, DEGREES_TO_RADIANS(pSpotLight->fOuterAngle));
+				glUniform1f(unif, DEG_TO_RAD(pSpotLight->fOuterAngle));
 		}
 
 		GLint unif = glGetUniformLocation(m_theProgram, "lightSpaceMatrix");
@@ -447,9 +549,9 @@ void CMesh::UpdateLightUniform()
 	}
 }
 
-void CMesh::UpdateMaterialUniform( int i )
+void CMesh::UpdateMaterialUniform(CSubMesh* pSubMesh)
 {
-	if ( m_vMaterial[i].GetBaseColorTex() != -1 )
+	if (pSubMesh->m_material.GetBaseColorTex() != -1)
 	{
 		GLint colorTextureUnif = glGetUniformLocation(m_theProgram, "u_Material.baseColorTex");
 		if ( colorTextureUnif >= 0 )
@@ -457,12 +559,12 @@ void CMesh::UpdateMaterialUniform( int i )
 			glUniform1i(colorTextureUnif, 0);
 
 			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, m_vMaterial[i].GetBaseColorTex());
+			glBindTexture(GL_TEXTURE_2D, pSubMesh->m_material.GetBaseColorTex());
 			glBindSampler(0, m_Sampler);
 		}
 	}
 
-	if ( m_vMaterial[i].GetNormalMapTex() != -1 )
+	if (pSubMesh->m_material.GetNormalMapTex() != -1)
 	{
 		GLint colorTextureUnif = glGetUniformLocation(m_theProgram, "u_Material.normalMapTex");
 		if ( colorTextureUnif >= 0 )
@@ -470,7 +572,7 @@ void CMesh::UpdateMaterialUniform( int i )
 			glUniform1i(colorTextureUnif, 1);
 
 			glActiveTexture(GL_TEXTURE0 + 1);
-			glBindTexture(GL_TEXTURE_2D, m_vMaterial[i].GetNormalMapTex());
+			glBindTexture(GL_TEXTURE_2D, pSubMesh->m_material.GetNormalMapTex());
 			glBindSampler(1, m_Sampler);
 		}
 	}
@@ -478,13 +580,13 @@ void CMesh::UpdateMaterialUniform( int i )
 	GLint bHasNormalMapUnif = glGetUniformLocation(m_theProgram, "u_Material.bHasNormalMap");
 	if ( bHasNormalMapUnif >= 0 )
 	{
-		glUniform1i(bHasNormalMapUnif, int(m_vMaterial[i].GetNormalMapTex() != -1));
+		glUniform1i(bHasNormalMapUnif, int(pSubMesh->m_material.GetNormalMapTex() != -1));
 	}
 
 	GLint shininessUnif = glGetUniformLocation(m_theProgram, "u_Material.shininess");
 	if ( shininessUnif >= 0 )
 	{
-		glUniform1f(shininessUnif, m_vMaterial[i].GetShininess());
+		glUniform1f(shininessUnif, pSubMesh->m_material.GetShininess());
 	}
 }
 

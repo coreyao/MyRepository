@@ -3,26 +3,6 @@
 #include "Utility.h"
 #include "OpenGL/GLFrameWork.h"
 
-class CMaterial
-{
-public:
-	CMaterial();
-
-	GLuint GetBaseColorTex();
-	GLuint GetNormalMapTex();
-	float GetShininess();
-
-	void SetBaseColorTexture(const std::string& sFileName);
-	void SetNormalMapTexture(const std::string& sFileName);
-	void SetShininess(float fShininess);
-
-private:
-	GLuint m_baseColorTex;
-	float m_fShininess;
-
-	GLuint m_normalMapTex;
-};
-
 enum ELightType
 {
 	ELightType_DirectionalLight,

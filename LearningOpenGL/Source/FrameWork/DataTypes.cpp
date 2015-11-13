@@ -223,11 +223,14 @@ void SMeshData::ReadFromFile( FILE* hFile )
 
 Mat4 STransform::GetRotationMat()
 {
-	Mat4 rotateZ = Mat4::CreateFromRotationZ(m_rotation.z);
-	Mat4 rotateY = Mat4::CreateFromRotationY(m_rotation.y);
-	Mat4 rotateX = Mat4::CreateFromRotationX(m_rotation.x);
-
-	return rotateY * rotateX * rotateZ;
+	if (m_bUseQuaternion)
+	{
+		return Mat4::CreateRotationMat(m_quat);
+	}
+	else
+	{
+		return Mat4::CreateRotationMat(m_rotation.x, m_rotation.y, m_rotation.z);
+	}
 }
 
 void STransform::Reset()
@@ -235,27 +238,91 @@ void STransform::Reset()
 	m_pos = Vec3(0, 0, 0);
 	m_rotation = Vec3(0, 0, 0);
 	m_scale = Vec3(1.0f, 1.0f, 1.0f);
+	m_bTransformDirty = true;
 }
 
 Mat4 STransform::GetTransformMat()
 {
-	if ( m_mat != Mat4::IDENTITY )
+	if (m_bTransformDirty)
 	{
-		return m_mat;
+		Mat4 scaleMat = Mat4::CreateScaleMat(m_scale.x, m_scale.y, m_scale.z);
+		Mat4 rotationMat = GetRotationMat();
+		Mat4 translationMat = Mat4::CreateTranslationMat(m_pos.x, m_pos.y, m_pos.z);
+
+		m_mat = translationMat * rotationMat * scaleMat;
+
+		m_bTransformDirty = false;
 	}
 
-	return Mat4::CreateFromTranslation(m_pos.x, m_pos.y, m_pos.z)
-		* GetRotationMat() 
-		* Mat4::CreateFromScale(m_scale.x, m_scale.y, m_scale.z);
+	return m_mat;
 }
 
-void STransform::SetMat( const Mat4& mat )
+void STransform::SetPosition(const Vec3& pos)
 {
-	m_mat = mat;
+	if ( m_pos != pos )
+	{
+		m_pos = pos;
+		m_bTransformDirty = true;
+	}
 }
 
-const Color4F Color4F::WHITE (1.0f, 1.0f, 1.0f, 1.0f);
-const Color4F Color4F::GREEN (0.0f, 1.0f, 0.0f, 1.0f);
+void STransform::SetScale(const Vec3& scale)
+{
+	m_scale = scale;
+	m_bTransformDirty = true;
+}
+
+void STransform::SetRotation(const Vec3& rot)
+{
+	m_rotation = rot;
+	m_bTransformDirty = true;
+}
+
+void STransform::SetRotation(const Quaternion& rot)
+{
+	m_quat = rot;
+	m_bTransformDirty = true;
+}
+
+bool STransform::IsTransformDirty()
+{
+	return m_bTransformDirty;
+}
+
+const Vec3& STransform::GetPosition() const
+{
+	return m_pos;
+}
+
+const Vec3& STransform::GetRotation() const
+{
+	return m_rotation;
+}
+
+const Vec3& STransform::GetScale() const
+{
+	return m_scale;
+}
+
+void STransform::SetUseQuaternion(bool bVal)
+{
+	m_bUseQuaternion = bVal;
+}
+
+void STransform::SetPositionX(float val)
+{
+	m_pos.x = val;
+}
+
+void STransform::SetPositionY(float val)
+{
+	m_pos.y = val;
+}
+
+void STransform::SetPositionZ(float val)
+{
+	m_pos.z = val;
+}
 
 const Color3B Color3B::WHITE (255, 255, 255);
 const Color3B Color3B::GREEN (0, 255, 0);
@@ -297,15 +364,68 @@ Color3B Color3B::operator*=( const Color3B& rh )
 	return *this;
 }
 
-Color4F Color4F::operator*( const Color4F& rh )
-{
-	return Color4F( r * rh.r, g * rh.g, b * rh.b, a * rh.a );
-}
-
-SCommonVertex::SCommonVertex( const Vec3& pos, const Color4F& color, const Vec2& uv )
+SCommonVertex::SCommonVertex(const Vec3& pos, const Color4F& color, const Vec2& uv)
 	: m_pos(pos)
 	, m_color(color)
 	, m_UV(uv)
 {
 
 }
+
+Color4F Color4F::operator*(const Color4F& rh) const
+{
+	return Color4F(r * rh.r, g * rh.g, b * rh.b, a * rh.a);
+}
+
+void Color4F::operator+=(const Color4F& rh)
+{
+	this->a += rh.a;
+	this->r += rh.r;
+	this->g += rh.g;
+	this->b += rh.b;
+}
+
+Color4F Color4F::operator-(const Color4F& rh) const
+{
+	return Color4F(r - rh.r, g - rh.g, b - rh.b, a - rh.a);
+}
+
+Color4F Color4F::operator-(float fScalar) const
+{
+	return Color4F(r - fScalar, g - fScalar, b - fScalar, a - fScalar);
+}
+
+Color4F Color4F::operator/(float fScalar) const
+{
+	return Color4F(r / fScalar, g / fScalar, b / fScalar, a / fScalar);
+}
+
+Color4F Color4F::operator*(float fScalar) const
+{
+	return Color4F(r * fScalar, g * fScalar, b * fScalar, a * fScalar);
+}
+
+void Color4F::Set(float _r, float _g, float _b, float _a)
+{
+	r = _r;
+	g = _g;
+	b = _b;
+	a = _a;
+}
+
+Color4F Color4F::operator+(const Color4F& rh) const
+{
+	return Color4F(this->r + rh.r, this->g + rh.g, this->b + rh.b, this->a + rh.a);
+}
+
+void Color4F::operator*=(float fScalar)
+{
+	this->a *= fScalar;
+	this->r *= fScalar;
+	this->g *= fScalar;
+	this->b *= fScalar;
+}
+
+const Color4F Color4F::WHITE(1.0f, 1.0f, 1.0f, 1.0f);
+const Color4F Color4F::GREEN(0.0f, 1.0f, 0.0f, 1.0f);
+const Color4F Color4F::BLACK(0.0f, 0.0f, 0.0f, 1.0f);

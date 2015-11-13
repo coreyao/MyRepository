@@ -195,31 +195,31 @@ void CParticleInstance::Update( float dt )
 	m_position += m_moveDir * m_fCurSpeed * dt;
 
 	Mat4 viewMatrix = CDirector::GetInstance()->GetCurViewMat();
-	Mat4 TranslationMatrix = Mat4::CreateFromTranslation(m_position.x,m_position.y, m_position.z);
-	Mat4 ScaleMatrix = Mat4::CreateFromScale(fFinalSize, fFinalSize, fFinalSize);
-	Mat4 ZRotationMatrix = Mat4::CreateFromRotationZ(m_fCurZRotation);
+	Mat4 TranslationMatrix = Mat4::CreateTranslationMat(m_position.x,m_position.y, m_position.z);
+	Mat4 ScaleMatrix = Mat4::CreateScaleMat(fFinalSize, fFinalSize, fFinalSize);
+	Mat4 ZRotationMatrix = Mat4::CreateRotationMat(0, 0, m_fCurZRotation);
 
 	Mat4 BillboardMatrix = Mat4::IDENTITY;
 	Vec3 forward;
 	if ( m_pEmitter->m_emitMode == CEmitter::EEmitMode_Free )
 		forward = CDirector::GetInstance()->GetPerspectiveCamera()->GetLookAtDir() * (-1);
 	else if ( m_pEmitter->m_emitMode == CEmitter::EEmitMode_Relative )
-		forward = m_parentMat.Inverse() * CDirector::GetInstance()->GetPerspectiveCamera()->GetLookAtDir() * (-1);
+		forward = m_parentMat.GetInversed() * Vec4(CDirector::GetInstance()->GetPerspectiveCamera()->GetLookAtDir() * (-1), 0.0f);
 	if ( m_pEmitter->m_eRenderMode == CEmitter::ERenderMode_VerticalBillboard || m_pEmitter->m_eRenderMode == CEmitter::ERenderMode_HorizontalBillboard )
 		forward.y = 0;
-	forward.normalize();
+	forward.Normalize();
 	Vec3 up(0, 1, 0);
 	Vec3 right = up.Cross(forward);
-	right.normalize();
+	right.Normalize();
 	up = forward.Cross(right);
-	up.normalize();
-	BillboardMatrix.SetRight(right.x, right.y, right.z);
-	BillboardMatrix.SetForward(forward.x, forward.y, forward.z);
-	BillboardMatrix.SetUp(up.x, up.y, up.z);
+	up.Normalize();
+	BillboardMatrix.SetRight(Vec3(right.x, right.y, right.z));
+	BillboardMatrix.SetForward(Vec3(forward.x, forward.y, forward.z));
+	BillboardMatrix.SetUp(Vec3(up.x, up.y, up.z));
 
 	if (m_pEmitter->m_eRenderMode == CEmitter::ERenderMode_HorizontalBillboard)
 	{
-		BillboardMatrix = m_parentMat.Inverse() * BillboardMatrix * Mat4::CreateFromRotationX(-90);
+		BillboardMatrix = m_parentMat.GetInversed() * BillboardMatrix * Mat4::CreateRotationMat(-90, 0, 0);
 	}
 
 	if ( m_pEmitter->m_emitMode == CEmitter::EEmitMode_Free )
@@ -391,10 +391,10 @@ void CParticleInstance::Reset()
 	m_parentMat = m_pEmitter->m_pParticleSystem->m_transform.GetTransformMat() * m_pEmitter->m_transform.GetTransformMat();
 	if ( m_pEmitter->m_emitMode == CEmitter::EEmitMode_Free )
 	{
-		m_position = m_parentMat.TransformPoint(m_position);
-		m_moveDir = m_parentMat.TransformVector(m_moveDir);
+		m_position = m_parentMat * Vec4(m_position, 1.0f);
+		m_moveDir = m_parentMat * Vec4(m_moveDir, 0.0f);
 	}
-	m_moveDir.normalize();
+	m_moveDir.Normalize();
 
 	m_fElapsedRatio = m_pEmitter->m_fCurDuration / m_pEmitter->m_fTotalDuration;
 	m_fCurSpeed = m_pEmitter->m_fParticleStartSpeed.GetValue(m_fElapsedRatio);
@@ -463,7 +463,7 @@ void CEmitterShape::GeneratePositionAndDirection( Vec3& outPos, Vec3& outDir )
 			if ( m_eShapeType == EShape_Cone )
 			{
 				float fRandomRadius = RANDOM_MINUS1_1() * m_fRadius;
-				float fRandomAngle = RANDOM_0_1() * DEGREES_TO_RADIANS(360.0f);
+				float fRandomAngle = RANDOM_0_1() * DEG_TO_RAD(360.0f);
 
 				outPos = Vec3( cosf(fRandomAngle), sinf(fRandomAngle), 0 ) * fRandomRadius;
 			}
@@ -472,7 +472,7 @@ void CEmitterShape::GeneratePositionAndDirection( Vec3& outPos, Vec3& outDir )
 		{
 			if ( m_eShapeType == EShape_Cone )
 			{
-				float fRandomAngle = RANDOM_0_1() * DEGREES_TO_RADIANS(360.0f);
+				float fRandomAngle = RANDOM_0_1() * DEG_TO_RAD(360.0f);
 				outPos = Vec3( cosf(fRandomAngle), sinf(fRandomAngle), 0 ) * m_fRadius;
 			}
 		}
@@ -481,9 +481,9 @@ void CEmitterShape::GeneratePositionAndDirection( Vec3& outPos, Vec3& outDir )
 	outDir = Vec3(0, 0, 1);
 	if ( m_eShapeType == EShape_Cone )
 	{
-		Mat4 rotateX = Mat4::CreateFromRotationX(RANDOM_MINUS1_1() * m_fAngle);
-		Mat4 rotateZ = Mat4::CreateFromRotationZ(RANDOM_MINUS1_1() * m_fAngle);
-		outDir = rotateZ * rotateX * outDir;
+		Mat4 rotateX = Mat4::CreateRotationMat(RANDOM_MINUS1_1() * m_fAngle, 0, 0);
+		Mat4 rotateZ = Mat4::CreateRotationMat(0, 0, RANDOM_MINUS1_1() * m_fAngle);
+		outDir = rotateZ * rotateX * Vec4(outDir, 0.0f);
 	}
 	else
 	{
@@ -493,5 +493,5 @@ void CEmitterShape::GeneratePositionAndDirection( Vec3& outPos, Vec3& outDir )
 		}
 	}
 
-	outDir.normalize();
+	outDir.Normalize();
 }

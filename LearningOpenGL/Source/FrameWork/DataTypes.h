@@ -11,8 +11,6 @@
 #include "Math/Quaternion.h"
 #include "Math/Matrix.h"
 
-typedef Matrix4X4 Mat4;
-
 struct Color3B
 {
 	Color3B() : r(0), g(0), b(0)
@@ -42,13 +40,14 @@ struct Color3B
 	static const Color3B GREEN;
 };
 
-struct Color4F
+class Color4F
 {
-	Color4F() : r(1.0f), g(1.0f), b(1.0f), a(1.0f)
+public:
+	Color4F() : r(0.0f), g(0.0f), b(0.0f), a(0.0f)
 	{
 	}
 
-	Color4F( float _r, float _g, float _b, float _a )
+	Color4F(float _r, float _g, float _b, float _a)
 	{
 		r = _r;
 		g = _g;
@@ -56,7 +55,7 @@ struct Color4F
 		a = _a;
 	}
 
-	Color4F( Color3B color3B, float _a )
+	Color4F(Color3B color3B, float _a)
 	{
 		r = color3B.r / 255.0f;
 		g = color3B.g / 255.0f;
@@ -64,7 +63,17 @@ struct Color4F
 		a = _a;
 	}
 
-	Color4F operator*(const Color4F& rh);
+	Color4F operator*(const Color4F& rh) const;
+	Color4F operator-(const Color4F& rh) const;
+	Color4F operator-(float fScalar) const;
+	Color4F operator/(float fScalar) const;
+	Color4F operator*(float fScalar) const;
+	void operator+=(const Color4F& rh);
+	Color4F operator+(const Color4F& rh) const;
+
+	void operator*=(float fScalar);
+
+	void Set(float _r, float _g, float _b, float _a);
 
 	float r;
 	float g;
@@ -73,6 +82,7 @@ struct Color4F
 
 	static const Color4F WHITE;
 	static const Color4F GREEN;
+	static const Color4F BLACK;
 };
 
 struct SFace
@@ -91,10 +101,6 @@ struct SFace
 
 struct SSkinMeshVertex
 {
-	SSkinMeshVertex()
-	{
-	}
-
 	Vec3 m_position;
 	Vec3 m_normal;
 	Vec3 m_tangent;
@@ -202,22 +208,45 @@ struct SMeshData
 	SSkeletonData				m_skeleton;
 };
 
-struct STransform 
+struct STransform
 {
+public:
 	STransform()
 	{
 		m_mat = Mat4::IDENTITY;
 		m_scale.set(1.0f, 1.0f, 1.0f);
+		m_bTransformDirty = true;
+		m_bUseQuaternion = false;
 	}
 
 	Mat4 GetTransformMat();
 	Mat4 GetRotationMat();
 	void Reset();
-	void SetMat(const Mat4& mat);
 
+	const Vec3& GetPosition() const;
+	void SetPosition(const Vec3& pos);
+	void SetPositionX(float val);
+	void SetPositionY(float val);
+	void SetPositionZ(float val);
+
+	const Vec3& GetRotation() const;
+	void SetRotation(const Vec3& rot);
+	void SetRotation(const Quaternion& rot);
+
+	const Vec3& GetScale() const;
+	void SetScale(const Vec3& scale);
+
+	bool IsTransformDirty();
+	void SetUseQuaternion(bool bVal);
+
+private:
 	Vec3 m_pos;
 	Vec3 m_rotation;
+	Quaternion m_quat;
 	Vec3 m_scale;
 
 	Mat4 m_mat;
+
+	bool m_bTransformDirty;
+	bool m_bUseQuaternion;
 };

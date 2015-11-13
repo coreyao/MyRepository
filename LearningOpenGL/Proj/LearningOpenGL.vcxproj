@@ -11,7 +11,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Source\FrameWork\BaseRenderingDataStructure.cpp" />
     <ClCompile Include="..\Source\FrameWork\DataTypes.cpp" />
     <ClCompile Include="..\Source\FrameWork\Director.cpp" />
     <ClCompile Include="..\Source\FrameWork\Camera.cpp" />
@@ -42,7 +41,6 @@
     <ClCompile Include="..\Source\Console.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Source\FrameWork\BaseRenderingDataStructure.h" />
     <ClInclude Include="..\Source\FrameWork\DataTypes.h" />
     <ClInclude Include="..\Source\FrameWork\Director.h" />
     <ClInclude Include="..\Source\FrameWork\Camera.h" />

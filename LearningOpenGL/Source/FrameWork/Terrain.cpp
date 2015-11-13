@@ -428,7 +428,7 @@ void CTerrain::UpdateChunkLODInternal( SChunk* pChunk )
 {
 	Vec3 cameraPos = CDirector::GetInstance()->GetPerspectiveCamera()->GetCameraPos();
 	Vec3 centerPos = pChunk->m_pParent->m_boundingBoxLocal.GetCenter();
-	centerPos = m_transform.GetTransformMat().TransformPoint(centerPos);
+	centerPos = m_transform.GetTransformMat() * Vec4(centerPos, 1.0f);
 
 	float dist = centerPos.Distance(cameraPos);
 	pChunk->m_iCurLOD = conMaxLOD - 1;
@@ -545,8 +545,8 @@ float CTerrain::GetHeight( const Vec2& worldPos )
 {
 	Vec3 p( worldPos.x, 0, worldPos.y );
 
-	Mat4 dd = Mat4::CreateFromTranslation(m_iHeightMapWidth / 2, 0, m_iHeightMapHeight / 2);
-	Vec3 localPos = (dd * m_transform.GetTransformMat().Inverse()).TransformPoint(p);
+	Mat4 dd = Mat4::CreateTranslationMat(m_iHeightMapWidth / 2, 0, m_iHeightMapHeight / 2);
+	Vec3 localPos = dd * m_transform.GetTransformMat().GetInversed() * Vec4(p, 1.0f);
 
 	int i = (int)localPos.x;
 	int j = (int)localPos.z;
@@ -565,7 +565,7 @@ float CTerrain::GetHeight( const Vec2& worldPos )
 	float fLocalHeight = m * (1.0f - v) + n * v;
 
 	localPos.y = fLocalHeight;
-	p = (m_transform.GetTransformMat() * dd.Inverse()).TransformPoint(localPos);
+	p = (m_transform.GetTransformMat() * dd.GetInversed()) * Vec4(localPos, 1.0f);
 
 	return p.y;
 }

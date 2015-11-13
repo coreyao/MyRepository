@@ -1,6 +1,5 @@
 #pragma once
 
-#include "BaseRenderingDataStructure.h"
 #include "Light.h"
 #include "OpenGL/GLFrameWork.h"
 
@@ -17,7 +16,82 @@ private:
 	const CMesh* m_pTarget;
 };
 
-class CMesh : public CBaseMesh
+class CBone
+{
+public:
+	CBone() : m_pParent(nullptr)
+	{
+	}
+
+	Mat4 UpdateWorldMat();
+	void CalcPalette(Vec4* matrixPalette);
+
+	Mat4 m_localMat;
+	Mat4 m_worldMat;
+	SBoneData m_data;
+
+	std::vector<CBone*> m_vChildren;
+	CBone* m_pParent;
+};
+
+class CSkeleton
+{
+public:
+	CSkeleton() : m_pMatrixPalette(nullptr) {}
+
+	Vec4* GetMatrixPalette();
+
+	Vec4* m_pMatrixPalette;
+	std::vector<CBone> m_vBone;
+	std::vector<CBone*> m_vSkinBone;
+};
+
+class CSkeletonAnimator
+{
+public:
+	CSkeletonAnimator();
+
+	void SetTarget(CMesh* pMesh);
+	void Update(float fDeltaTime);
+	void Reset();
+	void PlayAnim(int iStartFrameIndex, int iEndFrameIndex, bool bLoop, std::function<void(void)> callback);
+
+protected:
+	CMesh* m_pTarget;
+	float m_fElapsedTime;
+	bool m_bLoop;
+
+	int m_iStartFrameIndex;
+	int m_iEndFrameIndex;
+
+	std::function<void(void)> m_callback;
+	float m_fBlendElapsedTime;
+};
+
+class CMesh;
+class CSubMesh
+{
+public:
+	CSubMesh()
+		: m_bSubMeshVisibility(true)
+		, m_pParent(nullptr)
+		, m_iIndex(-1)
+	{
+	}
+
+	CMesh* m_pParent;
+	int m_iIndex;
+
+	Mat4 m_meshMat;
+	CMaterial m_material;
+	bool m_bSubMeshVisibility;
+
+	GLuint m_vertexDataObj;
+	GLuint m_vertexIndexObj;
+	GLuint m_vertexAttributeObj;
+};
+
+class CMesh : public CObject
 {
 public:
 	CMesh();
@@ -33,26 +107,22 @@ public:
 	void SetLightEnable(bool bEnable);
 	void PlayAnim( int iStartFrameIndex, int iEndFrameIndex, bool bLoop, std::function<void(void)> callback);
 
+	GLuint m_theProgram;
+	GLuint m_Sampler;
+
+	SMeshData m_meshData;
+	Vec4 m_color;
+	bool m_bSkinMesh;
+
+	CSkeleton m_skeleton;
+	CSkeletonAnimator m_animator;
+	std::vector<CSubMesh*> m_vSubMesh;
 	std::vector<CMeshSocket> m_vSocket;
 
 private:
-	void InitVBOAndVAO();
+	void InitSubMesh();
 	void InitSkeleton();
-	void InitMaterial();
 	void UpdateLightUniform();
-	void UpdateMaterialUniform( int i );
-
-private:
-	GLuint m_theProgram;
-
-	GLuint m_Sampler;
-	std::vector<Mat4> m_MV;
-
-	std::vector<GLuint> m_vertexDataObj;
-	std::vector<GLuint> m_vertexIndexObj;
-	std::vector<CMaterial> m_vMaterial;
-	std::vector<GLuint> m_vertexAttributeObj;
-
-	bool m_bEnableLight;
+	void UpdateMaterialUniform(CSubMesh* pSubMesh);
 };
 

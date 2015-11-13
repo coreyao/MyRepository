@@ -1,53 +1,50 @@
 #include "Camera.h"
-#include "OpenGL/GLFrameWork.h"
 
 CCamera::CCamera(Vec3 eyePos, Vec3 lookAtDir, Vec3 upDir, EProjectionMode eMode)
-	: m_fPitch(0)
-	, m_fYaw(90)
-	, m_fFOV(90)
-	, m_fNearZ(1.0f)
-	, m_fFarZ(100000.0f)
-	, m_eMode(eMode)
+: m_fFOV(90)
+, m_fNearZ(1.0f)
+, m_fFarZ(1000.0f)
+, m_eMode(eMode)
 {
-	m_eyePos = eyePos;
-	m_lookAtDir = lookAtDir;
-	m_UpDir = upDir;
+	m_aspectRatio = (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT;
 
-	if ( m_eMode == EProjectionMode_Perspective)
+	if (m_eMode == EProjectionMode_Perspective)
 	{
-		m_ProjMat = Mat4::createPerspective(m_fFOV, (float)RESOLUTION_WIDTH / (float)RESOLUTION_HEIGHT, m_fNearZ, m_fFarZ);
+		m_ProjMat = Mat4::CreatePerspectiveMat(m_fFOV, m_aspectRatio, m_fNearZ, m_fFarZ);
 	}
-	else if ( m_eMode == EProjectionMode_Orthographic )
+	else if (m_eMode == EProjectionMode_Orthographic)
 	{
-		m_ProjMat = Mat4::createOrthographic(RESOLUTION_WIDTH, RESOLUTION_HEIGHT, 1.0f, 1000.0f);
+		//m_ProjMat = Mat4::CreateOrthegraphicsMat(SCREEN_WIDTH, SCREEN_HEIGHT, 1.0f, 1000.0f);
 	}
+
+	m_viewMat = Mat4::CreateLookAt(eyePos, lookAtDir, upDir);
+	const Mat4& rViewMatInv = m_viewMat.GetInversed();
+	Vec3 eulerAngle = rViewMatInv.ConvertToEuler();
+	m_transform.SetRotation(eulerAngle);
+	m_transform.SetPosition(eyePos);
+}
+
+void CCamera::Move(float leftAndRight, float upAndDown, float forwardAndBackward)
+{
+	const Vec3& forwardVec = m_transform.GetTransformMat().GetForward();
+	Vec3 rightVec = m_transform.GetTransformMat().GetRight();
+	rightVec.y = 0;
+
+	Vec3 moveOffset;
+	moveOffset += forwardVec * forwardAndBackward;
+	moveOffset += Vec3(0, upAndDown, 0);
+	moveOffset += rightVec * leftAndRight;
+	m_transform.SetPosition(m_transform.GetPosition() + moveOffset);
 
 	UpdateProjectionViewMat();
 }
 
-void CCamera::Move( float leftAndRight, float upAndDown, float forwardAndBackward )
+void CCamera::Rotate(float fPitch, float fYaw)
 {
-	Vec3 forwardAndBackwardOffset = m_lookAtDir * forwardAndBackward;
-	m_eyePos += forwardAndBackwardOffset;
-
-	m_eyePos.y += upAndDown;
-
-	Vec3 dirX = m_lookAtDir.Cross( m_UpDir );
-	dirX.normalize();
-	dirX.y = 0;
-	m_eyePos += dirX * leftAndRight;
-
-	UpdateProjectionViewMat();
-}
-
-void CCamera::Rotate( float fPitch, float fYaw )
-{
-	m_fYaw += fYaw;
-	m_fPitch += fPitch;
-
-	m_lookAtDir.x = cosf(DEGREES_TO_RADIANS(m_fPitch)) * cosf(DEGREES_TO_RADIANS(m_fYaw));
-	m_lookAtDir.y = sinf(DEGREES_TO_RADIANS(m_fPitch));
-	m_lookAtDir.z = -cosf(DEGREES_TO_RADIANS(m_fPitch)) * sinf(DEGREES_TO_RADIANS(m_fYaw));
+	Vec3 rot = m_transform.GetRotation();
+	rot.y += fYaw;
+	rot.x += fPitch;
+	m_transform.SetRotation(rot);
 
 	UpdateProjectionViewMat();
 }
@@ -64,59 +61,56 @@ const Mat4& CCamera::GetProjMat() const
 
 void CCamera::UpdateProjectionViewMat()
 {
-	m_lookAtDir.normalize();
-	m_viewMat = Mat4::createLookAt(m_eyePos, m_lookAtDir, m_UpDir);
-	UpdateFrustrum();
+	m_viewMat = m_transform.GetTransformMat().GetInversed();
 }
 
 Vec3 CCamera::GetCameraPos() const
 {
-	return m_eyePos;
+	return m_transform.GetPosition();
 }
 
-void CCamera::SetCameraPos( const Vec3& dst )
+void CCamera::SetCameraPos(const Vec3& dst)
 {
-	m_eyePos = dst;
+	m_transform.SetPosition(dst);
 	UpdateProjectionViewMat();
 }
 
-Vec3 CCamera::GetLookAtDir() const
+Vec3 CCamera::GetLookAtDir()
 {
-	return m_lookAtDir;
+	return m_transform.GetTransformMat().GetForward();
 }
 
-void CCamera::SetLookAtDir( const Vec3& dir )
+void CCamera::Zoom(float fDegOffset)
 {
-	m_lookAtDir = dir;
-	UpdateProjectionViewMat();
-}
-
-const CFrustrum& CCamera::GetFrustrum() const
-{
-	return m_frustrum;
-}
-
-void CCamera::UpdateFrustrum()
-{
-	m_frustrum.Init(*this);
-}
-
-bool CCamera::IsInFrustrum( const CAABB& worldRect ) const
-{
-	return m_frustrum.IsInFrustrum(worldRect);
-}
-
-void CCamera::Zoom( float fDegOffset )
-{
-	if ( m_eMode == EProjectionMode_Perspective)
+	if (m_eMode == EProjectionMode_Perspective)
 	{
 		m_fFOV += fDegOffset;
-		m_ProjMat = Mat4::createPerspective(m_fFOV, (float)RESOLUTION_WIDTH / (float)RESOLUTION_HEIGHT, 1.0f, 100000.0f);
+		m_ProjMat = Mat4::CreatePerspectiveMat(m_fFOV, (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 1.0f, 100000.0f);
 	}
 }
 
 float CCamera::GetFarZ() const
 {
 	return m_fFarZ;
+}
+
+float CCamera::GetNearZ() const
+{
+	return m_fNearZ;
+}
+
+float CCamera::GetFOV() const
+{
+	return m_fFOV;
+}
+
+float CCamera::GetAspectRatio() const
+{
+	return m_aspectRatio;
+}
+
+bool CCamera::IsInFrustrum(const CAABB& aabb)
+{
+	return true;
 }
 

@@ -20,19 +20,46 @@
     <Filter Include="Source Files\FrameWork\Math">
       <UniqueIdentifier>{8ef0196a-2571-4dd8-a5d2-3d40e846f9db}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\FrameWork\Mesh">
+      <UniqueIdentifier>{97f8853b-e308-459b-a569-f8685a3cb3fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FrameWork\Camera">
+      <UniqueIdentifier>{3cad8f0a-1456-429d-85fe-cac4823cce34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FrameWork\Label">
+      <UniqueIdentifier>{595c6705-8de7-4794-976e-ebc0b5335713}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FrameWork\ParticleSystem">
+      <UniqueIdentifier>{cd8f497d-b873-4fb9-a348-7177806290b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FrameWork\SkyBox">
+      <UniqueIdentifier>{a0e0904b-1003-418d-9398-86eac349c07a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FrameWork\Collision">
+      <UniqueIdentifier>{4ffbd216-8033-4f03-8a37-7e427157c985}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FrameWork\Frustrum">
+      <UniqueIdentifier>{f8ca7e0c-8a3a-4c83-9883-456f4459f7d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FrameWork\Light">
+      <UniqueIdentifier>{a7da7692-a0a6-4cf3-9389-cfc5be9b2f14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FrameWork\Terrain">
+      <UniqueIdentifier>{d43a9cf5-140d-42a2-ae43-13a08bf4c677}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FrameWork\Utilities">
+      <UniqueIdentifier>{3f3daebe-4357-4c46-9ffd-7f8c64b9f4b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FrameWork\Scenes">
+      <UniqueIdentifier>{c4eebaca-5d16-4d4b-b20f-facfea02b7f0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Source\FrameWork\Utility.cpp">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\FrameWork\Image\PNGReader.cpp">
       <Filter>Source Files\FrameWork\Image</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\FrameWork\Image\ImageReader.cpp">
       <Filter>Source Files\FrameWork\Image</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\FrameWork\DataTypes.cpp">
-      <Filter>Source Files\FrameWork</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\FrameWork\Math\Matrix.cpp">
       <Filter>Source Files\FrameWork\Math</Filter>
@@ -43,20 +70,11 @@
     <ClCompile Include="..\Source\FrameWork\Math\Vector.cpp">
       <Filter>Source Files\FrameWork\Math</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\FrameWork\BaseRenderingDataStructure.cpp">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\FrameWork\OpenGL\GLFrameWork.cpp">
       <Filter>Source Files\FrameWork\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\FrameWork\OpenGL\GLProgramManager.cpp">
       <Filter>Source Files\FrameWork\OpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\FrameWork\Director.cpp">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\FrameWork\Camera.cpp">
-      <Filter>Source Files\FrameWork</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Console.cpp">
       <Filter>Source Files</Filter>
@@ -67,61 +85,67 @@
     <ClCompile Include="..\Source\FrameWork\Math\Ray.cpp">
       <Filter>Source Files\FrameWork\Math</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\FrameWork\ThirdPersonController.cpp">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\FrameWork\Terrain.cpp">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\FrameWork\SkyBox.cpp">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\FrameWork\Primitive.cpp">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\FrameWork\ParticleSystem.cpp">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\FrameWork\Mesh.cpp">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\FrameWork\Label.cpp">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\FrameWork\Frustrum.cpp">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\FrameWork\CubeMap.cpp">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\FrameWork\Collision.cpp">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\FrameWork\Image\TGAReader.cpp">
       <Filter>Source Files\FrameWork\Image</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\FrameWork\Image\ImageManager.cpp">
       <Filter>Source Files\FrameWork\Image</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\Mesh.cpp">
+      <Filter>Source Files\FrameWork\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\Camera.cpp">
+      <Filter>Source Files\FrameWork\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\Label.cpp">
+      <Filter>Source Files\FrameWork\Label</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\ParticleSystem.cpp">
+      <Filter>Source Files\FrameWork\ParticleSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\CubeMap.cpp">
+      <Filter>Source Files\FrameWork\SkyBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\SkyBox.cpp">
+      <Filter>Source Files\FrameWork\SkyBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\Collision.cpp">
+      <Filter>Source Files\FrameWork\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\Frustrum.cpp">
+      <Filter>Source Files\FrameWork\Frustrum</Filter>
+    </ClCompile>
     <ClCompile Include="..\Source\FrameWork\Light.cpp">
-      <Filter>Source Files\FrameWork</Filter>
+      <Filter>Source Files\FrameWork\Light</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\FrameWork\ShadowMap.cpp">
-      <Filter>Source Files\FrameWork</Filter>
+      <Filter>Source Files\FrameWork\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\Terrain.cpp">
+      <Filter>Source Files\FrameWork\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\DataTypes.cpp">
+      <Filter>Source Files\FrameWork\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\Director.cpp">
+      <Filter>Source Files\FrameWork\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\Primitive.cpp">
+      <Filter>Source Files\FrameWork\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\ThirdPersonController.cpp">
+      <Filter>Source Files\FrameWork\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\Utility.cpp">
+      <Filter>Source Files\FrameWork\Utilities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Source\FrameWork\Utility.h">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\FrameWork\Image\PNGReader.h">
       <Filter>Source Files\FrameWork\Image</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\FrameWork\Image\ImageReader.h">
       <Filter>Source Files\FrameWork\Image</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\FrameWork\DataTypes.h">
-      <Filter>Source Files\FrameWork</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\FrameWork\Math\Matrix.h">
       <Filter>Source Files\FrameWork\Math</Filter>
@@ -132,20 +156,11 @@
     <ClInclude Include="..\Source\FrameWork\Math\Vector.h">
       <Filter>Source Files\FrameWork\Math</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\FrameWork\BaseRenderingDataStructure.h">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\FrameWork\OpenGL\GLFrameWork.h">
       <Filter>Source Files\FrameWork\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\FrameWork\OpenGL\GLProgramManager.h">
       <Filter>Source Files\FrameWork\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\FrameWork\Director.h">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\FrameWork\Camera.h">
-      <Filter>Source Files\FrameWork</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\FrameWork\Math\Plane.h">
       <Filter>Source Files\FrameWork\Math</Filter>
@@ -153,47 +168,59 @@
     <ClInclude Include="..\Source\FrameWork\Math\Ray.h">
       <Filter>Source Files\FrameWork\Math</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\FrameWork\ThirdPersonController.h">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\FrameWork\Terrain.h">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\FrameWork\SkyBox.h">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\FrameWork\Primitive.h">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\FrameWork\ParticleSystem.h">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\FrameWork\Mesh.h">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\FrameWork\Label.h">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\FrameWork\Frustrum.h">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\FrameWork\CubeMap.h">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\FrameWork\Collision.h">
-      <Filter>Source Files\FrameWork</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\FrameWork\Image\TGAReader.h">
       <Filter>Source Files\FrameWork\Image</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\FrameWork\Image\ImageManager.h">
       <Filter>Source Files\FrameWork\Image</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\Mesh.h">
+      <Filter>Source Files\FrameWork\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\Camera.h">
+      <Filter>Source Files\FrameWork\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\Label.h">
+      <Filter>Source Files\FrameWork\Label</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\ParticleSystem.h">
+      <Filter>Source Files\FrameWork\ParticleSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\CubeMap.h">
+      <Filter>Source Files\FrameWork\SkyBox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\SkyBox.h">
+      <Filter>Source Files\FrameWork\SkyBox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\Collision.h">
+      <Filter>Source Files\FrameWork\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\Frustrum.h">
+      <Filter>Source Files\FrameWork\Frustrum</Filter>
+    </ClInclude>
     <ClInclude Include="..\Source\FrameWork\Light.h">
-      <Filter>Source Files\FrameWork</Filter>
+      <Filter>Source Files\FrameWork\Light</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\FrameWork\ShadowMap.h">
-      <Filter>Source Files\FrameWork</Filter>
+      <Filter>Source Files\FrameWork\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\Terrain.h">
+      <Filter>Source Files\FrameWork\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\DataTypes.h">
+      <Filter>Source Files\FrameWork\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\Director.h">
+      <Filter>Source Files\FrameWork\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\Primitive.h">
+      <Filter>Source Files\FrameWork\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\ThirdPersonController.h">
+      <Filter>Source Files\FrameWork\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\Utility.h">
+      <Filter>Source Files\FrameWork\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

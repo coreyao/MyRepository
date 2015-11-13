@@ -101,8 +101,8 @@ Vec3 CAABB::GetMinPoint() const
 CAABB CAABB::Transform( const Mat4& mat ) const
 {
 	CAABB ret;
-	ret.m_minPoint = mat.TransformPoint(m_minPoint);
-	ret.m_maxPoint = mat.TransformPoint(m_maxPoint);
+	ret.m_minPoint = mat * Vec4(m_minPoint, 1.0f);
+	ret.m_maxPoint = mat * Vec4(m_maxPoint, 1.0f);
 	return ret;
 }
 

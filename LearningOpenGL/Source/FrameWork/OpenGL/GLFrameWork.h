@@ -3,13 +3,8 @@
 #include "GL/glew.h"
 #include "GL/freeglut.h"
 
-#include <vector>
 #include <string>
-#include <map>
-#include <algorithm>
-
-#define RESOLUTION_WIDTH 800
-#define RESOLUTION_HEIGHT 600
+#include <vector>
 
 void init();
 void display();

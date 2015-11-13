@@ -1,57 +1,58 @@
 #pragma once
 
 #include "Vector.h"
+#include "Quaternion.h"
 
-class Quaternion;
-class Matrix4X4
+class Mat4
 {
 public:
-	Matrix4X4();
-	Matrix4X4(float a00, float a01, float a02, float a03,
-		float a10, float a11, float a12, float a13,
-		float a20, float a21, float a22, float a23,
-		float a30, float a31, float a32, float a33);
+	static Mat4 CreateTranslationMat(float x, float y, float z);
+	static Mat4 CreateRotationMat(float x, float y, float z);
+	static Mat4 CreateRotationMat(const Quaternion& quat);
+	static Mat4 CreateScaleMat(float x, float y, float z);
+	static Mat4 CreatePerspectiveMat(float fVerticleFov, float whRatio, float n, float f);
+	static Mat4 CreateOrthegraphicsMat(float l, float r, float t, float b, float n, float f);
+	static Mat4 CreateLookAt(const Vec3& eyePos, const Vec3& lookDir, Vec3 upVec = Vec3(0, 1, 0));
 
-	void Identity();
-	Matrix4X4 Inverse();
-	Matrix4X4 Transpose();
+	Mat4(const Vec3& xAxis, const Vec3& yAxis, const Vec3& zAxis, const Vec3& origin);
 
-	void SetRight(float a00, float a10, float a20);
-	Vec3 GetRight();
+	Mat4 operator*(const Mat4& rh) const;
+	void operator*=(const Mat4& rh);
 
-	void SetUp(float a01, float a11, float a21);
-	Vec3 GetUp();
+	Mat4 operator*(float fScalar);
+	void operator*=(float fScalar);
 
-	void SetForward(float a02, float a12, float a22);
-	Vec3 GetForward();
+	Vec4 operator*(const Vec4& rh) const;
 
-	Matrix4X4 operator*(const Matrix4X4& rh) const;
-	Matrix4X4 operator*(float fScalar);
-	Matrix4X4 operator+(const Matrix4X4& rh);
-	bool operator==(const Matrix4X4& rh);
-	bool operator!=(const Matrix4X4& rh);
+	Mat4 operator+(const Mat4& rh);
+	void operator+=(const Mat4& rh);
 
-	Vec4 operator*(const Vec4& vec) const;
-	Vec3 operator*(const Vec3& vec) const;
+	bool operator==(const Mat4& rh);
+	bool operator!=(const Mat4& rh);
 
-	Vec3 TransformPoint(const Vec3& point) const;
-	Vec3 TransformVector(const Vec3& vec) const;
+	Mat4 GetTransposed();
+	void Transpose();
 
-	static Matrix4X4 createPerspective(float fieldOfView, float aspectRatio, float zNearPlane, float zFarPlane);
-	static Matrix4X4 createOrthographic(float width, float height, float zNearPlane, float zFarPlane);
-	static void createOrthographicOffCenter(float left, float right, float bottom, float top,
-		float zNearPlane, float zFarPlane, Matrix4X4* dst);
-	static Matrix4X4 createLookAt(const Vec3& eyePos, const Vec3& lookAtDir, Vec3 up);
-	static Matrix4X4 CreateFromTranslation(float x, float y, float z);
-	static Matrix4X4 CreateFromRotation(const Quaternion& quat);
-	static Matrix4X4 CreateFromRotation(float degX, float degY, float degZ);
-	static Matrix4X4 CreateFromRotationX(float deg);
-	static Matrix4X4 CreateFromRotationY(float deg);
-	static Matrix4X4 CreateFromRotationZ(float deg);
-	static Matrix4X4 CreateFromScale(float x, float y, float z);
+	Mat4 GetInversed();
+	void Inverse();
 
-	static Matrix4X4 IDENTITY;
-	static Matrix4X4 ZERO;
+	float Determinant();
+
+	Vec3 ConvertToEuler() const;
+
+	Vec3 GetForward() const;
+	void SetForward(const Vec3& rh);
+
+	Vec3 GetRight() const;
+	void SetRight(const Vec3& rh);
+
+	Vec3 GetUp() const;
+	void SetUp(const Vec3& rh);
+
+	Mat4();
 
 	float m[16];
+
+	static Mat4 IDENTITY;
+	static Mat4 ZERO;
 };

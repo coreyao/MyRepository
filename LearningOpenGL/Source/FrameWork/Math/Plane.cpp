@@ -2,7 +2,7 @@
 
 void CPlane::Init( const Vec3& n, float dist )
 {
-	float len = n.length();
+	float len = n.GetLength();
 	m_normal = n / len;
 	m_dist = dist / len;
 }

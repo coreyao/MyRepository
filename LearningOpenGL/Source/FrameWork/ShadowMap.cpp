@@ -65,8 +65,8 @@ void CShadowmap::Init(CDirectionalLight* pDirLight)
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	m_lightProjMat = Mat4::createOrthographic(RESOLUTION_WIDTH, RESOLUTION_HEIGHT, 1.0f, 1000.0f);
-	m_lightViewMat = Mat4::createLookAt(pDirLight->m_pDebugMesh->m_transform.m_pos, pDirLight->m_lightDir, Vec3(0, 0, 1));
+	//m_lightProjMat = Mat4::createOrthographic(SCREEN_WIDTH, SCREEN_HEIGHT, 1.0f, 1000.0f);
+	m_lightViewMat = Mat4::CreateLookAt(pDirLight->m_pDebugMesh->m_transform.GetPosition(), pDirLight->m_lightDir, Vec3(0, 0, 1));
 
 	m_theProgram = CGLProgramManager::GetInstance()->CreateProgramByName("ShadowMap");
 }
@@ -86,7 +86,7 @@ void CShadowmap::PostRender()
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	glViewport(0, 0, RESOLUTION_WIDTH, RESOLUTION_HEIGHT);
+	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
