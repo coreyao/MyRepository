@@ -53,6 +53,9 @@
     <Filter Include="Source Files\FrameWork\Scenes">
       <UniqueIdentifier>{c4eebaca-5d16-4d4b-b20f-facfea02b7f0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\FrameWork\Renderer">
+      <UniqueIdentifier>{49b8e66c-1c6d-48ed-a3ce-5582d38624a7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\FrameWork\Image\PNGReader.cpp">
@@ -139,6 +142,9 @@
     <ClCompile Include="..\Source\FrameWork\Utility.cpp">
       <Filter>Source Files\FrameWork\Utilities</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\Renderer\Renderer.cpp">
+      <Filter>Source Files\FrameWork\Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\FrameWork\Image\PNGReader.h">
@@ -221,6 +227,9 @@
     </ClInclude>
     <ClInclude Include="..\Source\FrameWork\Utility.h">
       <Filter>Source Files\FrameWork\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\Renderer\Renderer.h">
+      <Filter>Source Files\FrameWork\Renderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

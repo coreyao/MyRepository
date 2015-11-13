@@ -24,6 +24,7 @@
     <ClCompile Include="..\Source\FrameWork\Mesh.cpp" />
     <ClCompile Include="..\Source\FrameWork\ParticleSystem.cpp" />
     <ClCompile Include="..\Source\FrameWork\Primitive.cpp" />
+    <ClCompile Include="..\Source\FrameWork\Renderer\Renderer.cpp" />
     <ClCompile Include="..\Source\FrameWork\ShadowMap.cpp" />
     <ClCompile Include="..\Source\FrameWork\SkyBox.cpp" />
     <ClCompile Include="..\Source\FrameWork\Terrain.cpp" />
@@ -54,6 +55,7 @@
     <ClInclude Include="..\Source\FrameWork\Mesh.h" />
     <ClInclude Include="..\Source\FrameWork\ParticleSystem.h" />
     <ClInclude Include="..\Source\FrameWork\Primitive.h" />
+    <ClInclude Include="..\Source\FrameWork\Renderer\Renderer.h" />
     <ClInclude Include="..\Source\FrameWork\ShadowMap.h" />
     <ClInclude Include="..\Source\FrameWork\SkyBox.h" />
     <ClInclude Include="..\Source\FrameWork\Terrain.h" />
