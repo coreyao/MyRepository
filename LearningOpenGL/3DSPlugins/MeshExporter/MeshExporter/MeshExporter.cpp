@@ -494,7 +494,7 @@ void MeshExporter::ParseGeomObject(INode* pNode)
 					tangentNormal.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
 					tangentNormal.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
 					tangentNormal.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
-					tangentNormal.normalize();
+					tangentNormal.Normalize();
 
 					tV1.m_tangent += tangentNormal;
 					tV2.m_tangent += tangentNormal;
@@ -504,7 +504,7 @@ void MeshExporter::ParseGeomObject(INode* pNode)
 				for (int i = 0; i < tVertexNum; i++)
 				{
 					SSkinMeshVertex& tV = tVertexVec[i];
-					tV.m_tangent.normalize();
+					tV.m_tangent.Normalize();
 				}
   
 				vector<ISkin*> vSkinInfo = FindSkinModifier(pNode);
@@ -746,13 +746,12 @@ SBoneData* MeshExporter::FindBoneDataByName( const char* pName )
 
 void MeshExporter::ConvertGMatrixToMat4( Mat4& outMat, const Matrix3& inputMatrix )
 {
-	Mat4 temp(inputMatrix[0][0], inputMatrix[0][2], inputMatrix[0][1], 0
-		, inputMatrix[2][0], inputMatrix[2][2], inputMatrix[2][1], 0
-		, inputMatrix[1][0], inputMatrix[1][2], inputMatrix[1][1], 0
-		, inputMatrix[3][0], inputMatrix[3][2], inputMatrix[3][1], 1);
+	Mat4 temp(Vec3(inputMatrix[0][0], inputMatrix[0][2], inputMatrix[0][1])
+		, Vec3(inputMatrix[2][0], inputMatrix[2][2], inputMatrix[2][1])
+		, Vec3(inputMatrix[1][0], inputMatrix[1][2], inputMatrix[1][1])
+		, Vec3(inputMatrix[3][0], inputMatrix[3][2], inputMatrix[3][1]));
 
-	temp = temp.Transpose();
-
+	temp.Transpose();
 	outMat = temp;
 }
 

@@ -244,6 +244,11 @@ Vec4 Vec4::operator-(const Vec4& rh) const
 #endif
 }
 
+float& Vec4::operator[](int iIndex)
+{
+	return *(&x + sizeof(float) * iIndex);
+}
+
 void Vec4::operator+=(const Vec4& rh)
 {
 #if USE_SIMD

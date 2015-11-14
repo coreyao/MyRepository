@@ -7,7 +7,10 @@
 #include <sstream>
 #include <map>
 #include "DataTypes.h"
+
+#ifndef MAX_EXPORTER_MODE
 #include "OpenGL/GLFrameWork.h"
+#endif
 
 #ifndef SHADER_FILE_DIR
 #define SHADER_FILE_DIR std::string("../Resource/Shaders/")
@@ -49,6 +52,7 @@ enum EVertexOrder
 	EVertexOrder_Counter_ClockWise,
 };
 
+#ifndef MAX_EXPORTER_MODE
 class CRenderState
 {
 public:
@@ -98,6 +102,7 @@ public:
 	STransform m_transform;
 	CRenderState m_renderState;
 };
+#endif
 
 struct timezone
 {

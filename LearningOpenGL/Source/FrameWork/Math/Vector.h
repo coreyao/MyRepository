@@ -43,6 +43,8 @@ public:
 	Vec4 operator+(const Vec4& rh) const;
 	Vec4 operator-(const Vec4& rh) const;
 
+	float& operator[](int iIndex);
+
 	float Dot(const Vec4& rh) const;
 
 	union
