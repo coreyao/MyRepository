@@ -109,7 +109,10 @@ void CMaterial::SetBaseColorTexture(const std::string& sFileName)
 
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fWidth, fHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, pData);
 
+		glGenerateMipmap(GL_TEXTURE_2D);
+
 		glBindTexture(GL_TEXTURE_2D, 0);
+
 
 		delete[] pData;
 	}
@@ -128,6 +131,8 @@ void CMaterial::SetNormalMapTexture(const std::string& sFileName)
 		glBindTexture(GL_TEXTURE_2D, m_normalMapTex);
 
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fWidth, fHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, pData);
+
+		glGenerateMipmap(GL_TEXTURE_2D);
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 
