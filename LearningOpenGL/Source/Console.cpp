@@ -12,7 +12,7 @@
 #include "FrameWork/ThirdPersonController.h"
 #include "FrameWork/Light.h"
 #include "FrameWork/ShadowMap.h"
-#include "FrameWork/Scenes/SceneManage.h"
+#include "FrameWork/Scenes/SceneManager.h"
 
 timeval g_fLastTime = {0, 0};
 float g_fDeltaTime = 0.0f;
@@ -26,6 +26,8 @@ bool g_bMouseRightButtonClicked = false;
 void init()
 {
 	srand(time(nullptr));
+
+	CSceneManager::GetInstance()->Next();
 
 	//g_pDeltaTimeLabel = new CLabel(FONT_FILE_DIR + "simyou.ttf", 20);
 	//g_pDeltaTimeLabel->m_transform.SetPosition(Vec3(-SCREEN_WIDTH / 2 + 10, SCREEN_HEIGHT / 2 - 20, 0));
@@ -51,16 +53,6 @@ void init()
 	//planeMesh->m_renderState.m_bEnableCullFace = false;
 	//planeMesh->SetLightEnable(true);
 	//planeMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh") );
-
-	CMaterial material1;
-	material1.SetBaseColorTexture("HelloWorld.png");
-	CMesh* pFileCube = new CMesh;
-	pFileCube->InitFromFile("cube.CSTM");
-	pFileCube->SetMaterial(material1, 0);
-	pFileCube->m_transform.SetPosition(Vec3(0, -25, 0));
-	pFileCube->m_transform.SetScale(Vec3(1, 1, -1));
-	pFileCube->m_transform.SetRotation(Vec3(0, 60, 0));
-	pFileCube->SetGLProgram(CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh"));
 }
 
 void UpdateScene();

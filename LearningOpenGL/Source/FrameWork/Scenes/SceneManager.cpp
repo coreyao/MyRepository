@@ -1,10 +1,14 @@
 #include "SceneManager.h"
+#include "StaticMeshTest.h"
 
 CSceneManager* CSceneManager::GetInstance()
 {
 	if (!s_instance)
 	{
 		s_instance = new CSceneManager;
+
+		CStaticMeshTest* scene = new CStaticMeshTest;
+		s_instance->m_vScene.push_back(scene);
 	}
 
 	return s_instance;
@@ -62,4 +66,6 @@ CSceneManager::CSceneManager()
 {
 
 }
+
+CSceneManager* CSceneManager::s_instance = nullptr;
 
