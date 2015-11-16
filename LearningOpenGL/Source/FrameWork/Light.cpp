@@ -22,7 +22,12 @@ CLightManager* CLightManager::GetInstance()
 	return s_pInstance;
 }
 
-void CLightManager::AddLight( CLightBase* pLight )
+void CLightManager::Purge()
+{
+	delete s_pInstance;
+}
+
+void CLightManager::AddLight(CLightBase* pLight)
 {
 	switch (pLight->m_eLightType)
 	{

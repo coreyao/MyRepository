@@ -28,6 +28,7 @@ void CSceneManager::Next()
 		iNextIndex = 0;
 
 	m_vScene[iNextIndex]->OnEnter();
+	m_curSceneIndex = iNextIndex;
 }
 
 void CSceneManager::Previous()
@@ -44,6 +45,7 @@ void CSceneManager::Previous()
 		iNextIndex = 0;
 
 	m_vScene[iNextIndex]->OnEnter();
+	m_curSceneIndex = iNextIndex;
 }
 
 CBaseScene* CSceneManager::GetCurScene()

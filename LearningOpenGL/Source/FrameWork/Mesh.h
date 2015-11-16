@@ -111,7 +111,7 @@ public:
 	GLuint m_Sampler;
 
 	SMeshData m_meshData;
-	Vec4 m_color;
+	Color4F m_color;
 	bool m_bSkinMesh;
 
 	CSkeleton m_skeleton;

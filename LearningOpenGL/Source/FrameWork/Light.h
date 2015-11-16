@@ -69,6 +69,7 @@ class CLightManager
 {
 public:
 	static CLightManager* GetInstance();
+	static void Purge();
 
 	void AddLight(CLightBase* pLight);
 
@@ -76,9 +77,9 @@ public:
 	const std::vector<CPointLight>& GetAllPointLights();
 	const std::vector<CSpotLight>& GetAllSpotLights();
 
-	static const int conMaxDirectionalLightNum = 5;
-	static const int conMaxPointLightNum = 5;
-	static const int conMaxSpotLightNum = 5;
+	static const int conMaxDirectionalLightNum = 3;
+	static const int conMaxPointLightNum = 3;
+	static const int conMaxSpotLightNum = 3;
 
 private:
 	static CLightManager* s_pInstance;

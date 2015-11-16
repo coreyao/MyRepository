@@ -159,6 +159,7 @@ CMesh::CMesh()
 	: m_Sampler(0)
 	, m_theProgram(0)
 {
+	m_color = Color4F::WHITE;
 }
 
 CMesh::~CMesh()
@@ -189,7 +190,9 @@ void CMesh::InitSubMesh()
 	for (int i = 0; i < m_meshData.m_vSubMesh.size(); ++i)
 	{
 		CSubMesh* pSubMesh = new CSubMesh;
+		pSubMesh->m_pParent = this;
 		pSubMesh->m_iIndex = i;
+		pSubMesh->m_meshMat = m_meshData.m_vSubMesh[i].m_MeshMatrix;
 		m_vSubMesh.push_back(pSubMesh);
 
 		// - Init material
@@ -232,6 +235,8 @@ void CMesh::InitSubMesh()
 		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(SSkinMeshVertex), (GLvoid*)offsetof(SSkinMeshVertex, m_normal));
 		glEnableVertexAttribArray(5);
 		glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, sizeof(SSkinMeshVertex), (GLvoid*)offsetof(SSkinMeshVertex, m_tangent));
+		glEnableVertexAttribArray(6);
+		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(SSkinMeshVertex), (GLvoid*)offsetof(SSkinMeshVertex, m_color));
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
@@ -316,7 +321,7 @@ void CMesh::Render()
 
 		GLint modelMatrixUnif = glGetUniformLocation(m_theProgram, "modelMatrix");
 		if ( modelMatrixUnif >= 0 )
-			glUniformMatrix4fv(modelMatrixUnif, 1, GL_FALSE, (m_transform.GetTransformMat() * pSubMesh->m_meshMat).m);
+			glUniformMatrix4fv(modelMatrixUnif, 1, GL_FALSE, (m_transform.GetTransformMat() /** pSubMesh->m_meshMat*/).m);
 
 		Mat4 viewMatrix = CDirector::GetInstance()->GetCurViewMat();
 		GLint viewMatrixUnif = glGetUniformLocation(m_theProgram, "viewMatrix");
@@ -339,7 +344,7 @@ void CMesh::Render()
 		GLint colorUnif = glGetUniformLocation(m_theProgram, "u_color");
 		if ( colorUnif >= 0 )
 		{
-			glUniform4f( colorUnif, m_color.x, m_color.y, m_color.z, m_color.w );
+			glUniform4f( colorUnif, m_color.r, m_color.g, m_color.b, m_color.a );
 		}
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pSubMesh->m_vertexIndexObj);
@@ -532,7 +537,7 @@ void CMesh::UpdateLightUniform()
 				glUniform1f(unif, DEG_TO_RAD(pSpotLight->fOuterAngle));
 		}
 
-		GLint unif = glGetUniformLocation(m_theProgram, "lightSpaceMatrix");
+		/*GLint unif = glGetUniformLocation(m_theProgram, "lightSpaceMatrix");
 		if ( unif >= 0 )
 		{
 			glUniformMatrix4fv(unif, 1, GL_FALSE, (CDirector::GetInstance()->m_pShadowMap->m_lightProjMat * CDirector::GetInstance()->m_pShadowMap->m_lightViewMat).m);
@@ -545,7 +550,7 @@ void CMesh::UpdateLightUniform()
 
 			glActiveTexture(GL_TEXTURE0 + 2);
 			glBindTexture(GL_TEXTURE_2D, CDirector::GetInstance()->m_pShadowMap->GetDepthMapTex());
-		}
+		}*/
 	}
 }
 
