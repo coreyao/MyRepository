@@ -12,126 +12,45 @@
 #include "FrameWork/ThirdPersonController.h"
 #include "FrameWork/Light.h"
 #include "FrameWork/ShadowMap.h"
-
-CMesh* g_pCharactor = nullptr;
-CMesh* g_pLightMesh = nullptr;
-std::vector<CMesh*> g_vMesh;
-
-CParticleSystem* g_particleSystem = nullptr;
-CLabel* g_pDeltaTimeLabel = nullptr;
-CLabel* g_pFPSLabel = nullptr;
-
-CPrimitive* g_pLineDrawer = nullptr;
-CPrimitive* g_pPointDrawer = nullptr;
-
-CTerrain* g_pTerrain = nullptr;
-CSkyBox* g_pSkyBox = nullptr;
-
-CThirdPersonController* g_pController = nullptr;
+#include "FrameWork/Scenes/SceneManage.h"
 
 timeval g_fLastTime = {0, 0};
 float g_fDeltaTime = 0.0f;
 float g_fElapsedTime = 0.0f;
 int g_iStepLength = 20;
-
 int g_iFrame = 0;
 float g_fAccumulatedTime = 0;
-
 Vec2 g_lastMousePos;
 bool g_bMouseRightButtonClicked = false;
-
-bool bDrawMesh = true;
-
-bool bDrawWireFrame = false;
-
-void UpdatePos()
-{
-	Vec3 lookAt = CDirector::GetInstance()->GetPerspectiveCamera()->GetLookAtDir();
-	Vec3 cameraPos = CDirector::GetInstance()->GetPerspectiveCamera()->GetCameraPos();
-	Vec3 charactorPos = cameraPos + lookAt * 250;
-
-	charactorPos.y = g_pTerrain->GetHeight( Vec2(charactorPos.x, charactorPos.z) );
-	g_pCharactor->m_transform.SetPosition(charactorPos);
-
-	cameraPos.y = g_pTerrain->GetHeight( Vec2(cameraPos.x, cameraPos.z) ) + 250;
-	CDirector::GetInstance()->GetPerspectiveCamera()->SetCameraPos(cameraPos);
-}
 
 void init()
 {
 	srand(time(nullptr));
 
-	g_pDeltaTimeLabel = new CLabel(FONT_FILE_DIR + "simyou.ttf", 20);
-	g_pDeltaTimeLabel->m_transform.SetPosition(Vec3(-SCREEN_WIDTH / 2 + 10, SCREEN_HEIGHT / 2 - 20, 0));
-	g_pDeltaTimeLabel->m_color = Color4F(0.0f, 1.0f, 0.0f, 1.0f);
+	//g_pDeltaTimeLabel = new CLabel(FONT_FILE_DIR + "simyou.ttf", 20);
+	//g_pDeltaTimeLabel->m_transform.SetPosition(Vec3(-SCREEN_WIDTH / 2 + 10, SCREEN_HEIGHT / 2 - 20, 0));
+	//g_pDeltaTimeLabel->m_color = Color4F(0.0f, 1.0f, 0.0f, 1.0f);
 
-	g_pFPSLabel = new CLabel(FONT_FILE_DIR + "simyou.ttf", 20);
-	g_pFPSLabel->SetString("FPS:0");
-	g_pFPSLabel->m_transform.SetPosition(Vec3(g_pDeltaTimeLabel->m_transform.GetPosition().x, g_pDeltaTimeLabel->m_transform.GetPosition().y - 20, 0));
-	g_pFPSLabel->m_color = Color4F(0.0f, 1.0f, 0.0f, 1.0f);
+	//g_pFPSLabel = new CLabel(FONT_FILE_DIR + "simyou.ttf", 20);
+	//g_pFPSLabel->SetString("FPS:0");
+	//g_pFPSLabel->m_transform.SetPosition(Vec3(g_pDeltaTimeLabel->m_transform.GetPosition().x, g_pDeltaTimeLabel->m_transform.GetPosition().y - 20, 0));
+	//g_pFPSLabel->m_color = Color4F(0.0f, 1.0f, 0.0f, 1.0f);
 
-	g_pLineDrawer = new CPrimitive(CPrimitive::EPrimitiveType_Line);
-
-	g_pPointDrawer = new CPrimitive(CPrimitive::EPrimitiveType_Point);
-	g_pPointDrawer->DrawPoint(Vec3(-100, -100, 0), 5);
-
-	g_particleSystem = new CParticleSystem;
-	g_particleSystem->GetTransformData().SetPosition(Vec3(300, 0, 0));
-	g_particleSystem->GetTransformData().SetRotation(Vec3(-90, 0, 0));
-	g_particleSystem->GetTransformData().SetScale(Vec3(10, 10, 10));
-	CEmitter* pEmitter = new CEmitter;
-	pEmitter->SetTotalDuration(1.0f);
-	pEmitter->SetBlendMode(CEmitter::EBlendMode_ALPHA_BLEND);
-	pEmitter->SetTexture("T_FX_guangyun01.png");
-	pEmitter->SetEmitMode(CEmitter::EEmitMode_Relative);
-	pEmitter->SetEmissionRate(50.0f);
-	pEmitter->GetEmitterShapeRef().SetShape(CEmitterShape::EShape_Cone);
-	pEmitter->GetEmitterShapeRef().SetRadius(30.0f);
-	pEmitter->GetEmitterShapeRef().SetAngle(30.0f);
-	pEmitter->GetParticleStartLifeTimeRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, 4.f, 5.f);
-	pEmitter->GetParticleStartSizeRef().Init<double>(EPropertyType_Constant, 30.0f);
-	pEmitter->GetParticleStartZRotationRef().Init<double>(EPropertyType_RandomBetweenConstant, 2, -12.0f, 14.0f);
-	pEmitter->GetParticleStartSpeedRef().Init<double>(EPropertyType_Constant, 50.0f);
-	g_particleSystem->AddEmitter(pEmitter);
-
-	CMesh* planeMesh = new CMesh;
-	planeMesh->InitFromFile("plane.CSTM");
-	planeMesh->m_transform.SetScale(Vec3(10, 10, -10));
-	planeMesh->m_transform.SetPosition(Vec3(0, -30, -100));
-	for ( int i = 0; i < planeMesh->m_vSubMesh.size(); ++i )
-	{
-		CMaterial newMaterial;
-		newMaterial.SetBaseColorTexture("brickwall.png");
-		newMaterial.SetNormalMapTexture("brickwall_normal.png");
-		newMaterial.SetShininess(64.0f);
-		planeMesh->SetMaterial(newMaterial, i);
-	}
-	planeMesh->m_renderState.m_bEnableCullFace = false;
-	planeMesh->SetLightEnable(true);
-	planeMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh") );
-	g_vMesh.push_back(planeMesh);
-
-	g_pLightMesh = new CMesh;
-	g_pLightMesh->InitFromFile("ball.CSTM");
-	g_pLightMesh->m_transform.SetPosition(Vec3(0, 100, -100));
-	for ( int i = 0; i < g_pLightMesh->m_vSubMesh.size(); ++i )
-	{
-		CMaterial newMaterial;
-		newMaterial.SetBaseColorTexture("default.png");
-		g_pLightMesh->SetMaterial(newMaterial, i);
-	}
-	g_pLightMesh->m_renderState.m_bEnableCullFace = false;
-	g_pLightMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh") );
-	//g_vMesh.push_back(g_pLightMesh);
-
-	g_pCharactor = new CMesh;
-	g_pCharactor->InitFromFile("hama.CSTM");
-	g_pCharactor->m_transform.SetScale(Vec3(1, 1, -1));
-	g_pCharactor->m_transform.SetPosition(Vec3(0, 350, 100));
-	g_pCharactor->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("SkinMesh") );
-	//g_pCharactor->PlayAnim(0, 25, true, nullptr);
-	g_pCharactor->SetLightEnable(false);
-	//g_vMesh.push_back(g_pCharactor);
+	//CMesh* planeMesh = new CMesh;
+	//planeMesh->InitFromFile("plane.CSTM");
+	//planeMesh->m_transform.SetScale(Vec3(10, 10, -10));
+	//planeMesh->m_transform.SetPosition(Vec3(0, -30, -100));
+	//for ( int i = 0; i < planeMesh->m_vSubMesh.size(); ++i )
+	//{
+	//	CMaterial newMaterial;
+	//	newMaterial.SetBaseColorTexture("brickwall.png");
+	//	newMaterial.SetNormalMapTexture("brickwall_normal.png");
+	//	newMaterial.SetShininess(64.0f);
+	//	planeMesh->SetMaterial(newMaterial, i);
+	//}
+	//planeMesh->m_renderState.m_bEnableCullFace = false;
+	//planeMesh->SetLightEnable(true);
+	//planeMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh") );
 
 	CMaterial material1;
 	material1.SetBaseColorTexture("HelloWorld.png");
@@ -142,70 +61,10 @@ void init()
 	pFileCube->m_transform.SetScale(Vec3(1, 1, -1));
 	pFileCube->m_transform.SetRotation(Vec3(0, 60, 0));
 	pFileCube->SetGLProgram(CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh"));
-	//g_vMesh.push_back(pFileCube);
-
-	g_pTerrain = new CTerrain();
-	g_pTerrain->SetDetailTexture("dirt.png", "Grass2.png", "road.png", "GreenSkin.png");
-	g_pTerrain->SetDetailTextureSize(20, 20, 20, 20);
-	g_pTerrain->SetAlphaTexture("alphamap.png");
-	g_pTerrain->SetDrawWireFrame(false);
-	g_pTerrain->m_transform.SetScale(Vec3(100, 100, 100));
-	g_pTerrain->Init("heightmap16.png");
-
-	g_pSkyBox = new CSkyBox;
-	g_pSkyBox->Init("skybox/right.png", "skybox/left.png",
-		"skybox/top.png", "skybox/bottom.png",
-		"skybox/back.png", "skybox/front.png"
-		);
-
-	g_pController = new CThirdPersonController;
-	g_pController->m_transform.SetPositionY(g_pTerrain->GetHeight(Vec2(g_pController->m_transform.GetPosition().x, g_pController->m_transform.GetPosition().z)));
-	//g_pController->SetCharactor(g_pCharactor);
-
-	CDirectionalLight* pDirectionalLight = new CDirectionalLight;
-	pDirectionalLight->m_ambientColor = Vec3(0.1f, 0.1f, 0.1f);
-	pDirectionalLight->m_diffuseColor = Vec3(1.0f, 1.0f, 1.0f);
-	pDirectionalLight->m_specularColor = Vec3(1.0f, 1.0f, 1.0f);
-	pDirectionalLight->m_lightDir = Vec3(1, 1, 1);
-	pDirectionalLight->m_lightDir.Normalize();
-	pDirectionalLight->m_pDebugMesh = g_pLightMesh;
-	CLightManager::GetInstance()->AddLight(pDirectionalLight);
-
-	CPointLight* pPointLight = new CPointLight;
-	pPointLight->m_ambientColor = Vec3(0.1f, 0.1f, 0.1f);
-	pPointLight->m_diffuseColor = Vec3(1.0f, 1.0f, 1.0f);
-	pPointLight->m_specularColor = Vec3(1.0f, 1.0f, 1.0f);
-	pPointLight->m_pDebugMesh = g_pLightMesh;
-	//CLightManager::GetInstance()->AddLight(pPointLight);
-
-	CSpotLight* pSpotLight = new CSpotLight;
-	pSpotLight->m_ambientColor = Vec3(0.1f, 0.1f, 0.1f);
-	pSpotLight->m_diffuseColor = Vec3(0.8f, 0.8f, 0.8f);
-	pSpotLight->m_specularColor = Vec3(1.0f, 1.0f, 1.0f);
-	pSpotLight->m_lightDir = Vec3(0, -1, 0);
-	pSpotLight->m_lightDir.Normalize();
-	pSpotLight->fInnerAngle = 30;
-	pSpotLight->fOuterAngle = 60;
-	//pSpotLight->m_attenuation_linear = 0.0009f;
-	//pSpotLight->m_attenuation_quadratic = 0.032f;
-	pSpotLight->m_pDebugMesh = g_pLightMesh;
-	//CLightManager::GetInstance()->AddLight(pSpotLight);
-
-	g_pLightMesh->m_transform.SetPosition(Vec3( 0, 500, 0 ));
-	pDirectionalLight->m_lightDir = -pDirectionalLight->m_pDebugMesh->m_transform.GetPosition();
-	CDirector::GetInstance()->m_pShadowMap = new CShadowmap;
-	CDirector::GetInstance()->m_pShadowMap->Init(pDirectionalLight);
 }
 
 void UpdateScene();
 void DrawScene();
-
-void DrawMesh();
-void DrawLabel();
-void DrawTerrain();
-void DrawPrimitive();
-void DrawSkyBox();
-void DrawParticleSystem();
 
 void display()
 {
@@ -232,13 +91,7 @@ void display()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	UpdateScene();
-	//CDirector::GetInstance()->m_pShadowMap->PreRender();
 	DrawScene();
-	//CDirector::GetInstance()->m_pShadowMap->PostRender();
-	//CDirector::GetInstance()->m_pShadowMap->DebugRenderShadowMap();
-	//DrawScene();
-	//DrawSkyBox();
-	DrawLabel();
 
 	glutSwapBuffers();
 	glutPostRedisplay();
@@ -264,37 +117,16 @@ void keyboard(unsigned char key, int x, int y)
 	case 'd': iMoveLeftRight = g_iStepLength; break;
 	case 'w': iMoveForwardBack = g_iStepLength; break;
 	case 's': iMoveForwardBack = -g_iStepLength; break;
-	case 'b': bDrawWireFrame = !bDrawWireFrame; break;
+	//case 'b': bDrawWireFrame = !bDrawWireFrame; break;
 	}
 
-	//g_pTerrain->SetDrawWireFrame(bDrawWireFrame);
-
 	CDirector::GetInstance()->GetPerspectiveCamera()->Move(iMoveLeftRight, 0, iMoveForwardBack);
-	//CDirector::GetInstance()->GetOrthographicCamera()->Move(iMoveLeftRight, 0, iMoveForwardBack);
-	/*g_pController->m_transform.m_pos.y = g_pTerrain->GetHeight( Vec2(g_pController->m_transform.m_pos.x, g_pController->m_transform.m_pos.z) );
-	g_pController->Move(iMoveLeftRight, 0, iMoveForwardBack);*/
 }
 
 void mouse_down( int button, int state, int x, int y )
 {
 	if ( button == GLUT_LEFT_BUTTON )
 	{
-		//if ( !g_bMouseRightButtonClicked )
-		//{
-		//	Vec3 pos = CDirector::GetInstance()->Unproject(Vec2(x, y));
-		//	CRay ray(Vec3(0, 0, 0), pos);
-		//	ray.Transform( CDirector::GetInstance()->GetCurViewMat().Inverse() );
-		//	if ( ray.m_direction.Dot(Vec3(0, 1, 0)) < 0 )
-		//	{
-		//		Vec3 intersectionPos = g_pTerrain->GetIntersectionPoint(ray);
-		//		g_pCharactor->m_transform.m_pos = intersectionPos;
-		//	}
-		//	//g_pLineDrawer->DrawLine(ray.m_origin, ray.m_origin + ray.m_direction * 10000);
-		//}
-
-		/*	if ( state == GLUT_DOWN )
-		g_pCharactor->PlayAnim(215, 245, false, [](){ g_pCharactor->PlayAnim(10, 25, true, nullptr); });*/
-
 		if (state == GLUT_DOWN)
 			g_bMouseRightButtonClicked = true;
 		else
@@ -333,91 +165,43 @@ void mouse_move(int x,int y)
 
 void DrawMesh()
 {
-	if ( bDrawMesh )
-	{
-		//g_pLightMesh->m_transform.m_pos = Vec3( 500 * cos(g_fElapsedTime), 500, 500 * sin(g_fElapsedTime) );
-		//g_pLightMesh->m_transform.m_pos = Vec3( -300, 1000, 300 );
-
-		for (int i = 0; i < g_vMesh.size(); ++i)
-		{
-			g_vMesh[i]->Render();
-		}
-	}
 }
 
-void DrawLabel()
-{
-	char buf[50] = {0};
-	sprintf(buf, "DeltaTime:%f", g_fDeltaTime);
-	g_pDeltaTimeLabel->SetString(buf);
-	if ( g_fDeltaTime >= 0.5f )
-		g_pDeltaTimeLabel->m_color = Color4F(1.0f, 0.0f, 0.0f, 1.0f);
-	else
-		g_pDeltaTimeLabel->m_color = Color4F(0.0f, 1.0f, 0.0f, 1.0f);
-
-	g_fAccumulatedTime += g_fDeltaTime;
-	++g_iFrame;
-	if ( g_fAccumulatedTime >= 1.0f )
-	{
-		char buf[50] = {0};
-		sprintf(buf, "FPS:%d", g_iFrame);
-		g_pFPSLabel->SetString(buf);
-
-		if ( g_iFrame <= 30 )
-			g_pFPSLabel->m_color = Color4F(1.0f, 0.0f, 0.0f, 1.0f);
-		else
-			g_pFPSLabel->m_color = Color4F(0.0f, 1.0f, 0.0f, 1.0f);
-
-		g_iFrame = 0;
-		g_fAccumulatedTime = 0;
-	}
-
-	g_pDeltaTimeLabel->Render();
-	g_pFPSLabel->Render();
-}
-
-void DrawTerrain()
-{
-	g_pTerrain->Render();
-}
-
-void DrawPrimitive()
-{
-	g_pPointDrawer->Render();
-	g_pLineDrawer->Render();
-}
-
-void DrawSkyBox()
-{
-	g_pSkyBox->Render();
-}
-
-void DrawParticleSystem()
-{
-	g_particleSystem->Render();
-}
+//void DrawLabel()
+//{
+//	char buf[50] = {0};
+//	sprintf(buf, "DeltaTime:%f", g_fDeltaTime);
+//	g_pDeltaTimeLabel->SetString(buf);
+//	if ( g_fDeltaTime >= 0.5f )
+//		g_pDeltaTimeLabel->m_color = Color4F(1.0f, 0.0f, 0.0f, 1.0f);
+//	else
+//		g_pDeltaTimeLabel->m_color = Color4F(0.0f, 1.0f, 0.0f, 1.0f);
+//
+//	g_fAccumulatedTime += g_fDeltaTime;
+//	++g_iFrame;
+//	if ( g_fAccumulatedTime >= 1.0f )
+//	{
+//		char buf[50] = {0};
+//		sprintf(buf, "FPS:%d", g_iFrame);
+//		g_pFPSLabel->SetString(buf);
+//
+//		if ( g_iFrame <= 30 )
+//			g_pFPSLabel->m_color = Color4F(1.0f, 0.0f, 0.0f, 1.0f);
+//		else
+//			g_pFPSLabel->m_color = Color4F(0.0f, 1.0f, 0.0f, 1.0f);
+//
+//		g_iFrame = 0;
+//		g_fAccumulatedTime = 0;
+//	}
+//}
 
 void DrawScene()
 {
-	DrawMesh();
-	//DrawTerrain();
-	//DrawPrimitive();
-	//DrawParticleSystem();
+	CSceneManager::GetInstance()->Draw();
 }
 
 void UpdateScene()
 {
-	if ( bDrawMesh )
-	{
-		for (int i = 0; i < g_vMesh.size(); ++i)
-		{
-			//g_vMesh[i]->m_transform.m_rotation.set(0, g_vMesh[i]->m_transform.m_rotation.y + 30 * g_fDeltaTime, 0);
-			g_vMesh[i]->Update(g_fDeltaTime);
-		}
-	}
-	//g_pTerrain->Update(g_fDeltaTime);
-	//g_pSkyBox->Update(g_fDeltaTime);
-	//g_particleSystem->Update(g_fDeltaTime);
-	//g_particleSystem->GetTransformData().SetMat(g_pCharactor->m_vSocket[0].GetWorldMat());
+	CSceneManager::GetInstance()->Update(g_fDeltaTime);
 }
 

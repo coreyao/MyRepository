@@ -25,6 +25,10 @@
     <ClCompile Include="..\Source\FrameWork\ParticleSystem.cpp" />
     <ClCompile Include="..\Source\FrameWork\Primitive.cpp" />
     <ClCompile Include="..\Source\FrameWork\Renderer\Renderer.cpp" />
+    <ClCompile Include="..\Source\FrameWork\Scenes\BaseScene.cpp" />
+    <ClCompile Include="..\Source\FrameWork\Scenes\StaticMeshTest.cpp" />
+    <ClCompile Include="..\Source\FrameWork\Scenes\SceneManager.cpp" />
+    <ClCompile Include="..\Source\FrameWork\Scheduler\Scheduler.cpp" />
     <ClCompile Include="..\Source\FrameWork\ShadowMap.cpp" />
     <ClCompile Include="..\Source\FrameWork\SkyBox.cpp" />
     <ClCompile Include="..\Source\FrameWork\Terrain.cpp" />
@@ -56,6 +60,10 @@
     <ClInclude Include="..\Source\FrameWork\ParticleSystem.h" />
     <ClInclude Include="..\Source\FrameWork\Primitive.h" />
     <ClInclude Include="..\Source\FrameWork\Renderer\Renderer.h" />
+    <ClInclude Include="..\Source\FrameWork\Scenes\BaseScene.h" />
+    <ClInclude Include="..\Source\FrameWork\Scenes\StaticMeshTest.h" />
+    <ClInclude Include="..\Source\FrameWork\Scenes\SceneManager.h" />
+    <ClInclude Include="..\Source\FrameWork\Scheduler\Scheduler.h" />
     <ClInclude Include="..\Source\FrameWork\ShadowMap.h" />
     <ClInclude Include="..\Source\FrameWork\SkyBox.h" />
     <ClInclude Include="..\Source\FrameWork\Terrain.h" />
@@ -124,7 +132,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\Extern\lpng1616;..\Extern\freeglut-2.8.1\include;..\Extern\glew-1.12.0\include;..\Extern\freetype-2.5.5\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Extern\lpng1616;..\Extern\freeglut-2.8.1\include;..\Extern\glew-1.12.0\include;..\Extern\freetype-2.5.5\include;..\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
