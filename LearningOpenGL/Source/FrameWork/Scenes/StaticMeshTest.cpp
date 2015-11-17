@@ -7,7 +7,7 @@ void CStaticMeshTest::OnEnter()
 {
 	CMesh* planeMesh = new CMesh;
 	planeMesh->InitFromFile("plane.CSTM");
-	planeMesh->m_transform.SetScale(Vec3(10, 10, -10));
+	planeMesh->m_transform.SetScale(Vec3(15, 15, -15));
 	planeMesh->m_transform.SetPosition(Vec3(0, -50, -100));
 	for (int i = 0; i < planeMesh->m_vSubMesh.size(); ++i)
 	{
@@ -23,7 +23,7 @@ void CStaticMeshTest::OnEnter()
 	m_vObject.push_back(planeMesh);
 
 	CPointLight* pPointLight = new CPointLight;
-	pPointLight->m_ambientColor = Vec3(0.1f, 0.1f, 0.1f);
+	pPointLight->m_ambientColor = Vec3(0.3f, 0.3f, 0.3f);
 	pPointLight->m_diffuseColor = Vec3(1.0f, 1.0f, 1.0f);
 	pPointLight->m_specularColor = Vec3(1.0f, 1.0f, 1.0f);
 	pPointLight->m_lightPos = Vec3(planeMesh->m_transform.GetPosition() + Vec3(0, 100, 0));

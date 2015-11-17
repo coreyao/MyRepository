@@ -169,7 +169,16 @@ Mat4 Mat4::CreatePerspectiveMat(float fVerticleFov, float whRatio, float n, floa
 
 Mat4 Mat4::CreateOrthegraphicsMat(float l, float r, float t, float b, float n, float f)
 {
-	return Mat4::ZERO;
+	Mat4 ret;
+	ret.m[0] = 2.0f / (r - l);
+	ret.m[12] = (r + l) / (l - r);
+	ret.m[5] = 2.0f / ( t - b );
+	ret.m[13] = (b + t) / (b - t);
+	ret.m[10] = 2.0f / (n - f);
+	ret.m[14] = (n + f) / (n - f);
+	ret.m[15] = 1.0f;
+
+	return ret;
 }
 
 Mat4 Mat4::CreateLookAt(const Vec3& eyePos, const Vec3& lookDir, Vec3 upVec /*= Vec3(0, 1, 0)*/)

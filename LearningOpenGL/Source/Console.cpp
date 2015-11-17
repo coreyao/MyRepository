@@ -16,12 +16,15 @@
 
 timeval g_fLastTime = {0, 0};
 float g_fDeltaTime = 0.0f;
-float g_fElapsedTime = 0.0f;
-int g_iStepLength = 20;
 int g_iFrame = 0;
 float g_fAccumulatedTime = 0;
+
+int g_iStepLength = 20;
 Vec2 g_lastMousePos;
 bool g_bMouseRightButtonClicked = false;
+
+CLabel* g_pDeltaTimeLabel = nullptr;
+CLabel* g_pFPSLabel = nullptr;
 
 void init()
 {
@@ -29,34 +32,19 @@ void init()
 
 	CSceneManager::GetInstance()->Next();
 
-	//g_pDeltaTimeLabel = new CLabel(FONT_FILE_DIR + "simyou.ttf", 20);
-	//g_pDeltaTimeLabel->m_transform.SetPosition(Vec3(-SCREEN_WIDTH / 2 + 10, SCREEN_HEIGHT / 2 - 20, 0));
-	//g_pDeltaTimeLabel->m_color = Color4F(0.0f, 1.0f, 0.0f, 1.0f);
+	g_pDeltaTimeLabel = new CLabel(FONT_FILE_DIR + "simyou.ttf", 20);
+	g_pDeltaTimeLabel->m_transform.SetPosition(Vec3(-SCREEN_WIDTH / 2 + 10, SCREEN_HEIGHT / 2 - 20, 0));
+	g_pDeltaTimeLabel->m_color = Color4F(0.0f, 1.0f, 0.0f, 1.0f);
 
-	//g_pFPSLabel = new CLabel(FONT_FILE_DIR + "simyou.ttf", 20);
-	//g_pFPSLabel->SetString("FPS:0");
-	//g_pFPSLabel->m_transform.SetPosition(Vec3(g_pDeltaTimeLabel->m_transform.GetPosition().x, g_pDeltaTimeLabel->m_transform.GetPosition().y - 20, 0));
-	//g_pFPSLabel->m_color = Color4F(0.0f, 1.0f, 0.0f, 1.0f);
-
-	//CMesh* planeMesh = new CMesh;
-	//planeMesh->InitFromFile("plane.CSTM");
-	//planeMesh->m_transform.SetScale(Vec3(10, 10, -10));
-	//planeMesh->m_transform.SetPosition(Vec3(0, -30, -100));
-	//for ( int i = 0; i < planeMesh->m_vSubMesh.size(); ++i )
-	//{
-	//	CMaterial newMaterial;
-	//	newMaterial.SetBaseColorTexture("brickwall.png");
-	//	newMaterial.SetNormalMapTexture("brickwall_normal.png");
-	//	newMaterial.SetShininess(64.0f);
-	//	planeMesh->SetMaterial(newMaterial, i);
-	//}
-	//planeMesh->m_renderState.m_bEnableCullFace = false;
-	//planeMesh->SetLightEnable(true);
-	//planeMesh->SetGLProgram( CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh") );
+	g_pFPSLabel = new CLabel(FONT_FILE_DIR + "simyou.ttf", 20);
+	g_pFPSLabel->SetString("FPS:0");
+	g_pFPSLabel->m_transform.SetPosition(Vec3(g_pDeltaTimeLabel->m_transform.GetPosition().x, g_pDeltaTimeLabel->m_transform.GetPosition().y - 20, 0));
+	g_pFPSLabel->m_color = Color4F(0.0f, 1.0f, 0.0f, 1.0f);
 }
 
 void UpdateScene();
 void DrawScene();
+void DrawStatistics();
 
 void display()
 {
@@ -75,7 +63,6 @@ void display()
 	}
 
 	g_fDeltaTime = std::min(g_fDeltaTime, 0.02f);
-	g_fElapsedTime += g_fDeltaTime;
 
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClearDepth(1.0f);
@@ -84,6 +71,7 @@ void display()
 
 	UpdateScene();
 	DrawScene();
+	DrawStatistics();
 
 	glutSwapBuffers();
 	glutPostRedisplay();
@@ -155,37 +143,36 @@ void mouse_move(int x,int y)
 	}
 }
 
-void DrawMesh()
+void DrawStatistics()
 {
-}
+	char buf[50] = { 0 };
+	sprintf(buf, "DeltaTime:%f", g_fDeltaTime);
+	g_pDeltaTimeLabel->SetString(buf);
+	if (g_fDeltaTime >= 0.5f)
+		g_pDeltaTimeLabel->m_color = Color4F(1.0f, 0.0f, 0.0f, 1.0f);
+	else
+		g_pDeltaTimeLabel->m_color = Color4F(0.0f, 1.0f, 0.0f, 1.0f);
 
-//void DrawLabel()
-//{
-//	char buf[50] = {0};
-//	sprintf(buf, "DeltaTime:%f", g_fDeltaTime);
-//	g_pDeltaTimeLabel->SetString(buf);
-//	if ( g_fDeltaTime >= 0.5f )
-//		g_pDeltaTimeLabel->m_color = Color4F(1.0f, 0.0f, 0.0f, 1.0f);
-//	else
-//		g_pDeltaTimeLabel->m_color = Color4F(0.0f, 1.0f, 0.0f, 1.0f);
-//
-//	g_fAccumulatedTime += g_fDeltaTime;
-//	++g_iFrame;
-//	if ( g_fAccumulatedTime >= 1.0f )
-//	{
-//		char buf[50] = {0};
-//		sprintf(buf, "FPS:%d", g_iFrame);
-//		g_pFPSLabel->SetString(buf);
-//
-//		if ( g_iFrame <= 30 )
-//			g_pFPSLabel->m_color = Color4F(1.0f, 0.0f, 0.0f, 1.0f);
-//		else
-//			g_pFPSLabel->m_color = Color4F(0.0f, 1.0f, 0.0f, 1.0f);
-//
-//		g_iFrame = 0;
-//		g_fAccumulatedTime = 0;
-//	}
-//}
+	g_fAccumulatedTime += g_fDeltaTime;
+	++g_iFrame;
+	if (g_fAccumulatedTime >= 1.0f)
+	{
+		char buf[50] = { 0 };
+		sprintf(buf, "FPS:%d", g_iFrame);
+		g_pFPSLabel->SetString(buf);
+
+		if (g_iFrame <= 30)
+			g_pFPSLabel->m_color = Color4F(1.0f, 0.0f, 0.0f, 1.0f);
+		else
+			g_pFPSLabel->m_color = Color4F(0.0f, 1.0f, 0.0f, 1.0f);
+
+		g_iFrame = 0;
+		g_fAccumulatedTime = 0;
+	}
+
+	g_pFPSLabel->Render();
+	g_pDeltaTimeLabel->Render();
+}
 
 void DrawScene()
 {
