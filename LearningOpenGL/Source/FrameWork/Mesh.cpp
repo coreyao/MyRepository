@@ -321,7 +321,7 @@ void CMesh::Render()
 
 		GLint modelMatrixUnif = glGetUniformLocation(m_theProgram, "modelMatrix");
 		if ( modelMatrixUnif >= 0 )
-			glUniformMatrix4fv(modelMatrixUnif, 1, GL_FALSE, (m_transform.GetTransformMat() /** pSubMesh->m_meshMat*/).m);
+			glUniformMatrix4fv(modelMatrixUnif, 1, GL_FALSE, (m_transform.GetTransformMat() * pSubMesh->m_meshMat).m);
 
 		Mat4 viewMatrix = CDirector::GetInstance()->GetCurViewMat();
 		GLint viewMatrixUnif = glGetUniformLocation(m_theProgram, "viewMatrix");

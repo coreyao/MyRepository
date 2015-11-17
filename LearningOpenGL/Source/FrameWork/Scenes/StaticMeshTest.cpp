@@ -7,7 +7,6 @@ void CStaticMeshTest::OnEnter()
 {
 	CMesh* planeMesh = new CMesh;
 	planeMesh->InitFromFile("plane.CSTM");
-	planeMesh->m_transform.SetScale(Vec3(15, 15, -15));
 	planeMesh->m_transform.SetPosition(Vec3(0, -50, -100));
 	for (int i = 0; i < planeMesh->m_vSubMesh.size(); ++i)
 	{
@@ -21,6 +20,21 @@ void CStaticMeshTest::OnEnter()
 	planeMesh->SetLightEnable(true);
 	planeMesh->SetGLProgram(CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh"));
 	m_vObject.push_back(planeMesh);
+
+	CMesh* charactorMesh = new CMesh;
+	charactorMesh->InitFromFile("hama.CSTM");
+	charactorMesh->m_transform.SetPosition(planeMesh->m_transform.GetPosition() + Vec3(0, 10, 0));
+	charactorMesh->m_transform.SetScale(Vec3(0.5f, 0.5f, -0.5f));
+	charactorMesh->m_renderState.m_bCullBackFace = false;
+	for (int i = 0; i < charactorMesh->m_vSubMesh.size(); ++i)
+	{
+		CMaterial newMaterial;
+		newMaterial.SetBaseColorTexture("Hama.png");
+		charactorMesh->SetMaterial(newMaterial, i);
+	}
+	charactorMesh->SetLightEnable(false);
+	charactorMesh->SetGLProgram(CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh"));
+	m_vObject.push_back(charactorMesh);
 
 	CPointLight* pPointLight = new CPointLight;
 	pPointLight->m_ambientColor = Vec3(0.3f, 0.3f, 0.3f);
