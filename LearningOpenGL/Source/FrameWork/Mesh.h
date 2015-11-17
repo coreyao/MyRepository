@@ -107,7 +107,6 @@ public:
 	void SetLightEnable(bool bEnable);
 	void PlayAnim( int iStartFrameIndex, int iEndFrameIndex, bool bLoop, std::function<void(void)> callback);
 
-	GLuint m_theProgram;
 	GLuint m_Sampler;
 
 	SMeshData m_meshData;

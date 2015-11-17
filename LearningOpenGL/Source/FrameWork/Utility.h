@@ -71,6 +71,9 @@ public:
 
 	bool m_bDrawWireFrame;
 	bool m_bEnableLight;
+
+	float m_fGamma;
+	bool m_bEnableGammaCorrection;
 };
 
 class CMaterial
@@ -101,6 +104,7 @@ public:
 
 	STransform m_transform;
 	CRenderState m_renderState;
+	GLuint m_theProgram;
 };
 #endif
 

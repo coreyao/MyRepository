@@ -12,6 +12,9 @@ uniform vec4 u_color;
 uniform int u_enableLight;
 uniform vec3 u_eyePos;
 
+uniform float u_fGamma;
+uniform bool u_enableGammaCorrection; 
+
 // - Material
 struct Material
 {
@@ -182,7 +185,7 @@ vec3 CalcSpotLightContribution(vec3 n)
 
 void main()
 {
-	vec4 baseColor = texture(u_Material.baseColorTex, colorCoord) * u_color;
+	vec4 baseColor = texture(u_Material.baseColorTex, colorCoord) * u_color * colorVertex;
 	vec3 finalColor = vec3(0.0, 0.0, 0.0);
 	if ( u_enableLight > 0 )
 	{
@@ -208,5 +211,8 @@ void main()
 		finalColor = baseColor.xyz;
 	}
 
-	outputColor = vec4(finalColor * colorVertex, baseColor.w);
+	if ( u_enableGammaCorrection )
+		finalColor.rgb = pow( finalColor.rgb, vec3(1.0 / u_fGamma) );
+
+	outputColor = vec4(finalColor, baseColor.w);
 }

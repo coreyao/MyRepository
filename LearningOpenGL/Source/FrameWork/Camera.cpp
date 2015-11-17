@@ -3,7 +3,7 @@
 CCamera::CCamera(Vec3 eyePos, Vec3 lookAtDir, Vec3 upDir, EProjectionMode eMode)
 : m_fFOV(90)
 , m_fNearZ(1.0f)
-, m_fFarZ(1000.0f)
+, m_fFarZ(10000.0f)
 , m_eMode(eMode)
 {
 	m_aspectRatio = (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT;

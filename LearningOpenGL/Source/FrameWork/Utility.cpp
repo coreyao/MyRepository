@@ -72,6 +72,18 @@ void CObject::Render()
 
 	glEnable(GL_BLEND);
 	glBlendFunc(m_renderState.m_iBlendSrc, m_renderState.m_iBlendDst);
+
+	glUseProgram(m_theProgram);
+
+	GLint unif = glGetUniformLocation(m_theProgram, "u_enableGammaCorrection");
+	if (unif >= 0)
+		glUniform1i(unif, int(m_renderState.m_bEnableGammaCorrection));
+
+	unif = glGetUniformLocation(m_theProgram, "u_fGamma");
+	if (unif >= 0)
+		glUniform1f(unif, m_renderState.m_fGamma);
+
+	glUseProgram(0);
 }
 
 CRenderState::CRenderState()
@@ -85,6 +97,8 @@ CRenderState::CRenderState()
 , m_eVertexOrder(EVertexOrder_ClockWise)
 , m_iBlendSrc(GL_SRC_ALPHA)
 , m_iBlendDst(GL_ONE_MINUS_SRC_ALPHA)
+, m_fGamma(1.8f)
+, m_bEnableGammaCorrection(true)
 {
 }
 

@@ -62,7 +62,7 @@ void display()
 		g_fDeltaTime = std::max(0.0f, g_fDeltaTime);
 	}
 
-	g_fDeltaTime = std::min(g_fDeltaTime, 0.02f);
+	//g_fDeltaTime = std::min(g_fDeltaTime, 0.02f);
 
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClearDepth(1.0f);

@@ -157,7 +157,6 @@ void CSkeletonAnimator::PlayAnim(int iStartFrameIndex, int iEndFrameIndex, bool 
 
 CMesh::CMesh()
 	: m_Sampler(0)
-	, m_theProgram(0)
 {
 	m_color = Color4F::WHITE;
 }

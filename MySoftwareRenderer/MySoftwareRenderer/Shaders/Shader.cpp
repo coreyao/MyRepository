@@ -122,6 +122,10 @@ Color4F CMeshFragmentShader::ProcessFragment(SFragment* pFragment)
 
 	Color4F& rVertexColor = pFragment->m_vVertexAttributeVar[EVertexAttributeVar_Color].color;
 	Color4F finalColor = texColor * rVertexColor * lightColor;
+	//float fGamma = 1.0f / 1.8f;
+	//finalColor.r = pow(finalColor.r, fGamma);
+	//finalColor.g = pow(finalColor.g, fGamma);
+	//finalColor.b = pow(finalColor.b, fGamma);
 	finalColor.a = pFragment->fAlpha;
 	return finalColor;
 }
