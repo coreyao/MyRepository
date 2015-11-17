@@ -34,6 +34,8 @@ void CObject::Update(float dt)
 
 void CObject::Render()
 {
+	//glEnable(GL_FRAMEBUFFER_SRGB);
+
 	if (m_renderState.m_bEnableCullFace)
 	{
 		glEnable(GL_CULL_FACE);
