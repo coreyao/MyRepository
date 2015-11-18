@@ -74,24 +74,22 @@ uniform SpotLight u_AllSpotLight[MAX_SPOT_LIGHT_COUNT];
 
 float CalcInShadow(vec3 lightDir)
 {
-//float bias = max( (1.0 - dot( normalize(normal), lightDir )) * 0.05, 0.005 );
-   /*
+	vec3 projCoord = fragPosLightSpace.xyz / fragPosLightSpace.w;
+	projCoord = projCoord * 0.5 + 0.5;
+	float bias = max( (1.0 - dot( normalize(normal), lightDir )) * 0.05, 0.005 );
+	float shadow = 0.0f;
+	
 	vec2 texelSize = 1.0 / textureSize(u_shadowMapTexture, 0);
     for(int x = -1; x <= 1; ++x)
     {
         for(int y = -1; y <= 1; ++y)
         {
             float pcfDepth = texture(u_shadowMapTexture, projCoord.xy + vec2(x, y) * texelSize).r; 
-            shadow += projCoord.z - bias > pcfDepth  ? 1.0 : 0.0;        
+            shadow += projCoord.z - bias > pcfDepth ? 1.0 : 0.0;        
         }    
     }
     shadow /= 9.0;
-	*/
 
-	vec3 projCoord = fragPosLightSpace.xyz / fragPosLightSpace.w;
-	projCoord = projCoord * 0.5 + 0.5;
-	float fClosestDepth = texture(u_shadowMapTexture, projCoord.xy).r;
-	float shadow = projCoord.z > fClosestDepth ? 1.0f : 0.0f;
 	if(projCoord.z > 1.0)
        shadow = 0.0;
 

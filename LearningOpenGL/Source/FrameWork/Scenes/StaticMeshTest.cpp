@@ -18,10 +18,10 @@ void CStaticMeshTest::OnEnter()
 		newMaterial.SetShininess(64.0f);
 		planeMesh->SetMaterial(newMaterial, i);
 	}
-	planeMesh->m_renderState.m_bEnableCullFace = false;
 	planeMesh->SetLightEnable(true);
 	planeMesh->SetGLProgram(CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh"));
 	planeMesh->m_renderState.m_bEnableGammaCorrection = false;
+	planeMesh->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
 	m_vObject.push_back(planeMesh);
 
 	for (int i = 0; i < 3; ++i)
@@ -30,7 +30,6 @@ void CStaticMeshTest::OnEnter()
 		charactorMesh->InitFromFile("hama.CSTM");
 		charactorMesh->m_transform.SetPosition(planeMesh->m_transform.GetPosition() + Vec3(i * 500 - 300, 10, 0));
 		charactorMesh->m_transform.SetScale(Vec3(1, 1, -1));
-		charactorMesh->m_renderState.m_bCullBackFace = false;
 		for (int i = 0; i < charactorMesh->m_vSubMesh.size(); ++i)
 		{
 			CMaterial newMaterial;
@@ -40,6 +39,7 @@ void CStaticMeshTest::OnEnter()
 		charactorMesh->SetLightEnable(true);
 		charactorMesh->SetGLProgram(CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh"));
 		charactorMesh->m_renderState.m_bEnableGammaCorrection = false;
+		charactorMesh->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
 		m_vObject.push_back(charactorMesh);
 	}
 
@@ -82,15 +82,13 @@ void CStaticMeshTest::Draw()
 	{
 		vProgram.push_back(pObj->m_theProgram);
 		pObj->m_theProgram = CDirector::GetInstance()->m_pShadowMap->m_theProgram;
-
 		pObj->Render();
 	}
 
-	//CDirector::GetInstance()->m_pShadowMap->PostRender();
-	//CDirector::GetInstance()->m_pShadowMap->DebugRenderShadowMap();
+	CDirector::GetInstance()->m_pShadowMap->PostRender();
+	CDirector::GetInstance()->m_pShadowMap->DebugRenderShadowMap();
 
 	int iIndex = 0;
-	CDirector::GetInstance()->m_pShadowMap->PostRender();
 	for (auto& pObj : m_vObject)
 	{
 		pObj->m_theProgram = vProgram[iIndex++];

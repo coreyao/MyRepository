@@ -4,8 +4,8 @@
 #include "Light.h"
 #include "Mesh.h"
 
-const int SHADOW_WIDTH = 2048;
-const int SHADOW_HEIGHT = 2048;
+const int SHADOW_WIDTH = 1024;
+const int SHADOW_HEIGHT = 1024;
 
 void CShadowmap::Init(CDirectionalLight* pDirLight)
 {
@@ -32,10 +32,10 @@ void CShadowmap::Init(CDirectionalLight* pDirLight)
 	glGenVertexArrays(1, &m_vertexAttributeObj);
 
 	SCommonVertex vVertex[4] = {
-		SCommonVertex(Vec3(-1, -1, 0), Color4F(1, 1, 1, 1), Vec2(0, 0)),
-		SCommonVertex(Vec3(-1, 1, 0), Color4F(1, 1, 1, 1), Vec2(0, 1)),
-		SCommonVertex(Vec3(1, 1, 0), Color4F(1, 1, 1, 1), Vec2(1, 1)),
-		SCommonVertex(Vec3(1, -1, 0), Color4F(1, 1, 1, 1), Vec2(1, 0))
+		SCommonVertex(Vec3(-1, -1, 0), Color4F(1, 1, 1, 1), Vec2(0, 1)),
+		SCommonVertex(Vec3(-1, 1, 0), Color4F(1, 1, 1, 1), Vec2(0, 0)),
+		SCommonVertex(Vec3(1, 1, 0), Color4F(1, 1, 1, 1), Vec2(1, 0)),
+		SCommonVertex(Vec3(1, -1, 0), Color4F(1, 1, 1, 1), Vec2(1, 1))
 	};
 
 	unsigned short vVertexIndex[6] = {
@@ -95,6 +95,8 @@ GLuint CShadowmap::GetDepthMapTex()
 
 void CShadowmap::DebugRenderShadowMap()
 {
+	glViewport(0, 0, SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4);
+
 	GLint colorTextureUnif = glGetUniformLocation(m_theDebugProgram, "u_colorTexture");
 	if ( colorTextureUnif >= 0 )
 	{
@@ -109,5 +111,7 @@ void CShadowmap::DebugRenderShadowMap()
 	glBindVertexArray(m_vertexAttributeObj);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vertexIndexObj);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+
+	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
