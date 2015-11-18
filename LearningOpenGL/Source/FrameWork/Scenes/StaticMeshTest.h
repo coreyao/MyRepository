@@ -7,4 +7,6 @@ class CStaticMeshTest : public CBaseScene
 public:
 	virtual void OnEnter();
 	virtual void OnExit();
+
+	virtual void Draw();
 };

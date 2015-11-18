@@ -64,8 +64,6 @@ Mat4 CDirector::GetCurProjectionMat()
 
 	}
 	return m_pCameraPerspective->GetProjMat();
-
-	//return m_pCameraOrthographic->GetProjMat();
 }
 
 Mat4 CDirector::GetCurViewMat()
@@ -76,8 +74,6 @@ Mat4 CDirector::GetCurViewMat()
 	}
 
 	return m_pCameraPerspective->GetViewMat();
-
-	//return m_pCameraOrthographic->GetViewMat();
 }
 
 CDirector* CDirector::s_pInstance = nullptr;

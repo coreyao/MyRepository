@@ -74,17 +74,9 @@ uniform SpotLight u_AllSpotLight[MAX_SPOT_LIGHT_COUNT];
 
 float CalcInShadow(vec3 lightDir)
 {
-	return 0.0;
-
-	vec3 projCoord = fragPosLightSpace.xyz / fragPosLightSpace.w;
-	//if ( projCoord.x < -1 || projCoord.x > 1 || projCoord.y < -1 || projCoord.y > 1 || projCoord.z < -1 || projCoord.z > 1 )
-		//return 1.0;
-
-	projCoord = projCoord * 0.5 + 0.5;
-
-	float bias = max( (1.0 - dot( normalize(normal), lightDir )) * 0.05, 0.005 );
-	float shadow = 0.0;
-    vec2 texelSize = 1.0 / textureSize(u_shadowMapTexture, 0);
+//float bias = max( (1.0 - dot( normalize(normal), lightDir )) * 0.05, 0.005 );
+   /*
+	vec2 texelSize = 1.0 / textureSize(u_shadowMapTexture, 0);
     for(int x = -1; x <= 1; ++x)
     {
         for(int y = -1; y <= 1; ++y)
@@ -94,17 +86,16 @@ float CalcInShadow(vec3 lightDir)
         }    
     }
     shadow /= 9.0;
+	*/
 
+	vec3 projCoord = fragPosLightSpace.xyz / fragPosLightSpace.w;
+	projCoord = projCoord * 0.5 + 0.5;
+	float fClosestDepth = texture(u_shadowMapTexture, projCoord.xy).r;
+	float shadow = projCoord.z > fClosestDepth ? 1.0f : 0.0f;
 	if(projCoord.z > 1.0)
        shadow = 0.0;
 
 	return shadow;
-
-	/*float clostDepth = texture(u_shadowMapTexture, projCoord.xy).r;
-	if ( clostDepth < projCoord.z - bias )
-		return 1.0;
-	else
-		return 0.0;*/
 }
 
 vec3 CalcDirLightContribution(vec3 n)

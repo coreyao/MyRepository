@@ -14,7 +14,7 @@ CCamera::CCamera(Vec3 eyePos, Vec3 lookAtDir, Vec3 upDir, EProjectionMode eMode)
 	}
 	else if (m_eMode == EProjectionMode_Orthographic)
 	{
-		m_ProjMat = Mat4::CreateOrthegraphicsMat(-SCREEN_WIDTH / 2, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, -SCREEN_HEIGHT / 2, 1.0f, 1000.0f);
+		m_ProjMat = Mat4::CreateOrthegraphicsMat(-SCREEN_WIDTH / 2, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, -SCREEN_HEIGHT / 2, m_fNearZ, m_fFarZ);
 	}
 
 	m_viewMat = Mat4::CreateLookAt(eyePos, lookAtDir, upDir);

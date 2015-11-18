@@ -35,7 +35,8 @@ CGLProgramManager* CGLProgramManager::GetInstance()
 		s_pInstance->Add("Primitive", SHADER_FILE_DIR + "Primitive_Vertex_Shader.vert", SHADER_FILE_DIR + "Primitive_Fragment_Shader.frag");
 		s_pInstance->Add("Terrain", SHADER_FILE_DIR + "Terrain_Vertex_Shader.vert", SHADER_FILE_DIR + "Terrain_Fragment_Shader.frag");
 		s_pInstance->Add("SkyBox", SHADER_FILE_DIR + "SkyBox_Vertex_Shader.vert", SHADER_FILE_DIR + "SkyBox_Fragment_Shader.frag");
-		s_pInstance->Add("ShadowMap", SHADER_FILE_DIR + "shadow_map.vert", SHADER_FILE_DIR + "shadow_map.frag");
+		s_pInstance->Add("DebugShadowMap", SHADER_FILE_DIR + "debug_shadow_map.vert", SHADER_FILE_DIR + "debug_shadow_map.frag");
+		s_pInstance->Add("ShadowMapping", SHADER_FILE_DIR + "ShadowMapping.vert", SHADER_FILE_DIR + "ShadowMapping.frag");
 	}
 
 	return s_pInstance;

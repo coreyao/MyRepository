@@ -17,13 +17,15 @@ public:
 	Mat4 m_lightViewMat;
 	Mat4 m_lightProjMat;
 
+	GLuint m_theProgram;
+
 private:
 	GLuint m_depthMapFBO;
 
 	GLuint m_colorTex;
 	GLuint m_depthMapTex;
 
-	GLuint m_theProgram;
+	GLuint m_theDebugProgram;
 	GLuint m_vertexDataObj;
 	GLuint m_vertexIndexObj;
 	GLuint m_vertexAttributeObj;

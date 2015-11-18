@@ -299,10 +299,16 @@
     <None Include="..\Resource\Shaders\SkyBox_Vertex_Shader.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Resource\Shaders\shadow_map.frag">
+    <None Include="..\Resource\Shaders\debug_shadow_map.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Resource\Shaders\shadow_map.vert">
+    <None Include="..\Resource\Shaders\debug_shadow_map.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Resource\Shaders\ShadowMapping.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Resource\Shaders\ShadowMapping.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

@@ -99,6 +99,11 @@ private:
 class CObject
 {
 public:
+	CObject()
+		: m_theProgram(0)
+	{
+	}
+
 	virtual void Update(float dt);
 	virtual void Render();
 

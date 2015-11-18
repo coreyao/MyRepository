@@ -88,8 +88,10 @@
     <None Include="..\Resource\Shaders\Particle_Vertex_Shader.vert" />
     <None Include="..\Resource\Shaders\Primitive_Fragment_Shader.frag" />
     <None Include="..\Resource\Shaders\Primitive_Vertex_Shader.vert" />
-    <None Include="..\Resource\Shaders\shadow_map.frag" />
-    <None Include="..\Resource\Shaders\shadow_map.vert" />
+    <None Include="..\Resource\Shaders\debug_shadow_map.frag" />
+    <None Include="..\Resource\Shaders\debug_shadow_map.vert" />
+    <None Include="..\Resource\Shaders\ShadowMapping.frag" />
+    <None Include="..\Resource\Shaders\ShadowMapping.vert" />
     <None Include="..\Resource\Shaders\SkinMesh_Vertex_Shader.vert" />
     <None Include="..\Resource\Shaders\SkyBox_Fragment_Shader.frag" />
     <None Include="..\Resource\Shaders\SkyBox_Vertex_Shader.vert" />
