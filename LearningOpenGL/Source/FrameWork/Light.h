@@ -73,9 +73,9 @@ public:
 
 	void AddLight(CLightBase* pLight);
 
-	const std::vector<CDirectionalLight>& GetAllDirectionalLights();
-	const std::vector<CPointLight>& GetAllPointLights();
-	const std::vector<CSpotLight>& GetAllSpotLights();
+	std::vector<CDirectionalLight>& GetAllDirectionalLights();
+	std::vector<CPointLight>& GetAllPointLights();
+	std::vector<CSpotLight>& GetAllSpotLights();
 
 	static const int conMaxDirectionalLightNum = 3;
 	static const int conMaxPointLightNum = 3;

@@ -54,17 +54,17 @@ void CLightManager::AddLight(CLightBase* pLight)
 	}
 }
 
-const std::vector<CDirectionalLight>& CLightManager::GetAllDirectionalLights()
+std::vector<CDirectionalLight>& CLightManager::GetAllDirectionalLights()
 {
 	return m_vAllDirectionalLight;
 }
 
-const std::vector<CPointLight>& CLightManager::GetAllPointLights()
+std::vector<CPointLight>& CLightManager::GetAllPointLights()
 {
 	return m_vAllPointLight;
 }
 
-const std::vector<CSpotLight>& CLightManager::GetAllSpotLights()
+std::vector<CSpotLight>& CLightManager::GetAllSpotLights()
 {
 	return m_vAllSpotLight;
 }
