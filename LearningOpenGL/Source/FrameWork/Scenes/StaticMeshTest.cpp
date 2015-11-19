@@ -34,6 +34,8 @@ void CStaticMeshTest::OnEnter()
 		{
 			CMaterial newMaterial;
 			newMaterial.SetBaseColorTexture("Hama.png");
+			newMaterial.SetNormalMapTexture("Hama_NRM.png");
+			newMaterial.SetShininess(64.0f);
 			charactorMesh->SetMaterial(newMaterial, i);
 		}
 		charactorMesh->SetLightEnable(true);
@@ -45,21 +47,23 @@ void CStaticMeshTest::OnEnter()
 
 	CDirectionalLight* pDirLight = new CDirectionalLight;
 	pDirLight->m_ambientColor = Vec3(0.3f, 0.3f, 0.3f);
-	pDirLight->m_diffuseColor = Vec3(1.0f, 1.0f, 1.0f);
-	pDirLight->m_specularColor = Vec3(1.0f, 1.0f, 1.0f);
+	pDirLight->m_diffuseColor = Vec3(0.3f, 0.3f, 0.3f);
+	pDirLight->m_specularColor = Vec3(0.5f, 0.5f, 0.5f);
 	pDirLight->m_lightPos = Vec3(planeMesh->m_transform.GetPosition() + Vec3(1000, 1000, 0));
-	pDirLight->m_lightDir = Vec3(1, 1, 0).GetNormalized();
+	pDirLight->m_lightDir = pDirLight->m_lightPos.GetNormalized();
 	CLightManager::GetInstance()->AddLight(pDirLight);
 
 	CDirector::GetInstance()->m_pShadowMap = new CShadowmap;
 	CDirector::GetInstance()->m_pShadowMap->Init(pDirLight);
 
-	//CPointLight* pPointLight = new CPointLight;
-	//pPointLight->m_ambientColor = Vec3(0.3f, 0.3f, 0.3f);
-	//pPointLight->m_diffuseColor = Vec3(1.0f, 1.0f, 1.0f);
-	//pPointLight->m_specularColor = Vec3(1.0f, 1.0f, 1.0f);
-	//pPointLight->m_lightPos = Vec3(planeMesh->m_transform.GetPosition() + Vec3(100, 100, 0));
-	//CLightManager::GetInstance()->AddLight(pPointLight);
+	CPointLight* pPointLight = new CPointLight;
+	pPointLight->m_ambientColor = Vec3(0.3f, 0.3f, 0.3f);
+	pPointLight->m_diffuseColor = Vec3(0.3f, 0.3f, 0.3f);
+	pPointLight->m_specularColor = Vec3(0.5f, 0.5f, 0.5f);
+	CLightManager::GetInstance()->AddLight(pPointLight);
+	m_pPointLight = const_cast<CPointLight*>(&CLightManager::GetInstance()->GetAllPointLights()[0]);
+
+	fCounter = 0;
 }
 
 void CStaticMeshTest::OnExit()
@@ -71,6 +75,14 @@ void CStaticMeshTest::OnExit()
 	m_vObject.clear();
 
 	CLightManager::Purge();
+}
+
+void CStaticMeshTest::Update(float dt)
+{
+	CBaseScene::Update(dt);
+
+	fCounter += dt * 60;
+	m_pPointLight->m_lightPos = Vec3(cosf(DEG_TO_RAD(fCounter)) * 1000, 500, sinf(DEG_TO_RAD(fCounter)) * 1000);
 }
 
 void CStaticMeshTest::Draw()

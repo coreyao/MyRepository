@@ -181,8 +181,9 @@ void main()
 		vec3 n = normalize(normal);
 		if (u_Material.bHasNormalMap)
 		{
-			vec3 T = normalize(tangent);
+			vec3 T = tangent;
 			vec3 N = n;
+			T = normalize(T - dot(T, N) * N);
 			vec3 B = normalize(cross(T, N));
 			mat3 TBN = mat3(T, B, N);
 
