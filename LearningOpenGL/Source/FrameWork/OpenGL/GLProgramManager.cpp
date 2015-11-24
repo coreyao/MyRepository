@@ -37,6 +37,7 @@ CGLProgramManager* CGLProgramManager::GetInstance()
 		s_pInstance->Add("SkyBox", SHADER_FILE_DIR + "SkyBox_Vertex_Shader.vert", SHADER_FILE_DIR + "SkyBox_Fragment_Shader.frag");
 		s_pInstance->Add("DebugShadowMap", SHADER_FILE_DIR + "debug_shadow_map.vert", SHADER_FILE_DIR + "debug_shadow_map.frag");
 		s_pInstance->Add("ShadowMapping", SHADER_FILE_DIR + "ShadowMapping.vert", SHADER_FILE_DIR + "ShadowMapping.frag");
+		s_pInstance->Add("HDR", SHADER_FILE_DIR + "HDR_vertex.vert", SHADER_FILE_DIR + "HDR_fragment.frag");
 	}
 
 	return s_pInstance;

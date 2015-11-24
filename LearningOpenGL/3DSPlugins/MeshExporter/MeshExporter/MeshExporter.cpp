@@ -405,8 +405,8 @@ void MeshExporter::ParseGeomObject(INode* pNode)
 					Point3 vert = mesh->verts[i];  
 					tVertex.m_position.set(vert.x, vert.z, vert.y);  
 
-					Point3 norm = mesh->getNormal(i);  
-					tVertex.m_normal.set(norm.x, norm.z, norm.y);
+					/*Point3 norm = mesh->getNormal(i);
+					tVertex.m_normal.set(norm.x, norm.z, norm.y);*/
 
 					tVertex.m_color.r = 1.0f;  
 					tVertex.m_color.g = 1.0f;  
@@ -499,12 +499,18 @@ void MeshExporter::ParseGeomObject(INode* pNode)
 					tV1.m_tangent += tangentNormal;
 					tV2.m_tangent += tangentNormal;
 					tV3.m_tangent += tangentNormal;
+
+					Vec3 n = edge2.Cross(edge1);
+					tV1.m_normal += n;
+					tV2.m_normal += n;
+					tV3.m_normal += n;
 				}
 
 				for (int i = 0; i < tVertexNum; i++)
 				{
 					SSkinMeshVertex& tV = tVertexVec[i];
 					tV.m_tangent.Normalize();
+					tV.m_normal.Normalize();
 				}
   
 				vector<ISkin*> vSkinInfo = FindSkinModifier(pNode);

@@ -16,12 +16,15 @@ uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 perspectiveMatrix;
 uniform mat4 lightSpaceMatrix;
+uniform bool u_flipnormal;
 
 void main()
 {
 	fragPos = (modelMatrix * vec4(a_position, 1.0)).xyz;
 	fragPosLightSpace = lightSpaceMatrix * vec4(fragPos, 1.0);
 	normal = normalize((modelMatrix * vec4(a_normal, 0.0))).xyz;
+	if ( u_flipnormal )
+		normal = -normal;
 	tangent = normalize((modelMatrix * vec4(a_tangent, 0.0))).xyz;
 	colorCoord = a_texCoord;
 	colorVertex = a_color;

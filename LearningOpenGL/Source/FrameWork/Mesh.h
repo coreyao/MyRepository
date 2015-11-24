@@ -112,6 +112,7 @@ public:
 	SMeshData m_meshData;
 	Color4F m_color;
 	bool m_bSkinMesh;
+	bool m_bFlipNormal;
 
 	CSkeleton m_skeleton;
 	CSkeletonAnimator m_animator;

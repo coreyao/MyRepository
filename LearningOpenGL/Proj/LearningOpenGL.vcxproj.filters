@@ -160,6 +160,12 @@
     <ClCompile Include="..\Source\FrameWork\Scenes\SceneManager.cpp">
       <Filter>Source Files\FrameWork\Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\HDR.cpp">
+      <Filter>Source Files\FrameWork\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\Scenes\HDRTest.cpp">
+      <Filter>Source Files\FrameWork\Scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\FrameWork\Image\PNGReader.h">
@@ -258,6 +264,12 @@
     <ClInclude Include="..\Source\FrameWork\Scenes\SceneManager.h">
       <Filter>Source Files\FrameWork\Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\HDR.h">
+      <Filter>Source Files\FrameWork\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\Scenes\HDRTest.h">
+      <Filter>Source Files\FrameWork\Scenes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Resource\Shaders\Mesh_Fragment_Shader.frag">
@@ -309,6 +321,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Resource\Shaders\ShadowMapping.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Resource\Shaders\HDR_fragment.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Resource\Shaders\HDR_vertex.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

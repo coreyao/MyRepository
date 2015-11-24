@@ -17,6 +17,7 @@
     <ClCompile Include="..\Source\FrameWork\Collision.cpp" />
     <ClCompile Include="..\Source\FrameWork\CubeMap.cpp" />
     <ClCompile Include="..\Source\FrameWork\Frustrum.cpp" />
+    <ClCompile Include="..\Source\FrameWork\HDR.cpp" />
     <ClCompile Include="..\Source\FrameWork\Image\ImageManager.cpp" />
     <ClCompile Include="..\Source\FrameWork\Image\TGAReader.cpp" />
     <ClCompile Include="..\Source\FrameWork\Label.cpp" />
@@ -26,6 +27,7 @@
     <ClCompile Include="..\Source\FrameWork\Primitive.cpp" />
     <ClCompile Include="..\Source\FrameWork\Renderer\Renderer.cpp" />
     <ClCompile Include="..\Source\FrameWork\Scenes\BaseScene.cpp" />
+    <ClCompile Include="..\Source\FrameWork\Scenes\HDRTest.cpp" />
     <ClCompile Include="..\Source\FrameWork\Scenes\StaticMeshTest.cpp" />
     <ClCompile Include="..\Source\FrameWork\Scenes\SceneManager.cpp" />
     <ClCompile Include="..\Source\FrameWork\Scheduler\Scheduler.cpp" />
@@ -52,6 +54,7 @@
     <ClInclude Include="..\Source\FrameWork\Collision.h" />
     <ClInclude Include="..\Source\FrameWork\CubeMap.h" />
     <ClInclude Include="..\Source\FrameWork\Frustrum.h" />
+    <ClInclude Include="..\Source\FrameWork\HDR.h" />
     <ClInclude Include="..\Source\FrameWork\Image\ImageManager.h" />
     <ClInclude Include="..\Source\FrameWork\Image\TGAReader.h" />
     <ClInclude Include="..\Source\FrameWork\Label.h" />
@@ -61,6 +64,7 @@
     <ClInclude Include="..\Source\FrameWork\Primitive.h" />
     <ClInclude Include="..\Source\FrameWork\Renderer\Renderer.h" />
     <ClInclude Include="..\Source\FrameWork\Scenes\BaseScene.h" />
+    <ClInclude Include="..\Source\FrameWork\Scenes\HDRTest.h" />
     <ClInclude Include="..\Source\FrameWork\Scenes\StaticMeshTest.h" />
     <ClInclude Include="..\Source\FrameWork\Scenes\SceneManager.h" />
     <ClInclude Include="..\Source\FrameWork\Scheduler\Scheduler.h" />
@@ -80,6 +84,8 @@
     <ClInclude Include="..\Source\FrameWork\Utility.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Resource\Shaders\HDR_fragment.frag" />
+    <None Include="..\Resource\Shaders\HDR_vertex.vert" />
     <None Include="..\Resource\Shaders\Label_Fragment_Shader.frag" />
     <None Include="..\Resource\Shaders\Label_Vertex_Shader.vert" />
     <None Include="..\Resource\Shaders\Mesh_Fragment_Shader.frag" />

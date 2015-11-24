@@ -157,6 +157,7 @@ void CSkeletonAnimator::PlayAnim(int iStartFrameIndex, int iEndFrameIndex, bool 
 
 CMesh::CMesh()
 	: m_Sampler(0)
+	, m_bFlipNormal(false)
 {
 	m_color = Color4F::WHITE;
 }
@@ -344,6 +345,12 @@ void CMesh::Render()
 		if ( colorUnif >= 0 )
 		{
 			glUniform4f( colorUnif, m_color.r, m_color.g, m_color.b, m_color.a );
+		}
+
+		GLint bFlipNormal = glGetUniformLocation(m_theProgram, "u_flipnormal");
+		if (bFlipNormal >= 0)
+		{
+			glUniform1i(bFlipNormal, m_bFlipNormal);
 		}
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pSubMesh->m_vertexIndexObj);
