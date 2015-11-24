@@ -6,5 +6,7 @@ uniform sampler2D u_colorTexture;
 
 void main()
 {
-	outputColor = vec4(1.0, 1.0, 0, 1.0);//texture(u_colorTexture, colorCoord);
+	vec3 hdrColor = texture(u_colorTexture, colorCoord).rgb;
+	vec3 mapped = hdrColor / (hdrColor + vec3(1.0));
+	outputColor = vec4(hdrColor, 1.0); //vec4(texture(u_colorTexture, colorCoord).rgb, 1.0);
 }
