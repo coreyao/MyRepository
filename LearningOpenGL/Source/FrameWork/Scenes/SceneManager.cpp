@@ -1,6 +1,7 @@
 #include "SceneManager.h"
 #include "StaticMeshTest.h"
 #include "HDRTest.h"
+#include "BloomTest.h"
 
 CSceneManager* CSceneManager::GetInstance()
 {
@@ -8,13 +9,18 @@ CSceneManager* CSceneManager::GetInstance()
 	{
 		s_instance = new CSceneManager;
 
-		/*	{
-				CStaticMeshTest* scene = new CStaticMeshTest;
-				s_instance->m_vScene.push_back(scene);
-				}*/
+		/*{
+			CStaticMeshTest* scene = new CStaticMeshTest;
+			s_instance->m_vScene.push_back(scene);
+			}
+
+			{
+			CHDRTest* scene = new CHDRTest;
+			s_instance->m_vScene.push_back(scene);
+			}*/
 
 		{
-			CHDRTest* scene = new CHDRTest;
+			CBloomTest* scene = new CBloomTest;
 			s_instance->m_vScene.push_back(scene);
 		}
 	}

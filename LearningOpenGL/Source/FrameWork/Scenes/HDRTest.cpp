@@ -7,6 +7,8 @@
 
 void CHDRTest::OnEnter()
 {
+	CBaseScene::OnEnter();
+
 	CMesh* cubeMesh = new CMesh;
 	cubeMesh->InitFromFile("cube.CSTM");
 	cubeMesh->m_transform.SetPosition(Vec3(0, -50, -100));
@@ -40,11 +42,7 @@ void CHDRTest::OnEnter()
 
 void CHDRTest::OnExit()
 {
-	for (auto& pObj : m_vObject)
-		delete pObj;
-	m_vObject.clear();
-
-	CLightManager::Purge();
+	CBaseScene::OnExit();
 	delete m_hdr;
 }
 

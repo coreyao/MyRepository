@@ -100,7 +100,7 @@ CRenderState::CRenderState()
 , m_iBlendSrc(GL_SRC_ALPHA)
 , m_iBlendDst(GL_ONE_MINUS_SRC_ALPHA)
 , m_fGamma(1.8f)
-, m_bEnableGammaCorrection(true)
+, m_bEnableGammaCorrection(false)
 {
 }
 

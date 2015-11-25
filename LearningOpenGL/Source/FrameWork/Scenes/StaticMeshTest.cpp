@@ -6,6 +6,8 @@
 
 void CStaticMeshTest::OnEnter()
 {
+	CBaseScene::OnEnter();
+
 	CMesh* planeMesh = new CMesh;
 	planeMesh->InitFromFile("plane.CSTM");
 	planeMesh->m_transform.SetPosition(Vec3(0, -50, -100));
@@ -68,13 +70,7 @@ void CStaticMeshTest::OnEnter()
 
 void CStaticMeshTest::OnExit()
 {
-	for (auto& pObj : m_vObject)
-	{
-		delete pObj;
-	}
-	m_vObject.clear();
-
-	CLightManager::Purge();
+	CBaseScene::OnExit();
 }
 
 void CStaticMeshTest::Update(float dt)
