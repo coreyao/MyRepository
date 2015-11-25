@@ -22,7 +22,9 @@ void main()
 {
 	fragPos = (modelMatrix * vec4(a_position, 1.0)).xyz;
 	fragPosLightSpace = lightSpaceMatrix * vec4(fragPos, 1.0);
-	normal = normalize((modelMatrix * vec4(a_normal, 0.0))).xyz;
+
+	mat3 NormalMatrix = transpose(inverse(mat3(modelMatrix)));
+	normal = normalize(NormalMatrix * a_normal);
 	if ( u_flipnormal )
 		normal = -normal;
 	tangent = normalize((modelMatrix * vec4(a_tangent, 0.0))).xyz;

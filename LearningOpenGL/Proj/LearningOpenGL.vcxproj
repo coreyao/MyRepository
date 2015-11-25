@@ -86,6 +86,13 @@
     <ClInclude Include="..\Source\FrameWork\Utility.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Resource\Shaders\Bloom.frag" />
+    <None Include="..\Resource\Shaders\Bloom.vert" />
+    <None Include="..\Resource\Shaders\Bloom_final.frag" />
+    <None Include="..\Resource\Shaders\Bloom_final.vert" />
+    <None Include="..\Resource\Shaders\Bloom_Lighter.frag" />
+    <None Include="..\Resource\Shaders\Blur.frag" />
+    <None Include="..\Resource\Shaders\Blur.vert" />
     <None Include="..\Resource\Shaders\HDR_fragment.frag" />
     <None Include="..\Resource\Shaders\HDR_vertex.vert" />
     <None Include="..\Resource\Shaders\Label_Fragment_Shader.frag" />

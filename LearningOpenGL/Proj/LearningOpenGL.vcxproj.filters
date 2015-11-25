@@ -335,5 +335,26 @@
     <None Include="..\Resource\Shaders\HDR_vertex.vert">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\Resource\Shaders\Bloom.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Resource\Shaders\Bloom.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Resource\Shaders\Bloom_final.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Resource\Shaders\Bloom_final.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Resource\Shaders\Bloom_Lighter.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Resource\Shaders\Blur.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Resource\Shaders\Blur.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
