@@ -47,7 +47,7 @@ void CStaticMeshTest::OnEnter()
 
 	CDirectionalLight* pDirLight = new CDirectionalLight;
 	pDirLight->m_ambientColor = Vec3(0.3f, 0.3f, 0.3f);
-	pDirLight->m_diffuseColor = Vec3(0.3f, 0.3f, 0.3f);
+	pDirLight->m_diffuseColor = Vec3(0.8f, 0.8f, 0.8f);
 	pDirLight->m_specularColor = Vec3(0.5f, 0.5f, 0.5f);
 	pDirLight->m_lightPos = Vec3(planeMesh->m_transform.GetPosition() + Vec3(1000, 1000, 0));
 	pDirLight->m_lightDir = pDirLight->m_lightPos.GetNormalized();

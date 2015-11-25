@@ -30,6 +30,10 @@ void init()
 {
 	srand(time(nullptr));
 
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClearDepth(1.0f);
+	glDepthRange(0.0f, 1.0f);
+
 	CSceneManager::GetInstance()->Next();
 
 	g_pDeltaTimeLabel = new CLabel(FONT_FILE_DIR + "simyou.ttf", 20);
@@ -62,11 +66,6 @@ void display()
 		g_fDeltaTime = std::max(0.0f, g_fDeltaTime);
 	}
 
-	//g_fDeltaTime = std::min(g_fDeltaTime, 0.02f);
-
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	glClearDepth(1.0f);
-	glDepthRange(0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	UpdateScene();

@@ -204,5 +204,5 @@ void main()
 	if ( u_enableGammaCorrection )
 		finalColor.rgb = pow( finalColor.rgb, vec3(1.0 / u_fGamma) );
 
-	outputColor = vec4(finalColor, baseColor.w);
+	outputColor = vec4(finalColor.rgb, baseColor.w);
 }

@@ -17,6 +17,9 @@ public:
 private:
 	GLuint m_HDRFBO;
 
+	float m_fExposure;
+
+	GLuint m_Sampler;
 	GLuint m_HDRTex;
 	GLuint m_vertexDataObj;
 	GLuint m_vertexIndexObj;

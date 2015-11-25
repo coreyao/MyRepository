@@ -32,10 +32,10 @@ void CShadowmap::Init(CDirectionalLight* pDirLight)
 	glGenVertexArrays(1, &m_vertexAttributeObj);
 
 	SCommonVertex vVertex[4] = {
-		SCommonVertex(Vec3(-1, -1, 0), Color4F(1, 1, 1, 1), Vec2(0, 1)),
-		SCommonVertex(Vec3(-1, 1, 0), Color4F(1, 1, 1, 1), Vec2(0, 0)),
-		SCommonVertex(Vec3(1, 1, 0), Color4F(1, 1, 1, 1), Vec2(1, 0)),
-		SCommonVertex(Vec3(1, -1, 0), Color4F(1, 1, 1, 1), Vec2(1, 1))
+		SCommonVertex(Vec3(-1, -1, 0), Color4F(1, 1, 1, 1), Vec2(0, 0)),
+		SCommonVertex(Vec3(-1, 1, 0), Color4F(1, 1, 1, 1), Vec2(0, 1)),
+		SCommonVertex(Vec3(1, 1, 0), Color4F(1, 1, 1, 1), Vec2(1, 1)),
+		SCommonVertex(Vec3(1, -1, 0), Color4F(1, 1, 1, 1), Vec2(1, 0))
 	};
 
 	unsigned short vVertexIndex[6] = {
@@ -97,6 +97,7 @@ void CShadowmap::DebugRenderShadowMap()
 {
 	glViewport(0, 0, SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4);
 
+	glUseProgram(m_theDebugProgram);
 	GLint colorTextureUnif = glGetUniformLocation(m_theDebugProgram, "u_colorTexture");
 	if ( colorTextureUnif >= 0 )
 	{
@@ -107,7 +108,6 @@ void CShadowmap::DebugRenderShadowMap()
 	}
 	
 	glDisable(GL_CULL_FACE);
-	glUseProgram(m_theDebugProgram);
 	glBindVertexArray(m_vertexAttributeObj);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vertexIndexObj);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
