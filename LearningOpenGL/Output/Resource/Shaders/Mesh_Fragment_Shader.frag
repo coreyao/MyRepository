@@ -15,6 +15,8 @@ uniform vec3 u_eyePos;
 uniform float u_fGamma;
 uniform bool u_enableGammaCorrection; 
 
+uniform bool u_receiveShadows;
+
 // - Material
 struct Material
 {
@@ -74,6 +76,9 @@ uniform SpotLight u_AllSpotLight[MAX_SPOT_LIGHT_COUNT];
 
 float CalcInShadow(vec3 lightDir)
 {
+	if ( !u_receiveShadows )
+		return 0.0;
+
 	vec3 projCoord = fragPosLightSpace.xyz / fragPosLightSpace.w;
 	projCoord = projCoord * 0.5 + 0.5;
 	float bias = max( (1.0 - dot( normalize(normal), lightDir )) * 0.05, 0.005 );
@@ -204,5 +209,5 @@ void main()
 	if ( u_enableGammaCorrection )
 		finalColor.rgb = pow( finalColor.rgb, vec3(1.0 / u_fGamma) );
 
-	outputColor = texture(u_Material.baseColorTex, colorCoord);
+	outputColor = vec4(finalColor.rgb, baseColor.w);
 }

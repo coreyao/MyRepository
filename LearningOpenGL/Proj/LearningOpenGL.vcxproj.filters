@@ -169,6 +169,9 @@
     <ClCompile Include="..\Source\FrameWork\Scenes\BloomTest.cpp">
       <Filter>Source Files\FrameWork\Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\Bloom.cpp">
+      <Filter>Source Files\FrameWork\Light</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\FrameWork\Image\PNGReader.h">
@@ -275,6 +278,9 @@
     </ClInclude>
     <ClInclude Include="..\Source\FrameWork\Scenes\BloomTest.h">
       <Filter>Source Files\FrameWork\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\Bloom.h">
+      <Filter>Source Files\FrameWork\Light</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

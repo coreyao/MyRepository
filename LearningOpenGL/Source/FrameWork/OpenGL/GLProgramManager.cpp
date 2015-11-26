@@ -38,6 +38,10 @@ CGLProgramManager* CGLProgramManager::GetInstance()
 		s_pInstance->Add("DebugShadowMap", SHADER_FILE_DIR + "debug_shadow_map.vert", SHADER_FILE_DIR + "debug_shadow_map.frag");
 		s_pInstance->Add("ShadowMapping", SHADER_FILE_DIR + "ShadowMapping.vert", SHADER_FILE_DIR + "ShadowMapping.frag");
 		s_pInstance->Add("HDR", SHADER_FILE_DIR + "HDR_vertex.vert", SHADER_FILE_DIR + "HDR_fragment.frag");
+		s_pInstance->Add("BloomFirstPass", SHADER_FILE_DIR + "Bloom.vert", SHADER_FILE_DIR + "Bloom.frag");
+		s_pInstance->Add("BloomFirstPass_Lighter", SHADER_FILE_DIR + "Bloom.vert", SHADER_FILE_DIR + "Bloom_Lighter.frag");
+		s_pInstance->Add("Blur", SHADER_FILE_DIR + "Blur.vert", SHADER_FILE_DIR + "Blur.frag");
+		s_pInstance->Add("BloomFinal", SHADER_FILE_DIR + "Bloom_final.vert", SHADER_FILE_DIR + "Bloom_final.frag");
 	}
 
 	return s_pInstance;

@@ -158,6 +158,7 @@ void CSkeletonAnimator::PlayAnim(int iStartFrameIndex, int iEndFrameIndex, bool 
 CMesh::CMesh()
 	: m_Sampler(0)
 	, m_bFlipNormal(false)
+	, m_bReceiveShadow(false)
 {
 	m_color = Color4F::WHITE;
 }
@@ -559,6 +560,12 @@ void CMesh::UpdateLightUniform()
 				glActiveTexture(GL_TEXTURE0 + 2);
 				glBindTexture(GL_TEXTURE_2D, CDirector::GetInstance()->m_pShadowMap->GetDepthMapTex());
 			}
+		}
+
+		GLint receiveShadowUnif = glGetUniformLocation(m_theProgram, "u_receiveShadows");
+		if (receiveShadowUnif >= 0)
+		{
+			glUniform1i(receiveShadowUnif, m_bReceiveShadow);
 		}
 	}
 }

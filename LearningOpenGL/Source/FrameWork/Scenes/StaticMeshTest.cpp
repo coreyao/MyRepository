@@ -24,6 +24,7 @@ void CStaticMeshTest::OnEnter()
 	planeMesh->SetGLProgram(CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh"));
 	planeMesh->m_renderState.m_bEnableGammaCorrection = false;
 	planeMesh->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
+	planeMesh->m_bReceiveShadow = true;
 	m_vObject.push_back(planeMesh);
 
 	for (int i = 0; i < 3; ++i)
@@ -44,6 +45,7 @@ void CStaticMeshTest::OnEnter()
 		charactorMesh->SetGLProgram(CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh"));
 		charactorMesh->m_renderState.m_bEnableGammaCorrection = false;
 		charactorMesh->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
+		charactorMesh->m_bReceiveShadow = true;
 		m_vObject.push_back(charactorMesh);
 	}
 

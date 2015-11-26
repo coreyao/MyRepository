@@ -113,6 +113,7 @@ public:
 	Color4F m_color;
 	bool m_bSkinMesh;
 	bool m_bFlipNormal;
+	bool m_bReceiveShadow;
 
 	CSkeleton m_skeleton;
 	CSkeletonAnimator m_animator;
