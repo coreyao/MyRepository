@@ -42,6 +42,8 @@ CGLProgramManager* CGLProgramManager::GetInstance()
 		s_pInstance->Add("BloomFirstPass_Lighter", SHADER_FILE_DIR + "Bloom.vert", SHADER_FILE_DIR + "Bloom_Lighter.frag");
 		s_pInstance->Add("Blur", SHADER_FILE_DIR + "Blur.vert", SHADER_FILE_DIR + "Blur.frag");
 		s_pInstance->Add("BloomFinal", SHADER_FILE_DIR + "Bloom_final.vert", SHADER_FILE_DIR + "Bloom_final.frag");
+		s_pInstance->Add("GBuffer", SHADER_FILE_DIR + "g_buffer.vs", SHADER_FILE_DIR + "g_buffer.frag");
+		s_pInstance->Add("DeferredShading", SHADER_FILE_DIR + "deferred_shading.vs", SHADER_FILE_DIR + "deferred_shading.frag");
 	}
 
 	return s_pInstance;

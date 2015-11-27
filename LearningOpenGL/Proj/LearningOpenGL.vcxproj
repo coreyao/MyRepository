@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClCompile Include="..\Source\FrameWork\Bloom.cpp" />
     <ClCompile Include="..\Source\FrameWork\DataTypes.cpp" />
+    <ClCompile Include="..\Source\FrameWork\DeferredShading.cpp" />
     <ClCompile Include="..\Source\FrameWork\Director.cpp" />
     <ClCompile Include="..\Source\FrameWork\Camera.cpp" />
     <ClCompile Include="..\Source\FrameWork\Collision.cpp" />
@@ -29,6 +30,7 @@
     <ClCompile Include="..\Source\FrameWork\Renderer\Renderer.cpp" />
     <ClCompile Include="..\Source\FrameWork\Scenes\BaseScene.cpp" />
     <ClCompile Include="..\Source\FrameWork\Scenes\BloomTest.cpp" />
+    <ClCompile Include="..\Source\FrameWork\Scenes\DeferredShadingTest.cpp" />
     <ClCompile Include="..\Source\FrameWork\Scenes\HDRTest.cpp" />
     <ClCompile Include="..\Source\FrameWork\Scenes\StaticMeshTest.cpp" />
     <ClCompile Include="..\Source\FrameWork\Scenes\SceneManager.cpp" />
@@ -52,6 +54,7 @@
   <ItemGroup>
     <ClInclude Include="..\Source\FrameWork\Bloom.h" />
     <ClInclude Include="..\Source\FrameWork\DataTypes.h" />
+    <ClInclude Include="..\Source\FrameWork\DeferredShading.h" />
     <ClInclude Include="..\Source\FrameWork\Director.h" />
     <ClInclude Include="..\Source\FrameWork\Camera.h" />
     <ClInclude Include="..\Source\FrameWork\Collision.h" />
@@ -68,6 +71,7 @@
     <ClInclude Include="..\Source\FrameWork\Renderer\Renderer.h" />
     <ClInclude Include="..\Source\FrameWork\Scenes\BaseScene.h" />
     <ClInclude Include="..\Source\FrameWork\Scenes\BloomTest.h" />
+    <ClInclude Include="..\Source\FrameWork\Scenes\DeferredShadingTest.h" />
     <ClInclude Include="..\Source\FrameWork\Scenes\HDRTest.h" />
     <ClInclude Include="..\Source\FrameWork\Scenes\StaticMeshTest.h" />
     <ClInclude Include="..\Source\FrameWork\Scenes\SceneManager.h" />
@@ -95,6 +99,10 @@
     <None Include="..\Resource\Shaders\Bloom_Lighter.frag" />
     <None Include="..\Resource\Shaders\Blur.frag" />
     <None Include="..\Resource\Shaders\Blur.vert" />
+    <None Include="..\Resource\Shaders\deferred_shading.frag" />
+    <None Include="..\Resource\Shaders\deferred_shading.vs" />
+    <None Include="..\Resource\Shaders\g_buffer.frag" />
+    <None Include="..\Resource\Shaders\g_buffer.vs" />
     <None Include="..\Resource\Shaders\HDR_fragment.frag" />
     <None Include="..\Resource\Shaders\HDR_vertex.vert" />
     <None Include="..\Resource\Shaders\Label_Fragment_Shader.frag" />

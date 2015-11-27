@@ -2,6 +2,7 @@
 #include "StaticMeshTest.h"
 #include "HDRTest.h"
 #include "BloomTest.h"
+#include "DeferredShadingTest.h"
 
 CSceneManager* CSceneManager::GetInstance()
 {
@@ -19,8 +20,14 @@ CSceneManager* CSceneManager::GetInstance()
 		//	s_instance->m_vScene.push_back(scene);
 		//}
 
+		//{
+		//	CBloomTest* scene = new CBloomTest;
+		//	s_instance->m_vScene.push_back(scene);
+		//}
+
+
 		{
-			CBloomTest* scene = new CBloomTest;
+			CDeferredShadingTest* scene = new CDeferredShadingTest;
 			s_instance->m_vScene.push_back(scene);
 		}
 	}
