@@ -121,6 +121,19 @@ void CSkeletonAnimator::Update(float fDeltaTime)
 				Mat4 rotationMatrix = Mat4::CreateRotationMat(finalRotation);
 
 				pBone->m_localMat = translationMatrix * scaleMatrix * rotationMatrix;
+
+				// - Interpolate by matrix
+			/*	Mat4 translationMatrixA = Mat4::CreateTranslationMat(pCurFrame->m_vKey[iKeyIdx].m_translation.x, pCurFrame->m_vKey[iKeyIdx].m_translation.y, pCurFrame->m_vKey[iKeyIdx].m_translation.z);
+				Mat4 scaleMatrixA = Mat4::CreateScaleMat(pCurFrame->m_vKey[iKeyIdx].m_scale.x, pCurFrame->m_vKey[iKeyIdx].m_scale.y, pCurFrame->m_vKey[iKeyIdx].m_scale.z);
+				Mat4 rotationMatrixA = Mat4::CreateRotationMat(pCurFrame->m_vKey[iKeyIdx].m_rotation);
+				Mat4 localMatA = translationMatrixA * scaleMatrixA * rotationMatrixA;
+
+				Mat4 translationMatrixB = Mat4::CreateTranslationMat(pNextFrame->m_vKey[iKeyIdx].m_translation.x, pNextFrame->m_vKey[iKeyIdx].m_translation.y, pNextFrame->m_vKey[iKeyIdx].m_translation.z);
+				Mat4 scaleMatrixB = Mat4::CreateScaleMat(pNextFrame->m_vKey[iKeyIdx].m_scale.x, pNextFrame->m_vKey[iKeyIdx].m_scale.y, pNextFrame->m_vKey[iKeyIdx].m_scale.z);
+				Mat4 rotationMatrixB = Mat4::CreateRotationMat(pNextFrame->m_vKey[iKeyIdx].m_rotation);
+				Mat4 localMatB = translationMatrixB * scaleMatrixB * rotationMatrixB;
+
+				pBone->m_localMat = localMatA + (localMatB - localMatA) * fElapsedPercent;*/
 			}
 		}
 

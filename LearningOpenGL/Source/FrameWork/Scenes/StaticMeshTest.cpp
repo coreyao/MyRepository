@@ -42,10 +42,11 @@ void CStaticMeshTest::OnEnter()
 			charactorMesh->SetMaterial(newMaterial, i);
 		}
 		charactorMesh->SetLightEnable(true);
-		charactorMesh->SetGLProgram(CGLProgramManager::GetInstance()->CreateProgramByName("StaticMesh"));
+		charactorMesh->SetGLProgram(CGLProgramManager::GetInstance()->CreateProgramByName("SkinMesh"));
 		charactorMesh->m_renderState.m_bEnableGammaCorrection = false;
 		charactorMesh->m_renderState.m_eVertexOrder = EVertexOrder_Counter_ClockWise;
 		charactorMesh->m_bReceiveShadow = true;
+		charactorMesh->PlayAnim(0, 235, true, nullptr);
 		m_vObject.push_back(charactorMesh);
 	}
 

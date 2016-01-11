@@ -210,6 +210,20 @@ void Mat4::operator+=(const Mat4& rh)
 	*this = *this + rh;
 }
 
+Mat4 Mat4::operator-(const Mat4& rh)
+{
+	Mat4 ret;
+	for (int i = 0; i < 16; ++i)
+		ret.m[i] = m[i] - rh.m[i];
+
+	return ret;
+}
+
+void Mat4::operator-=(const Mat4& rh)
+{
+	*this = *this - rh;
+}
+
 bool Mat4::operator==(const Mat4& rh)
 {
 	return !memcmp((void*)m, (void*)rh.m, sizeof(m));

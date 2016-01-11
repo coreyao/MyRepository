@@ -10,10 +10,10 @@ CSceneManager* CSceneManager::GetInstance()
 	{
 		s_instance = new CSceneManager;
 
-		//{
-		//	CStaticMeshTest* scene = new CStaticMeshTest;
-		//	s_instance->m_vScene.push_back(scene);
-		//}
+		{
+			CStaticMeshTest* scene = new CStaticMeshTest;
+			s_instance->m_vScene.push_back(scene);
+		}
 
 		//{
 		//	CHDRTest* scene = new CHDRTest;
@@ -26,10 +26,10 @@ CSceneManager* CSceneManager::GetInstance()
 		//}
 
 
-		{
+	/*	{
 			CDeferredShadingTest* scene = new CDeferredShadingTest;
 			s_instance->m_vScene.push_back(scene);
-		}
+		}*/
 	}
 
 	return s_instance;

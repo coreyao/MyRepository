@@ -27,6 +27,9 @@ public:
 	Mat4 operator+(const Mat4& rh);
 	void operator+=(const Mat4& rh);
 
+	Mat4 operator-(const Mat4& rh);
+	void operator-=(const Mat4& rh);
+
 	bool operator==(const Mat4& rh);
 	bool operator!=(const Mat4& rh);
 
