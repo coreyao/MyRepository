@@ -181,6 +181,9 @@
     <ClCompile Include="..\Source\FrameWork\Scenes\ReflectionAndRefractionTest.cpp">
       <Filter>Source Files\FrameWork\Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\Scenes\TextureProjectionTest.cpp">
+      <Filter>Source Files\FrameWork\Scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\FrameWork\Image\PNGReader.h">
@@ -298,6 +301,9 @@
       <Filter>Source Files\FrameWork\Light</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\FrameWork\Scenes\ReflectionAndRefractionTest.h">
+      <Filter>Source Files\FrameWork\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\Scenes\TextureProjectionTest.h">
       <Filter>Source Files\FrameWork\Scenes</Filter>
     </ClInclude>
   </ItemGroup>

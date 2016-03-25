@@ -35,6 +35,7 @@
     <ClCompile Include="..\Source\FrameWork\Scenes\ReflectionAndRefractionTest.cpp" />
     <ClCompile Include="..\Source\FrameWork\Scenes\StaticMeshTest.cpp" />
     <ClCompile Include="..\Source\FrameWork\Scenes\SceneManager.cpp" />
+    <ClCompile Include="..\Source\FrameWork\Scenes\TextureProjectionTest.cpp" />
     <ClCompile Include="..\Source\FrameWork\Scheduler\Scheduler.cpp" />
     <ClCompile Include="..\Source\FrameWork\ShadowMap.cpp" />
     <ClCompile Include="..\Source\FrameWork\SkyBox.cpp" />
@@ -77,6 +78,7 @@
     <ClInclude Include="..\Source\FrameWork\Scenes\ReflectionAndRefractionTest.h" />
     <ClInclude Include="..\Source\FrameWork\Scenes\StaticMeshTest.h" />
     <ClInclude Include="..\Source\FrameWork\Scenes\SceneManager.h" />
+    <ClInclude Include="..\Source\FrameWork\Scenes\TextureProjectionTest.h" />
     <ClInclude Include="..\Source\FrameWork\Scheduler\Scheduler.h" />
     <ClInclude Include="..\Source\FrameWork\ShadowMap.h" />
     <ClInclude Include="..\Source\FrameWork\SkyBox.h" />
