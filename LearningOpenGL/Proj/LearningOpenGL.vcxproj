@@ -32,6 +32,7 @@
     <ClCompile Include="..\Source\FrameWork\Scenes\BloomTest.cpp" />
     <ClCompile Include="..\Source\FrameWork\Scenes\DeferredShadingTest.cpp" />
     <ClCompile Include="..\Source\FrameWork\Scenes\HDRTest.cpp" />
+    <ClCompile Include="..\Source\FrameWork\Scenes\ReflectionAndRefractionTest.cpp" />
     <ClCompile Include="..\Source\FrameWork\Scenes\StaticMeshTest.cpp" />
     <ClCompile Include="..\Source\FrameWork\Scenes\SceneManager.cpp" />
     <ClCompile Include="..\Source\FrameWork\Scheduler\Scheduler.cpp" />
@@ -73,6 +74,7 @@
     <ClInclude Include="..\Source\FrameWork\Scenes\BloomTest.h" />
     <ClInclude Include="..\Source\FrameWork\Scenes\DeferredShadingTest.h" />
     <ClInclude Include="..\Source\FrameWork\Scenes\HDRTest.h" />
+    <ClInclude Include="..\Source\FrameWork\Scenes\ReflectionAndRefractionTest.h" />
     <ClInclude Include="..\Source\FrameWork\Scenes\StaticMeshTest.h" />
     <ClInclude Include="..\Source\FrameWork\Scenes\SceneManager.h" />
     <ClInclude Include="..\Source\FrameWork\Scheduler\Scheduler.h" />
