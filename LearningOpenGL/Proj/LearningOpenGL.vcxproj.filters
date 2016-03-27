@@ -59,6 +59,9 @@
     <Filter Include="Source Files\FrameWork\Scheduler">
       <UniqueIdentifier>{818f4c7d-f24f-4061-b5c9-d34a9a5e115e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\FrameWork\Projector">
+      <UniqueIdentifier>{d2dc6e31-48b2-4fbd-8cd9-7195267e0a89}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\FrameWork\Image\PNGReader.cpp">
@@ -184,6 +187,9 @@
     <ClCompile Include="..\Source\FrameWork\Scenes\TextureProjectionTest.cpp">
       <Filter>Source Files\FrameWork\Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\FrameWork\Projector.cpp">
+      <Filter>Source Files\FrameWork\Projector</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\FrameWork\Image\PNGReader.h">
@@ -306,6 +312,9 @@
     <ClInclude Include="..\Source\FrameWork\Scenes\TextureProjectionTest.h">
       <Filter>Source Files\FrameWork\Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\FrameWork\Projector.h">
+      <Filter>Source Files\FrameWork\Projector</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Resource\Shaders\Mesh_Fragment_Shader.frag">
@@ -396,6 +405,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Resource\Shaders\g_buffer.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Resource\Shaders\Simple_Position_Color_Shader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Resource\Shaders\Simple_Position_Color_Shader.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
