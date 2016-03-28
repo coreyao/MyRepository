@@ -3,6 +3,7 @@
 #include "HDRTest.h"
 #include "BloomTest.h"
 #include "DeferredShadingTest.h"
+#include "TextureProjectionTest.h"
 
 CSceneManager* CSceneManager::GetInstance()
 {
@@ -10,26 +11,31 @@ CSceneManager* CSceneManager::GetInstance()
 	{
 		s_instance = new CSceneManager;
 
-	/*	{
-			CStaticMeshTest* scene = new CStaticMeshTest;
-			s_instance->m_vScene.push_back(scene);
-		}*/
+		//{
+		//	CStaticMeshTest* scene = new CStaticMeshTest;
+		//	s_instance->m_vScene.push_back(scene);
+		//}
 
 		//{
 		//	CHDRTest* scene = new CHDRTest;
 		//	s_instance->m_vScene.push_back(scene);
 		//}
 
-		{
-			CBloomTest* scene = new CBloomTest;
-			s_instance->m_vScene.push_back(scene);
-		}
+		//{
+		//	CBloomTest* scene = new CBloomTest;
+		//	s_instance->m_vScene.push_back(scene);
+		//}
 
 
 		//{
 		//	CDeferredShadingTest* scene = new CDeferredShadingTest;
 		//	s_instance->m_vScene.push_back(scene);
 		//}
+
+		{
+			CTextureProjectionTest* scene = new CTextureProjectionTest;
+			s_instance->m_vScene.push_back(scene);
+		}
 	}
 
 	return s_instance;

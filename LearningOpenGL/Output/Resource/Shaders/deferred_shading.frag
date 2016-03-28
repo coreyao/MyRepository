@@ -1,28 +1,15 @@
 #version 330
 out vec4 outputColor;
-in vec2 colorCoord;
-in vec3 normal;
-in vec3 fragPos;
-in vec3 tangent;
-in vec4 fragPosLightSpace;
-in vec4 fragPosProjectorSpace;
-in vec4 colorVertex;
+in vec2 TexCoords;
 
-uniform sampler2D u_shadowMapTexture;
-uniform vec4 u_color;
-uniform int u_enableLight;
 uniform vec3 u_eyePos;
 
 uniform float u_fGamma;
 uniform bool u_enableGammaCorrection; 
 
-uniform bool u_receiveShadows;
-
-uniform sampler2D u_projectorImage;
-uniform int u_enableProjector;
-uniform mat4 ProjectorSpaceMatrix;
-
-uniform mat4 perspectiveMatrix;
+uniform sampler2D gPosition;
+uniform sampler2D gNormal;
+uniform sampler2D gAlbedoSpec;
 
 // - Material
 struct Material
@@ -81,58 +68,30 @@ struct SpotLight
 const int MAX_SPOT_LIGHT_COUNT = 3;
 uniform SpotLight u_AllSpotLight[MAX_SPOT_LIGHT_COUNT];
 
-float CalcInShadow(vec3 lightDir)
-{
-	if ( !u_receiveShadows )
-		return 0.0;
-
-	vec3 projCoord = fragPosLightSpace.xyz / fragPosLightSpace.w;
-	projCoord = projCoord * 0.5 + 0.5;
-	float bias = max( (1.0 - dot( normalize(normal), lightDir )) * 0.05, 0.005 );
-	float shadow = 0.0f;
-	
-	vec2 texelSize = 1.0 / textureSize(u_shadowMapTexture, 0);
-    for(int x = -1; x <= 1; ++x)
-    {
-        for(int y = -1; y <= 1; ++y)
-        {
-            float pcfDepth = texture(u_shadowMapTexture, projCoord.xy + vec2(x, y) * texelSize).r; 
-            shadow += projCoord.z - bias > pcfDepth ? 1.0 : 0.0;        
-        }    
-    }
-    shadow /= 9.0;
-
-	if(projCoord.z > 1.0)
-       shadow = 0.0;
-
-	return shadow;
-}
-
-vec3 CalcDirLightContribution(vec3 n)
+vec3 CalcDirLightContribution(vec3 n, vec3 fragPos, vec3 diffuse)
 {
 	vec3 outColor = vec3(0.0, 0.0, 0.0);
-	vec3 baseColor = (texture(u_Material.baseColorTex, colorCoord) * u_color ).xyz;
+	vec3 baseColor = diffuse;
 	for ( int i = 0; i < MAX_DIRECTIONAL_LIGHT_COUNT; ++i )
 	{
 		vec3 lightDir = normalize(u_AllDirLight[i].direction);
-		float IsInShadow = CalcInShadow(lightDir);
 
 		outColor += baseColor * u_AllDirLight[i].ambient;
-		outColor += baseColor * u_AllDirLight[i].diffuse * max(dot(lightDir, n), 0.0) * (1.0 - IsInShadow);
+		outColor += baseColor * u_AllDirLight[i].diffuse * max(dot(lightDir, n), 0.0);
 
 		vec3 halfDir = normalize(lightDir + normalize(u_eyePos - fragPos));
 		float spec = max(dot(halfDir, n), 0.0);
-		outColor += baseColor * u_AllDirLight[i].specular * pow(spec, u_Material.shininess) * (1.0 - IsInShadow);
+		outColor += baseColor * u_AllDirLight[i].specular * pow(spec, u_Material.shininess);
 	}
 
 	return outColor;
 }
 
-vec3 CalcPointLightContribution(vec3 n)
+vec3 CalcPointLightContribution(vec3 n, vec3 fragPos, vec3 diffuse)
 {
 	vec3 outColor = vec3(0.0, 0.0, 0.0);
-	vec3 baseColor = (texture(u_Material.baseColorTex, colorCoord) * u_color ).xyz;
-	
+	vec3 baseColor = diffuse;
+
 	for ( int i = 0; i < MAX_POINT_LIGHT_COUNT; ++i )
 	{
 		float distance = length(u_AllPointLight[i].position - fragPos);
@@ -151,10 +110,10 @@ vec3 CalcPointLightContribution(vec3 n)
 	return outColor;
 }
 
-vec3 CalcSpotLightContribution(vec3 n)
+vec3 CalcSpotLightContribution(vec3 n, vec3 fragPos, vec3 diffuse)
 {
 	vec3 outColor = vec3(0.0, 0.0, 0.0);
-	vec3 baseColor = (texture(u_Material.baseColorTex, colorCoord) * u_color ).xyz;
+	vec3 baseColor = diffuse;
 	
 	for ( int i = 0; i < MAX_SPOT_LIGHT_COUNT; ++i )
 	{
@@ -186,43 +145,22 @@ vec3 CalcSpotLightContribution(vec3 n)
 
 void main()
 {
-	vec4 baseColor = texture(u_Material.baseColorTex, colorCoord) * u_color * colorVertex;
+	// Retrieve data from gbuffer
+    vec3 FragPos = texture(gPosition, TexCoords).rgb;
+    vec3 Normal = texture(gNormal, TexCoords).rgb;
+    vec3 Diffuse = texture(gAlbedoSpec, TexCoords).rgb;
+    float Specular = texture(gAlbedoSpec, TexCoords).a;
+
+	vec4 baseColor = vec4(Diffuse, 1.0);
 	vec3 finalColor = vec3(0.0, 0.0, 0.0);
-	vec2 projectorUV = (fragPosProjectorSpace.xy / fragPosProjectorSpace.w) * 0.5 + 0.5;
-	if ( u_enableProjector > 0 && projectorUV.x >= 0 && projectorUV.x <= 1 && projectorUV.y >= 0 && projectorUV.y <= 1 )
-	{
-		finalColor = texture(u_projectorImage, projectorUV).xyz;
-	}
-	else
-	{
-		if ( u_enableLight > 0 )
-		{
-			vec3 n = normalize(normal);
-			if (u_Material.bHasNormalMap)
-			{
-				vec3 T = tangent;
-				vec3 N = n;
-				T = normalize(T - dot(T, N) * N);
-				vec3 B = normalize(cross(T, N));
-				mat3 TBN = mat3(T, B, N);
-
-				n = texture(u_Material.normalMapTex, colorCoord).xyz;
-				n = n * 2.0 - 1.0;
-				n = normalize(TBN * n);
-			}
-
-			finalColor += CalcDirLightContribution(n);
-			finalColor += CalcPointLightContribution(n);
-			finalColor += CalcSpotLightContribution(n);
-		}
-		else
-		{
-			finalColor = baseColor.xyz;
-		}
-	}
+	vec3 n = normalize(Normal);
+	//finalColor += CalcDirLightContribution(n, FragPos, Diffuse);
+	finalColor += CalcPointLightContribution(n, FragPos, Diffuse);
+	//finalColor += CalcSpotLightContribution(n, FragPos, Diffuse);		
 
 	if ( u_enableGammaCorrection )
 		finalColor.rgb = pow( finalColor.rgb, vec3(1.0 / u_fGamma) );
 
-	outputColor = vec4(finalColor.rgb, baseColor.w);
+	// Based on which of the 1-5 keys we pressed, show final result or intermediate g-buffer textures
+    outputColor = vec4(finalColor, 1.0);
 }

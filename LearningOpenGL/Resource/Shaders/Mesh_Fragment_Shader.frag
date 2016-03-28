@@ -5,6 +5,7 @@ in vec3 normal;
 in vec3 fragPos;
 in vec3 tangent;
 in vec4 fragPosLightSpace;
+in vec4 fragPosProjectorSpace;
 in vec4 colorVertex;
 
 uniform sampler2D u_shadowMapTexture;
@@ -16,6 +17,12 @@ uniform float u_fGamma;
 uniform bool u_enableGammaCorrection; 
 
 uniform bool u_receiveShadows;
+
+uniform sampler2D u_projectorImage;
+uniform int u_enableProjector;
+uniform mat4 ProjectorSpaceMatrix;
+
+uniform mat4 perspectiveMatrix;
 
 // - Material
 struct Material
@@ -179,31 +186,45 @@ vec3 CalcSpotLightContribution(vec3 n)
 
 void main()
 {
-	vec4 baseColor = texture(u_Material.baseColorTex, colorCoord) * u_color * colorVertex;
+	vec4 baseColor = texture(u_Material.baseColorTex, colorCoord) * u_color;
 	vec3 finalColor = vec3(0.0, 0.0, 0.0);
-	if ( u_enableLight > 0 )
+	vec2 projectorUV = (fragPosProjectorSpace.xy / fragPosProjectorSpace.w) * 0.5 + 0.5;
+	if ( u_enableProjector > 0 && projectorUV.x >= 0 && projectorUV.x <= 1 && projectorUV.y >= 0 && projectorUV.y <= 1 )
 	{
-		vec3 n = normalize(normal);
-		if (u_Material.bHasNormalMap)
+		projectorUV.y = 1.0 - projectorUV.y;
+		vec4 df = texture(u_projectorImage, projectorUV);
+		finalColor = df.xyz;
+		if (df.w <= 0.1)
 		{
-			vec3 T = tangent;
-			vec3 N = n;
-			T = normalize(T - dot(T, N) * N);
-			vec3 B = normalize(cross(T, N));
-			mat3 TBN = mat3(T, B, N);
-
-			n = texture(u_Material.normalMapTex, colorCoord).xyz;
-			n = n * 2.0 - 1.0;
-			n = normalize(TBN * n);
+			finalColor = baseColor.xyz;
 		}
-
-		finalColor += CalcDirLightContribution(n);
-		finalColor += CalcPointLightContribution(n);
-		finalColor += CalcSpotLightContribution(n);
 	}
 	else
 	{
-		finalColor = baseColor.xyz;
+		if ( u_enableLight > 0 )
+		{
+			vec3 n = normalize(normal);
+			if (u_Material.bHasNormalMap)
+			{
+				vec3 T = tangent;
+				vec3 N = n;
+				T = normalize(T - dot(T, N) * N);
+				vec3 B = normalize(cross(T, N));
+				mat3 TBN = mat3(T, B, N);
+
+				n = texture(u_Material.normalMapTex, colorCoord).xyz;
+				n = n * 2.0 - 1.0;
+				n = normalize(TBN * n);
+			}
+
+			finalColor += CalcDirLightContribution(n);
+			finalColor += CalcPointLightContribution(n);
+			finalColor += CalcSpotLightContribution(n);
+		}
+		else
+		{
+			finalColor = baseColor.xyz;
+		}
 	}
 
 	if ( u_enableGammaCorrection )

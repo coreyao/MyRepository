@@ -3,14 +3,18 @@
 #include "Utility.h"
 #include "OpenGL/GLFrameWork.h"
 
-class CProjector : public CObject
+class CProjector
 {
 public:
 	CProjector(const std::string& sFileName);
 
-	virtual void Update(float dt);
-	virtual void Render();
+	void Update(float dt);
 
 	GLuint m_colorTex;
 	STransform worldTransform;
+	Mat4 ViewMat;
+
+	float FOV;
+	float AspectRatio;
+	Mat4 ProjectionMat;
 };

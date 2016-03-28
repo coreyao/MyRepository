@@ -120,6 +120,8 @@ public:
 	std::vector<CSubMesh*> m_vSubMesh;
 	std::vector<CMeshSocket> m_vSocket;
 
+	bool m_bReceiveProjector;
+
 private:
 	void InitSubMesh();
 	void InitSkeleton();

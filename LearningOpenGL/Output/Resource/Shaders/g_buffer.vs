@@ -10,21 +10,18 @@ out vec4 colorVertex;
 out vec3 normal;
 out vec3 fragPos;
 out vec4 fragPosLightSpace;
-out vec4 fragPosProjectorSpace;
 out vec3 tangent;
 
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 perspectiveMatrix;
 uniform mat4 lightSpaceMatrix;
-uniform mat4 ProjectorSpaceMatrix;
 uniform bool u_flipnormal;
 
 void main()
 {
 	fragPos = (modelMatrix * vec4(a_position, 1.0)).xyz;
 	fragPosLightSpace = lightSpaceMatrix * vec4(fragPos, 1.0);
-	fragPosProjectorSpace = ProjectorSpaceMatrix * vec4(fragPos, 1.0);
 
 	mat3 NormalMatrix = transpose(inverse(mat3(modelMatrix)));
 	normal = normalize(NormalMatrix * a_normal);

@@ -172,6 +172,7 @@ CMesh::CMesh()
 	: m_Sampler(0)
 	, m_bFlipNormal(false)
 	, m_bReceiveShadow(false)
+	, m_bReceiveProjector(false)
 {
 	m_color = Color4F::WHITE;
 }
@@ -588,7 +589,7 @@ void CMesh::UpdateMaterialUniform(CSubMesh* pSubMesh)
 	if (pSubMesh->m_material.GetBaseColorTex() != -1)
 	{
 		GLint colorTextureUnif = glGetUniformLocation(m_theProgram, "u_Material.baseColorTex");
-		if ( colorTextureUnif >= 0 )
+		if (colorTextureUnif >= 0)
 		{
 			glUniform1i(colorTextureUnif, 0);
 
@@ -601,7 +602,7 @@ void CMesh::UpdateMaterialUniform(CSubMesh* pSubMesh)
 	if (pSubMesh->m_material.GetNormalMapTex() != -1)
 	{
 		GLint colorTextureUnif = glGetUniformLocation(m_theProgram, "u_Material.normalMapTex");
-		if ( colorTextureUnif >= 0 )
+		if (colorTextureUnif >= 0)
 		{
 			glUniform1i(colorTextureUnif, 1);
 
